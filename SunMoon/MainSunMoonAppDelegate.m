@@ -7,15 +7,100 @@
 //
 
 #import "MainSunMoonAppDelegate.h"
+#import <ShareSDK/ShareSDK.h>
+#import "WXApi.h"
+#import <TencentOpenAPI/QQApiInterface.h>
+#import <TencentOpenAPI/TencentOAuth.h>
+
+
+@interface MainSunMoonAppDelegate ()
+
+@property (nonatomic, strong) UIWindow * statusWindow;
+@property (nonatomic, strong) UILabel * statusLabel;
+
+- (void) dismissStatus;
+
+@end
+
 
 @implementation MainSunMoonAppDelegate
+
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    
+    //ShareSDK 设置
+    [ShareSDK registerApp:@"fe35485ae4a"];
+    
+    //添加新浪微博应用
+    [ShareSDK connectSinaWeiboWithAppKey:@"3318551146" appSecret:@"88fd372af9e86ae0c8fa25df1fd6b61d" redirectUri:@"http://com.weibo"];
+    
+    //添加微信应用
+    [ShareSDK connectWeChatWithAppId:@"wx4e89a3a1551f87e9" wechatCls:[WXApi class]];
+    
+    //添加QQ应用
+    [ShareSDK connectQQWithQZoneAppKey:@"100586310"
+                     qqApiInterfaceCls:[QQApiInterface class]
+                       tencentOAuthCls:[TencentOAuth class]];
+    /*
+     //添加腾讯微博应用
+     [ShareSDK connectTencentWeiboWithAppKey:@"801307650"
+     appSecret:@"ae36f4ee3946e1cbb98d6965b0b2ff5c"
+     redirectUri:@"http://www.sharesdk.cn"];
+     
+     //添加QQ空间应用
+     [ShareSDK connectQZoneWithAppKey:@"100371282"
+     appSecret:@"aed9b0303e3ed1e27bae87c33761161d"];
+     */
+
+    
     return YES;
 }
-							
+
+
+/**
+ * @brief 在状态栏显示 一些Log
+ *
+ * @param string 需要显示的内容
+ * @param duration  需要显示多长时间
+ */
++ (void) showStatusWithText:(NSString *) string duration:(NSTimeInterval) duration {
+    
+    MainSunMoonAppDelegate * delegate = (MainSunMoonAppDelegate *) [UIApplication sharedApplication].delegate;
+    
+    delegate.statusLabel.text = string;
+    [delegate.statusLabel sizeToFit];
+    CGRect rect = [UIApplication sharedApplication].statusBarFrame;
+    CGFloat width = delegate.statusLabel.frame.size.width;
+    CGFloat height = rect.size.height;
+    rect.origin.x = rect.size.width - width - 5;
+    rect.size.width = width;
+    delegate.statusWindow.frame = rect;
+    delegate.statusLabel.frame = CGRectMake(0, 0, width, height);
+    
+    if (duration < 1.0) {
+        duration = 1.0;
+    }
+    if (duration > 4.0) {
+        duration = 4.0;
+    }
+    [delegate performSelector:@selector(dismissStatus) withObject:nil afterDelay:duration];
+}
+
+/**
+ * @brief 干掉状态栏文字
+ */
+- (void) dismissStatus {
+    CGRect rect = self.statusWindow.frame;
+    rect.origin.y -= rect.size.height;
+    [UIView animateWithDuration:0.5 animations:^{
+        self.statusWindow.frame = rect;
+    }];
+}
+
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

@@ -1,0 +1,24 @@
+/* 
+  Localizable.strings
+  SunMoon
+
+  Created by songwei on 14-5-7.
+  Copyright (c) 2014年 xujun. All rights reserved.
+*/
+
+
+"Sun_sentenc_1" = "全新的一天，全新的我！";  //初始默认
+"Sun_sentenc_2" = "全新的一天，自信的我！";
+"Sun_sentenc_3" = "努力，我最棒！";
+
+"Moon_sentenc_1" = "我是月光公主！";  //初始默认
+"Moon_sentenc_2" = "我觉得，我今天美到无与伦比，哇咔咔！";
+"Moon_sentenc_3" = "晚安，好好睡个美容觉吧！";
+
+"Sun time is on" = "是时候来一次阳光宣言了~";
+"Moon time is on" = "是时候来一次月光宣言了~";
+
+"FromUri" = "（App:天天更美丽）";
+
+
+
