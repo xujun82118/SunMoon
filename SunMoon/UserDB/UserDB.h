@@ -32,6 +32,7 @@
  */
 - (void) saveUser:(UserInfo *)user;
 
+
 /**
  * @brief 获取数据库路径
  */
@@ -43,7 +44,7 @@
  * @param uid 需要删除的用户的id
  */
 - (void) deleteUserWithId:(NSString *) uid;
-
+- (void) deleteUserWithDataTime:(NSString *) dateTime ;
 /**
  * @brief 修改用户的信息By UID
  *
@@ -71,7 +72,14 @@
  *
  * @param dateTime 指定的时间
  */
--(UserInfo*) getUserImageByDateTime: (NSString*) dateTime;
+-(UserInfo*) getUserDataByDateTime: (NSString*) dateTime;
+
+/**
+ * @brief 用指定时间 查询用户的数据,可传入现有userinfo,如果传入了userinfo指针，针使用现有指针，否则申请新的
+ *
+ * @param dateTime 指定的时间
+ */
+-(UserInfo*) getUserDataByDateTime: (NSString*) dateTime currUserInfo:(UserInfo*) currUserInfo;
 
 /**
  * @brief 查询用户的数据 限制个数
@@ -79,5 +87,7 @@
  * @param limit 查询的结果个数
  */
 -(NSArray*) getUserImageLimite:(int) limit;
+
+-(UserInfo *)findMaxByField:(NSString *) field;
 
 @end

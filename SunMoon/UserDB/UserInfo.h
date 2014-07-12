@@ -7,11 +7,34 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ShareSDK/ShareSDK.h>
 
+
+
+//@interface UserInfoDataBase : NSObject
+//{
+//    
+//    
+//}
+//
+////用户数据,存在数据库中的
+//@property (nonatomic, copy      ) NSString * date_time;
+//@property (nonatomic, copy      ) NSString * sun_value;
+//@property (nonatomic,copy       ) NSString * moon_value;
+//@property (nonatomic, copy      ) NSData   * sun_image;
+//@property (nonatomic, copy      ) NSString * sun_image_name;
+//@property (nonatomic, copy      ) NSString * sun_image_sentence;//此照片的语录
+//@property (nonatomic,copy       ) NSData   * moon_image;
+//@property (nonatomic, copy      ) NSString * moon_image_name;
+//@property (nonatomic, copy      ) NSString * moon_image_sentence;//此照片的语录
+//
+//
+//@end
 
 @interface UserInfo : NSObject
 {
 
+    NSString* test;
     
 }
 
@@ -19,7 +42,7 @@
 @property (nonatomic, copy      ) NSString * uid;
 @property (nonatomic, copy      ) NSString * user_id;
 @property (nonatomic, copy      ) NSString * name;
-@property (nonatomic, copy      ) NSString * sns_id;
+@property (nonatomic, copy      ) NSString * sns_id; //"x_ID",x对应ShareType, ID为鉴权的用户uid
 @property (nonatomic, copy      ) NSString * reg_time;
 @property (nonatomic, copy      ) UIImage  * userHeaderImage;
 
@@ -36,7 +59,44 @@
 
 
 
-//用户数据,存在数据库中的
+//用户当前登录连续登录次数
+@property (nonatomic) NSInteger continueLogInSunCount;
+@property (nonatomic) NSInteger continueLogInMoonCount;
+
+//是否有光在育成
+@property (nonatomic) BOOL isBringUpSun;
+@property (nonatomic) BOOL isBringUpMoon;
+
+
+//当天的照片是否已加过光值
+@property (nonatomic) BOOL isHaveAddSun;
+@property (nonatomic) BOOL isHaveaddMoon;
+
+
+//云同步等级
+//0:不支持同步
+//1：手动同步
+//2: 自动同步
+@property(nonatomic) NSInteger cloudSynchronizeClass;
+//云同步内容等级
+//0：同步阳光月光值
+//1:同步照片与阳光月光值
+@property(nonatomic) NSInteger cloudSynchronizeContent;
+
+
+//开启自动云同步
+@property(nonatomic) BOOL  cloudSynAutoCtl;
+
+//开启相片相动本地存储
+@property(nonatomic) BOOL  photoSaveAutoCtl;
+
+//开启延迟拍照
+@property(nonatomic) BOOL  delayTakePhotoCtl;
+
+
+
+
+//用户数据,存在数据库中的, 存当前天数据
 @property (nonatomic, copy      ) NSString * date_time;
 @property (nonatomic, copy      ) NSString * sun_value;
 @property (nonatomic,copy       ) NSString * moon_value;
@@ -61,7 +121,7 @@
 @property (nonatomic) NSInteger moonSentenceSelect;
 
 
-//用户数据库
+//用户数据库取得的数据,多天的
 @property(nonatomic,copy) NSArray* userDataBase;
 
 
@@ -70,6 +130,11 @@
 @property(nonatomic,copy) NSDate * moonAlertTime;
 @property(nonatomic) BOOL  sunAlertTimeCtl;
 @property(nonatomic) BOOL  moonAlertTimeCtl;
+
+
+
+
+
 
 + (UserInfo *)sharedSingleUserInfo;
 
@@ -84,6 +149,26 @@
 - (instancetype)initWithArray:(NSArray *)array;
 
 -(UserInfo*) getUserBaseInfo;
+
+/**
+ * @brief 保存或更新一条用户记录
+ *
+ * @param user 需要保存的用户数据
+ */
+- (void) saveUserCheckByDataTime:(UserInfo *) user;
+
+
+-(NSString*)getMaxUserSunValue;
+-(NSString*)getMaxUserMoonValue;
+
+
+-(BOOL)checkLoginLastDateIsToday;
+-(void)setLoginToday;
+-(void) addContinueLogInCount;
+-(BOOL)checkLoginLastDateIsYesterday;
+
+
+-(void)updateSns_ID:(NSString*) share_sns_id PlateType:(ShareType) plateType;
 
 -(void)updateSunSentenceSelected:(NSInteger) sentenceSelect;
 -(void)updateMoonSentenceSelected:(NSInteger) sentenceSelect;
@@ -103,5 +188,32 @@
 -(void)updateUserHeaderImage:(UIImage*) image;
 
 -(void)updateUserType:(NSInteger) iType;
+
+-(void)updateTodayUserData:(UserInfo*) userInfo;
+
+-(void)updatecloudSynAutoCtl:(BOOL) iscloudSynAutoCtl;
+
+-(void)updatePhotoSaveAutoCtl:(BOOL) isphotoSaveAutoCtl;
+
+-(void)updateDelayTakePhotoCtl:(BOOL) isDelayTakePhotoCtl;
+
+-(void)addSunOrMoonValue:(NSInteger) value;
+-(void)decreaseSunOrMoonValue:(NSInteger) value;
+
+-(void)updateContinueLogInCount:(NSInteger) value;
+
+-(void) updateisBringUpSun:(BOOL) isBringup;
+-(void) updateisBringUpMoon:(BOOL) isBringup;
+-(void) updateisBringUpSunOrMoon:(BOOL) isBringup;
+
+-(BOOL)checkIsBringUpinSunOrMoon;
+
+
+-(void) updateIsHaveAddSunValueForTodayPhoto:(BOOL) isOrNo;
+-(void) updateIsHaveAddMoonValueForTodayPhoto:(BOOL) isOrNo;
+
+-(BOOL) checkIsHaveAddSunValueForTodayPhoto;
+-(BOOL) checkIsHaveAddMoonValueForTodayPhoto;
+
 
 @end

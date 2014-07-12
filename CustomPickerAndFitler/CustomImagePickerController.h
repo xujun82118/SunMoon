@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "UserDB.h"
 #import "AFPickerView.h"
+#import "VoicePressedHold.h"
+
 
 @protocol CustomImagePickerControllerDelegate;
 
@@ -19,6 +21,7 @@
      AFPickerView *defaultPickerView;
     
     NSDictionary* imagePickerData;
+    VoicePressedHold* pressedVoice;
 }
 
 @property(nonatomic)BOOL isSingle;
@@ -27,7 +30,13 @@
 @property (nonatomic, strong) NSDictionary* imagePickerData;
 
 @property(nonatomic,copy) NSArray* userData;
-@property (nonatomic, strong) UserInfo * user;
+@property (nonatomic, strong) UserInfo * userInfo;
+
+@property(nonatomic)UIImage *currentChooseImage;
+
+@property (nonatomic, strong)UIProgressView *progressView;
+@property (retain, nonatomic)  F3BarGauge *customRangeBar;
+
 
 
 

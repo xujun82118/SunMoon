@@ -15,6 +15,8 @@
 
 @implementation AddWaterMask
 
+@synthesize waterRect, logRect;
+
 
 /**
  加文字随意
@@ -105,21 +107,16 @@
 /**
  加半透明水印
  @param useImage 需要加水印的图片
- @param addImage1 水印
+ @param maskImage 水印
  @returns 加好水印的图片
  */
 - (UIImage *)addImage:(UIImage *)useImage addMsakImage:(UIImage *)maskImage
 {
     UIGraphicsBeginImageContext(useImage.size);
+    NSLog(@"useimage.width = %f, height = %f", useImage.size.width,useImage.size.height);
     [useImage drawInRect:CGRectMake(0, 0, useImage.size.width, useImage.size.height)];
-    //    [addImage1 drawInRect:CGRectMake(0, useImage.size.height-addImage1.size.height, addImage1.size.width, addImage1.size.height)];
     
-    //四个参数为水印图片的位置
-    float rate =maskImage.size.width/maskImage.size.height;
-    int decrease = 50;
-    int newHeight = useImage.size.height-decrease;
-    int newWidth = useImage.size.width - decrease*rate;
-    [maskImage drawInRect:CGRectMake(useImage.size.width/2-newWidth/2, 20, newWidth, newHeight)];
+    [maskImage drawInRect:CGRectMake(waterRect.origin.x, waterRect.origin.y, waterRect.size.width, waterRect.size.height)];
     UIImage *resultingImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return resultingImage;

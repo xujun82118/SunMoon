@@ -11,6 +11,7 @@
 #import "AddWaterMask.h"
 #import <ShareSDK/ShareSDK.h>
 #import "SunMoonAlertTime.h"
+#import "ShareByShareSDR.h"
 
 
 @interface HomeInsideViewController ()
@@ -36,22 +37,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.navigationController.navigationBarHidden = NO;
-    self.navigationController.navigationBar.opaque = YES; 
-    //self.navigationController.toolbarHidden = NO;
-    //self.navigationController.toolbar.barStyle =UIBarStyleDefault;
-    
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"HomeInside_0000s_0002_上部-底图.png"] forBarMetrics:UIBarMetricsDefault];
-//   
-//  [self.navigationController.toolbar setBackgroundImage:[UIImage imageNamed:@"HomeInside_0000s_0002_上部-底图.png"] forToolbarPosition:UIBarPositionBottom barMetrics:UIBarMetricsDefault];
-    
-//    UIImage *toolBarIMG = [UIImage imageNamed: @"HomeInside_0000s_0002_上部-底图.png"];
-//    
-//    if ([self.navigationController.toolbar respondsToSelector:@selector(setBackgroundImage:forToolbarPosition:barMetrics:)]) {
-//        [self.navigationController.toolbar setBackgroundImage:toolBarIMG forToolbarPosition:0 barMetrics:0];
-//    }
-
-    
+ 
     //获取单例用户数据
     self.user= [UserInfo  sharedSingleUserInfo];
     self.userData  = self.user.userDataBase;
@@ -140,7 +126,7 @@
 //        size.width = size.height*rat;
 //        
 //    }
-    imageScrollSun = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition.frame.origin.y-15, SREEN_WIDTH, 100)];
+    imageScrollSun = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition.frame.origin.y-15, SCREEN_WIDTH, 100)];
     [imageScrollSun setImageAry:setSun];
     [imageScrollSun setItemSize:size];
     [imageScrollSun setHeightOffset:30];
@@ -154,7 +140,7 @@
     NSLog(@"imageview (%f,%f,%f,%f)", imageScrollSun.frame.origin.x,imageScrollSun.frame.origin.y, imageScrollSun.frame.size.width,imageScrollSun.frame.size.height);
     
     UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
-    imageScrollMoon = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition1.frame.origin.y-15, SREEN_WIDTH, 100)];
+    imageScrollMoon = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100)];
     [imageScrollMoon setImageAry:setMoon];
     [imageScrollMoon setItemSize:size];
     [imageScrollMoon setHeightOffset:30];
@@ -173,6 +159,36 @@
     [super viewWillAppear:animated];
     self.navigationController.toolbarHidden = YES;
     
+    
+    //self.navigationController.navigationBarHidden = NO;
+
+    
+    //[self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"HomeInside上部导航-底图.png"] forBarMetrics:UIBarMetricsDefault];
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"返回.png"]
+                                                                  style:UIBarButtonItemStyleBordered target:self action:@selector(back)];
+    self.navigationItem.rightBarButtonItem =addButton;
+    
+    //加返回按钮
+    NSInteger backBtnWidth = 20;
+    NSInteger backBtnHeight = 20;
+    UIButton *backBtn =[UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setImage:[UIImage imageNamed:@"返回.png"] forState:UIControlStateNormal];
+    [backBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y, backBtnWidth, backBtnHeight)];
+    //[backBtn setFrame:CGRectMake(200, NAVI_BAR_BTN_Y, backBtnWidth, backBtnHeight)];
+    [backBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backBtn];
+    
+    
+    /*
+    UIImage *backButtonBackgroundImage = [UIImage imageNamed:@"返回.png"];
+    // The background should be pinned to the left and not stretch.
+    backButtonBackgroundImage = [backButtonBackgroundImage resizableImageWithCapInsets:UIEdgeInsetsMake(0, backButtonBackgroundImage.size.width - 1, 0, 0)];
+    
+    id appearance = [UIBarButtonItem appearanceWhenContainedIn:[HomeInsideViewController class], nil];
+    [appearance setBackButtonBackgroundImage:backButtonBackgroundImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
+    UIBarButtonItem *backBarButton = [[UIBarButtonItem alloc] initWithTitle:@" " style:UIBarButtonItemStylePlain target:nil action:NULL];
+    self.navigationItem.backBarButtonItem = backBarButton;
+    */
     
     //显示定时时间
     NSCalendar* calendar = [NSCalendar currentCalendar];
@@ -214,6 +230,9 @@
 //    UIImageView *highlightSun = [[UIImageView alloc] initWithFrame:CGRectMake(0,30,40,40)];
 //    highlightSun.image = [UIImage imageNamed:@"相框.png"];
 //    [self.view addSubview:highlightSun];
+    
+    
+
     
 }
 
@@ -299,127 +318,55 @@
  */
 - (IBAction)shareNight:(id)sender {
     
-    NSString* shareMsg;
-  
+    
     UIImageView* imageData = [currentSelectDataMoon objectForKey:@"image_data"];
-    NSString* imageName = [currentSelectDataMoon objectForKey:@"image_name"];
+    NSString* imageSentence = [currentSelectDataMoon objectForKey:@"image_sentence"];
     
-    NSString * preString = NSLocalizedString(@"FromUri", @"");
-    shareMsg = [imageName stringByAppendingString:preString];
+    ShareByShareSDR* share = [ShareByShareSDR alloc];
+    share.shareTitle = @"天天更美丽";
+    share.shareImage =imageData.image;
+    share.shareMsg = imageSentence;
+    share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
+    share.shareMsgPreFix = @"晚安，送上我的月光语录：";
+    share.waterImage = [UIImage imageNamed:@"waterlogo.png"];
+    NSInteger x = share.shareImage.size.width/4;
+    NSInteger y = share.shareImage.size.width*3/4;
+    NSInteger w = share.shareImage.size.width/5;
+    NSInteger h = share.shareImage.size.width/5*(share.waterImage.size.height/share.waterImage.size.width);
+    share.waterRect = CGRectMake(x,y,w,h);
+
+    [share addWater];
     
+    [share shareImageNews];
     
-    shareMsg =[@"晚安，送上我的月光语录：" stringByAppendingString:shareMsg];
-    
-    NSInteger contentType;
-    if (imageData.image && shareMsg) {
-        contentType = SSPublishContentMediaTypeNews;
-        
-        //加水印LOG
-        AddWaterMask* addWaterMask = [AddWaterMask alloc];
-        imageData.image =[addWaterMask addImage:imageData.image addMsakImage:[UIImage imageNamed:@"waterlogo.png"]];
-        
-    }else{
-        contentType = SSPublishContentMediaTypeText;
-    }
-    
-    //构造分享内容
-    id<ISSContent> publishContent = [ShareSDK content:shareMsg
-                                       defaultContent:@"没有分享内容"
-                                                image:[ShareSDK jpegImageWithImage:imageData.image
-                                                                           quality:CGFLOAT_DEFINED]
-                                                title:@"天天更美丽"
-                                                  url:@"null"
-                                          description:nil
-                                            mediaType:contentType];
-    NSArray *shareList = [ShareSDK getShareListWithType:
-                          ShareTypeWeixiSession,
-                          ShareTypeWeixiTimeline,
-                          ShareTypeSinaWeibo,
-                          ShareTypeTencentWeibo,
-                          ShareTypeQQ,
-                          ShareTypeCopy,
-                          nil];
-    [ShareSDK showShareActionSheet:nil
-                         shareList:shareList
-                           content:publishContent
-                     statusBarTips:YES
-                       authOptions:nil
-                      shareOptions: nil
-                            result:^(ShareType type, SSResponseState state, id<ISSPlatformShareInfo> statusInfo, id<ICMErrorInfo> error, BOOL end) {
-                                if (state == SSResponseStateSuccess)
-                                {
-                                    NSLog(@"分享成功");
-                                }
-                                else if (state == SSResponseStateFail)
-                                {
-                                    NSLog(@"分享失败,错误码:%d,错误描述:%@", [error errorCode], [error errorDescription]);
-                                }
-                            }];
     
 }
 
 
 /**
- * @brief 分享晚上选中的相片
+ * @brief 分享早上选中的相片
  *
  */- (IBAction)shareMorning:(id)sender {
      
-     NSString* shareMsg;
-     
      UIImageView* imageData = [currentSelectDataSun objectForKey:@"image_data"];
-     NSString* imageName = [currentSelectDataSun objectForKey:@"image_name"];
+     NSString* imageSentence = [currentSelectDataSun objectForKey:@"image_sentence"];
      
-     NSString * preString = NSLocalizedString(@"FromUri", @"");
-     shareMsg = [imageName stringByAppendingString:preString];
+     ShareByShareSDR* share = [ShareByShareSDR alloc];
+     share.shareTitle = @"天天更美丽";
+     share.shareImage =imageData.image;
+     share.shareMsg = imageSentence;
+     share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
+     share.shareMsgPreFix = @"晚安，送上我的阳光语录：";
+     share.waterImage = [UIImage imageNamed:@"waterlogo.png"];
+     NSInteger x = share.shareImage.size.width/4;
+     NSInteger y = share.shareImage.size.width*3/4;
+     NSInteger w = share.shareImage.size.width/5;
+     NSInteger h = share.shareImage.size.width/5*(share.waterImage.size.height/share.waterImage.size.width);
+     share.waterRect = CGRectMake(x,y,w,h);
      
+     [share addWater];
      
-     shareMsg =[@"早安，送上我的阳光语录：" stringByAppendingString:shareMsg];
-     
-     NSInteger contentType;
-     if (imageData.image && shareMsg) {
-         contentType = SSPublishContentMediaTypeNews;
-         
-         //加水印LOG
-         AddWaterMask* addWaterMask = [AddWaterMask alloc];
-         imageData.image =[addWaterMask addImage:imageData.image addMsakImage:[UIImage imageNamed:@"waterlogo.png"]];
-         
-     }else{
-         contentType = SSPublishContentMediaTypeText;
-     }
-     
-     //构造分享内容
-     id<ISSContent> publishContent = [ShareSDK content:shareMsg
-                                        defaultContent:@"没有分享内容"
-                                                 image:[ShareSDK jpegImageWithImage:imageData.image
-                                                                            quality:CGFLOAT_DEFINED]
-                                                 title:@"天天更美丽"
-                                                   url:@"null"
-                                           description:nil
-                                             mediaType:contentType];
-     NSArray *shareList = [ShareSDK getShareListWithType:
-                           ShareTypeWeixiSession,
-                           ShareTypeWeixiTimeline,
-                           ShareTypeSinaWeibo,
-                           ShareTypeTencentWeibo,
-                           ShareTypeQQ,
-                           ShareTypeCopy,
-                           nil];
-     [ShareSDK showShareActionSheet:nil
-                          shareList:shareList
-                            content:publishContent
-                      statusBarTips:YES
-                        authOptions:nil
-                       shareOptions: nil
-                             result:^(ShareType type, SSResponseState state, id<ISSPlatformShareInfo> statusInfo, id<ICMErrorInfo> error, BOOL end) {
-                                 if (state == SSResponseStateSuccess)
-                                 {
-                                     NSLog(@"分享成功");
-                                 }
-                                 else if (state == SSResponseStateFail)
-                                 {
-                                     NSLog(@"分享失败,错误码:%d,错误描述:%@", [error errorCode], [error errorDescription]);
-                                 }
-                             }];
+     [share shareImageNews];
      
 }
 

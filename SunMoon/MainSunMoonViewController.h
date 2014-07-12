@@ -36,12 +36,16 @@
 
 @property (nonatomic, copy) UserDB * userDB;
 
-@property (nonatomic, strong) UserInfo * user;
+@property (nonatomic, strong) UserInfo * userInfo;
 
 @property (nonatomic, strong) UserInfoCloud* userCloud;
 
 @property (nonatomic, strong) IBOutlet UIImageView *userHeaderImageView;
 
 @property (weak, nonatomic) IBOutlet UIImageView *mainBgImage;
+
+@property (weak, nonatomic) IBOutlet UIImageView *skySunorMoonImage;
+
+@property (weak, nonatomic) IBOutlet UIImageView *panSunorMoonImageView;
 
 @end

@@ -291,7 +291,7 @@
 
 - (void)setNewTitleImage:(UIImage *)image
 {
-    UIImageView *bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0,  SREEN_WIDTH, 40)];
+    UIImageView *bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0,  SCREEN_WIDTH, 40)];
     bgImageView.image = image;
     
     self.titleView = bgImageView;

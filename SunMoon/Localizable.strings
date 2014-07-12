@@ -21,4 +21,15 @@
 "FromUri" = "（App:天天更美丽）";
 
 
-
+"TEXT_SINA_WEIBO" = "新浪微博";
+"TEXT_TENCENT_WEIBO" = "腾讯微博";
+"TEXT_SOHO_WEIBO" = "搜狐微博";
+"TEXT_NETEASE_WEIBO" = "网易微博";
+"TEXT_DOUBAN" = "豆瓣社区";
+"TEXT_QZONE" = "QQ空间";
+"TEXT_RENREN" = "人人网";
+"TEXT_KAIXIN" = "开心网";
+"TEXT_YOUDAO_NOTE" = "有道云笔记";
+"TEXT_SOHU_KAN" = "搜狐随身看";
+"TEXT_UNAUTH" = "此平台尚未授权!";
+"TEXT_UNAUTH_2" = "尚未授权";

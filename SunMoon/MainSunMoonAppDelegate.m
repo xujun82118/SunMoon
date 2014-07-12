@@ -11,6 +11,7 @@
 #import "WXApi.h"
 #import <TencentOpenAPI/QQApiInterface.h>
 #import <TencentOpenAPI/TencentOAuth.h>
+#import "WeiboApi.h"
 
 
 @interface MainSunMoonAppDelegate ()
@@ -25,6 +26,7 @@
 
 @implementation MainSunMoonAppDelegate
 
+//@synthesize viewDelegate = _viewDelegate;
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -36,6 +38,12 @@
     
     //添加新浪微博应用
     [ShareSDK connectSinaWeiboWithAppKey:@"3318551146" appSecret:@"88fd372af9e86ae0c8fa25df1fd6b61d" redirectUri:@"http://com.weibo"];
+    
+    //添加腾讯微博应用 注册网址 http://dev.t.qq.com
+    [ShareSDK connectTencentWeiboWithAppKey:@"801517498"
+                                  appSecret:@"521685f57c6f8e365028e089c642d7fa"
+                                redirectUri:@"https://itunes.apple.com/cn/app/tian-tian-geng-mei-li/id782426992?mt=8"
+                                   wbApiCls:[WeiboApi class]];
     
     //添加微信应用
     [ShareSDK connectWeChatWithAppId:@"wx4e89a3a1551f87e9" wechatCls:[WXApi class]];

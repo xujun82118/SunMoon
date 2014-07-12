@@ -91,7 +91,7 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [self.contentViewController beginAppearanceTransition:YES animated:animated];
+    //[self.contentViewController beginAppearanceTransition:YES animated:animated];
 }
 
 - (void)viewDidAppear:(BOOL)animated

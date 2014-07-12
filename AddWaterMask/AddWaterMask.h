@@ -11,6 +11,9 @@
 @interface AddWaterMask : NSObject
 
 
+@property (nonatomic      ) CGRect  logRect;
+@property (nonatomic      ) CGRect  waterRect;
+
 - (UIImage *)addImage:(UIImage *)useImage addMsakImage:(UIImage *)maskImage;
 -(UIImage *)addText:(UIImage *)img text:(NSString *)text1;
 @end

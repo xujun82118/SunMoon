@@ -19,17 +19,23 @@
     id <ImageFitlerProcessDelegate> delegate;
     
     NSDictionary* imagePickerData;
+    
+    bool isHaveRemindValue;
 
     
 }
 @property(nonatomic) id<ImageFitlerProcessDelegate> delegate;
 @property(nonatomic)UIImage *currentImage;
+@property(nonatomic)NSString *currentSentence; //当前语录
 @property (nonatomic, strong) NSDictionary* imagePickerData;
 @property(nonatomic) NSInteger iSunORMoon; //1:太阳，2：月亮
 
+@property(nonatomic,copy) NSArray* userData;
+@property (nonatomic, strong) UserInfo * userInfo;
 
 - (void)reDoPhoto:(id)sender;
 - (void)cameraPhoto:(NSDictionary *)imagePickerDataReturn;
+-(void)chooseOldImage;
 
 @end
 

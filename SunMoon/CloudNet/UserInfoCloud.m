@@ -27,17 +27,20 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     //设置content-type
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+    
     
     NSMutableDictionary *params=[[NSMutableDictionary alloc] init];
-    //[params setValue:user.user_id forKey:@"user_id"];
+    [params setValue:user.user_id forKey:@"user_id"];
     [params setValue:user.name forKey:@"name"];
     [params setValue:user.sns_id forKey:@"sns_id"];
     [params setValue:user.sun_value forKey:@"sun_value"];
+    [params setValue:user.moon_value forKey:@"moon_value"];
     NSLog(@"upateUserInfo--params = %@", params.descriptionInStringsFileFormat);
 
     //NSDictionary *params1 = @{@"cmd":@"0", @"id":@"001"};
 
-    [manager GET:@"http://115.28.36.43/cgi-bin/app_userinfo" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:@"http://115.28.36.43/app_userinfo.php" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"JSON: %@", responseObject);
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
