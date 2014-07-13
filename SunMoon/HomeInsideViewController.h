@@ -29,12 +29,17 @@
 @property (weak, nonatomic) IBOutlet UIButton *sunTimeBtn;
 - (IBAction)shareNight:(id)sender;
 - (IBAction)shareMorning:(id)sender;
+
+- (IBAction)DeleteMoonImage:(id)sender;
+- (IBAction)DeleteSunImage:(id)sender;
+
 @property (weak, nonatomic) IBOutlet UILabel *sunWordShow;
 @property (weak, nonatomic) IBOutlet UILabel *moonWordShow;
 
 
 @property(nonatomic,copy) NSArray* userData;
 @property (nonatomic, strong) UserInfo * user;
+@property (nonatomic, copy) UserDB * userDB;
 @property(nonatomic, copy) NSDictionary* currentSelectDataSun;
 @property(nonatomic, copy) NSDictionary* currentSelectDataMoon;
 

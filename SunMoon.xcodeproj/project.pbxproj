@@ -36,6 +36,10 @@
 		5D18096018F2EA680039F50E /* editePhoto_底图.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D18095A18F2EA680039F50E /* editePhoto_底图.png */; };
 		5D18ACE718E9B1E600D4741A /* 默认头像.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D18ACE618E9B1E600D4741A /* 默认头像.png */; };
 		5D18ACEB18EB065400D4741A /* UserSetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D18ACEA18EB065400D4741A /* UserSetViewController.m */; };
+		5D2609A3197230C400741953 /* TapSeeImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D2609A2197230C400741953 /* TapSeeImage.m */; };
+		5D2609A6197234E000741953 /* TapShowImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D2609A5197234E000741953 /* TapShowImageViewController.m */; };
+		5D2609AA19723DB800741953 /* tapToImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D2609A819723DB800741953 /* tapToImage.m */; };
+		5D2609AB19723DB800741953 /* tapToImage.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5D2609A919723DB800741953 /* tapToImage.xib */; };
 		5D3339E21967B07C00AD8C54 /* lightCircle.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D3339E11967B07C00AD8C54 /* lightCircle.png */; };
 		5D3339E41967B1FD00AD8C54 /* lightCircleBlured.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D3339E31967B1FD00AD8C54 /* lightCircleBlured.png */; };
 		5D45CE061919C670007900A7 /* 分享.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D45CE051919C670007900A7 /* 分享.png */; };
@@ -293,6 +297,13 @@
 		5D18ACE618E9B1E600D4741A /* 默认头像.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "默认头像.png"; sourceTree = "<group>"; };
 		5D18ACE918EB065400D4741A /* UserSetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserSetViewController.h; sourceTree = "<group>"; };
 		5D18ACEA18EB065400D4741A /* UserSetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = UserSetViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5D2609A1197230C400741953 /* TapSeeImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapSeeImage.h; sourceTree = "<group>"; };
+		5D2609A2197230C400741953 /* TapSeeImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TapSeeImage.m; sourceTree = "<group>"; };
+		5D2609A4197234E000741953 /* TapShowImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapShowImageViewController.h; sourceTree = "<group>"; };
+		5D2609A5197234E000741953 /* TapShowImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TapShowImageViewController.m; sourceTree = "<group>"; };
+		5D2609A719723DB800741953 /* tapToImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tapToImage.h; sourceTree = "<group>"; };
+		5D2609A819723DB800741953 /* tapToImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = tapToImage.m; sourceTree = "<group>"; };
+		5D2609A919723DB800741953 /* tapToImage.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = tapToImage.xib; sourceTree = "<group>"; };
 		5D3339E11967B07C00AD8C54 /* lightCircle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lightCircle.png; sourceTree = "<group>"; };
 		5D3339E31967B1FD00AD8C54 /* lightCircleBlured.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lightCircleBlured.png; sourceTree = "<group>"; };
 		5D45CE051919C670007900A7 /* 分享.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "分享.png"; sourceTree = "<group>"; };
@@ -1117,6 +1128,10 @@
 				5D18ACEA18EB065400D4741A /* UserSetViewController.m */,
 				5D18091718F123800039F50E /* HomeInsideViewController.h */,
 				5D18091818F123800039F50E /* HomeInsideViewController.m */,
+				5D2609A1197230C400741953 /* TapSeeImage.h */,
+				5D2609A2197230C400741953 /* TapSeeImage.m */,
+				5D2609A4197234E000741953 /* TapShowImageViewController.h */,
+				5D2609A5197234E000741953 /* TapShowImageViewController.m */,
 				5D18091A18F124AC0039F50E /* TakePhotoViewController.h */,
 				5D18091B18F124AC0039F50E /* TakePhotoViewController.m */,
 				5D618AAC191F3D0300150945 /* SunSentenceManagerViewController.h */,
@@ -1133,6 +1148,9 @@
 				5DE48CC51956479F007A8A17 /* WeatherLoc.m */,
 				5D51141019397C5800F41F8A /* CommonObject.h */,
 				5D51141119397C5800F41F8A /* CommonObject.m */,
+				5D2609A719723DB800741953 /* tapToImage.h */,
+				5D2609A819723DB800741953 /* tapToImage.m */,
+				5D2609A919723DB800741953 /* tapToImage.xib */,
 				5DF2386B18E7B48A00538DA1 /* Images.xcassets */,
 				5D8070D218F8E65E0022A09C /* UserDB */,
 				5D5113E51935687900F41F8A /* REFrostedViewController */,
@@ -1427,6 +1445,7 @@
 				5D98348D195FB59300A80EEB /* abFrame_2@2x.png in Resources */,
 				5D618C8F192863C100150945 /* 日期背景.png in Resources */,
 				5DB6201719147072005000E8 /* scroll-8.png in Resources */,
+				5D2609AB19723DB800741953 /* tapToImage.xib in Resources */,
 				5D8AC8D4190CC2E800E41FBA /* 时间轴背景.png in Resources */,
 				5D18095018F131F00039F50E /* 拍照.png in Resources */,
 				5DB6201419147072005000E8 /* scroll-5.png in Resources */,
@@ -1468,6 +1487,7 @@
 				5D8AF89018FADCD700CA23C1 /* AFURLResponseSerialization.m in Sources */,
 				5D618C92192A2C7600150945 /* ImageFilterViewController.m in Sources */,
 				5DDC6751191200BB000B6A61 /* InfiniteScrollPicker.m in Sources */,
+				5D2609AA19723DB800741953 /* tapToImage.m in Sources */,
 				5D8AF88918FADCD700CA23C1 /* AFHTTPRequestOperation.m in Sources */,
 				5D51140019356BB000F41F8A /* RootViewController.m in Sources */,
 				5D5113F51935687900F41F8A /* UIImage+REFrostedViewController.m in Sources */,
@@ -1493,6 +1513,8 @@
 				5D8070E418F8E7080022A09C /* FMDatabaseQueue.m in Sources */,
 				5D18093918F127FF0039F50E /* UIImage+Cut.m in Sources */,
 				5D5113F21935687900F41F8A /* RECommonFunctions.m in Sources */,
+				5D2609A3197230C400741953 /* TapSeeImage.m in Sources */,
+				5D2609A6197234E000741953 /* TapShowImageViewController.m in Sources */,
 				5D5113F31935687900F41F8A /* REFrostedContainerViewController.m in Sources */,
 				5D8AF88C18FADCD700CA23C1 /* AFNetworkReachabilityManager.m in Sources */,
 				5DABFEBC195873290000D5B2 /* VoicePressedHold.m in Sources */,

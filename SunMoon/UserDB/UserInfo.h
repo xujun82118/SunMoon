@@ -148,7 +148,6 @@
 - (instancetype)initWithAttributes:(NSDictionary *)attributes;
 - (instancetype)initWithArray:(NSArray *)array;
 
--(UserInfo*) getUserBaseInfo;
 
 /**
  * @brief 保存或更新一条用户记录

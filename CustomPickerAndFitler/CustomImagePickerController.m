@@ -145,10 +145,6 @@
         NSInteger sentenceLabelWidth = 280;
         NSInteger sentenceLabelHeigth =80;
         UILabel *labelSentence = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth/2-sentenceLabelWidth/2, overlyView.frame.origin.y-sentenceLabelHeigth-40, sentenceLabelWidth, sentenceLabelHeigth)];
-        
-        //设置背景色
-        //labelSentence.backgroundColor = [UIColor grayColor];
-       
         labelSentence.tag = TAG_CAMERA_DECLEAR_LABEL;
         //设置标签文本
         //NSString *preString = @"Say:\n";
@@ -161,7 +157,6 @@
             labelSentence.text = self.userInfo.current_moon_sentence;
 
         }
-        //labelSentence.text = [preString stringByAppendingString:labelSentence.text];
         
         //设置标签文本字体和字体大小
         labelSentence.font = [UIFont fontWithName:@"Arial" size:20];
@@ -172,21 +167,20 @@
         //设置字体大小适应label宽度
         labelSentence.adjustsFontSizeToFitWidth = YES;
         labelSentence.numberOfLines = 4;
-        /*
-        UIImage *labelbgimage = [UIImage imageNamed:@"declare-bg.png"];
-        UIImageView *bgImageView = [[UIImageView alloc]initWithFrame:CGRectMake(30, ScreenHeight-70-80, 280, 80)];
-        bgImageView.image = labelbgimage;
-        //[PLCameraView addSubview:bgImageView];
-        */
-        
-        UITapGestureRecognizer *recognizer1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(chooseSentencePicker:)];
-        recognizer1.numberOfTouchesRequired = 1;
-        recognizer1.numberOfTapsRequired = 1;
-        recognizer1.delegate = self;
-        [labelSentence setUserInteractionEnabled:YES];
-        [labelSentence addGestureRecognizer:recognizer1];
         [PLCameraView addSubview:labelSentence];
         
+        //语录三点
+        UIImageView * sentenceView = [[UIImageView alloc] initWithImage:[UIImage  imageNamed:@"语录三点.png"]];
+        NSInteger sentenceViewWidth = 25;
+        NSInteger sentenceViewHeigth =60;
+        [sentenceView setFrame:CGRectMake(SCREEN_WIDTH/2-sentenceViewWidth/2, labelSentence.frame.origin.y+sentenceLabelHeigth+10, sentenceViewWidth, sentenceViewHeigth)];
+        UITapGestureRecognizer *recognizerSentence = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(chooseSentencePicker:)];
+        recognizerSentence.numberOfTouchesRequired = 1;
+        recognizerSentence.numberOfTapsRequired = 1;
+        recognizerSentence.delegate = self;
+        [sentenceView setUserInteractionEnabled:YES];
+        [sentenceView addGestureRecognizer:recognizerSentence];
+        [PLCameraView addSubview:sentenceView];
 
         //回放语音按钮
         //优化：有语音时显示
@@ -198,33 +192,6 @@
         [voiceReplayBtn setImage:voiceReplayImage forState:UIControlStateNormal];
         [voiceReplayBtn addTarget:self action:@selector(rePlayMyVoice) forControlEvents:UIControlEventTouchUpInside];
         [PLCameraView addSubview:voiceReplayBtn];
-        
-        
-
-     
-//        //原相片,点击进入相片编辑
-//        UIImage *camerImageOld = Nil;
-//        if(iSunORMoon == IS_SUN_TIME) {
-//            camerImageOld = [UIImage imageWithData:self.userInfo.sun_image];
-//        }else if (iSunORMoon == IS_MOON_TIME)
-//        {
-//            camerImageOld = [UIImage imageWithData:self.userInfo.moon_image];
-//        }
-//        float imageOldWideth = 30;
-//        float imageOldHeight = 60;
-//        UIImageView* camerImageOldView = [[UIImageView alloc ] initWithFrame:CGRectMake(0, 100, imageOldWideth, imageOldHeight)];
-//        camerImageOldView.image = camerImageOld;
-//        camerImageOldView.tag = TAG_CAMERA_OLD_IMAGE_VIEW;
-//        [overlyView addSubview:camerImageOldView];
-//        
-//        //原相片增中触发
-//        UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(chooseOldImage:)];
-//        recognizer.numberOfTouchesRequired = 1;
-//        recognizer.numberOfTapsRequired = 1;
-//        recognizer.delegate = self;
-//        [camerImageOldView addGestureRecognizer:recognizer];
-        
-
         
 
         //按住说语录按钮
@@ -519,20 +486,6 @@
     [super takePicture];
 }
 
-//替换为原来的相片
--(void)chooseOldImage
-{
-    if(iSunORMoon == IS_SUN_TIME) {
-        self.currentChooseImage = [UIImage imageWithData:self.userInfo.sun_image];
-    }else if (iSunORMoon == IS_MOON_TIME)
-    {
-        self.currentChooseImage = [UIImage imageWithData:self.userInfo.moon_image];
-    }
-    
-    //触发拍照动作
-    [super takePicture];
-    
-}
 
 - (void)showPhoto
 {
@@ -564,29 +517,33 @@
     
 }
 
-#pragma mark Camera View Delegate Methods
+#pragma mark - Camera View Delegate Methods
+#pragma mark - 返回并保存数据
 - (void)imagePickerController:(UIImagePickerController *)picker
 didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    //是否替换了相片
-    UIImage *image = Nil;
-    if (self.currentChooseImage) {
-        image = self.currentChooseImage;
-    }else
+
+    UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
+
+    
+    NSString* labelSentence;
+    if(iSunORMoon == IS_SUN_TIME) {
+        labelSentence = self.userInfo.current_sun_sentence;
+        
+    }else if (iSunORMoon == IS_MOON_TIME)
     {
-        image = [info objectForKey:UIImagePickerControllerOriginalImage];
+        labelSentence = self.userInfo.current_moon_sentence;
 
     }
     
     image = [image clipImageWithScaleWithsize:CGSizeMake(320, 480)] ;
     [picker dismissViewControllerAnimated:YES completion:^{
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
-        //[_customDelegate cameraPhoto:image];
         
         NSDictionary *imageData = [NSDictionary dictionaryWithObjectsAndKeys:
                                    image,CAMERA_IMAGE_KEY,
                                    [CommonObject getCurrentDate], CAMERA_TIME_KEY,
-                                   @"语录。。。", CAMERA_SENTENCE_KEY,
+                                   labelSentence, CAMERA_SENTENCE_KEY,
                                    nil];
         
         [_customDelegate cameraPhoto:imageData];
@@ -650,15 +607,10 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
 
 - (void)pickerView:(AFPickerView *)pickerView didSelectRow:(NSInteger)row {
 
-
-    
-    
     UIView *PLCameraView=[self findView:self.view
                                withName:@"PLCameraView"];
     
     UILabel *label = (UILabel*)[PLCameraView viewWithTag:TAG_CAMERA_DECLEAR_LABEL];
-    
-    NSString *preString = @"Say:\n";
     
     
     if(iSunORMoon == IS_SUN_TIME) {

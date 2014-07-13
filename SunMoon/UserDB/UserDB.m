@@ -190,6 +190,13 @@
     [_db executeUpdate:query];
 }
 
+
+//- (void) deleteUserWithImageName:(NSString *) dateTime {
+//    NSString * query = [NSString stringWithFormat:@"DELETE FROM UserInfo WHERE date_time = '%@'",dateTime];
+//    [MainSunMoonAppDelegate showStatusWithText:@"删除一条数据" duration:2.0];
+//    [_db executeUpdate:query];
+//}
+
 /**
  * @brief 修改用户的信息
  *
@@ -420,79 +427,7 @@
     
     //只能查出一条
     return [array objectAtIndex:0];
-    
-    
-    
-}
-
-
-/**
- * @brief 用指定时间 查询用户的数据,可传入现有userinfo,如果传入了userinfo指针，针使用现有指针，否则申请新的
- *
- * @param dateTime 指定的时间
- */
--(UserInfo*) getUserDataByDateTime: (NSString*) dateTime currUserInfo:(UserInfo*) currUserInfo
-{
-    NSString * query = @"SELECT uid,date_time, sun_value,sun_image,sun_image_name,sun_image_sentence, moon_value, moon_image, moon_image_name,moon_image_sentence FROM UserInfo ";
-    
-    if (dateTime.length == 0) {
-        return nil;
-    }else
-    {
-        query = [query stringByAppendingFormat:@"WHERE date_time = %@ ", dateTime];
-    }
-    
-    FMResultSet * rs = [_db executeQuery:query];
-    NSMutableArray * array = [NSMutableArray arrayWithCapacity:[rs columnCount]];
-	while ([rs next]) {
-        UserInfo * user = [UserInfo new];
         
-        user.uid = [rs stringForColumn:@"uid"];
-        user.date_time = [rs stringForColumn:@"date_time"];
-        user.sun_value = [rs stringForColumn:@"sun_value"];
-        user.sun_image_name = [rs stringForColumn:@"sun_image_name"];
-        user.sun_image_sentence = [rs stringForColumn:@"sun_image_sentence"];
-        user.sun_image = [rs dataForColumn:@"sun_image"];
-        
-        user.moon_value = [rs stringForColumn:@"moon_value"];
-        user.moon_image_name = [rs stringForColumn:@"moon_image_name"];
-        user.moon_image_sentence = [rs stringForColumn:@"moon_image_sentence"];
-        user.moon_image = [rs dataForColumn:@"moon_image"];
-        [array addObject:user];
-	}
-	[rs close];
-    
-    if ([array count]>1) {
-        NSLog(@"ERROR: date_time =%@, count is %d", dateTime, [array count]);
-    }
-    
-    if ([array count] == 0) {
-        return  Nil;
-    }
-    
-    if (currUserInfo) {
-        UserInfo* temp = (UserInfo*)[array objectAtIndex:0];
-        currUserInfo.uid = temp.uid;;
-        currUserInfo.date_time = temp.date_time;
-        currUserInfo.sun_value = temp.sun_value;
-        currUserInfo.sun_image_name = temp.sun_image_name;
-        currUserInfo.sun_image_sentence = temp.sun_image_sentence;
-        currUserInfo.sun_image = temp.sun_image;
-        
-        currUserInfo.moon_value = temp.moon_value;
-        currUserInfo.moon_image_name = temp.moon_image_name;
-        currUserInfo.moon_image_sentence = temp.moon_image_sentence;
-        currUserInfo.moon_image = temp.moon_image;
-    
-        return currUserInfo;
-                                            
-    }else
-    {
-        //只能查出一条
-        return (UserInfo*)[array objectAtIndex:0];
-    }
-
-    
 }
 
 

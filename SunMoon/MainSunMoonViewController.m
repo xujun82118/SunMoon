@@ -1342,21 +1342,21 @@
 }
 
 #pragma mark - imagefilter delegate
-#pragma mark 照完象， 存用户据
+#pragma mark - 照完象， 存用户据
 - (void)imageFitlerProcessDone:(NSDictionary*) imageFilterData
 {
     //存图片到数据库
     
     //获取时间
-    NSString* imageTime = [CommonObject getCurrentDate];
-    NSLog(@"--image time =%@",  imageTime);
+    //NSString* imageTime = [CommonObject getCurrentDate];
+    //NSLog(@"--image time =%@",  imageTime);
     
-
+    NSLog(@"Save one user data from camera!");
     [self saveUserDataFromCamera:imageFilterData];
     
-    NSLog(@"---path=%@", [userDB getDBPath]);
+    //NSLog(@"---path=%@", [userDB getDBPath]);
     
-    UserInfo* userer=[userDB getUserDataByDateTime:imageTime];
+    //UserInfo* userer=[userDB getUserDataByDateTime:imageTime];
     
 }
 
@@ -1387,7 +1387,7 @@
     return _userHeaderImageView;
 }
 
-#pragma mark - 用户头像函数
+#pragma mark - 编辑用户头像 或 进入小屋
 -(void)handleTapUserHeader
 {
     if (self.userInfo.userType == USER_TYPE_NEW || self.userInfo.userType == USER_TYPE_NEED_CARE) {
@@ -1396,7 +1396,7 @@
     }else
     {
         //进入小屋
-        [self performSegueWithIdentifier:@"getintoHome" sender:self];
+        [self performSegueWithIdentifier:@"getintoHome" sender:nil];
    
     }
     
@@ -1417,17 +1417,7 @@
 
 #pragma mark - UIActionSheetDelegate
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    
-    if ([actionSheet.title isEqualToString:@"是否替换当前相片" ]) {
-        //替换
-        if (buttonIndex == 0) {
-            
-            
-        } else if (buttonIndex == 1)//不替换
-        {
 
-        }
-    }
     
     if ([actionSheet.title isEqualToString:@"请选择头像"]) {
         if (buttonIndex == 0) {

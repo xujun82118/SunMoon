@@ -32,8 +32,6 @@
 @property(nonatomic,copy) NSArray* userData;
 @property (nonatomic, strong) UserInfo * userInfo;
 
-@property(nonatomic)UIImage *currentChooseImage;
-
 @property (nonatomic, strong)UIProgressView *progressView;
 @property (retain, nonatomic)  F3BarGauge *customRangeBar;
 

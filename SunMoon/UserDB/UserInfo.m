@@ -33,8 +33,8 @@ static UserInfo *sharedUserInfo;
         if (!sharedUserInfo)
         {
            sharedUserInfo = [[UserInfo alloc] init];
-           //sharedUserInfo = [UserInfo alloc];
         }
+    
         return sharedUserInfo;
     //}
 }
@@ -339,28 +339,6 @@ static UserInfo *sharedUserInfo;
 }
 
 
-//-(UserInfo*) getUserBaseInfo
-//{
-//    if (!self) {
-//        
-//        NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
-//        self.user_id = [userBaseData objectForKey:@"user_id"];
-//        self.sns_id = [userBaseData objectForKey:@"sns_id"];
-//        self.name = [userBaseData objectForKey:@"name"];
-//        self.sun_value = [userBaseData objectForKey:@"sun_value"];
-//        self.moon_value = [userBaseData objectForKey:@"moon_value"];
-//        
-//        if (self.name.length == 0) {
-//            return nil;
-//        }
-//
-//
-//        return self;
-//    }
-//    
-//    return self;
-//    
-//}
 
 /**
  * @brief 保存或更新一条用户记录

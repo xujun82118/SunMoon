@@ -85,14 +85,25 @@
     [shareBtn addTarget:self action:@selector(doShare) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareBtn];
     
-    //加OK并返回按钮
-    NSInteger leftBtnWidth = 20;
-    NSInteger leftBtnHeight = 20;
-    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setImage:[UIImage imageNamed:@"takePhoto_返回.png"] forState:UIControlStateNormal];
-    [leftBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y, leftBtnWidth, leftBtnHeight)];
-    [leftBtn addTarget:self action:@selector(fitlerDone:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:leftBtn];
+    
+    //加保存到相册按钮
+    NSInteger saveBtnWidth = 20;
+    NSInteger saveBtnHeight = 20;
+    UIButton *saveBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [saveBtn setImage:[UIImage imageNamed:@"选择.png"] forState:UIControlStateNormal];
+    [saveBtn setFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X- saveBtnWidth, TOOL_BAR_BTN_Y, saveBtnWidth, saveBtnHeight)];
+    [saveBtn addTarget:self action:@selector(savetoAlbumHandle:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:saveBtn];
+    
+    
+    //加OK返回按钮
+    NSInteger okBtnWidth = 20;
+    NSInteger okBtnHeight = 20;
+    UIButton *okBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [okBtn setImage:[UIImage imageNamed:@"返回.png"] forState:UIControlStateNormal];
+    [okBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y, okBtnWidth, okBtnHeight)];
+    [okBtn addTarget:self action:@selector(fitlerDone:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:okBtn];
     
     //加丢弃并反回按钮
     NSInteger rightBtnWidth = 20;
@@ -197,6 +208,7 @@
     [sentencelabel setFont:[UIFont systemFontOfSize:13.0f]];
     [sentencelabel setTextColor:[UIColor blackColor]];
     [self.view addSubview:sentencelabel];
+    
 
     //调色盘
     NSArray *arr = [NSArray arrayWithObjects:@"原图",@"LOMO",@"黑白",@"复古",@"哥特",@"锐色",@"淡雅",@"酒红",@"青柠",@"浪漫",@"光晕",@"蓝调",@"梦幻",@"夜色", nil];
@@ -308,6 +320,20 @@
     
 }
 
+
+-(void)savetoAlbumHandle:(UIButton*)sender
+{
+    UIImageWriteToSavedPhotosAlbum(currentImage, nil, nil,nil);
+    UIAlertView *alert = [[UIAlertView alloc]
+                          initWithTitle:@"保存成功！"
+                          message:nil//show the msg in the alert.
+                          delegate:self//delegate itself
+                          cancelButtonTitle:@"确定"
+                          otherButtonTitles: nil];
+    [alert show];
+    
+    
+}
 
 -(void) reFreshcelement
 {

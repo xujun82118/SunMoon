@@ -9,6 +9,9 @@
 #import "InfiniteScrollPicker.h"
 #import "UIView+viewController.h"
 #import "AddWaterMask.h"
+#import "TapSeeImage.h"
+#import "TapShowImageViewController.h"
+#import "tapToImage.h";
 
 
 @implementation InfiniteScrollPicker
@@ -121,6 +124,12 @@
         {
             _itemSize = CGSizeMake(self.frame.size.height/2, self.frame.size.height/2);
         }
+        
+        //第一次登录时照片为空，size=0
+        if (_itemSize.width==0) {
+            _itemSize = CGSizeMake(self.frame.size.height/2, self.frame.size.height/2);
+        }
+        
     }
     
     if (_itemSize.height>self.frame.size.height) {
@@ -142,7 +151,15 @@
         for (int i = 0; i < (_imageAry.count*5); i++)
         {
             // Place images into the bottom of view
-            UIImageView *temp = [[UIImageView alloc] initWithFrame:CGRectMake(i * _itemSize.width, self.frame.size.height - _itemSize.height, _itemSize.width, _itemSize.height)];
+            //UIImageView *temp = [[UIImageView alloc] initWithFrame:CGRectMake(i * _itemSize.width, self.frame.size.height - _itemSize.height, _itemSize.width, _itemSize.height)];
+            
+            //tap**
+            TapSeeImage* temp =[[TapSeeImage alloc] initWithFrame:CGRectMake(i * _itemSize.width, self.frame.size.height - _itemSize.height, _itemSize.width, _itemSize.height)];
+            temp.canClick = YES;
+            tapToImage *tapShow = [[tapToImage alloc] initWithNibName:@"tapToImage" bundle:Nil];
+
+            //[temp setClickToViewController:tapShow];
+            
             NSDictionary * tempDic =(NSDictionary *)[_imageAry objectAtIndex:i%_imageAry.count];
             temp.image = (UIImage*)[tempDic objectForKey:@"image_data"];
             //temp.image = [_imageAry objectAtIndex:i%_imageAry.count];
@@ -152,6 +169,15 @@
                                    [tempDic objectForKey:@"image_name_time"], @"image_name_time",
                                     [tempDic objectForKey:@"image_sentence"], @"image_sentence",
                                    nil]];
+            /*
+            UITapGestureRecognizer *recognizerTempView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapOneImageViewHandle:)];
+            recognizerTempView.numberOfTouchesRequired = 1;
+            recognizerTempView.numberOfTapsRequired = 1;
+            recognizerTempView.delegate = self;
+            [temp setUserInteractionEnabled:YES];
+            [temp addGestureRecognizer:recognizerTempView];
+            */
+            
             [self addSubview:temp];
         }
         
@@ -172,6 +198,30 @@
         
     }
     
+}
+
+
+- (void)tapOneImageViewHandle:(UITapGestureRecognizer *)sender
+{
+    NSLog(@" one view is tapper");
+    
+    
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    NSLog(@" one view is touchesEnded");
+
+    
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    NSLog(@" shouldReceiveTouch");
+    UIImageView* tappedView = touch.view;
+    
+
+    return  YES;
 }
 
 - (void)setImageAry:(NSArray *)imageAry

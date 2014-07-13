@@ -7,7 +7,7 @@
 //
 
 // 第一次登录送一个阳光，点击太阳，移动到头像，点亮头像
-//工作：梳理阳光值算法!!
+//点击进入多功能界面，未实现
 //动画, 判断动画的类型,
 // 捕捉手指的移动
 // 可爱提示框
@@ -156,13 +156,13 @@ typedef enum
 #define SCREEN_HEIGHT   [[UIScreen mainScreen] bounds].size.height
 
 //控件定义
-#define TOOL_BAR_HEIGHT  30
-#define NAVI_BAR_HEIGHT 30
-#define NAVI_BAR_BTN_Y  NAVI_BAR_HEIGHT-5 //距离导航条边
+#define TOOL_BAR_HEIGHT  60
+#define NAVI_BAR_HEIGHT 60
+#define NAVI_BAR_BTN_Y  NAVI_BAR_HEIGHT/2 //距离导航条边
 #define TOOL_BAR_BTN_Y SCREEN_HEIGHT-TOOL_BAR_HEIGHT+5 //距离工具条上边缘
 
 #define LEFT_NAVI_BTN_TO_SIDE_X 5
-#define RIGHT_NAVI_BTN_TO_SIDE_X SCREEN_WIDTH-5
+#define RIGHT_NAVI_BTN_TO_SIDE_X SCREEN_WIDTH-5 //还需减去控件的宽
 
 #define TitleFont 18
 #define TitleColor [UIColor whiteColor]
