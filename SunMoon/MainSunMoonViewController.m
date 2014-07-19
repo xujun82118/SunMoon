@@ -21,13 +21,18 @@
 #import "AminationCustom.h"
 #import "AddWaterMask.h"
 
+
+#define LIGHT_ANIMATION_INTERVAL  25  //动画光环扩出动画实体的宽度
+
+
 @interface MainSunMoonViewController ()
 {
     BOOL  isFromHeaderBegin;
     BOOL  isFromSunMoonBegin;
     UIImageView* bringupImageView;    //光育成中要用的动画View
     UIImageView*  lightSkySunOrMoonView; //太阳或月亮闪烁动画View
-    UIImageView*  lightSkyUserHeaderView; //头像闪烁动画View
+    UIImageView*  lightBowSkyUserHeaderView; //头像爆闪烁动画View
+    UIImageView* lightUserHeader;//头像闪烁动画View
 
 
     
@@ -88,19 +93,61 @@
     self.userCloud = [[UserInfoCloud alloc] init];
     self.userCloud.userInfoCloudDelegate = self;
     
+    //选择背景时间与日月图片
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        [mainBgImage setImage:[UIImage imageNamed:@"主页底图002.png"]];
+        [_skySunorMoonImage setImage:[UIImage imageNamed:@"sun.png"]];
+
+        
+    }else
+    {
+        [mainBgImage setImage:[UIImage imageNamed:@"moon-home.png"]];
+        [_skySunorMoonImage setImage:[UIImage imageNamed:@"moon.png"]];
+
+    }
+    
+    
     //加载头像
     self.userHeaderImageView.image = self.userInfo.userHeaderImage;
-    
     
     //创建拖动轨迹识别
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
     [self.view addGestureRecognizer:pan];
     
+    //拖动动画图层
     panSunOrMoonlayer=[[CALayer alloc]init];
     
-    lightSkyUserHeaderView=[[UIImageView alloc] init];
+    //日月动画图
+    lightSkySunOrMoonView =[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"空白图"]];
+    lightSkySunOrMoonView.userInteractionEnabled=YES;
+    lightSkySunOrMoonView.contentMode=UIViewContentModeScaleToFill;
+    NSInteger IntervalWidth = 0;// 光环向日月外扩的宽度,日月的光晕较大
+    NSInteger lightSkySunOrMoonViewWidth = _skySunorMoonImage.frame.size.width+IntervalWidth*2;
+    NSInteger lightSkySunOrMoonViewHeigth = _skySunorMoonImage.frame.size.height+IntervalWidth*2;
+    
+    
+    //NSInteger lightSkySunOrMoonViewWidth =50;
+    //NSInteger lightSkySunOrMoonViewHeigth = 50;
+    
+    [lightSkySunOrMoonView setFrame:CGRectMake(_skySunorMoonImage.center.x-lightSkySunOrMoonViewWidth/2, _skySunorMoonImage.center.y-lightSkySunOrMoonViewHeigth/2, lightSkySunOrMoonViewWidth, lightSkySunOrMoonViewHeigth)];
 
+
+    
+    [self.view addSubview:lightSkySunOrMoonView];
+    [self.view bringSubviewToFront:_skySunorMoonImage];
+    
+    //头像爆闪动画图
+    lightBowSkyUserHeaderView=[[UIImageView alloc] init];
+    lightBowSkyUserHeaderView.image=[UIImage imageNamed:@"空白图"];
+    lightBowSkyUserHeaderView.userInteractionEnabled=YES;
+    lightBowSkyUserHeaderView.contentMode=UIViewContentModeScaleToFill;
+    
+    NSInteger IntervalWidth1 = LIGHT_ANIMATION_INTERVAL;// 光环向头像外扩的宽度
+    NSInteger lightBowSkyUserHeaderViewWidth = _userHeaderImageView.frame.size.width+IntervalWidth1*2;
+    NSInteger lightBowSkyUserHeaderViewHeigth = _userHeaderImageView.frame.size.height+IntervalWidth1*2;
+    [lightBowSkyUserHeaderView setFrame:CGRectMake(_userHeaderImageView.center.x-lightBowSkyUserHeaderViewWidth/2, _userHeaderImageView.center.y-lightBowSkyUserHeaderViewHeigth/2, lightBowSkyUserHeaderViewWidth, lightBowSkyUserHeaderViewHeigth)];
+    [self.view addSubview:lightBowSkyUserHeaderView];
+    [self.view bringSubviewToFront:_userHeaderImageView];
     
     //增加点击识别，进入拍照，或回归光到头像, 拖动也可让光回到头像
     UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(TapSkySumOrMoonhandle:)];
@@ -142,7 +189,7 @@
     
     //头像闪烁动画view
     for (int i=0 ; i<7; i++) {
-        UIImageView* lightUserHeader = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"lightCircle.png"]];
+        lightUserHeader = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"lightCircle.png"]];
         lightUserHeader.tag = TAG_LIGHT_USER_HEADER+i;
         lightUserHeader.userInteractionEnabled=YES;
         lightUserHeader.contentMode=UIViewContentModeScaleToFill;
@@ -250,7 +297,7 @@
     {
         if ([self.userInfo checkIsBringUpinSunOrMoon]) {
             //有则，闪烁
-            [self animationLightFrameSkySunOrMoon:10];
+            [self animationLightFrameSkySunOrMoon:7];
             NSLog(@"有光在育成， 闪烁。。");
 
 
@@ -274,6 +321,34 @@
     
 }
 
+
+#pragma mark -  getter
+- (UIImageView *)userHeaderImageView {
+    
+    [_userHeaderImageView setFrame:CGRectMake(_userHeaderImageView.frame.origin.x, _userHeaderImageView.frame.origin.y, _userHeaderImageView.frame.size.width, _userHeaderImageView.frame.size.height)];
+    [_userHeaderImageView.layer setCornerRadius:(_userHeaderImageView.frame.size.height/2)];
+    _userHeaderImageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+    [_userHeaderImageView.layer setMasksToBounds:YES];
+    [_userHeaderImageView setContentMode:UIViewContentModeScaleAspectFill];
+    [_userHeaderImageView setClipsToBounds:YES];
+    _userHeaderImageView.layer.shadowColor = [UIColor clearColor].CGColor;
+    _userHeaderImageView.layer.shadowOffset = CGSizeMake(4, 4);
+    _userHeaderImageView.layer.shadowOpacity = 0.5;
+    _userHeaderImageView.layer.shadowRadius = 2.0;
+    _userHeaderImageView.layer.borderColor = [[UIColor orangeColor] CGColor];
+    _userHeaderImageView.layer.borderWidth = 3.5f;
+    _userHeaderImageView.layer.cornerRadius =40.0;
+    _userHeaderImageView.userInteractionEnabled = YES;
+    _userHeaderImageView.backgroundColor = [UIColor blackColor];
+    UITapGestureRecognizer *portraitTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapUserHeader)];
+    [_userHeaderImageView addGestureRecognizer:portraitTap];
+    
+    
+    return _userHeaderImageView;
+}
+
+
+#pragma mark -  handle
 
 //点击日月
 -(IBAction)TapSkySumOrMoonhandle:(UITapGestureRecognizer *)gestureRecognizer
@@ -340,7 +415,7 @@
         //有光在头像中，可以开始从头像的拖动识别！
         if (gestureRecognizer.state == UIGestureRecognizerStateBegan ) {
             
-            CGRect tapRect = CGRectMake(location.x-20, location.y-20, _userHeaderImageView.frame.size.width, _userHeaderImageView.frame.size.height);
+            CGRect tapRect = CGRectMake(location.x-30, location.y-30, _userHeaderImageView.frame.size.width, _userHeaderImageView.frame.size.height);
             
             CGRect intersect = CGRectIntersection(_userHeaderImageView.frame, tapRect);
             //同一区域
@@ -348,9 +423,8 @@
             {
                 NSLog(@" 开始拖动手势： 起点：头像之内！");
                 isFromHeaderBegin = YES;
-                //_panSunorMoonImageView.image =[UIImage imageNamed:@"sun.png"];
+                _panSunorMoonImageView.image =[UIImage imageNamed:@"sun.png"];
                 _panSunorMoonImageView.center = _userHeaderImageView.center;
-                //_panSunorMoonImageView.frame = _userHeaderImageView.frame;
                 _panSunorMoonImageView.alpha = 1.0;
                 _panSunorMoonImageView.hidden =  NO;
                 
@@ -382,8 +456,6 @@
             {
                 
                 NSLog(@" 结束拖动手势： 终点：日月之内！");
-                //            _panSunorMoonImageView.center = location;
-                //            _panSunorMoonImageView.alpha = 1.0;
                 if (isFromHeaderBegin) {
                     NSLog(@"光被拖回日月育成！");
                     [self moveLightWithRepeatCount:0 StartPoint:_userHeaderImageView.center EndPoint:_skySunorMoonImage.center IsUseRepeatCount:NO];
@@ -398,12 +470,6 @@
                 }
                 
                 isFromHeaderBegin = NO;
-
-                //开启日月闪烁
-                //[self animationLightFrameSkySunOrMoon:10];
-                
-                //NSLog(@"结束头像闪烁");
-                //[lightSkyUserHeaderView stopAnimating];
                 
                 
             }else
@@ -470,7 +536,6 @@
                 isFromSunMoonBegin = YES;
                 _panSunorMoonImageView.image =[UIImage imageNamed:@"sun.png"];
                 _panSunorMoonImageView.center = _skySunorMoonImage.center;
-                //_panSunorMoonImageView.frame = _skySunorMoonImage.frame;
                 _panSunorMoonImageView.alpha = 1.0;
                 _panSunorMoonImageView.hidden =  NO;
                 
@@ -544,37 +609,7 @@
                     [self moveLightWithRepeatCount:1 StartPoint:location EndPoint:_skySunorMoonImage.center IsUseRepeatCount:YES];
                     
                     isStartSunOrmoonImageMoveToSunMoonAnimation = YES;
-                    /*_panSunorMoonImageView.hidden = YES;
-                     panSunOrMoonlayer.contents=_panSunorMoonImageView.layer.contents;
-                     panSunOrMoonlayer.frame=_panSunorMoonImageView.frame;
-                     panSunOrMoonlayer.opacity=1;
-                     [self.view.layer addSublayer:panSunOrMoonlayer];
-                     //动画 终点 都以sel.view为参考系
-                     CGPoint endpoint=[self.view convertPoint:_skySunorMoonImage.center fromView:nil];
-                     UIBezierPath *path=[UIBezierPath bezierPath];
-                     //动画起点
-                     CGPoint startPoint=[self.view convertPoint:location fromView:nil];
-                     [path moveToPoint:startPoint];
-                     //贝塞尔曲线中间点
-                     float sx=startPoint.x;
-                     float sy=startPoint.y;
-                     float ex=endpoint.x;
-                     float ey=endpoint.y;
-                     float x=sx+(ex-sx)/3;
-                     float y=sy+(ey-sy)*0.5-100;
-                     CGPoint centerPoint=CGPointMake(x,y);
-                     [path addQuadCurveToPoint:endpoint controlPoint:centerPoint];
-                     
-                     CAKeyframeAnimation *animation=[CAKeyframeAnimation animationWithKeyPath:@"position"];
-                     animation.path = path.CGPath;
-                     animation.removedOnCompletion = NO;
-                     animation.fillMode = kCAFillModeRemoved;
-                     animation.duration=0.8;
-                     animation.delegate=self;
-                     animation.autoreverses= NO;
-                     animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
-                     [panSunOrMoonlayer addAnimation:animation forKey:@"backToSunMoon"];
-                     */
+
                 }else{
                     NSLog(@"不是从 日月 开始的！");
                     
@@ -629,11 +664,6 @@
     [_panSunorMoonImageView setCenter:start];
     _panSunorMoonImageView.alpha = 1.0;
     _panSunorMoonImageView.hidden =  YES;
-    
-    
-//    isStartSunOrmoonImageMoveToHeaderAnimation = YES;
-//    _panSunorMoonImageView.hidden = YES;
-    
     
     panSunOrMoonlayer.contents=_panSunorMoonImageView.layer.contents;
     panSunOrMoonlayer.frame=_panSunorMoonImageView.frame;
@@ -784,10 +814,15 @@
         
         //开启日月动画
         if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-            [self animationLightFrameSkySunOrMoon:[self.userInfo.sun_value intValue]];
+            //[self animationLightFrameSkySunOrMoon:[self.userInfo.sun_value intValue]];
+            
+            //test
+            [self animationLightFrameSkySunOrMoon:7];
         }else
         {
-            [self animationLightFrameSkySunOrMoon:[self.userInfo.moon_value intValue]];
+            //[self animationLightFrameSkySunOrMoon:[self.userInfo.moon_value intValue]];
+            //test
+            [self animationLightFrameSkySunOrMoon:7];
             
         }
         
@@ -828,63 +863,22 @@
     NSMutableArray *iArr=[NSMutableArray arrayWithCapacity:0];
 
     
-    for (int i=0; i<10; i++) {
+    for (int i=0; i<3; i++) {
         
-        NSString *name=[NSString stringWithFormat:@"abFrame_%d",i%10+1];
+        NSString *name=[NSString stringWithFormat:@"headerFrameBow_%d",i];
         UIImage *image=[UIImage imageNamed:name];
         
         [iArr addObject:image];
         
     }
     
-    lightSkyUserHeaderView.image=[UIImage imageNamed:@"abFrame_9"];
-    lightSkyUserHeaderView.userInteractionEnabled=YES;
-    lightSkyUserHeaderView.contentMode=UIViewContentModeScaleToFill;
-    lightSkyUserHeaderView.animationImages=iArr;
-    [lightSkyUserHeaderView setFrame:CGRectMake(_userHeaderImageView.frame.origin.x-20, _userHeaderImageView.frame.origin.y-20, _userHeaderImageView.frame.size.width+40, _userHeaderImageView.frame.size.height+40)];
-    lightSkyUserHeaderView.animationDuration=1;
-    lightSkyUserHeaderView.animationRepeatCount = repeatCout;
-    [self.view addSubview:lightSkyUserHeaderView];
-    [self.view bringSubviewToFront:_userHeaderImageView];
-    [lightSkyUserHeaderView startAnimating];
+    lightBowSkyUserHeaderView.animationImages=iArr;
+    lightBowSkyUserHeaderView.animationDuration=1;
+    lightBowSkyUserHeaderView.animationRepeatCount = repeatCout;
+    [lightBowSkyUserHeaderView startAnimating];
     
 }
 
-//头像闪烁
-/*
--(void) animationLightFrameHeaderView:(NSInteger) range
-{
-    NSLog(@"开启头像闪烁动画, range=%d！", range);
-    NSMutableArray *iArr= NULL;
-
-    NSInteger bigRang = range/15+1;
-    NSInteger smallRang = range%15;
-    
-    if (range > 100) {
-        NSLog(@"增加彩虹！");
-        [self animationRainbow:bigRang];
-    }
-
-    
-    //一圈圈画光环
-    for (int i = 0; i<bigRang; i++) {
-        iArr = [self makeSmallRangAnimationLightFrameHeaderView:smallRang BigRang:i];
-    }
-    
-
-    //初始动画底图
-    lightSkyUserHeaderView.image=[UIImage imageNamed:@"abFrame_2"];
-    lightSkyUserHeaderView.userInteractionEnabled=YES;
-    lightSkyUserHeaderView.contentMode=UIViewContentModeScaleToFill;
-    lightSkyUserHeaderView.animationImages=iArr;
-    [lightSkyUserHeaderView setFrame:CGRectMake(_userHeaderImageView.frame.origin.x-20, _userHeaderImageView.frame.origin.y-20, _userHeaderImageView.frame.size.width+40, _userHeaderImageView.frame.size.height+40)];
-    lightSkyUserHeaderView.animationDuration=1;
-    [self.view addSubview:lightSkyUserHeaderView];
-    [self.view bringSubviewToFront:_userHeaderImageView];
-    [lightSkyUserHeaderView startAnimating];
- 
-}
-*/
 
 -(void) animationLightFrameHeaderViewSetRange:(NSInteger) range isUseSetRange:(BOOL) isOrNo
 {
@@ -933,14 +927,18 @@
         
 
         
-        UIImageView* lightUserHeader = (UIImageView* )[self.view viewWithTag:(TAG_LIGHT_USER_HEADER+i)];
-        //NSLog(@"start-----tag=%d", lightUserHeader.tag);
-        lightUserHeader.hidden = NO;
-        lightUserHeader.animationImages=iArr;
-        [lightUserHeader setFrame:CGRectMake(_userHeaderImageView.frame.origin.x-everyBigRangWidth*i-20, _userHeaderImageView.frame.origin.y-everyBigRangWidth*i-20, _userHeaderImageView.frame.size.width+everyBigRangWidth*2*i+40, _userHeaderImageView.frame.size.height+everyBigRangWidth*2*i+40)];
-        lightUserHeader.animationDuration=1;
+        UIImageView* lightUserHeaderTag = (UIImageView* )[self.view viewWithTag:(TAG_LIGHT_USER_HEADER+i)];
+        lightUserHeaderTag.hidden = NO;
+        lightUserHeaderTag.animationImages=iArr;
+        
+        
+        NSInteger IntervalWidth = LIGHT_ANIMATION_INTERVAL;// 光环向头像外扩的宽度
+        NSInteger lightBowSkyUserHeaderViewWidth = _userHeaderImageView.frame.size.width+IntervalWidth*2;
+        NSInteger lightBowSkyUserHeaderViewHeigth = _userHeaderImageView.frame.size.height+IntervalWidth*2;
+        [lightUserHeaderTag setFrame:CGRectMake(_userHeaderImageView.center.x-lightBowSkyUserHeaderViewWidth/2, _userHeaderImageView.center.y-lightBowSkyUserHeaderViewHeigth/2, lightBowSkyUserHeaderViewWidth, lightBowSkyUserHeaderViewHeigth)];
+        lightUserHeaderTag.animationDuration=1;
         [self.view bringSubviewToFront:_userHeaderImageView];
-        [lightUserHeader startAnimating];
+        [lightUserHeaderTag startAnimating];
         
     }
     
@@ -955,132 +953,12 @@
 
         
     for (int j=0; j<smallRang; j++) {
-        NSString *name=[NSString stringWithFormat:@"abFrame_%d",j%10+1];
+        NSString *name=[NSString stringWithFormat:@"headerFrame_%d",j];
         UIImage *image=[UIImage imageNamed:name];
         
         [iArr addObject:image];
 
     }
-    
-    return iArr;
-}
-
--(NSMutableArray*) makeSmallRangAnimationLightFrameHeaderView:(NSInteger) smallRang  BigRang:(NSInteger) bigRang
-{
-    
-    NSMutableArray *iArr=[NSMutableArray arrayWithCapacity:0];
-    
-    NSInteger lightCircleWidth = 5;//细光环宽
-    NSInteger everyBigRangWidth = 6*lightCircleWidth;//每一级光环的宽
-
-    //
-//    if (bigRang>0) {
-//        for (int i = 0; i<bigRang; i++) {
-//            <#statements#>
-//        }
-//    }
-    
-    //test
-    //smallRang = 15;
-    
-    //前6级加层细光图
-    if (smallRang<=6 && smallRang>0) {
-        NSLog(@"细光图---动画！");
-        UIImage* lightCircle = [UIImage imageNamed:@"lightCircle.png"];
-        UIImage* backCircle = NULL;
-        for (int i=0; i<smallRang; i++) {
-            
-            //加大i光圈
-            NSInteger w = lightCircle.size.width+i*15;
-            NSInteger h = lightCircle.size.height+i*15;
-            w = w+bigRang*everyBigRangWidth;
-            h = h+bigRang*everyBigRangWidth;
-            NSInteger x = 0;
-            NSInteger y = 0;
-
-            //画圈圈,每一个图多一圈
-            CGSize drawSize = CGSizeMake(w,h);
-            UIGraphicsBeginImageContext(drawSize);
-            [lightCircle drawInRect:CGRectMake(x,y,w,h)];
-            NSLog(@"细光图,Draw one new outside circle : %d, %d, %d, %d", x,y,w,h);
-            if (backCircle) {
-                NSInteger inCreaseW = w-backCircle.size.width;
-                NSInteger inCreaseH = h-backCircle.size.height;
-                [backCircle drawInRect:CGRectMake(inCreaseW/2,inCreaseH/2,backCircle.size.width,backCircle.size.height)];
-                NSLog(@"细光图,Draw one inside circle : %d, %d, %f, %f", inCreaseW/2,inCreaseH/2,backCircle.size.width, backCircle.size.height);
-                
-            }
-            backCircle = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-
-            
-            [iArr addObject:backCircle];
-            
-            
-            
-        }
-    }
-    //7到9为加层模糊光环
-    if (smallRang>=7 && smallRang<=9) {
-        NSLog(@"模糊光环---动画！");
-        UIImage* lightCircle = [UIImage imageNamed:@"lightCircleBlured.png"];
-        UIImage* backCircle = NULL;
-        for (int i=0; i<smallRang-6; i++) {
-
-            NSInteger x = 0;
-            NSInteger y = 0;
-            NSInteger w = lightCircle.size.width+i*15;
-            NSInteger h = lightCircle.size.height+i*15;
-            w = w+bigRang*everyBigRangWidth;
-            h = h+bigRang*everyBigRangWidth;
-            
-            //画圈圈,每一个图多一圈
-            CGSize drawSize = CGSizeMake(w,h);
-            UIGraphicsBeginImageContext(drawSize);
-            [lightCircle drawInRect:CGRectMake(x,y,w,h)];
-            NSLog(@"模糊光环,Draw one new outside circle : %d, %d, %d, %d", x,y,w,h);
-            if (backCircle) {
-                NSInteger inCreaseW = w-backCircle.size.width;
-                NSInteger inCreaseH = h-backCircle.size.height;
-                [backCircle drawInRect:CGRectMake(inCreaseW/2,inCreaseH/2,backCircle.size.width,backCircle.size.height)];
-                NSLog(@"模糊光环,Draw one inside circle : %d, %d, %f, %f", inCreaseW/2,inCreaseH/2,backCircle.size.width, backCircle.size.height);
-                
-            }
-            backCircle = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-
-            [iArr addObject:backCircle];
-            
-        }
-    }
-    
-    //10到15闪烁光环
-    if (smallRang>=10 && smallRang<=15) {
-        NSLog(@"闪烁光环---动画！");
-        for (int i=0; i<smallRang-10; i++) {
-            
-            NSString *name=[NSString stringWithFormat:@"abFrame_%d",i%10+1];
-            UIImage *image=[UIImage imageNamed:name];
-            
-            //每一大环，扩大一圈
-//            NSInteger x = 0;
-//            NSInteger y = 0;
-//            NSInteger w = _userHeaderImageView.frame.size.width;
-//            NSInteger h = _userHeaderImageView.frame.size.height;
-//            w = w+bigRang*everyBigRangWidth;
-//            h = h+bigRang*everyBigRangWidth;
-//            
-//            UIGraphicsBeginImageContext(image.size);
-//            [image drawInRect:CGRectMake(x, y, w, h)];
-//            UIImage *resultingImage = UIGraphicsGetImageFromCurrentImageContext();
-//            UIGraphicsEndImageContext();
-            
-            [iArr addObject:image];
-            
-        }
-    }
-
-    
     
     return iArr;
 }
@@ -1094,22 +972,13 @@
     
     NSMutableArray *iArr=[NSMutableArray arrayWithCapacity:0];
     for (int i=0; i<range; i++) {
-        NSString *name=[NSString stringWithFormat:@"abFrame_%d",i%10+1];
+        NSString *name=[NSString stringWithFormat:@"headerFrame_%d",i];
         UIImage *image=[UIImage imageNamed:name];
         [iArr addObject:image];
     }
     
-    lightSkySunOrMoonView =[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"abFrame_2"]];
-    lightSkySunOrMoonView.userInteractionEnabled=YES;
-    lightSkySunOrMoonView.contentMode=UIViewContentModeScaleToFill;
     lightSkySunOrMoonView.animationImages=iArr;
-    NSInteger lightSkySunOrMoonViewWidth = 80;
-    NSInteger lightSkySunOrMoonViewHeigth = 80;
-
-    [lightSkySunOrMoonView setFrame:CGRectMake(_skySunorMoonImage.center.x-lightSkySunOrMoonViewWidth/2, _skySunorMoonImage.center.y-lightSkySunOrMoonViewHeigth/2, lightSkySunOrMoonViewWidth, lightSkySunOrMoonViewHeigth)];
     lightSkySunOrMoonView.animationDuration=2;
-    [self.view addSubview:lightSkySunOrMoonView];
-    [self.view bringSubviewToFront:_skySunorMoonImage];
     [lightSkySunOrMoonView startAnimating];
     
 }
@@ -1363,30 +1232,6 @@
 
 
 
-#pragma mark - userHeaderImageView getter
-- (UIImageView *)userHeaderImageView {
-
-        [_userHeaderImageView setFrame:CGRectMake(_userHeaderImageView.frame.origin.x, _userHeaderImageView.frame.origin.y, _userHeaderImageView.frame.size.width, _userHeaderImageView.frame.size.height)];
-        [_userHeaderImageView.layer setCornerRadius:(_userHeaderImageView.frame.size.height/2)];
-        _userHeaderImageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-        [_userHeaderImageView.layer setMasksToBounds:YES];
-        [_userHeaderImageView setContentMode:UIViewContentModeScaleAspectFill];
-        [_userHeaderImageView setClipsToBounds:YES];
-        _userHeaderImageView.layer.shadowColor = [UIColor blackColor].CGColor;
-        _userHeaderImageView.layer.shadowOffset = CGSizeMake(4, 4);
-        _userHeaderImageView.layer.shadowOpacity = 0.5;
-        _userHeaderImageView.layer.shadowRadius = 2.0;
-        _userHeaderImageView.layer.borderColor = [[UIColor redColor] CGColor];
-        _userHeaderImageView.layer.borderWidth = 2.0f;
-        _userHeaderImageView.layer.cornerRadius =30.0;
-        _userHeaderImageView.userInteractionEnabled = YES;
-        _userHeaderImageView.backgroundColor = [UIColor blackColor];
-        UITapGestureRecognizer *portraitTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapUserHeader)];
-        [_userHeaderImageView addGestureRecognizer:portraitTap];
-
-    
-    return _userHeaderImageView;
-}
 
 #pragma mark - 编辑用户头像 或 进入小屋
 -(void)handleTapUserHeader
