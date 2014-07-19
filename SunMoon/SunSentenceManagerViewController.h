@@ -14,7 +14,11 @@
 @property (weak, nonatomic) IBOutlet UITableView *sunSentenceTable;
 
 @property (weak, nonatomic) IBOutlet UITextField *addNewSentence;
+@property (weak, nonatomic) IBOutlet UIButton *addNewSentenceBtn;
+
 - (IBAction)doAddSunSentence:(id)sender;
+- (void)canEditSentence:(id)sender;
+
 
 - (IBAction)back:(id)sender;
 

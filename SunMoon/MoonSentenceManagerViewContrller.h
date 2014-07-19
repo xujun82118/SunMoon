@@ -14,7 +14,10 @@
 @property (weak, nonatomic) IBOutlet UITableView *moonSentenceTable;
 
 @property (weak, nonatomic) IBOutlet UITextField *addNewSentence;
+@property (weak, nonatomic) IBOutlet UIButton *addNewSentenceBtn;
+
 - (IBAction)doAddMoonSentence:(id)sender;
+- (void)canEditSentence:(id)sender;
 
 - (IBAction)back:(id)sender;
 @property (nonatomic, strong) UserInfo * user;

@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TapSeeImage.h"
+
 
 
 @protocol InfiniteScrollPickerDelegate;
@@ -19,6 +21,8 @@
     bool snapping;
     float lastSnappingX;
     id <InfiniteScrollPickerDelegate> scrollDelegate;
+    
+    TapSeeImage* tapSeeImageView;
 }
 
 @property(nonatomic) id<InfiniteScrollPickerDelegate> scrollDelegate;
@@ -26,7 +30,7 @@
 @property (nonatomic) NSMutableArray *imageStore;
 
 @property (nonatomic, strong) NSArray *imageAry;
-@property (nonatomic) int mode; //0:早上， 1：晚上
+@property (nonatomic) int mode; //1:早上， 2：晚上
 
 @property (nonatomic) CGSize itemSize;
 @property (nonatomic) float alphaOfobjs;

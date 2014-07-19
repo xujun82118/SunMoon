@@ -21,7 +21,8 @@
 @implementation HomeInsideViewController
 
 @synthesize user,userData,userDB,sunWordShow,moonWordShow,currentSelectDataSun,currentSelectDataMoon;
-@synthesize sunTimeBtn,moonTimeBtn,moonTimeCtlBtn,sunTimeCtlBtn,sunValueStatic,moonValueStatic,sunTimeText,moonTimeText;
+@synthesize sunTimeBtn,moonTimeBtn,moonTimeCtlBtn,sunTimeCtlBtn,sunValueStatic,moonValueStatic,sunTimeText,moonTimeText,lightSunSentence,lightMoonSentence;
+@synthesize cloudCtlBtn = _cloudCtlBtn,shareSunCtlBtn = _shareSunCtlBtn, shareMoonCtlBtn=_shareMoonCtlBtn;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -38,6 +39,18 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
  
+    self.navigationController.navigationBarHidden = YES;
+    self.navigationController.navigationBar.opaque = YES;
+    //加返回按钮
+    NSInteger backBtnWidth = 15;
+    NSInteger backBtnHeight = 20;
+    UIButton *backBtn =[UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setImage:[UIImage imageNamed:@"返回.png"] forState:UIControlStateNormal];
+    [backBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y-backBtnHeight/2+5, backBtnWidth, backBtnHeight)];
+    //[backBtn setFrame:CGRectMake(200, NAVI_BAR_BTN_Y, backBtnWidth, backBtnHeight)];
+    [backBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backBtn];
+    
     //获取单例用户数据
     self.user= [UserInfo  sharedSingleUserInfo];
     //重取一次数据
@@ -48,21 +61,53 @@
     
 
     //[self.navigationItem setNewTitle:@"测试"];
-    [self.navigationItem setRightItemWithTarget:self  action:@selector(back) image:@"HomeInside_0000s_0001_设置.png"];
+    //[self.navigationItem setRightItemWithTarget:self  action:@selector(back) image:@"HomeInside_0000s_0001_设置.png"];
     
-    [self.navigationItem setLeftItemWithTarget:self  action:@selector(back) image:@"HomeInside_0000s_0000_返回.png"];
+    //[self.navigationItem setLeftItemWithTarget:self  action:@selector(back) image:@"HomeInside_0000s_0000_返回.png"];
 
     
 
     [self addScrollUserImageSunReFresh:NO];
     [self addScrollUserImageMoonReFresh:NO];
     
+    
+    [_cloudCtlBtn setImage:[UIImage imageNamed:@"小云-touch.png"] forState:UIControlStateHighlighted];
+    [_shareSunCtlBtn setImage:[UIImage imageNamed:@"分享-touch.png"] forState:UIControlStateHighlighted];
+    [_shareMoonCtlBtn setImage:[UIImage imageNamed:@"分享-touch.png"] forState:UIControlStateHighlighted];
+    
+    if(self.user.sunAlertTimeCtl)
+    {
+        [sunTimeBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        sunTimeBtn.hidden = NO;
+        [sunTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-打开.png"] forState:UIControlStateNormal ];
+    }else
+    {
+
+        sunTimeBtn.hidden = YES;
+        [sunTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-关闭.png"] forState:UIControlStateNormal ];
+        
+    }
+    
+    if(self.user.moonAlertTimeCtl)
+    {
+        [moonTimeBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        moonTimeBtn.hidden = NO;
+        [moonTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-打开.png"] forState:UIControlStateNormal ];
+        
+    }else
+    {
+
+        moonTimeBtn.hidden = YES;
+        [moonTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-关闭.png"] forState:UIControlStateNormal ];
+        
+    }
+    
+    
 }
 
 -(void) addScrollUserImageSunReFresh:(BOOL) isFresh
 {
     NSInteger count = [userData count];
-    NSLog(@"-------count = %d", count);
     NSMutableArray *setSun = [[NSMutableArray alloc] init];
     if (count>0) {
         
@@ -91,10 +136,9 @@
     
     //目前最多支持8张相片，小于8张的用默认图片填充
     if (count<8) {
-        int temp = 1;
         for (int i = count; i<8; i++) {
             [setSun addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                               [UIImage imageNamed:[NSString stringWithFormat:@"scroll-%d.png",temp++]],@"image_data",
+                               [UIImage imageNamed:@"null-相片.png"],@"image_data",
                                @" ",@"image_name_time",
                                @" ",@"image_sentence",
                                nil]];
@@ -138,8 +182,8 @@
         [imageScrollSun setItemSize:size];
         [imageScrollSun setHeightOffset:30];
         [imageScrollSun setPositionRatio:2];
-        [imageScrollSun setAlphaOfobjs:0.8];
-        [imageScrollSun setMode:0];
+        [imageScrollSun setAlphaOfobjs:0.5];
+        [imageScrollSun setMode:IS_SUN_TIME];
         [imageScrollSun setScrollDelegate:self];
         [self.view addSubview:imageScrollSun];
 
@@ -151,7 +195,7 @@
         [imageScrollSun setItemSize:size];
         [imageScrollSun setHeightOffset:30];
         [imageScrollSun setPositionRatio:2];
-        [imageScrollSun setAlphaOfobjs:0.8];
+        [imageScrollSun setAlphaOfobjs:0.5];
         [imageScrollSun setMode:0];
         [imageScrollSun setScrollDelegate:self];
         [self.view addSubview:imageScrollSun];
@@ -190,10 +234,9 @@
     
     //目前最多支持8张相片，小于8张的用默认图片填充
     if (count<8) {
-        int  temp1=1;
         for (int i = count; i<8; i++) {
             [setMoon addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                [UIImage imageNamed:[NSString stringWithFormat:@"scroll-%d.png",temp1++]],@"image_data",
+                                [UIImage imageNamed:@"null-相片.png"],@"image_data",
                                 @" ",@"image_name_time",
                                 @" ",@"image_sentence",
                                 nil]];
@@ -225,8 +268,8 @@
         [imageScrollMoon setItemSize:size];
         [imageScrollMoon setHeightOffset:30];
         [imageScrollMoon setPositionRatio:2];
-        [imageScrollMoon setAlphaOfobjs:0.8];
-        [imageScrollMoon setMode:1];
+        [imageScrollMoon setAlphaOfobjs:0.5];
+        [imageScrollMoon setMode:IS_MOON_TIME];
         [imageScrollMoon setScrollDelegate:self];
         [self.view addSubview:imageScrollMoon];
         
@@ -239,7 +282,7 @@
         [imageScrollMoon setItemSize:size];
         [imageScrollMoon setHeightOffset:30];
         [imageScrollMoon setPositionRatio:2];
-        [imageScrollMoon setAlphaOfobjs:0.8];
+        [imageScrollMoon setAlphaOfobjs:0.5];
         [imageScrollMoon setMode:1];
         [imageScrollMoon setScrollDelegate:self];
         [self.view addSubview:imageScrollMoon];
@@ -282,25 +325,7 @@
 {
     
     [super viewWillAppear:animated];
-    self.navigationController.toolbarHidden = YES;
-    
-    
-    //self.navigationController.navigationBarHidden = NO;
 
-    
-    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"返回.png"]
-                                                                  style:UIBarButtonItemStyleBordered target:self action:@selector(back)];
-    self.navigationItem.rightBarButtonItem =addButton;
-    
-    //加返回按钮
-    NSInteger backBtnWidth = 20;
-    NSInteger backBtnHeight = 20;
-    UIButton *backBtn =[UIButton buttonWithType:UIButtonTypeCustom];
-    [backBtn setImage:[UIImage imageNamed:@"返回.png"] forState:UIControlStateNormal];
-    [backBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y, backBtnWidth, backBtnHeight)];
-    //[backBtn setFrame:CGRectMake(200, NAVI_BAR_BTN_Y, backBtnWidth, backBtnHeight)];
-    [backBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:backBtn];
     
     
     /*
@@ -442,7 +467,6 @@
  */
 - (IBAction)shareNight:(id)sender {
     
-    
     UIImageView* imageData = [currentSelectDataMoon objectForKey:@"image_data"];
     NSString* imageSentence = [currentSelectDataMoon objectForKey:@"image_sentence"];
     
@@ -563,21 +587,21 @@
 
 }
 
+#pragma mark - 闹钟控制
 
-- (IBAction)moonTimeCtl:(id)sender {
+- (IBAction)moonAlertCtl:(id)sender {
     
     [self.user updateMoonAlertTimeCtl:!self.user.moonAlertTimeCtl];
 
     if(self.user.moonAlertTimeCtl)
     {
-        [moonTimeBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-        [moonTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟.png"] forState:UIControlStateNormal ];
+        moonTimeBtn.hidden = NO;
+        [moonTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-打开.png"] forState:UIControlStateNormal ];
 
     }else
     {
-        [moonTimeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        
-        [moonTimeCtlBtn setImage:[UIImage imageNamed:@"alarm-暗.png"] forState:UIControlStateNormal ];
+        moonTimeBtn.hidden = YES;
+        [moonTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-关闭.png"] forState:UIControlStateNormal ];
        
     }
     
@@ -589,12 +613,12 @@
    
     if(self.user.sunAlertTimeCtl)
     {
-        [sunTimeBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-        [sunTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟.png"] forState:UIControlStateNormal ];
+        sunTimeBtn.hidden = NO;
+        [sunTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-打开.png"] forState:UIControlStateNormal ];
     }else
     {
-        [sunTimeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [sunTimeCtlBtn setImage:[UIImage imageNamed:@"alarm-暗.png"] forState:UIControlStateNormal ];
+        sunTimeBtn.hidden = YES;
+        [sunTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-关闭.png"] forState:UIControlStateNormal ];
         
     }
     
@@ -607,7 +631,7 @@
     //NSLog(@"selected index =%d", infiniteScrollPicker.selectedIndex);
     
     //太阳
-    if (infiniteScrollPicker.mode == 0) {
+    if (infiniteScrollPicker.mode == IS_SUN_TIME) {
         currentSelectDataSun =(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex];
         
         //UIImageView* imageData = [(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex] objectForKey:@"image_data"];
@@ -630,7 +654,7 @@
         
         
         
-    }else if (infiniteScrollPicker.mode == 1)//月亮
+    }else if (infiniteScrollPicker.mode == IS_MOON_TIME)//月亮
     {
         currentSelectDataMoon =(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex];
         //UIImageView* imageData = [(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex] objectForKey:@"image_data"];
@@ -653,15 +677,24 @@
     [UIView beginAnimations:@"TimeShowAnimationWhenDragging" context:(__bridge void *)(sunTimeText)];
     [UIView setAnimationDuration:0.3f];
     
-    if (picker.mode == 0)
+    if (picker.mode == IS_SUN_TIME)
     {
         sunTimeText.alpha = 0.1;
         sunWordShow.alpha = 0.1;
-    }else if (picker.mode == 1)
+        
+        _shareSunCtlBtn.alpha = 0.1;
+        lightSunSentence.alpha = 0.1;
+        
+    }else if (picker.mode == IS_MOON_TIME)
     {
         
         moonTimeText.alpha = 0.1;
         moonWordShow.alpha = 0.1;
+        
+        _shareMoonCtlBtn.alpha = 0.1;
+        lightMoonSentence.alpha = 0.1;
+
+
 
     }
     
@@ -675,15 +708,26 @@
     [UIView setAnimationDuration:0.3f];
 
     
-    if (picker.mode == 0)
+    if (picker.mode == IS_SUN_TIME)
     {
         sunTimeText.alpha = 1;
         sunWordShow.alpha = 1;
-    }else if (picker.mode == 1)
+        
+        _shareSunCtlBtn.alpha = 1;
+        lightSunSentence.alpha = 1;
+
+
+        
+    }else if (picker.mode == IS_MOON_TIME)
     {
         
         moonTimeText.alpha = 1;
         moonWordShow.alpha = 1;
+        
+        _shareMoonCtlBtn.alpha = 1;
+        lightMoonSentence.alpha = 1;
+
+
         
     }
     

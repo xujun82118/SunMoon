@@ -23,7 +23,16 @@
 @property (weak, nonatomic) IBOutlet UILabel *sunValueStatic;
 @property (weak, nonatomic) IBOutlet UIButton *moonTimeCtlBtn;
 @property (weak, nonatomic) IBOutlet UIButton *sunTimeCtlBtn;
-- (IBAction)moonTimeCtl:(id)sender;
+@property (weak, nonatomic) IBOutlet UIButton *cloudCtlBtn;
+@property (weak, nonatomic) IBOutlet UIButton *shareSunCtlBtn;
+@property (weak, nonatomic) IBOutlet UIButton *shareMoonCtlBtn;
+@property (weak, nonatomic) IBOutlet UIImageView *lightSunSentence;
+@property (weak, nonatomic) IBOutlet UIImageView *lightMoonSentence;
+
+
+
+
+- (IBAction)moonAlertCtl:(id)sender;
 - (IBAction)sunAlertCtl:(id)sender;
 @property (weak, nonatomic) IBOutlet UIButton *moonTimeBtn;
 @property (weak, nonatomic) IBOutlet UIButton *sunTimeBtn;

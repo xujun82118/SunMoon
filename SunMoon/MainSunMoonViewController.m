@@ -88,6 +88,7 @@
     self.userCloud = [[UserInfoCloud alloc] init];
     self.userCloud.userInfoCloudDelegate = self;
     
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
     //加载头像
     self.userHeaderImageView.image = self.userInfo.userHeaderImage;
     

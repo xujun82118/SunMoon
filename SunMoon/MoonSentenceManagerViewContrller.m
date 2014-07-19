@@ -14,7 +14,7 @@
 
 @implementation MoonSentenceManagerViewContrller
 
-@synthesize   user, addNewSentence, moonSentenceTable;
+@synthesize   user, addNewSentence,addNewSentenceBtn, moonSentenceTable;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -29,8 +29,31 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.navigationController.navigationBarHidden = NO;
+    self.navigationController.navigationBarHidden = YES;
     self.navigationController.navigationBar.opaque = YES;
+    
+    //加返回按钮
+    NSInteger backBtnWidth = 15;
+    NSInteger backBtnHeight = 20;
+    UIButton *backBtn =[UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setImage:[UIImage imageNamed:@"返回.png"] forState:UIControlStateNormal];
+    [backBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y-backBtnHeight/2+5, backBtnWidth, backBtnHeight)];
+    [backBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backBtn];
+    
+    
+    //加编辑按钮
+    NSInteger editeBtnWidth = 15;
+    NSInteger editeBtnHeight = 15;
+    UIButton *editeBtn =[UIButton buttonWithType:UIButtonTypeCustom];
+    [editeBtn setImage:[UIImage imageNamed:@"编辑.png"] forState:UIControlStateNormal];
+    [editeBtn setFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X-editeBtnWidth, NAVI_BAR_BTN_Y-editeBtnHeight/2, editeBtnWidth, editeBtnHeight)];
+    [editeBtn addTarget:self action:@selector(canEditSentence:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:editeBtn];
+    
+    [moonSentenceTable setBackgroundColor:[UIColor clearColor]];
+    [addNewSentence setText:@""];
+    
     
     //获取单例用户数据
     self.user= [UserInfo  sharedSingleUserInfo];
@@ -73,6 +96,12 @@
 }
 */
 
+-(void) back
+{
+    [self.navigationController popViewControllerAnimated:YES];
+    
+}
+
 
 #pragma mark - Table view data source
 
@@ -98,7 +127,7 @@
     if(indexPath.row == user.moonSentenceSelect)
     {
         
-        cell.imageView.image = [UIImage imageNamed:@"选择.png"];
+        cell.imageView.image = [UIImage imageNamed:@"moon.png"];
     }
     
     else
@@ -108,7 +137,7 @@
         
     }
     
-    cell.backgroundColor = [UIColor yellowColor];
+    cell.backgroundColor = [UIColor clearColor];
     return cell;
     
     
@@ -183,6 +212,9 @@
     
     cell.imageView.image = [UIImage imageNamed:@"选择.png"];
     
+    [moonSentenceTable reloadData];
+
+    
     [user updateMoonSentenceSelected:indexPath.row];
     
     
@@ -195,6 +227,37 @@
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     
     cell.imageView.image = nil;
+    
+}
+
+- (void)canEditSentence:(id)sender {
+    
+    [moonSentenceTable setEditing:!moonSentenceTable.editing animated:YES];
+    
+    if (moonSentenceTable.editing == YES) {
+    }else
+    {
+        
+    }
+    
+}
+
+- (IBAction)sentenceTextChanged:(id)sender
+{
+    
+    if ([self.addNewSentence.text isEqualToString:@""]) {
+        
+        [addNewSentenceBtn setImage:[UIImage imageNamed:@"加语录-关闭.png"] forState:UIControlStateNormal ];
+        
+    }else
+    {
+        [addNewSentenceBtn setImage:[UIImage imageNamed:@"加语录-打开.png"] forState:UIControlStateNormal ];
+        
+    }
+    
+    
+    
+    
     
 }
 
@@ -302,12 +365,6 @@
 }
 
 
-
--(IBAction) back:(id)sender
-{
-    [self.navigationController popViewControllerAnimated:YES];
-    
-}
 
 
 @end

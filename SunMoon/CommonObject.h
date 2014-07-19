@@ -6,7 +6,7 @@
 //  Copyright (c) 2014年 xujun. All rights reserved.
 //
 
-// 第一次登录送一个阳光，点击太阳，移动到头像，点亮头像
+// 设备触发时间，更换后天夜晚
 //点击进入多功能界面，未实现
 //动画, 判断动画的类型,
 // 捕捉手指的移动
@@ -91,6 +91,7 @@ typedef enum
 }CloudSynchronizeContent;
 
 
+
 //阳光，月光时间
 #define SUN_TIME_MIN  6
 #define SUN_TIME_MAX  18
@@ -158,7 +159,7 @@ typedef enum
 //控件定义
 #define TOOL_BAR_HEIGHT  60
 #define NAVI_BAR_HEIGHT 60
-#define NAVI_BAR_BTN_Y  NAVI_BAR_HEIGHT/2 //距离导航条边
+#define NAVI_BAR_BTN_Y  NAVI_BAR_HEIGHT/2 //距离导航条边,还需减去控件的高的一半
 #define TOOL_BAR_BTN_Y SCREEN_HEIGHT-TOOL_BAR_HEIGHT+5 //距离工具条上边缘
 
 #define LEFT_NAVI_BTN_TO_SIDE_X 5

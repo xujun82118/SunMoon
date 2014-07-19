@@ -36,9 +36,9 @@
     alertNotification=[[UILocalNotification alloc] init];
     
     //获取单例用户数据
-    if (_iSunORMoon == 1) {
+    if (_iSunORMoon == IS_SUN_TIME) {
         alertTime = [UserInfo  sharedSingleUserInfo].sunAlertTime;
-    }else if (_iSunORMoon == 2)
+    }else if (_iSunORMoon == IS_MOON_TIME)
     {
         alertTime = [UserInfo  sharedSingleUserInfo].moonAlertTime;
         
@@ -80,7 +80,7 @@
     
     
     //存用户选择的时间
-    if (_iSunORMoon == 1) {
+    if (_iSunORMoon == IS_SUN_TIME) {
         [[UserInfo  sharedSingleUserInfo] updateSunAlertTime:fireDate];
         
         //设置定时每天通知
@@ -115,7 +115,7 @@
             
         }
         
-    }else if (_iSunORMoon == 2)
+    }else if (_iSunORMoon == IS_MOON_TIME)
     {
         [[UserInfo  sharedSingleUserInfo] updateMoonAlertTime:fireDate];
         

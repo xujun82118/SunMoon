@@ -298,7 +298,7 @@
         
     }
     bowLightView = [[UIImageView alloc] initWithFrame:CGRectMake(sunMoonImageViewTop.frame.origin.x-10,sunMoonImageViewTop.frame.origin.y-10, sunMoonImageViewTop.frame.size.width+20,sunMoonImageViewTop.frame.size.height+20)];
-    bowLightView.image=[UIImage imageNamed:@"abFrame_9"];
+    bowLightView.image=[UIImage imageNamed:@"空白图"];
     bowLightView.userInteractionEnabled=YES;
     bowLightView.contentMode=UIViewContentModeScaleToFill;
     bowLightView.animationImages=iArr;
