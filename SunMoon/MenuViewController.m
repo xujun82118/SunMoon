@@ -96,11 +96,12 @@
     {
         UserSetViewController *secondViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"UserSetController"];
         navigationController.viewControllers = @[secondViewController];
-    }else if (indexPath.section == 0 && indexPath.row == 2)
-    {
-        AboutViewController *aboutViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"about"];
-        navigationController.viewControllers = @[aboutViewController];
     }
+//    }else if (indexPath.section == 0 && indexPath.row == 2)
+//    {
+//        AboutViewController *aboutViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"about"];
+//        navigationController.viewControllers = @[aboutViewController];
+//    }
     
     [self.frostedViewController hideMenuViewController];
 }
@@ -120,7 +121,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)sectionIndex
 {
-    return 3;
+    return 2;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -133,7 +134,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
-    NSArray *titles = @[@"我的天空", @"我的设置", @"关于"];
+    NSArray *titles = @[@"我的天空", @"我的设置"];
     cell.textLabel.text = titles[indexPath.row];
 
     

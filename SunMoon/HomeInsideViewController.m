@@ -15,6 +15,10 @@
 
 
 @interface HomeInsideViewController ()
+{
+
+
+}
 
 @end
 
@@ -22,7 +26,8 @@
 
 @synthesize user,userData,userDB,sunWordShow,moonWordShow,currentSelectDataSun,currentSelectDataMoon;
 @synthesize sunTimeBtn,moonTimeBtn,moonTimeCtlBtn,sunTimeCtlBtn,sunValueStatic,moonValueStatic,sunTimeText,moonTimeText,lightSunSentence,lightMoonSentence;
-@synthesize cloudCtlBtn = _cloudCtlBtn,shareSunCtlBtn = _shareSunCtlBtn, shareMoonCtlBtn=_shareMoonCtlBtn;
+@synthesize cloudCtlBtn = _cloudCtlBtn,shareSunCtlBtn = _shareSunCtlBtn, shareMoonCtlBtn=_shareMoonCtlBtn, voiceReplaySunBtn = _voiceReplaySunBtn, voiceReplayMoonBtn = _voiceReplayMoonBtn;
+@synthesize userCloud=_userCloud;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -42,23 +47,25 @@
     self.navigationController.navigationBarHidden = YES;
     self.navigationController.navigationBar.opaque = YES;
     //加返回按钮
-    NSInteger backBtnWidth = 15;
-    NSInteger backBtnHeight = 20;
+    NSInteger backBtnWidth = 18;
+    NSInteger backBtnHeight = 22;
     UIButton *backBtn =[UIButton buttonWithType:UIButtonTypeCustom];
-    [backBtn setImage:[UIImage imageNamed:@"返回.png"] forState:UIControlStateNormal];
-    [backBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y-backBtnHeight/2+5, backBtnWidth, backBtnHeight)];
-    //[backBtn setFrame:CGRectMake(200, NAVI_BAR_BTN_Y, backBtnWidth, backBtnHeight)];
+    [backBtn setImage:[UIImage imageNamed:@"返回-黄.png"] forState:UIControlStateNormal];
+    [backBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y-backBtnHeight/2+10, backBtnWidth, backBtnHeight)];
     [backBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:backBtn];
     
     //获取单例用户数据
-    self.user= [UserInfo  sharedSingleUserInfo];
+    //self.user= [UserInfo  sharedSingleUserInfo];
     //重取一次数据
-    [self.user getUserInfoAtNormalOpen];
+    //[self.user getUserInfoAtNormalOpen];
     self.userData  = self.user.userDataBase;
     
     userDB = [[UserDB alloc] init];
     
+    //云同步
+    self.userCloud = [[UserInfoCloud alloc] init];
+    self.userCloud.userInfoCloudDelegate = self;
 
     //[self.navigationItem setNewTitle:@"测试"];
     //[self.navigationItem setRightItemWithTarget:self  action:@selector(back) image:@"HomeInside_0000s_0001_设置.png"];
@@ -66,7 +73,7 @@
     //[self.navigationItem setLeftItemWithTarget:self  action:@selector(back) image:@"HomeInside_0000s_0000_返回.png"];
 
     
-
+    //增加scroll图片
     [self addScrollUserImageSunReFresh:NO];
     [self addScrollUserImageMoonReFresh:NO];
     
@@ -103,12 +110,32 @@
     }
     
     
+    //语音回放控制
+    pressedVoiceForPlay = [[VoicePressedHold alloc] init];
+
+    [_voiceReplaySunBtn setImage:[UIImage imageNamed:@"放音-细黄.PNG"] forState:UIControlStateNormal];
+    [_voiceReplayMoonBtn setImage:[UIImage imageNamed:@"放音-细黄.PNG"] forState:UIControlStateNormal];
+    [_voiceReplaySunBtn setImage:[UIImage imageNamed:@"停止放音-细黄.PNG"] forState:UIControlStateSelected];
+    [_voiceReplayMoonBtn setImage:[UIImage imageNamed:@"停止放音-细黄.PNG"] forState:UIControlStateSelected];
+
+
 }
 
 -(void) addScrollUserImageSunReFresh:(BOOL) isFresh
 {
-    NSInteger count = [userData count];
     NSMutableArray *setSun = [[NSMutableArray alloc] init];
+    //前4个为空，第5个为最新日期的照片
+    for (int i = 0; i<4; i++) {
+        [setSun addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                           [UIImage imageNamed:@"null-相片.png"],@"image_data",
+                           @" ",@"image_name_time",
+                           @" ",@"image_sentence",
+                           nil]];
+        
+    }
+    
+    //从第5张开始插入相片
+    NSInteger count = [userData count];
     if (count>0) {
         
         //太阳数据
@@ -120,23 +147,27 @@
             //UIImage* addImage = [self addToImage:[UIImage imageWithData:userInfo.sun_image] withBkImage:addImageBk];
             //传入dictionary，以携带更多信息
             UIImage* addImage = [UIImage imageWithData:userInfo.sun_image];
-            if (addImage == Nil) {
-                break;
+            if (addImage != Nil) {
+                
+                [setSun addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                   addImage,@"image_data",
+                                   userInfo.sun_image_name,@"image_name_time",//name 即为时间
+                                   userInfo.sun_image_sentence,@"image_sentence",
+                                   nil]];
             }
-            [setSun addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                               addImage,@"image_data",
-                               userInfo.sun_image_name,@"image_name_time",//name 即为时间
-                               userInfo.sun_image_sentence,@"image_sentence",
-                               nil]];
+
             
         }
         
     }
    
+    //第一次起动初始化时照片为空，前端4张固定为空
+    NSInteger realCount = [setSun count] + 4;
+
     
-    //目前最多支持8张相片，小于8张的用默认图片填充
-    if (count<8) {
-        for (int i = count; i<8; i++) {
+    //全屏相示8张相片，小于8张的用默认图片填充
+    if (realCount<8) {
+        for (int i = realCount; i<8; i++) {
             [setSun addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                [UIImage imageNamed:@"null-相片.png"],@"image_data",
                                @" ",@"image_name_time",
@@ -149,18 +180,7 @@
     
     
     //取第一张默认相片的尺寸
-    CGSize size;
-    if (count>0) {
-        size = [(UIImage*)[(NSDictionary*)[setSun objectAtIndex:0] objectForKey:@"image_data"] size];
-    }else
-    {
-        size =[[UIImage imageNamed:[NSString stringWithFormat:@"scroll-%d.png",1]] size];
-    }
-    
-    //第一次登录时照片为空，size=0
-    if (size.width ==0) {
-        size =[[UIImage imageNamed:[NSString stringWithFormat:@"scroll-%d.png",1]] size];
-    }
+    CGSize size = [[UIImage imageNamed:[NSString stringWithFormat:@"scroll-%d.png",1]] size];
     
     
     //取得时间轴的相对位置
@@ -176,33 +196,24 @@
 
 
     
-    if (!isFresh) {
-        imageScrollSun = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition.frame.origin.y-15, SCREEN_WIDTH, 100)];
-        [imageScrollSun setImageAry:setSun];
-        [imageScrollSun setItemSize:size];
-        [imageScrollSun setHeightOffset:30];
-        [imageScrollSun setPositionRatio:2];
-        [imageScrollSun setAlphaOfobjs:0.5];
-        [imageScrollSun setMode:IS_SUN_TIME];
-        [imageScrollSun setScrollDelegate:self];
-        [self.view addSubview:imageScrollSun];
-
-    }else
-    {
+    if (isFresh) {
         [imageScrollSun removeFromSuperview];
-        imageScrollSun = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition.frame.origin.y-15, SCREEN_WIDTH, 100)];
-        [imageScrollSun setImageAry:setSun];
-        [imageScrollSun setItemSize:size];
-        [imageScrollSun setHeightOffset:30];
-        [imageScrollSun setPositionRatio:2];
-        [imageScrollSun setAlphaOfobjs:0.5];
-        [imageScrollSun setMode:0];
-        [imageScrollSun setScrollDelegate:self];
-        [self.view addSubview:imageScrollSun];
+        //清空日期等
+        sunTimeText.text = @"";
+        sunWordShow.text = @"";
 
-        
     }
     
+    
+    imageScrollSun = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition.frame.origin.y-15, SCREEN_WIDTH, 100)];
+    [imageScrollSun setImageAry:setSun];
+    [imageScrollSun setItemSize:size];
+    [imageScrollSun setHeightOffset:30];
+    [imageScrollSun setPositionRatio:2];
+    [imageScrollSun setAlphaOfobjs:0.5];
+    [imageScrollSun setMode:IS_SUN_TIME];
+    [imageScrollSun setScrollDelegate:self];
+    [self.view addSubview:imageScrollSun];
     
 
 }
@@ -210,9 +221,19 @@
 
 -(void) addScrollUserImageMoonReFresh:(BOOL) isFresh
 {
-    NSInteger count = [userData count];
-
     NSMutableArray *setMoon = [[NSMutableArray alloc] init];
+    //前4个为空，第5个为最新日期的照片
+    for (int i = 0; i<4; i++) {
+        [setMoon addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                           [UIImage imageNamed:@"null-相片.png"],@"image_data",
+                           @" ",@"image_name_time",
+                           @" ",@"image_sentence",
+                           nil]];
+        
+    }
+    
+    //从第5张开始插入相片
+    NSInteger count = [userData count];
     if (count>0) {
         
         //月亮数据
@@ -221,20 +242,25 @@
             userInfo = [userData objectAtIndex:i];
             UIImage* addImage = [UIImage imageWithData:userInfo.moon_image];
             //传入dictionary，以携带更多信息
-            [setMoon addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                addImage,@"image_data",
-                                userInfo.moon_image_name,@"image_name_time",//name 即为时间
-                                userInfo.moon_image_sentence,@"image_sentence",
-                                nil]];
+            if (addImage != Nil) {
+                
+                [setMoon addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                   addImage,@"image_data",
+                                   userInfo.moon_image_name,@"image_name_time",//name 即为时间
+                                   userInfo.moon_image_sentence,@"image_sentence",
+                                   nil]];
+            }
             
         }
         
     }
     
+    NSInteger realCount = [setMoon count];
+
     
-    //目前最多支持8张相片，小于8张的用默认图片填充
-    if (count<8) {
-        for (int i = count; i<8; i++) {
+    //全屏相示8张相片，小于8张的用默认图片填充
+    if (realCount<8) {
+        for (int i = realCount; i<8; i++) {
             [setMoon addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                 [UIImage imageNamed:@"null-相片.png"],@"image_data",
                                 @" ",@"image_name_time",
@@ -247,48 +273,28 @@
     
     
     //取第一张默认相片的尺寸
-    CGSize size;
-    if (count>0) {
-        size = [(UIImage*)[(NSDictionary*)[setMoon objectAtIndex:0] objectForKey:@"image_data"] size];
-    }else
-    {
-        size =[[UIImage imageNamed:[NSString stringWithFormat:@"scroll-%d.png",1]] size];
-    }
-    
-    //第一次登录时照片为空，size=0
-    if (size.width ==0) {
-        size =[[UIImage imageNamed:[NSString stringWithFormat:@"scroll-%d.png",1]] size];
-    }
+    CGSize size = [[UIImage imageNamed:[NSString stringWithFormat:@"scroll-%d.png",1]] size];
     
     
-    if (!isFresh) {
-        UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
-        imageScrollMoon = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100)];
-        [imageScrollMoon setImageAry:setMoon];
-        [imageScrollMoon setItemSize:size];
-        [imageScrollMoon setHeightOffset:30];
-        [imageScrollMoon setPositionRatio:2];
-        [imageScrollMoon setAlphaOfobjs:0.5];
-        [imageScrollMoon setMode:IS_MOON_TIME];
-        [imageScrollMoon setScrollDelegate:self];
-        [self.view addSubview:imageScrollMoon];
+    if (isFresh) {
         
-    }else
-    {
         [imageScrollMoon removeFromSuperview];
-        UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
-        imageScrollMoon = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100)];
-        [imageScrollMoon setImageAry:setMoon];
-        [imageScrollMoon setItemSize:size];
-        [imageScrollMoon setHeightOffset:30];
-        [imageScrollMoon setPositionRatio:2];
-        [imageScrollMoon setAlphaOfobjs:0.5];
-        [imageScrollMoon setMode:1];
-        [imageScrollMoon setScrollDelegate:self];
-        [self.view addSubview:imageScrollMoon];
+        //清空日期等
+        moonTimeText.text = @"";
+        moonWordShow.text = @"";
         
     }
     
+    UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
+    imageScrollMoon = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100)];
+    [imageScrollMoon setImageAry:setMoon];
+    [imageScrollMoon setItemSize:size];
+    [imageScrollMoon setHeightOffset:30];
+    [imageScrollMoon setPositionRatio:2];
+    [imageScrollMoon setAlphaOfobjs:0.5];
+    [imageScrollMoon setMode:IS_MOON_TIME];
+    [imageScrollMoon setScrollDelegate:self];
+    [self.view addSubview:imageScrollMoon];
 
     
     
@@ -317,6 +323,7 @@
 
     
     [self addScrollUserImageMoonReFresh:YES];
+    
     
     
 }
@@ -458,6 +465,42 @@
 */
 
 
+//暂时无用
+- (IBAction)infoTextChanged:(id)sender
+{
+    
+    if ([sunTimeText.text isEqualToString:@""]) {
+        
+        sunTimeText.hidden = YES;
+        lightSunSentence.hidden = YES;
+        sunWordShow.hidden = YES;
+        
+    }else
+    {
+        sunTimeText.hidden = NO;
+        lightSunSentence.hidden = NO;
+        sunWordShow.hidden = NO;
+     
+    }
+    
+    if ([moonTimeText.text isEqualToString:@""]) {
+        
+        moonTimeText.hidden = YES;
+        lightMoonSentence.hidden = YES;
+        moonWordShow.hidden = YES;
+        
+    }else
+    {
+        moonTimeText.hidden = NO;
+        lightMoonSentence.hidden = NO;
+        moonWordShow.hidden = NO;
+
+
+        
+    }
+    
+    
+}
 
 #pragma mark - 用户分享
 
@@ -518,6 +561,39 @@
      
 }
 
+#pragma mark -  云同步
+-(IBAction)synClouderUserInfo:(id)sender
+{
+    
+    if (self.user.cloudSynAutoCtl) {
+        [CommonObject showAlert:@"已开启自动云同步，退出时自动同步" titleMsg:Nil DelegateObject:self];
+    }else
+    {
+        [_userCloud upateUserInfo:self.user];
+        
+    }
+    
+    
+    
+}
+
+- (void) getUserInfoFinishReturnDic:(NSDictionary*) userInfo
+{
+
+    NSLog(@"Syn UserInfo Succ!");
+    
+    [CommonObject showAlert:@"同步数据成功！" titleMsg:Nil DelegateObject:self];
+    
+    
+}
+
+
+- (void) getUserInfoFinishFailed
+{
+    [CommonObject showAlert:@"同步数据失败, 请检查网络！" titleMsg:Nil DelegateObject:self];
+    
+}
+
 #pragma mark -
 - (IBAction)DeleteMoonImage:(id)sender
 {
@@ -537,6 +613,12 @@
         NSLog(@"DeleteNightImage，错误，此条不存在!");
         [userDB saveUser:selectUserInfo];
     }
+    
+    //删除语音
+    NSString*  timeMoon = [currentSelectDataMoon objectForKey:@"image_name_time"];
+    NSString* nameMoon = [NSString stringWithFormat:@"%@_%d", timeMoon, IS_MOON_TIME];
+    [pressedVoiceForPlay setVoiceName:nameMoon];
+    [pressedVoiceForPlay deleteVoiceFile];
     
     NSLog(@"刷新 月光 数据");
     [self refreshScrollUserImageMoon];
@@ -562,9 +644,57 @@
         [userDB saveUser:selectUserInfo];
     }
     
+    //删除语音
+    NSString*  timeSun = [currentSelectDataSun objectForKey:@"image_name_time"];
+    NSString* nameSun = [NSString stringWithFormat:@"%@_%d", timeSun, IS_SUN_TIME];
+    [pressedVoiceForPlay setVoiceName:nameSun];
+    [pressedVoiceForPlay deleteVoiceFile];
+    
     NSLog(@"刷新 阳光 数据");
     [self refreshScrollUserImageSun];
     
+}
+
+
+#pragma mark - 回放语音
+- (IBAction)replaySunVoice:(id)sender
+{
+
+    NSString*  timeSun = [currentSelectDataSun objectForKey:@"image_name_time"];
+    NSString* nameSun = [NSString stringWithFormat:@"%@_%d", timeSun, IS_SUN_TIME];
+    [pressedVoiceForPlay setVoiceName:nameSun];
+    
+    if (_voiceReplaySunBtn.selected == NO) {
+        [pressedVoiceForPlay playRecording];
+    }else
+    {
+        [pressedVoiceForPlay stopPlaying];
+
+    }
+    
+    [_voiceReplaySunBtn setSelected:!_voiceReplaySunBtn.selected];
+
+    
+    
+}
+- (IBAction)replayMoonVoice:(id)sender
+{
+
+    
+    NSString*  timeMoon = [currentSelectDataMoon objectForKey:@"image_name_time"];
+    NSString* nameMoon = [NSString stringWithFormat:@"%@_%d", timeMoon, IS_MOON_TIME];
+    [pressedVoiceForPlay setVoiceName:nameMoon];
+    
+    if (_voiceReplayMoonBtn.selected == NO) {
+        [pressedVoiceForPlay playRecording];
+    }else
+    {
+        [pressedVoiceForPlay stopPlaying];
+        
+    }
+
+    [_voiceReplayMoonBtn setSelected:!_voiceReplayMoonBtn.selected];
+
 }
 
 #pragma mark - Seques
@@ -636,10 +766,10 @@
         
         //UIImageView* imageData = [(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex] objectForKey:@"image_data"];
         
-        NSString* imageSentence    = [(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex] objectForKey:@"image_sentence"];
+        NSString* imageSentence    = [currentSelectDataSun objectForKey:@"image_sentence"];
         sunWordShow.text       = imageSentence;
         
-        sunTimeText.text =[(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex] objectForKey:@"image_name_time"];
+        sunTimeText.text =[currentSelectDataSun objectForKey:@"image_name_time"];
         [self.view bringSubviewToFront:sunTimeText];
     
         
@@ -658,10 +788,10 @@
     {
         currentSelectDataMoon =(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex];
         //UIImageView* imageData = [(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex] objectForKey:@"image_data"];
-        NSString* imageSentence    = [(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex] objectForKey:@"image_sentence"];
+        NSString* imageSentence    = [currentSelectDataMoon objectForKey:@"image_sentence"];
         moonWordShow.text      = imageSentence;
         
-        moonTimeText.text =[(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex] objectForKey:@"image_name_time"];
+        moonTimeText.text =[currentSelectDataMoon objectForKey:@"image_name_time"];
         [self.view bringSubviewToFront:moonTimeText];
         
     }
@@ -685,6 +815,10 @@
         _shareSunCtlBtn.alpha = 0.1;
         lightSunSentence.alpha = 0.1;
         
+        _voiceReplaySunBtn.alpha = 0.1;
+        
+        
+        
     }else if (picker.mode == IS_MOON_TIME)
     {
         
@@ -694,7 +828,7 @@
         _shareMoonCtlBtn.alpha = 0.1;
         lightMoonSentence.alpha = 0.1;
 
-
+        _voiceReplayMoonBtn.alpha = 0.1;
 
     }
     
@@ -716,7 +850,7 @@
         _shareSunCtlBtn.alpha = 1;
         lightSunSentence.alpha = 1;
 
-
+        _voiceReplaySunBtn.alpha = 1;
         
     }else if (picker.mode == IS_MOON_TIME)
     {
@@ -727,7 +861,7 @@
         _shareMoonCtlBtn.alpha = 1;
         lightMoonSentence.alpha = 1;
 
-
+        _voiceReplayMoonBtn.alpha = 1;
         
     }
     

@@ -10,12 +10,14 @@
 #import "UserDB.h"
 #import "AFPickerView.h"
 #import "VoicePressedHold.h"
+#import "AminationCustom.h"
+
 
 
 @protocol CustomImagePickerControllerDelegate;
 
 @interface CustomImagePickerController : UIImagePickerController
-<UINavigationControllerDelegate,UIImagePickerControllerDelegate,AFPickerViewDataSource, AFPickerViewDelegate>
+<UINavigationControllerDelegate,UIImagePickerControllerDelegate,AFPickerViewDataSource, AFPickerViewDelegate,pitchDelegate,AminationCustomDelegate>
 {
     id<CustomImagePickerControllerDelegate> _customDelegate;
      AFPickerView *defaultPickerView;
@@ -35,6 +37,10 @@
 @property (nonatomic, strong)UIProgressView *progressView;
 @property (retain, nonatomic)  F3BarGauge *customRangeBar;
 
+@property (nonatomic, strong)NSString*  voiceName;
+
+
+- (void)setNewPith:(float)pitchValue;
 
 
 

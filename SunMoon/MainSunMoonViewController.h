@@ -32,7 +32,9 @@
 
 
 
-- (IBAction)doCamera:(id)sender;
+- (IBAction)intoCamera:(id)sender;
+- (IBAction)getBringedUpLight:(id)sender;
+
 
 @property (nonatomic, copy) UserDB * userDB;
 
@@ -47,5 +49,10 @@
 @property (weak, nonatomic) IBOutlet UIImageView *skySunorMoonImage;
 
 @property (weak, nonatomic) IBOutlet UIImageView *panSunorMoonImageView;
+
+//@property (weak, nonatomic) IBOutlet UIButton * intoCameraBtn;
+//@property (weak, nonatomic) IBOutlet UIButton * showBringLightBtn;
+
+
 
 @end

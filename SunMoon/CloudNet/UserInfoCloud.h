@@ -66,5 +66,8 @@
 
 - (void) getUserInfoFinishReturn:(UserInfo*) userInfo;
 
+- (void) getUserInfoFinishReturnDic:(NSDictionary*) userInfo;
+- (void) getUserInfoFinishFailed;
+
 
 @end

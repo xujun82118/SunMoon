@@ -21,8 +21,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <gestureRecognizers/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="480" id="Y2O-M5-ofS"/>
-                                    <constraint firstAttribute="width" constant="320" id="aK0-y6-dEg"/>
+                                    <constraint firstAttribute="width" constant="320" id="BrT-nB-AMV"/>
                                 </constraints>
                             </imageView>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sf4-a1-gkg">
@@ -74,18 +73,18 @@
                                 <rect key="frame" x="120" y="317" width="80" height="80"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="80" id="DO1-ye-Fu0"/>
-                                    <constraint firstAttribute="height" constant="80" id="rcb-BQ-DIG"/>
+                                    <constraint firstAttribute="height" constant="80" id="9Bm-uI-jws"/>
+                                    <constraint firstAttribute="width" constant="80" id="NZB-It-5jG"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XlY-Z9-7SP">
-                                <rect key="frame" x="12" y="21" width="46" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XlY-Z9-7SP" userLabel="Menu">
+                                <rect key="frame" x="12" y="30" width="20" height="15"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="8zb-aQ-K1c"/>
-                                    <constraint firstAttribute="width" constant="46" id="O0z-t1-3Iy"/>
+                                    <constraint firstAttribute="width" constant="20" id="9Yz-9W-8e6"/>
+                                    <constraint firstAttribute="height" constant="15" id="hUw-07-CU0"/>
                                 </constraints>
-                                <state key="normal" title="Menu">
+                                <state key="normal" image="menu.png">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -102,47 +101,81 @@
                                     <action selector="reCreatDataBase:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="6xK-hk-nZt"/>
                                 </connections>
                             </button>
+                            <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="W5S-w4-Jbf" userLabel="move View">
+                                <rect key="frame" x="134" y="333" width="52" height="47"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="52" id="JIR-TH-xh0"/>
+                                    <constraint firstAttribute="height" constant="47" id="QPo-8w-IDJ"/>
+                                </constraints>
+                            </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="sun.png" translatesAutoresizingMaskIntoConstraints="NO" id="EHF-7P-eHx">
                                 <rect key="frame" x="60" y="20" width="200" height="200"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="200" id="5JP-6K-Y5a"/>
-                                    <constraint firstAttribute="width" constant="200" id="kTS-ek-aDD"/>
+                                    <constraint firstAttribute="height" constant="200" id="Ejw-xL-Hxh"/>
+                                    <constraint firstAttribute="width" constant="200" id="wEa-iQ-QoZ"/>
                                 </constraints>
                             </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="W5S-w4-Jbf" userLabel="move View">
-                                <rect key="frame" x="209" y="85" width="52" height="47"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mz4-3r-ADq" userLabel="进入拍照">
+                                <rect key="frame" x="140" y="100" width="40" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="52" id="8c9-ga-mfn"/>
-                                    <constraint firstAttribute="height" constant="47" id="Xmj-kP-s56"/>
+                                    <constraint firstAttribute="height" constant="40" id="2Vv-vw-hyJ"/>
+                                    <constraint firstAttribute="width" constant="40" id="L9q-Nf-E5S"/>
                                 </constraints>
-                            </imageView>
+                                <state key="normal" image="拍照环-sun.png"/>
+                                <connections>
+                                    <action selector="intoCamera:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Cyv-dH-mo1"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4bo-O8-Orn" userLabel="光环">
+                                <rect key="frame" x="140" y="100" width="40" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="Uby-Vg-Vy1"/>
+                                    <constraint firstAttribute="width" constant="40" id="dVy-p7-oyU"/>
+                                </constraints>
+                                <state key="normal" image="环-sun.png">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="getBringedUpLight:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="iDL-Ae-JM0"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="jvY-ws-I2y" firstAttribute="centerX" secondItem="r8n-Wy-dYi" secondAttribute="centerX" id="02a-WX-JFS"/>
-                            <constraint firstItem="r8n-Wy-dYi" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="7JI-or-HVB"/>
+                            <constraint firstItem="XlY-Z9-7SP" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="30" id="2Of-bQ-WdP"/>
+                            <constraint firstAttribute="trailing" secondItem="EHF-7P-eHx" secondAttribute="trailing" constant="60" id="2Y2-I1-R7i"/>
+                            <constraint firstAttribute="bottom" secondItem="W5S-w4-Jbf" secondAttribute="bottom" constant="100" id="3R8-Gk-KUG"/>
+                            <constraint firstItem="4bo-O8-Orn" firstAttribute="centerY" secondItem="EHF-7P-eHx" secondAttribute="centerY" id="Dgh-ai-A8k"/>
                             <constraint firstAttribute="bottom" secondItem="HR3-qw-iAA" secondAttribute="bottom" constant="-8" id="FMg-RU-r0W"/>
-                            <constraint firstItem="r8n-Wy-dYi" firstAttribute="centerX" secondItem="EHF-7P-eHx" secondAttribute="centerX" id="I4t-1C-DOM"/>
-                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="r8n-Wy-dYi" secondAttribute="bottom" id="Kwr-QM-hjX"/>
-                            <constraint firstItem="XlY-Z9-7SP" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="12" id="QRh-U6-zoq"/>
-                            <constraint firstItem="EHF-7P-eHx" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="20" id="Tzg-WN-KTa"/>
-                            <constraint firstItem="W5S-w4-Jbf" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="21" id="a6H-YP-XmH"/>
-                            <constraint firstItem="HR3-qw-iAA" firstAttribute="top" secondItem="jvY-ws-I2y" secondAttribute="bottom" constant="28" id="aaM-cs-Nvp"/>
-                            <constraint firstAttribute="trailing" secondItem="W5S-w4-Jbf" secondAttribute="trailing" constant="59" id="ahK-ED-pBL"/>
-                            <constraint firstItem="XlY-Z9-7SP" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="21" id="b6o-Qc-PRs"/>
-                            <constraint firstAttribute="trailing" secondItem="r8n-Wy-dYi" secondAttribute="trailing" id="d5U-oz-POo"/>
-                            <constraint firstItem="r8n-Wy-dYi" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="eaY-JN-5oq"/>
-                            <constraint firstItem="W5S-w4-Jbf" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="209" id="j2P-Gv-2aE"/>
+                            <constraint firstAttribute="trailing" secondItem="W5S-w4-Jbf" secondAttribute="trailing" constant="134" id="KBE-7p-Fsv"/>
+                            <constraint firstAttribute="trailing" secondItem="jvY-ws-I2y" secondAttribute="trailing" constant="120" id="LiF-uD-4Ib"/>
+                            <constraint firstItem="r8n-Wy-dYi" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="M8I-p1-p0e"/>
+                            <constraint firstItem="EHF-7P-eHx" firstAttribute="centerY" secondItem="mz4-3r-ADq" secondAttribute="centerY" id="QUn-iC-Ngk"/>
+                            <constraint firstItem="EHF-7P-eHx" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="20" id="TeS-OD-uOl"/>
+                            <constraint firstAttribute="trailing" secondItem="r8n-Wy-dYi" secondAttribute="trailing" id="X1J-u5-JEN"/>
+                            <constraint firstItem="4bo-O8-Orn" firstAttribute="centerX" secondItem="EHF-7P-eHx" secondAttribute="centerX" id="XEr-ey-1Nr"/>
+                            <constraint firstItem="jvY-ws-I2y" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="120" id="YVB-JO-6cJ"/>
+                            <constraint firstItem="HR3-qw-iAA" firstAttribute="top" secondItem="jvY-ws-I2y" secondAttribute="bottom" constant="28" id="ZG0-rl-Iu0"/>
+                            <constraint firstItem="EHF-7P-eHx" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="60" id="dp0-WW-F2z"/>
+                            <constraint firstItem="EHF-7P-eHx" firstAttribute="centerX" secondItem="mz4-3r-ADq" secondAttribute="centerX" id="eLE-9h-vcC"/>
+                            <constraint firstItem="r8n-Wy-dYi" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="lPO-Bt-Ern"/>
+                            <constraint firstItem="W5S-w4-Jbf" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="134" id="niO-tS-QKb"/>
+                            <constraint firstItem="XlY-Z9-7SP" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="12" id="pbq-rE-LBP"/>
                             <constraint firstItem="HR3-qw-iAA" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="qRY-Bm-sGx"/>
                             <constraint firstAttribute="trailing" secondItem="HR3-qw-iAA" secondAttribute="trailing" id="xu9-hS-jka"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="r8n-Wy-dYi" secondAttribute="bottom" id="zCV-5o-lGU"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="xrS-ua-bR6"/>
                     <connections>
+                        <outlet property="intoCameraBtn" destination="mz4-3r-ADq" id="DpA-xa-5MM"/>
                         <outlet property="mainBgImage" destination="r8n-Wy-dYi" id="fpL-CS-hPC"/>
                         <outlet property="panSunorMoonImageView" destination="W5S-w4-Jbf" id="B4i-wJ-0gb"/>
+                        <outlet property="showBringLightBtn" destination="4bo-O8-Orn" id="YgO-Uf-aip"/>
                         <outlet property="skySunorMoonImage" destination="EHF-7P-eHx" id="KPt-rT-Bix"/>
                         <outlet property="userHeaderImageView" destination="jvY-ws-I2y" id="OWx-XY-XbR"/>
                         <segue destination="DjQ-12-Ofk" kind="push" identifier="getintoHome" id="Rq4-uz-dzv"/>
@@ -286,11 +319,11 @@
                                 </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="小屋上部云图.png" translatesAutoresizingMaskIntoConstraints="NO" id="5tL-PK-bxb" userLabel="上部底图">
-                                <rect key="frame" x="0.0" y="20" width="320" height="35"/>
+                                <rect key="frame" x="0.0" y="20" width="320" height="45"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="320" id="kRa-aJ-OZo"/>
-                                    <constraint firstAttribute="height" constant="35" id="llR-oc-Bbl"/>
+                                    <constraint firstAttribute="height" constant="45" id="ktZ-Gg-hg6"/>
                                 </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="HomeInside上部底图.png" translatesAutoresizingMaskIntoConstraints="NO" id="vcU-B2-Ioc" userLabel="上部功能底图">
@@ -303,11 +336,11 @@
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="skO-Wv-3d8" userLabel="太阳">
-                                <rect key="frame" x="107" y="33" width="106" height="106"/>
+                                <rect key="frame" x="120" y="46" width="80" height="80"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="106" id="B5E-YW-MbZ"/>
-                                    <constraint firstAttribute="height" constant="106" id="Vpq-5g-5kL"/>
+                                    <constraint firstAttribute="width" constant="80" id="Bjd-tg-g0e"/>
+                                    <constraint firstAttribute="height" constant="80" id="Q9W-lX-nm0"/>
                                 </constraints>
                                 <state key="normal" image="sun.png">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -479,6 +512,20 @@
                                     <action selector="moonAlertCtl:" destination="DjQ-12-Ofk" eventType="touchUpInside" id="sXs-lb-4us"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="olL-bu-tci" userLabel="早上放音">
+                                <rect key="frame" x="239" y="194" width="23" height="23"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="23" id="8UR-Ui-xux"/>
+                                    <constraint firstAttribute="height" constant="23" id="Aec-Lz-n61"/>
+                                </constraints>
+                                <state key="normal" image="放音-细黄.png">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="replaySunVoice:" destination="DjQ-12-Ofk" eventType="touchUpInside" id="FuG-od-fsy"/>
+                                </connections>
+                            </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="发光字背景.png" translatesAutoresizingMaskIntoConstraints="NO" id="mW1-Zy-Uyf" userLabel=" 早上发光字背景.">
                                 <rect key="frame" x="63" y="177" width="193" height="58"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -509,6 +556,20 @@
                                 </state>
                                 <connections>
                                     <action selector="DeleteSunImage:" destination="DjQ-12-Ofk" eventType="touchUpInside" id="p5H-QH-LLL"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ODV-a9-RvQ" userLabel="晚上放音">
+                                <rect key="frame" x="239" y="374" width="23" height="23"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="23" id="ADZ-ha-1Ne"/>
+                                    <constraint firstAttribute="width" constant="23" id="fBO-sr-ySZ"/>
+                                </constraints>
+                                <state key="normal" image="放音-细黄.png">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="replayMoonVoice:" destination="DjQ-12-Ofk" eventType="touchUpInside" id="FRO-M6-6LX"/>
                                 </connections>
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="发光字背景.png" translatesAutoresizingMaskIntoConstraints="NO" id="3eb-kd-4Df" userLabel="晚上发光字背景.">
@@ -601,6 +662,9 @@
                                 <state key="normal" image="小云.png" backgroundImage="小云-touch.png">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <connections>
+                                    <action selector="synClouderUserInfo:" destination="DjQ-12-Ofk" eventType="touchUpInside" id="Zd0-Pf-jG8"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -637,12 +701,16 @@
                             <constraint firstAttribute="trailing" secondItem="bnX-ni-iKW" secondAttribute="trailing" id="N6S-I3-W7k"/>
                             <constraint firstAttribute="trailing" secondItem="XBl-cO-OcA" secondAttribute="trailing" id="NXf-fq-t7z"/>
                             <constraint firstItem="5tL-PK-bxb" firstAttribute="leading" secondItem="dNl-f3-LZZ" secondAttribute="leading" id="OW9-50-DmJ"/>
+                            <constraint firstItem="gLY-2C-u1i" firstAttribute="leading" secondItem="skO-Wv-3d8" secondAttribute="trailing" constant="21" id="OaD-9G-qI2"/>
                             <constraint firstItem="3eb-kd-4Df" firstAttribute="centerY" secondItem="hw2-e4-jqa" secondAttribute="centerY" id="PZu-BA-AlM"/>
                             <constraint firstItem="S7h-9V-l8C" firstAttribute="leading" secondItem="dNl-f3-LZZ" secondAttribute="leading" constant="143" id="QHn-KS-yct"/>
                             <constraint firstItem="7vk-S6-tVh" firstAttribute="centerX" secondItem="jp9-Ym-1NW" secondAttribute="centerX" id="R5H-CW-Evx"/>
+                            <constraint firstAttribute="trailing" secondItem="ODV-a9-RvQ" secondAttribute="trailing" constant="58" id="Rz4-EF-zUZ"/>
                             <constraint firstItem="XBl-cO-OcA" firstAttribute="top" secondItem="dNl-f3-LZZ" secondAttribute="top" constant="20" id="SVc-84-mcb"/>
                             <constraint firstItem="mW1-Zy-Uyf" firstAttribute="top" secondItem="vcU-B2-Ioc" secondAttribute="bottom" constant="72" id="SYy-cG-elt"/>
                             <constraint firstAttribute="trailing" secondItem="Mpb-zD-kkq" secondAttribute="trailing" id="Ss2-df-j6V"/>
+                            <constraint firstItem="olL-bu-tci" firstAttribute="centerY" secondItem="mW1-Zy-Uyf" secondAttribute="centerY" id="TcX-Yn-whL"/>
+                            <constraint firstAttribute="trailing" secondItem="olL-bu-tci" secondAttribute="trailing" constant="58" id="U7S-vp-UoX"/>
                             <constraint firstAttribute="trailing" secondItem="Ct9-Mc-KiC" secondAttribute="trailing" id="VCW-Q4-Qr3"/>
                             <constraint firstItem="7vk-S6-tVh" firstAttribute="top" secondItem="bnX-ni-iKW" secondAttribute="bottom" constant="10" id="VN6-ja-Ldg"/>
                             <constraint firstAttribute="trailing" secondItem="7vk-S6-tVh" secondAttribute="trailing" constant="40" id="X2P-C1-vfQ"/>
@@ -652,7 +720,6 @@
                             <constraint firstItem="Tfs-CS-44e" firstAttribute="leading" secondItem="dNl-f3-LZZ" secondAttribute="leading" constant="20" id="ZNn-IN-3kU"/>
                             <constraint firstItem="3eb-kd-4Df" firstAttribute="top" secondItem="y2R-js-H8z" secondAttribute="bottom" constant="2" id="ce5-mf-1Wd"/>
                             <constraint firstItem="tDA-Mo-A50" firstAttribute="centerY" secondItem="vcU-B2-Ioc" secondAttribute="centerY" id="ciV-Eg-7Yt"/>
-                            <constraint firstItem="gLY-2C-u1i" firstAttribute="leading" secondItem="skO-Wv-3d8" secondAttribute="trailing" constant="8" id="dGf-uH-gee"/>
                             <constraint firstAttribute="trailing" secondItem="n17-Tv-BEm" secondAttribute="trailing" constant="135" id="dtN-Xg-Ztc"/>
                             <constraint firstAttribute="trailing" secondItem="GBW-69-AHh" secondAttribute="trailing" id="eA2-th-r8V"/>
                             <constraint firstAttribute="trailing" secondItem="CVa-jd-spr" secondAttribute="trailing" constant="21" id="efP-Us-XNi"/>
@@ -662,6 +729,7 @@
                             <constraint firstItem="GBW-69-AHh" firstAttribute="leading" secondItem="dNl-f3-LZZ" secondAttribute="leading" id="gx4-YX-1LY"/>
                             <constraint firstItem="Zmn-35-rC6" firstAttribute="centerY" secondItem="7vk-S6-tVh" secondAttribute="centerY" id="gxs-G3-k1G"/>
                             <constraint firstItem="XBl-cO-OcA" firstAttribute="centerX" secondItem="mW1-Zy-Uyf" secondAttribute="centerX" id="hIc-Oh-5ep"/>
+                            <constraint firstItem="3eb-kd-4Df" firstAttribute="centerY" secondItem="ODV-a9-RvQ" secondAttribute="centerY" id="ho2-pZ-2dN"/>
                             <constraint firstItem="tDA-Mo-A50" firstAttribute="leading" secondItem="dNl-f3-LZZ" secondAttribute="leading" constant="70" id="jEN-XD-IsK"/>
                             <constraint firstItem="bnX-ni-iKW" firstAttribute="top" secondItem="dNl-f3-LZZ" secondAttribute="top" constant="223" id="jSh-zf-YC9"/>
                             <constraint firstAttribute="trailing" secondItem="nag-Tw-lYU" secondAttribute="trailing" constant="35" id="jgu-rn-LEv"/>
@@ -700,6 +768,8 @@
                         <outlet property="sunTimeText" destination="n17-Tv-BEm" id="XRq-Bp-Rvp"/>
                         <outlet property="sunValueStatic" destination="EJ6-zb-3zi" id="oyY-aI-oIh"/>
                         <outlet property="sunWordShow" destination="nag-Tw-lYU" id="QQ6-Rm-niH"/>
+                        <outlet property="voiceReplayMoonBtn" destination="ODV-a9-RvQ" id="9Vs-Ub-Lk5"/>
+                        <outlet property="voiceReplaySunBtn" destination="olL-bu-tci" id="t2M-Z6-YEE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uTn-OK-7KW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -718,9 +788,29 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <datePicker contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="I9o-62-Whm">
-                                <rect key="frame" x="0.0" y="86" width="320" height="162"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="小屋内底图.png" translatesAutoresizingMaskIntoConstraints="NO" id="w1s-ZW-ZTe" userLabel="背景图">
+                                <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="320" id="LSM-9m-ik3"/>
+                                    <constraint firstAttribute="height" constant="460" id="vWE-An-vOE"/>
+                                </constraints>
+                            </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="小屋上部云图.png" translatesAutoresizingMaskIntoConstraints="NO" id="KzV-kL-DiB" userLabel="上部底图">
+                                <rect key="frame" x="0.0" y="20" width="320" height="45"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="320" id="7MT-6q-BKP"/>
+                                    <constraint firstAttribute="height" constant="45" id="DmC-6r-SH8"/>
+                                </constraints>
+                            </imageView>
+                            <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="I9o-62-Whm">
+                                <rect key="frame" x="0.0" y="169" width="320" height="162"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="320" id="3bY-sb-vwT"/>
+                                    <constraint firstAttribute="height" constant="162" id="VGQ-oW-Ws4"/>
+                                </constraints>
                                 <date key="date" timeIntervalSinceReferenceDate="421849170.04160798">
                                     <!--2014-05-15 12:19:30 +0000-->
                                 </date>
@@ -746,23 +836,33 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
 </data>
                                 </timeZone>
                             </datePicker>
+                            <imageView userInteractionEnabled="NO" alpha="0.39999999999999963" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="时间轴背景.png" translatesAutoresizingMaskIntoConstraints="NO" id="p7Y-cQ-9tT" userLabel="selectView">
+                                <rect key="frame" x="0.0" y="225" width="320" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="320" id="1Xk-OP-oTq"/>
+                                    <constraint firstAttribute="height" constant="50" id="tPO-5z-Ud7"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="p7Y-cQ-9tT" secondAttribute="trailing" id="0UN-LO-dxT"/>
+                            <constraint firstAttribute="bottom" secondItem="w1s-ZW-ZTe" secondAttribute="bottom" id="1i1-OU-H6t"/>
+                            <constraint firstItem="w1s-ZW-ZTe" firstAttribute="centerY" secondItem="I9o-62-Whm" secondAttribute="centerY" id="AYG-H7-CUs"/>
+                            <constraint firstItem="KzV-kL-DiB" firstAttribute="leading" secondItem="5PA-Ws-CGd" secondAttribute="leading" id="Kgy-gE-3pz"/>
+                            <constraint firstAttribute="trailing" secondItem="I9o-62-Whm" secondAttribute="trailing" id="XLZ-9k-WhH"/>
+                            <constraint firstItem="p7Y-cQ-9tT" firstAttribute="leading" secondItem="5PA-Ws-CGd" secondAttribute="leading" id="ZDJ-hQ-wC7"/>
+                            <constraint firstItem="I9o-62-Whm" firstAttribute="leading" secondItem="5PA-Ws-CGd" secondAttribute="leading" id="b2d-no-p5i"/>
+                            <constraint firstItem="p7Y-cQ-9tT" firstAttribute="centerY" secondItem="I9o-62-Whm" secondAttribute="centerY" id="dBG-rM-ApP"/>
+                            <constraint firstItem="w1s-ZW-ZTe" firstAttribute="leading" secondItem="5PA-Ws-CGd" secondAttribute="leading" id="ewd-LA-vKr"/>
+                            <constraint firstAttribute="trailing" secondItem="KzV-kL-DiB" secondAttribute="trailing" id="hjh-oy-DlI"/>
+                            <constraint firstItem="KzV-kL-DiB" firstAttribute="top" secondItem="5PA-Ws-CGd" secondAttribute="top" constant="20" id="i69-zl-2yQ"/>
+                            <constraint firstAttribute="trailing" secondItem="w1s-ZW-ZTe" secondAttribute="trailing" id="q29-uJ-h5P"/>
+                            <constraint firstItem="w1s-ZW-ZTe" firstAttribute="top" secondItem="5PA-Ws-CGd" secondAttribute="top" constant="20" id="vP9-Wk-mnd"/>
+                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="Hnr-uU-Vh4">
-                        <barButtonItem key="leftBarButtonItem" style="plain" id="gmR-Wm-CYs">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="6My-k1-yWP">
-                                <rect key="frame" x="16" y="11" width="27" height="22"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" image="返回.png">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="doSelect:" destination="nBp-M2-r4b" eventType="touchUpInside" id="PJY-lB-UWs"/>
-                                </connections>
-                            </button>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="Hnr-uU-Vh4"/>
                     <connections>
                         <outlet property="datePicker" destination="I9o-62-Whm" id="ewt-zk-afv"/>
                     </connections>
@@ -792,10 +892,10 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                 </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="小屋上部云图.png" translatesAutoresizingMaskIntoConstraints="NO" id="niN-Tx-ADn" userLabel="上部底图">
-                                <rect key="frame" x="0.0" y="20" width="320" height="35"/>
+                                <rect key="frame" x="0.0" y="20" width="320" height="45"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="35" id="3Dy-jC-YRr"/>
+                                    <constraint firstAttribute="height" constant="45" id="Fea-D6-9yg"/>
                                     <constraint firstAttribute="width" constant="320" id="Hyv-Xz-adk"/>
                                 </constraints>
                             </imageView>
@@ -905,11 +1005,11 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                 </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="小屋上部云图.png" translatesAutoresizingMaskIntoConstraints="NO" id="L2v-Bq-bd5" userLabel="上部底图">
-                                <rect key="frame" x="0.0" y="20" width="320" height="35"/>
+                                <rect key="frame" x="0.0" y="20" width="320" height="45"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="5pY-UB-Pha"/>
                                     <constraint firstAttribute="width" constant="320" id="nWk-8L-2Ub"/>
-                                    <constraint firstAttribute="height" constant="35" id="s5Y-PB-yqN"/>
                                 </constraints>
                             </imageView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="YMv-uf-Eqf">
@@ -1077,12 +1177,12 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="tXm-Xe-Uh0">
+                        <nil key="title"/>
                         <barButtonItem key="leftBarButtonItem" style="plain" id="kIo-NK-zeB">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="zLN-dY-GDw">
-                                <rect key="frame" x="16" y="5" width="71" height="33"/>
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="zLN-dY-GDw">
+                                <rect key="frame" x="16" y="11" width="32" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                <state key="normal" title="Menu">
+                                <state key="normal" image="menu.png">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -1100,8 +1200,9 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
     <resources>
         <image name="HomeInside_0004_分割线.png" width="640" height="6"/>
         <image name="HomeInside上部底图.png" width="525" height="77"/>
-        <image name="moon.png" width="640" height="683"/>
-        <image name="sun.png" width="237" height="237"/>
+        <image name="menu.png" width="32" height="22"/>
+        <image name="moon.png" width="683" height="683"/>
+        <image name="sun.png" width="682" height="682"/>
         <image name="下部圆弧001.png" width="1024" height="254"/>
         <image name="丢弃.png" width="41" height="46"/>
         <image name="主页底图002.png" width="524" height="786"/>
@@ -1115,9 +1216,11 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="小屋内底图.png" width="700" height="1050"/>
         <image name="小长方底图.png" width="91" height="31"/>
         <image name="小闹钟-关闭.png" width="50" height="50"/>
+        <image name="拍照环-sun.png" width="75" height="75"/>
+        <image name="放音-细黄.png" width="32" height="32"/>
         <image name="时间轴背景.png" width="640" height="164"/>
+        <image name="环-sun.png" width="75" height="75"/>
         <image name="语录三点.png" width="69" height="18"/>
-        <image name="返回.png" width="60" height="109"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

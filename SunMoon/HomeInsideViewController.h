@@ -9,12 +9,17 @@
 #import <UIKit/UIKit.h>
 #import "InfiniteScrollPicker.h"
 #import "UserDB.h"
+#import "VoicePressedHold.h"
+#import "UserInfoCloud.h"
 
 
-@interface HomeInsideViewController : UIViewController<InfiniteScrollPickerDelegate>
+
+@interface HomeInsideViewController : UIViewController<InfiniteScrollPickerDelegate,UserInfoCloudDelegate>
 {
       InfiniteScrollPicker *imageScrollSun;
       InfiniteScrollPicker *imageScrollMoon;
+      VoicePressedHold* pressedVoiceForPlay;
+
 
 }
 @property (weak, nonatomic) IBOutlet UITextField *sunTimeText;
@@ -28,29 +33,40 @@
 @property (weak, nonatomic) IBOutlet UIButton *shareMoonCtlBtn;
 @property (weak, nonatomic) IBOutlet UIImageView *lightSunSentence;
 @property (weak, nonatomic) IBOutlet UIImageView *lightMoonSentence;
+@property (weak, nonatomic) IBOutlet UIButton *voiceReplaySunBtn;
+@property (weak, nonatomic) IBOutlet UIButton *voiceReplayMoonBtn;
 
 
+@property (weak, nonatomic) IBOutlet UILabel *sunWordShow;
+@property (weak, nonatomic) IBOutlet UILabel *moonWordShow;
+@property (weak, nonatomic) IBOutlet UIButton *moonTimeBtn;
+@property (weak, nonatomic) IBOutlet UIButton *sunTimeBtn;
+
+@property(nonatomic, copy) NSDictionary* currentSelectDataSun;
+@property(nonatomic, copy) NSDictionary* currentSelectDataMoon;
+
+
+@property(nonatomic,copy) NSArray* userData;
+@property (nonatomic, strong) UserInfo * user;
+@property (nonatomic, copy) UserDB * userDB;
+@property (nonatomic, strong) UserInfoCloud* userCloud;
 
 
 - (IBAction)moonAlertCtl:(id)sender;
 - (IBAction)sunAlertCtl:(id)sender;
-@property (weak, nonatomic) IBOutlet UIButton *moonTimeBtn;
-@property (weak, nonatomic) IBOutlet UIButton *sunTimeBtn;
+
 - (IBAction)shareNight:(id)sender;
 - (IBAction)shareMorning:(id)sender;
 
 - (IBAction)DeleteMoonImage:(id)sender;
 - (IBAction)DeleteSunImage:(id)sender;
 
-@property (weak, nonatomic) IBOutlet UILabel *sunWordShow;
-@property (weak, nonatomic) IBOutlet UILabel *moonWordShow;
+- (IBAction)replaySunVoice:(id)sender;
+- (IBAction)replayMoonVoice:(id)sender;
 
+- (IBAction)infoTextChanged:(id)sender;
 
-@property(nonatomic,copy) NSArray* userData;
-@property (nonatomic, strong) UserInfo * user;
-@property (nonatomic, copy) UserDB * userDB;
-@property(nonatomic, copy) NSDictionary* currentSelectDataSun;
-@property(nonatomic, copy) NSDictionary* currentSelectDataMoon;
+-(IBAction)synClouderUserInfo:(id)sender;
 
 
 -(void) back;

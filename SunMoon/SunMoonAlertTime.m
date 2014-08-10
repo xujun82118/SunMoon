@@ -30,8 +30,17 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    self.navigationController.navigationBarHidden = NO;
+    self.navigationController.navigationBarHidden = YES;
     self.navigationController.navigationBar.opaque = YES;
+    
+    //加返回按钮
+    NSInteger backBtnWidth = 18;
+    NSInteger backBtnHeight = 22;
+    UIButton *backBtn =[UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setImage:[UIImage imageNamed:@"返回-黄.png"] forState:UIControlStateNormal];
+    [backBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y-backBtnHeight/2+10, backBtnWidth, backBtnHeight)];
+    [backBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backBtn];
     
     alertNotification=[[UILocalNotification alloc] init];
     
@@ -90,7 +99,7 @@
         {
             UILocalNotification *myUILocalNotification=[myArray objectAtIndex:i];
             
-            if ([[[myUILocalNotification userInfo] objectForKey:@"SunOrMoonTime"] isEqualToString:@"IsSunTime"])
+            if ([[[myUILocalNotification userInfo] objectForKey:ALERT_SUN_MOON_TIME] isEqualToString:ALERT_IS_SUN_TIME])
             {
                 [[UIApplication sharedApplication] cancelLocalNotification:myUILocalNotification];
             }
@@ -106,7 +115,7 @@
             alertNotification.timeZone=[NSTimeZone defaultTimeZone];
             alertNotification.soundName = @"cute.mp3";
             
-            NSDictionary* info = [NSDictionary dictionaryWithObject:@"IsSunTime" forKey:@"SunOrMoonTime"];
+            NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_SUN_TIME forKey:ALERT_SUN_MOON_TIME];
             alertNotification.userInfo = info;
             
             alertNotification.alertBody = NSLocalizedString(@"Sun time is on", @"");
@@ -126,7 +135,7 @@
         {
             UILocalNotification *myUILocalNotification=[myArray objectAtIndex:i];
             
-            if ([[[myUILocalNotification userInfo] objectForKey:@"SunOrMoonTime"] isEqualToString:@"IsMoonTime"])
+            if ([[[myUILocalNotification userInfo] objectForKey:ALERT_SUN_MOON_TIME] isEqualToString:ALERT_IS_MOON_TIME])
             {
                 [[UIApplication sharedApplication] cancelLocalNotification:myUILocalNotification];
             }
@@ -142,7 +151,7 @@
             alertNotification.timeZone=[NSTimeZone defaultTimeZone];
             alertNotification.soundName = @"cute.mp3";
             
-            NSDictionary* info = [NSDictionary dictionaryWithObject:@"IsMoonTime" forKey:@"SunOrMoonTime"];
+            NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_MOON_TIME forKey:ALERT_SUN_MOON_TIME];
             alertNotification.userInfo = info;
             
             alertNotification.alertBody = NSLocalizedString(@"Moon time is on", @"");
@@ -170,6 +179,12 @@
     
 }
 
+
+-(void) back
+{
+    [self.navigationController popViewControllerAnimated:YES];
+    
+}
 
 /*
 #pragma mark - Navigation

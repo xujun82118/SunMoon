@@ -11,7 +11,7 @@
 
 @implementation UserInfo
 
-@synthesize sns_id,current_sun_sentence,current_moon_sentence,sunDataSourceArray,moonDataSourceArray,sunSentenceSelect,moonSentenceSelect, continueLogInSunCount,continueLogInMoonCount;
+@synthesize name,sns_id,current_sun_sentence,current_moon_sentence,sunDataSourceArray,moonDataSourceArray,sunSentenceSelect,moonSentenceSelect, continueLogInSunCount,continueLogInMoonCount;
 @synthesize isRegisterUser =  _isRegisterUser;
 @synthesize sunAlertTimeCtl = _sunAlertTimeCtl;
 @synthesize moonAlertTimeCtl = _moonAlertTimeCtl;
@@ -22,6 +22,7 @@
 @synthesize delayTakePhotoCtl = _delayTakePhotoCtl;
 @synthesize isBringUpSun = _isBringUpSun, isBringUpMoon = _isBringUpMoon;
 @synthesize isHaveAddSun = _isHaveAddSun, isHaveaddMoon = _isHaveaddMoon;
+@synthesize startBringupSunTime = _startBringupSunTime, startBringupMoonTime = _startBringupMoonTime;
 
 static UserInfo *sharedUserInfo;
 
@@ -53,7 +54,7 @@ static UserInfo *sharedUserInfo;
     
     self.name = INIT_DEFAULT_USER_NAME;
     self.reg_time = time;
-    self.sns_id = @"000000";
+    self.sns_id = INIT_DEFAULT_SNS_ID;
     self.userHeaderImage = [UIImage imageNamed:@"默认头像.png"];
     self.isRegisterUser = NO;
     self.userType = USER_TYPE_NEW;
@@ -149,6 +150,11 @@ static UserInfo *sharedUserInfo;
     _isBringUpMoon =  NO;
     [userBaseData setBool:_isBringUpMoon forKey:KEY_IS_BRING_UP_MOON];
     
+    _startBringupSunTime = 0;
+    [userBaseData setObject:_startBringupSunTime forKey:KEY_START_BRING_UP_SUN_TIME];
+    _startBringupMoonTime = 0;
+    [userBaseData setObject:_startBringupMoonTime forKey:KEY_START_BRING_UP_MOON_TIME];
+    
     [userBaseData synchronize];
     
     
@@ -166,6 +172,11 @@ static UserInfo *sharedUserInfo;
     self.reg_time = [userBaseData objectForKey:KEY_REG_TIME];
     self.sns_id = [userBaseData objectForKey:KEY_SNS_ID];
     self.userHeaderImage = [UIImage imageWithData:[userBaseData objectForKey:KEY_USER_HEADER_IMAGE]];
+    
+    if (self.userHeaderImage == Nil) {
+        self.userHeaderImage = [UIImage imageNamed:@"默认头像.png"];
+    }
+    
     self.isRegisterUser = [userBaseData boolForKey:KEY_IS_REGISTER_USER];
 
     //更新用户类型
@@ -307,10 +318,12 @@ static UserInfo *sharedUserInfo;
     _isBringUpMoon = [userBaseData boolForKey:KEY_IS_BRING_UP_MOON];
     
     //当天的照片是否已加过阳光
-    _isBringUpSun = [userBaseData boolForKey:KEY_IS_HAVE_ADD_SUN];
-    _isBringUpMoon = [userBaseData boolForKey:KEY_IS_HAVE_ADD_MOON];
+    _isHaveAddSun = [userBaseData boolForKey:KEY_IS_HAVE_ADD_SUN];
+    _isHaveaddMoon = [userBaseData boolForKey:KEY_IS_HAVE_ADD_MOON];
 
-    
+    //上次光育成的时间
+    _startBringupSunTime = [userBaseData objectForKey:KEY_START_BRING_UP_SUN_TIME];
+    _startBringupMoonTime = [userBaseData objectForKey:KEY_START_BRING_UP_MOON_TIME];
     
 }
 
@@ -356,7 +369,8 @@ static UserInfo *sharedUserInfo;
     if ([userDB getUserDataByDateTime:user.date_time]) {
         NSLog(@"Datetime=%@， 重复，先删后插入一条!", user.date_time);
         //有错误，导致存入后数据乱，原因不明，暂时用先删后存的方法
-        [userDB deleteUserWithDataTime:user.date_time];
+        //test
+        //[userDB deleteUserWithDataTime:user.date_time];
         [userDB saveUser:user];
     }else
     {
@@ -398,11 +412,46 @@ static UserInfo *sharedUserInfo;
 -(void)updateSns_ID:(NSString*) share_sns_id PlateType:(ShareType) plateType
 {
     NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
-    NSString* tempString = [[NSString stringWithFormat:@"%d_",plateType] stringByAppendingString:share_sns_id];
-    [userBaseData setObject:tempString forKey:KEY_SNS_ID];
+    
+    if ([share_sns_id isEqualToString:INIT_DEFAULT_SNS_ID]) {
+        
+        [userBaseData setObject:INIT_DEFAULT_SNS_ID forKey:KEY_SNS_ID];
+        
+        [userBaseData setBool:NO forKey:KEY_IS_REGISTER_USER];
+        
+        sns_id = INIT_DEFAULT_SNS_ID;
+        _isRegisterUser = NO;
+        
+    }else
+    {
+        NSString* tempString = [[NSString stringWithFormat:@"%d_",plateType] stringByAppendingString:share_sns_id];
+        [userBaseData setObject:tempString forKey:KEY_SNS_ID];
+        
+        [userBaseData setBool:YES forKey:KEY_IS_REGISTER_USER];
+        
+        sns_id = tempString;
+        _isRegisterUser = YES;
+        
+    }
+
+    
     [userBaseData synchronize];
     
-    sns_id = tempString;
+
+    
+    
+    
+    
+}
+
+-(void)updateuserName:(NSString*) nameString
+{
+    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
+
+    [userBaseData setObject:nameString forKey:KEY_USER_NAME];
+    [userBaseData synchronize];
+    
+    name = nameString;
     
 }
 
@@ -506,6 +555,26 @@ static UserInfo *sharedUserInfo;
     _moonAlertTimeCtl = alertBool;
     
 }
+
+
+-(void)updateSunorMoonBringupTime:(NSDate*) bringupTime
+{
+    
+    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
+    if ([CommonObject checkSunOrMoonTime]== IS_SUN_TIME) {
+        [userBaseData setObject:bringupTime forKey:KEY_START_BRING_UP_SUN_TIME];
+        _startBringupSunTime = bringupTime;
+    }else
+    {
+        [userBaseData setObject:bringupTime forKey:KEY_START_BRING_UP_MOON_TIME];
+        _startBringupMoonTime = bringupTime;
+        
+    }
+    
+    [userBaseData synchronize];
+    
+}
+
 
 -(void)updateUserHeaderImage:(UIImage*) image
 {
@@ -710,6 +779,10 @@ static UserInfo *sharedUserInfo;
         lastDate = [userBaseData objectForKey:KEY_LOGIN_LAST_MOON_DATE];
     }
     
+    if (lastDate == nil) {
+        NSLog(@"最后一次登录时间，不存在，是新用户");
+        return NO;
+    }
     
     //只取年月日
     NSDate* fireDate = [CommonObject returnChooseTimeUnit:[NSDate date] Year:YES Month:YES Day:YES Hour:NO Minute:NO Second:NO];

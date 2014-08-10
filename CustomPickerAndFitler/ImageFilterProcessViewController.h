@@ -9,9 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "CustomImagePickerController.h"
 #import "CommonObject.h"
+#import "AminationCustom.h"
 
 @protocol ImageFitlerProcessDelegate;
-@interface ImageFilterProcessViewController : UIViewController<CustomImagePickerControllerDelegate>
+@interface ImageFilterProcessViewController : UIViewController<CustomImagePickerControllerDelegate,AminationCustomDelegate>
 {
     UIImageView *rootImageView;
     UIScrollView *scrollerView;

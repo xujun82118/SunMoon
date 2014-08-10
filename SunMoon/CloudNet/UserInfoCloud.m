@@ -41,10 +41,23 @@
     //NSDictionary *params1 = @{@"cmd":@"0", @"id":@"001"};
 
     [manager GET:@"http://115.28.36.43/app_userinfo.php" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"JSON: %@", responseObject);
+        NSLog(@"Succ JSON: %@", responseObject);
+  
+        NSDictionary *responseDic =(NSDictionary *)responseObject;
+
+        NSLog(@"Syn Succ return msg:%@", [responseDic objectForKey:@"msg"]);
+
+        NSDictionary *dataInfo = [responseDic objectForKey:@"data"];
+        
+        [_userInfoCloudDelegate getUserInfoFinishReturnDic:dataInfo];
+
+        
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
+
+        
+        [_userInfoCloudDelegate getUserInfoFinishFailed];
 
     }];
 

@@ -56,6 +56,7 @@ static BOOL isOpenGuid = NO; //全部提醒功能的总开关
 
 //默认用户名
 #define INIT_DEFAULT_USER_NAME @"MyDefaultNameWithoutRegister"
+#define INIT_DEFAULT_SNS_ID    @"MyDefaultSnsID"
 
 //用户类型
 #define USER_TYPE_STEADY_TIME  10 //用户稳定期次数
@@ -95,8 +96,16 @@ typedef enum
 //阳光，月光时间
 #define SUN_TIME_MIN  6
 #define SUN_TIME_MAX  18
-#define MOON_TIME_MIN  19
-#define MOON_TIME_MAX  5  //次日
+#define MOON_TIME_MIN  18
+#define MOON_TIME_MAX  6  //次日
+
+//test
+//#define MOON_TIME_MIN  6
+//#define MOON_TIME_MAX  18
+//#define SUN_TIME_MIN  18
+//#define SUN_TIME_MAX  6
+
+
 
 //阳光，月光标识
 #define IS_SUN_TIME 1
@@ -131,6 +140,13 @@ typedef enum
 #define KEY_IS_HAVE_ADD_SUN @"isHaveAddSun"
 #define KEY_IS_HAVE_ADD_MOON @"isHaveAddMoon"
 
+//奖励光的音量
+#define GIVE_ONE_LIGHT_VOICE_VALUE  300
+
+//开始养育光的时间
+#define KEY_START_BRING_UP_SUN_TIME @"startBringupSunTime"
+#define KEY_START_BRING_UP_MOON_TIME @"startBringupMoonTime"
+
 //用户选择的语录
 #define SUN_CHOOSE_STRING_KEY  @"SUNChooseString"
 #define MOON_CHOOSE_STRING_KEY  @"MOONChooseString"
@@ -151,10 +167,23 @@ typedef enum
 #define CAMERA_IMAGE_KEY @"camera_image"
 #define CAMERA_TIME_KEY @"camera_time"
 #define CAMERA_SENTENCE_KEY @"camera_sentence"
+#define CAMERA_VOICE_NAEM_KEY @"camera_voice_name"
+#define CAMERA_LIGHT_COUNT @"camera_light_count"
 
 
+//屏长宽
 #define SCREEN_WIDTH   [[UIScreen mainScreen] bounds].size.width
 #define SCREEN_HEIGHT   [[UIScreen mainScreen] bounds].size.height
+
+//定时通知KEY
+#define ALERT_SUN_MOON_TIME   @"AlertSunOrMoonTime"
+#define ALERT_IS_SUN_TIME     @"AlertIsSunTime"
+#define ALERT_IS_MOON_TIME     @"AlertIsMoonTime"
+
+//动画光环扩出动画实体的宽度
+#define LIGHT_ANIMATION_INTERVAL  35
+
+
 
 //控件定义
 #define TOOL_BAR_HEIGHT  60
@@ -179,11 +208,14 @@ typedef enum
 #define  TAG_IMAGE_SCROLL_SUN 102
 #define  TAG_IMAGE_SCROLL_MOON 103
 #define  TAG_IMAGE_HIGH_LIGHT_SUN 104
+#define  TAG_AUTO_CLOUD_SWITCH 105
+#define  TAB_VOICE_VALUE   106
 
 #define  TAG_EDITE_PHOTO_SCROLL_VIEW 109
 #define  TAG_EDITE_PHOTO_SCROLL_LABEL 200 //200到215
 
 #define  TAG_LIGHT_USER_HEADER 300 //300到307
+#define  TAG_LIGHT_TRACE 1000 //1000以后
 
 
 #define ORIGINAL_MAX_WIDTH 640.0f

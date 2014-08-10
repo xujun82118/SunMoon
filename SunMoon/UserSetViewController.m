@@ -123,7 +123,7 @@
         imageView.image = self.user.userHeaderImage;
         imageView.layer.masksToBounds = YES;
         imageView.layer.cornerRadius = 35.0;
-        imageView.layer.borderColor = [UIColor redColor].CGColor;
+        imageView.layer.borderColor = [UIColor yellowColor].CGColor;
         imageView.layer.borderWidth = 3.0f;
         imageView.layer.rasterizationScale = [UIScreen mainScreen].scale;
         imageView.layer.shouldRasterize = YES;
@@ -157,7 +157,7 @@
 }
 
 
-
+//增加用户信息时，才会调用，删除鉴权时不会
 - (void)userInfoUpdateHandler:(NSNotification *)notif
 {
     NSInteger plat = [[[notif userInfo] objectForKey:SSK_PLAT] integerValue];
@@ -264,8 +264,13 @@
     
     //更新本地用户信息
     [self.user updateSns_ID:[userInfo uid] PlateType:[userInfo type]];
+    [self.user updateuserName:[userInfo nickname]];
     
-    
+    NSURL *portraitUrl = [NSURL URLWithString:[userInfo profileImage]];
+    UIImage *protraitImg = [UIImage imageWithData:[NSData dataWithContentsOfURL:portraitUrl]];
+    [self.user updateUserHeaderImage:protraitImg];
+    //刷新头像
+    [self setTableHeaderView];
 }
 
 
@@ -533,7 +538,7 @@
         return 2;
     }
     
-    return 3;
+    return 2;
 
 }
 
@@ -606,6 +611,7 @@
             cell.textLabel.text = @"开启自动云同步";
             
             UISwitch *switchCtrl = [[UISwitch alloc] initWithFrame:CGRectZero];
+            switchCtrl.tag =TAG_AUTO_CLOUD_SWITCH;
             [switchCtrl sizeToFit];
             [switchCtrl addTarget:self action:@selector(autoCloudSwitchChangeHandler:) forControlEvents:UIControlEventValueChanged];
             cell.accessoryView = switchCtrl;
@@ -624,7 +630,7 @@
             [switchCtrl addTarget:self action:@selector(photoSaveSwitchChangeHandler:) forControlEvents:UIControlEventValueChanged];
             cell.accessoryView = switchCtrl;
             
-            switchCtrl.on = self.user.cloudSynAutoCtl;
+            switchCtrl.on = self.user.photoSaveAutoCtl;
             
         }
         
@@ -666,17 +672,6 @@
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
         }
-       
-        if (indexPath.row == 2) {
-            
-            
-            cell.textLabel.text = @"提个意见@我们";
-            
-            
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            
-        }
-        
         
     }
     return cell;
@@ -686,8 +681,19 @@
 #pragma mark - Switcher Handler
 - (void)autoCloudSwitchChangeHandler:(UISwitch *)sender
 {
+    if (sender.on) {
+        //判断是否注册过
+        if (!self.user.isRegisterUser) {
+            //没注册过，则关闭
+            sender.on = NO;
+            
+            [CommonObject showAlert:@"请选绑定账户进行注册" titleMsg:Nil DelegateObject:self];
+        }
+    }
     
     [self.user updatecloudSynAutoCtl:sender.on];
+
+    
     
     
 }
@@ -704,6 +710,7 @@
 {
     //MainSunMoonAppDelegate *appDelegate = (MainSunMoonAppDelegate *)[UIApplication sharedApplication].delegate;
     
+    //tag与表中的授权选项行对应
     NSInteger index = sender.tag;
     
     if (index < [_shareTypeArray count])
@@ -739,17 +746,61 @@
                                            [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/authListCache.plist",NSTemporaryDirectory()] atomically:YES];
                                        }
                                        NSLog(@"%ld:%@",(long)[error errorCode], [error errorDescription]);
+
+                                       
+                                       //取消另一个登录
+                                       NSArray *shareTypes = [ShareSDK connectedPlatformTypes];
+                                       for (int i = 0; i < [shareTypes count]; i++)
+                                       {
+                                           NSNumber *typeNum = [shareTypes objectAtIndex:i];
+                                           ShareType typeAll = (ShareType)[typeNum integerValue];
+                                           
+                                           //当前授权的
+                                           //NSMutableDictionary *item = [_shareTypeArray objectAtIndex:index];
+                                           //ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
+                                           if (typeAll!=[userInfo type]) {
+                                               //取消授权
+                                               [ShareSDK cancelAuthWithType:typeAll];
+                                               //[self.tableView reloadData];
+                                           }
+                                           
+                                       }
+                                       
                                        [self.tableView reloadData];
                                    }];
+            
+            
+
+            
+            
         }
         else
         {
             //取消授权
             [ShareSDK cancelAuthWithType:(ShareType)[[item objectForKey:@"type"] integerValue]];
             [self.tableView reloadData];
+            
+            //关闭云同步
+            UISwitch *switchCtrl = (UISwitch*)[self.view viewWithTag:TAG_AUTO_CLOUD_SWITCH];
+            switchCtrl.on = NO;
+            [self.user updatecloudSynAutoCtl:NO];
+            
+            
+            //清空用户SNS信息
+            [self.user updateSns_ID:INIT_DEFAULT_SNS_ID PlateType:0];
+            [self.user updateuserName:INIT_DEFAULT_USER_NAME];
+            [self.user updateUserHeaderImage:Nil];
+            //刷新头像
+            [self setTableHeaderView];
+            
         }
         
     }
+    
+    
+
+    
+    
 }
 
 

@@ -13,6 +13,8 @@
 
 @implementation VoicePressedHold
 
+@synthesize getPitchDelegate = _getPitchDelegate;
+@synthesize voiceName = _voiceName;
 
 
 - (void)addShapeLayer
@@ -151,8 +153,10 @@
     NSArray *dirPaths = NSSearchPathForDirectoriesInDomains(
                                                             NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docsDir = [dirPaths objectAtIndex:0];
-    NSString *soundFilePath = [docsDir
-                               stringByAppendingPathComponent:@"recordTest.caf"];
+    //NSString *soundFilePath = [docsDir stringByAppendingPathComponent:@"recordTest.caf"];
+    
+    NSString *soundFilePath = [docsDir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.caf", _voiceName]];
+
     
     NSURL *url = [NSURL fileURLWithPath:soundFilePath];
     
@@ -190,6 +194,9 @@
     }
     //Pitch =linear1;
     NSLog(@"Pitch==%f",Pitch);
+    
+    [_getPitchDelegate setNewPith:Pitch];
+    
     _customRangeBar.value = Pitch;//linear1+.30;
     [_progressView setProgress:Pitch];
     float minutes = floor(audioRecorder.currentTime/60);
@@ -223,8 +230,9 @@
     NSArray *dirPaths = NSSearchPathForDirectoriesInDomains(
                                                             NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docsDir = [dirPaths objectAtIndex:0];
-    NSString *soundFilePath = [docsDir
-                               stringByAppendingPathComponent:@"recordTest.caf"];
+    //NSString *soundFilePath = [docsDir stringByAppendingPathComponent:@"recordTest.caf"];
+    NSString *soundFilePath = [docsDir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.caf", _voiceName]];
+
     
     NSURL *url = [NSURL fileURLWithPath:soundFilePath];
     
@@ -241,6 +249,46 @@
     NSLog(@"stopPlaying");
     [audioPlayer stop];
     NSLog(@"stopped");
+    
+}
+
+-(void)deleteVoiceFile
+{
+    NSArray *dirPaths = NSSearchPathForDirectoriesInDomains(
+                                                            NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docsDir = [dirPaths objectAtIndex:0];
+    
+    NSString *soundFilePath = [docsDir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.caf", _voiceName]];
+    
+    NSFileManager * fileManager = [NSFileManager defaultManager];
+    BOOL exist = [fileManager fileExistsAtPath:soundFilePath];
+    if(exist)
+    {
+        [fileManager removeItemAtPath:soundFilePath error:NULL];
+        
+    }
+    
+}
+
+-(BOOL)checkVoiceFile
+{
+    NSArray *dirPaths = NSSearchPathForDirectoriesInDomains(
+                                                            NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *docsDir = [dirPaths objectAtIndex:0];
+    
+    NSString *soundFilePath = [docsDir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.caf", _voiceName]];
+    
+    NSFileManager * fileManager = [NSFileManager defaultManager];
+    BOOL exist = [fileManager fileExistsAtPath:soundFilePath];
+    if(exist)
+    {
+        return YES;
+        
+    }else
+    {
+        return NO;
+    }
+    
     
 }
 

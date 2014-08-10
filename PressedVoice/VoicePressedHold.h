@@ -10,7 +10,11 @@
 #import <AVFoundation/AVFoundation.h>
 #import "F3BarGauge.h"
 
-@interface VoicePressedHold : NSObject<UIGestureRecognizerDelegate>
+
+@protocol pitchDelegate;
+
+
+@interface VoicePressedHold : NSObject <UIGestureRecognizerDelegate>
 {
     AVAudioPlayer *audioPlayer;
     AVAudioRecorder *audioRecorder;
@@ -28,7 +32,12 @@
     float Pitch;
     NSTimer *timerForPitch;
     
+    id<pitchDelegate> getPitchDelegate;
+
+    
 }
+@property(nonatomic)id<pitchDelegate> getPitchDelegate;
+
 @property (weak, nonatomic)  UIImageView *imageView;
 @property (weak, nonatomic)  UIProgressView *progressView;
 @property (weak, nonatomic)  UIButton *touchbutton;
@@ -41,12 +50,25 @@
 @property (weak, nonatomic)  F3BarGauge *customRangeBar;
 @property (nonatomic) NSUInteger loopCount;
 @property (nonatomic) float Pitch;
+
+@property (nonatomic, strong) NSString *voiceName;
+
+
 -(void) startRecording;
 -(void) stopRecording;
 -(void) playRecording;
 -(void) stopPlaying;
-
+-(void)deleteVoiceFile;
+-(BOOL)checkVoiceFile;
 
 - (void) myButtonLongPressed:(UILongPressGestureRecognizer *)gesture;
 
 @end
+
+
+@protocol pitchDelegate <NSObject>
+
+- (void)setNewPith:(float)pitchValue;
+
+@end
+

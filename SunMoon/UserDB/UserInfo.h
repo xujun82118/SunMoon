@@ -72,6 +72,11 @@
 @property (nonatomic) BOOL isHaveAddSun;
 @property (nonatomic) BOOL isHaveaddMoon;
 
+//开始养育光的时间
+@property (nonatomic) NSDate* startBringupSunTime;
+@property (nonatomic) NSDate* startBringupMoonTime;
+
+
 
 //云同步等级
 //0:不支持同步
@@ -142,6 +147,7 @@
 -(instancetype) initDefaultInfoAtFirstOpenwithTime:(NSString*) time;
 
 -(instancetype) getUserInfoAtNormalOpen;
+-(void)getUserCommonData;
 
 -(instancetype) registerNewUserWithName:(NSString*) name regTime:(NSString*) time snsID:(NSString*) snsID headerImage:(UIImage*)image;
 
@@ -168,6 +174,7 @@
 
 
 -(void)updateSns_ID:(NSString*) share_sns_id PlateType:(ShareType) plateType;
+-(void)updateuserName:(NSString*) nameString;
 
 -(void)updateSunSentenceSelected:(NSInteger) sentenceSelect;
 -(void)updateMoonSentenceSelected:(NSInteger) sentenceSelect;
@@ -214,5 +221,6 @@
 -(BOOL) checkIsHaveAddSunValueForTodayPhoto;
 -(BOOL) checkIsHaveAddMoonValueForTodayPhoto;
 
+-(void)updateSunorMoonBringupTime:(NSDate*) bringupTime;
 
 @end

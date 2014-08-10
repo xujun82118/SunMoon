@@ -19,6 +19,10 @@
 @property (nonatomic, strong) UIWindow * statusWindow;
 @property (nonatomic, strong) UILabel * statusLabel;
 
+@property (nonatomic, strong) UserInfo * userInfo;
+
+@property (nonatomic, strong) UserInfoCloud* userCloud;
+
 - (void) dismissStatus;
 
 @end
@@ -26,12 +30,16 @@
 
 @implementation MainSunMoonAppDelegate
 
+@synthesize userInfo =_userInfo,userCloud=_userCloud;
 //@synthesize viewDelegate = _viewDelegate;
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    
+    //test 解决相机起动黑屏问题
+    self.window.backgroundColor = [UIColor whiteColor];
     
     //ShareSDK 设置
     [ShareSDK registerApp:@"fe35485ae4a"];
@@ -65,6 +73,40 @@
 
     
     return YES;
+}
+
+- (void)application:(UIApplication *)app didReceiveLocalNotification:(UILocalNotification *)notif
+{
+    
+    NSLog(@"Recieved Notification %@",notif);
+    NSDictionary* infoDic = notif.userInfo;
+    NSLog(@"userInfo description=%@",[infoDic description]);
+    NSString* codeStr = [infoDic objectForKey:ALERT_SUN_MOON_TIME];
+    NSLog(@"codeStr is  %@", codeStr);
+    
+    NSString* Mesg = nil;
+    if ([codeStr isEqualToString:ALERT_IS_SUN_TIME]) {
+
+        
+    
+    }else if ([codeStr isEqualToString:ALERT_IS_MOON_TIME])
+    {
+
+        
+        
+    }
+    
+    if (Mesg != nil) {
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle:nil
+                              message:Mesg
+                              delegate:nil
+                              cancelButtonTitle:@"Yes"
+                              otherButtonTitles:nil];
+        [alert show];
+    }
+    
+    
 }
 
 
@@ -119,6 +161,48 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    
+    
+
+    _userInfo= [UserInfo  sharedSingleUserInfo];
+    //云同步
+    self.userCloud = [[UserInfoCloud alloc] init];
+    self.userCloud.userInfoCloudDelegate = self;
+    
+    //[self.userCloud upateUserInfo:self.userInfo];
+    
+    
+    
+}
+
+
+- (void) getUserInfoFinishReturnDic:(NSDictionary*) userInfo
+{
+    
+    NSLog(@"Syn UserInfo Succ!");
+    
+    [CommonObject showAlert:@"同步数据成功！" titleMsg:Nil DelegateObject:self];
+    
+    alertNotification=[[UILocalNotification alloc] init];
+
+    alertNotification.fireDate = Nil;
+    alertNotification.repeatInterval = kCFCalendarUnitDay;
+    alertNotification.timeZone=[NSTimeZone defaultTimeZone];
+    alertNotification.soundName = @"cute.mp3";
+    
+    //NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_SUN_TIME forKey:ALERT_SUN_MOON_TIME];
+    //alertNotification.userInfo = info;
+    
+    alertNotification.alertBody = @"同步成功！";
+    
+    [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
+}
+
+
+- (void) getUserInfoFinishFailed
+{
+    [CommonObject showAlert:@"同步数据失败, 请检查网络！" titleMsg:Nil DelegateObject:self];
+    
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application

@@ -18,6 +18,7 @@
     UIImage *editImageOld;
     UIImageView* editImageOldView;
     UIImage *sunMoonImage;
+    UIImageView *sunMoonImageView;
     NSString* timeString;
     UILabel *valuelabel;
     UIImage* bgImageScroll;
@@ -26,6 +27,8 @@
     UILabel *sentencelabel;
     UIImageView* sunMoonImageViewTop;
     UIImageView* bowLightView;
+    
+    AminationCustom* addVauleAnimation;
 }
 
 @end
@@ -54,16 +57,24 @@
 
     }
  
+    addVauleAnimation = [[AminationCustom alloc] initWithKey:@"addValueinEdite"];
+    addVauleAnimation.aminationCustomDelegate =  self;
+    
     //获取单例用户数据
-    self.userInfo= [UserInfo  sharedSingleUserInfo];
-    
-
-    
+    //self.userInfo= [UserInfo  sharedSingleUserInfo];
     
     currentImage = [imagePickerData objectForKey:CAMERA_IMAGE_KEY];
     
-    UIImage *toolBarImage = [UIImage imageNamed:@"editePhoto_底图.png"];
-    UIImageView *toolBarImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, ScreenHeight-TOOL_BAR_HEIGHT, ScreenWidth, TOOL_BAR_HEIGHT)];
+    //UIImage *bkImage = [UIImage imageNamed:@"小屋内底图.png"];
+    UIImageView *bkImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 20, SCREEN_WIDTH, 460)];
+    //bkImageView.image = bkImage;
+    bkImageView.backgroundColor = [UIColor blackColor];
+    [self.view addSubview:bkImageView];
+    
+    //工具条
+    UIImage *toolBarImage = [UIImage imageNamed:@"下部圆弧001.png"];
+    //UIImageView *toolBarImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, ScreenHeight-TOOL_BAR_HEIGHT, ScreenWidth, TOOL_BAR_HEIGHT)];
+    UIImageView *toolBarImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 420, SCREEN_WIDTH, 60)];
     toolBarImageView.image = toolBarImage;
     [self.view addSubview:toolBarImageView];
     
@@ -72,7 +83,7 @@
     NSInteger rePhotoBtnHeight = 20;
     UIButton *rePhotoBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [rePhotoBtn setImage:[UIImage imageNamed:@"拍照-small.png"] forState:UIControlStateNormal];
-    [rePhotoBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, TOOL_BAR_BTN_Y, rePhotoBtnWidth, rePhotoBtnHeight)];
+    [rePhotoBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, toolBarImageView.center.y-rePhotoBtnHeight/2, rePhotoBtnWidth, rePhotoBtnHeight)];
     [rePhotoBtn addTarget:self action:@selector(reDoPhoto:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:rePhotoBtn];
     
@@ -81,7 +92,7 @@
     NSInteger shareBtnHeight = 20;
     UIButton *shareBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [shareBtn setImage:[UIImage imageNamed:@"editePhoto_分享.png"] forState:UIControlStateNormal];
-    [shareBtn setFrame:CGRectMake(ScreenWidth/2-shareBtnWidth/2, TOOL_BAR_BTN_Y, shareBtnWidth, shareBtnHeight)];
+    [shareBtn setFrame:CGRectMake(ScreenWidth/2-shareBtnWidth/2, toolBarImageView.center.y-shareBtnHeight/2, shareBtnWidth, shareBtnHeight)];
     [shareBtn addTarget:self action:@selector(doShare) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareBtn];
     
@@ -91,7 +102,7 @@
     NSInteger saveBtnHeight = 20;
     UIButton *saveBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [saveBtn setImage:[UIImage imageNamed:@"选择.png"] forState:UIControlStateNormal];
-    [saveBtn setFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X- saveBtnWidth, TOOL_BAR_BTN_Y, saveBtnWidth, saveBtnHeight)];
+    [saveBtn setFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X- saveBtnWidth, toolBarImageView.center.y-saveBtnHeight/2, saveBtnWidth, saveBtnHeight)];
     [saveBtn addTarget:self action:@selector(savetoAlbumHandle:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:saveBtn];
     
@@ -105,7 +116,7 @@
     [okBtn addTarget:self action:@selector(fitlerDone:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:okBtn];
     
-    //加丢弃并反回按钮
+    //加丢弃并返回按钮
     NSInteger rightBtnWidth = 20;
     NSInteger rightBtnHeight = 20;
     UIButton *rightBtn =[UIButton buttonWithType:UIButtonTypeCustom];
@@ -149,8 +160,8 @@
     [editImageOldView addGestureRecognizer:recognizer];
 
     //时间框
-    int timeImageHeight = 20;
-    int timeImageWidth = 70;
+    int timeImageHeight = 25;
+    int timeImageWidth = 100;
     UIImage *timeImage = [UIImage imageNamed:@"时间框.png"];
     UIImageView *timeImageView = [[UIImageView alloc]initWithFrame:CGRectMake(rootImageView.frame.origin.x+imageWideth/2-60/2, rootImageView.frame.origin.y+imageHeight+5, timeImageWidth, timeImageHeight)];
     timeImageView.image = timeImage;
@@ -167,7 +178,7 @@
         sunMoonImage = [UIImage imageNamed:@"moon.png"];
 
     }
-    UIImageView *sunMoonImageView = [[UIImageView alloc]initWithFrame:CGRectMake(timeImageView.frame.origin.x-10, timeImageView.frame.origin.y+timeImageHeight/2-sunMoonImageDiameter/2, sunMoonImageDiameter, sunMoonImageDiameter)];
+    sunMoonImageView = [[UIImageView alloc]initWithFrame:CGRectMake(timeImageView.frame.origin.x-10, timeImageView.frame.origin.y+timeImageHeight/2-sunMoonImageDiameter/2, sunMoonImageDiameter, sunMoonImageDiameter)];
     sunMoonImageView.image = sunMoonImage;
     [self.view addSubview:sunMoonImageView];
     
@@ -175,12 +186,12 @@
     //时间值
     timeString = [imagePickerData objectForKey:CAMERA_TIME_KEY];
     int timelabelHeight = 20;
-    int timelabelWidth = 80;
-    timelabel = [[UILabel alloc] initWithFrame:CGRectMake(timeImageView.frame.origin.x+10, timeImageView.frame.origin.y, timelabelWidth,timelabelHeight)];
+    int timelabelWidth = 100;
+    timelabel = [[UILabel alloc] initWithFrame:CGRectMake(timeImageView.frame.origin.x+10, timeImageView.center.y-timelabelHeight/2, timelabelWidth,timelabelHeight)];
     [timelabel setBackgroundColor:[UIColor clearColor]];
     [timelabel setText:timeString];
     [timelabel setTextAlignment:NSTextAlignmentCenter];
-    [timelabel setFont:[UIFont systemFontOfSize:10.0f]];
+    [timelabel setFont:[UIFont systemFontOfSize:12.0f]];
     [timelabel setTextColor:[UIColor blackColor]];
     [self.view addSubview:timelabel];
     
@@ -194,10 +205,11 @@
     [valuelabel setTextAlignment:NSTextAlignmentCenter];
     [valuelabel setFont:[UIFont systemFontOfSize:10.0f]];
     [valuelabel setTextColor:[UIColor blackColor]];
+    valuelabel.hidden = YES;
     [self.view addSubview:valuelabel];
     
 
-    //语录
+    //语录,暂时没用
     currentSentence = [imagePickerData objectForKey:CAMERA_SENTENCE_KEY];
     int sentencelabelHeight = 20;
     int sentencelabelWidth = 70;
@@ -212,7 +224,7 @@
 
     //调色盘
     NSArray *arr = [NSArray arrayWithObjects:@"原图",@"LOMO",@"黑白",@"复古",@"哥特",@"锐色",@"淡雅",@"酒红",@"青柠",@"浪漫",@"光晕",@"蓝调",@"梦幻",@"夜色", nil];
-    scrollerView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, ScreenHeight - 120, 320, 80)];
+    scrollerView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, timelabel.frame.origin.y+timelabelHeight+5, 320, 80)];
     scrollerView.tag = TAG_EDITE_PHOTO_SCROLL_VIEW;
     scrollerView.backgroundColor = [UIColor clearColor];
     scrollerView.indicatorStyle = UIScrollViewIndicatorStyleBlack;
@@ -274,40 +286,44 @@
         sunMoonImageTop = [UIImage imageNamed:@"moon.png"];
         
     }
-    NSInteger sunMoonImageTopWidth = 60;
-    NSInteger sunMoonImageTopHeigth =60;
-    sunMoonImageViewTop = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2 - sunMoonImageTopWidth/2, 20, sunMoonImageTopWidth, sunMoonImageTopHeigth)];
+    NSInteger sunMoonImageTopWidth = 200;
+    NSInteger sunMoonImageTopHeigth =200;
+    sunMoonImageViewTop = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2 - sunMoonImageTopWidth/2, -140, sunMoonImageTopWidth, sunMoonImageTopHeigth)];
     sunMoonImageViewTop.image = sunMoonImageTop;
     UITapGestureRecognizer *recognizerSunMoon = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(TapSunMoonInTakePhotoHandler:)];
     recognizerSunMoon.numberOfTouchesRequired = 1;
     recognizerSunMoon.numberOfTapsRequired = 1;
-    recognizerSunMoon.delegate = self;
+    //recognizerSunMoon.delegate = self;
     [sunMoonImageViewTop setUserInteractionEnabled:YES];
     [sunMoonImageViewTop addGestureRecognizer:recognizerSunMoon];
     [self.view addSubview:sunMoonImageViewTop];
     
-    
     //日月闪烁
     NSMutableArray *iArr=[NSMutableArray arrayWithCapacity:0];
-    for (int i=0; i<10; i++) {
+    for (int i=0; i<3; i++) {
         
-        NSString *name=[NSString stringWithFormat:@"abFrame_%d",i%10+1];
+        NSString *name=[NSString stringWithFormat:@"headerFrameBow_%d",i];
         UIImage *image=[UIImage imageNamed:name];
         
         [iArr addObject:image];
         
     }
-    bowLightView = [[UIImageView alloc] initWithFrame:CGRectMake(sunMoonImageViewTop.frame.origin.x-10,sunMoonImageViewTop.frame.origin.y-10, sunMoonImageViewTop.frame.size.width+20,sunMoonImageViewTop.frame.size.height+20)];
+    
+    NSInteger IntervalWidth = LIGHT_ANIMATION_INTERVAL;// 光环向头像外扩的宽度
+    NSInteger lightBowSkySunMoonViewWidth = sunMoonImageViewTop.frame.size.width+IntervalWidth*2;
+    NSInteger lightBowSkyUserHeaderViewHeigth = sunMoonImageViewTop.frame.size.height+IntervalWidth*2;
+    
+    bowLightView = [[UIImageView alloc] initWithFrame:CGRectMake(sunMoonImageViewTop.center.x-lightBowSkySunMoonViewWidth/2, sunMoonImageViewTop.center.y-lightBowSkySunMoonViewWidth/2, lightBowSkySunMoonViewWidth, lightBowSkyUserHeaderViewHeigth)];
     bowLightView.image=[UIImage imageNamed:@"空白图"];
     bowLightView.userInteractionEnabled=YES;
     bowLightView.contentMode=UIViewContentModeScaleToFill;
     bowLightView.animationImages=iArr;
-    [bowLightView setFrame:CGRectMake(sunMoonImageViewTop.frame.origin.x-10,sunMoonImageViewTop.frame.origin.y-10, sunMoonImageViewTop.frame.size.width+20,sunMoonImageViewTop.frame.size.height+20)];
     bowLightView.animationDuration=1;
     bowLightView.animationRepeatCount = 1;
     bowLightView.hidden = NO;
     [self.view addSubview:bowLightView];
     [self.view bringSubviewToFront:sunMoonImageViewTop];
+
 
 }
 
@@ -326,12 +342,26 @@
     UIImageWriteToSavedPhotosAlbum(currentImage, nil, nil,nil);
     UIAlertView *alert = [[UIAlertView alloc]
                           initWithTitle:@"保存成功！"
-                          message:nil//show the msg in the alert.
-                          delegate:self//delegate itself
+                          message:nil
+                          delegate:self
                           cancelButtonTitle:@"确定"
                           otherButtonTitles: nil];
     [alert show];
     
+    
+}
+
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:YES];
+
+    sunMoonImageViewTop.hidden = YES;
+
+    
+    if (self.userInfo.photoSaveAutoCtl) {
+        [self savetoAlbumHandle:Nil];
+    }
     
 }
 
@@ -376,7 +406,36 @@
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
 
+    [self checkWetherAndGiveLight];
+    
+    
+}
+
+
+-(void) checkWetherAndGiveLight
+{
+    
+    NSInteger count = [[imagePickerData objectForKey:CAMERA_LIGHT_COUNT] integerValue];
+    if (count==0) {
+        NSLog(@" 获得的光的个数为0，返回");
+        return;
+    }
+    
+    //增加光的动画准备
+    [addVauleAnimation setStartPoint:sunMoonImageViewTop.center];
+    [addVauleAnimation setEndpoint:sunMoonImageView.center];
+    [addVauleAnimation setUseRepeatCount:count];
+    [addVauleAnimation setBkView:self.view];
+    if (iSunORMoon == IS_SUN_TIME) {
+        [addVauleAnimation setImageName:@"sun.png"];
+    }else
+    {
+        [addVauleAnimation setImageName:@"moon.png"];
+    }
+    [addVauleAnimation setAminationImageViewframe:CGRectMake(sunMoonImageViewTop.frame.origin.x, sunMoonImageViewTop.frame.origin.y, 60, 60)];
+    
     //判断是否增加阳光月光值
     if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
         if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
@@ -385,8 +444,8 @@
             
         }else
         {
-            //优化：动画:...
-            [self.userInfo addSunOrMoonValue:1];
+            [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
+            [self.userInfo addSunOrMoonValue:count];
             [self.userInfo updateIsHaveAddSunValueForTodayPhoto:YES];
             
         }
@@ -398,20 +457,29 @@
             
         }else
         {
-            //优化：动画:...
-            [self.userInfo addSunOrMoonValue:1];
+            [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
+            [self.userInfo addSunOrMoonValue:count];
             [self.userInfo updateIsHaveAddMoonValueForTodayPhoto:YES];
-
+            
             
         }
         
     }
-
     
-    
+    //test
+    //[addVauleAnimation moveLightWithIsUseRepeatCount:YES];
     
 }
 
+#pragma mark - AminationCustomDelegate
+
+- (void) animationFinishedRuturn
+{
+    
+    valuelabel.hidden = NO;
+    
+}
+#pragma mark -
 
 - (IBAction)setImageStyle:(UITapGestureRecognizer *)sender
 {
@@ -463,13 +531,17 @@
 
 - (IBAction)fitlerDone:(id)sender
 {
+    
     [self dismissViewControllerAnimated:YES completion:^{
+
 
         NSDictionary* imageFilterData = [NSDictionary dictionaryWithObjectsAndKeys:rootImageView.image,CAMERA_IMAGE_KEY,
                                          [imagePickerData objectForKey:CAMERA_TIME_KEY], CAMERA_TIME_KEY,
                                          [imagePickerData objectForKey:CAMERA_SENTENCE_KEY], CAMERA_SENTENCE_KEY,
                                          nil];
         [delegate imageFitlerProcessDone:imageFilterData];
+        
+
         
     }];
 }
@@ -554,7 +626,7 @@
     //旧相片放到imagePickerData中
     imagePickerData = [NSDictionary dictionaryWithObjectsAndKeys:tempOld,CAMERA_IMAGE_KEY,
                                      [imagePickerData objectForKey:CAMERA_TIME_KEY], CAMERA_TIME_KEY,
-                                     tempOldstring,CAMERA_SENTENCE_KEY,
+                                     tempOldstring,CAMERA_SENTENCE_KEY,[imagePickerData objectForKey:CAMERA_VOICE_NAEM_KEY], CAMERA_VOICE_NAEM_KEY,
                                      nil];
     //换新照的相片存到userinfo中，当成上次照的旧相片
     if(iSunORMoon == IS_SUN_TIME) {

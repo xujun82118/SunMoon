@@ -22,28 +22,44 @@
     return dateTime;
 }
 
+//+ (NSString *)getCurrentDate
+//{
+//    NSDate *_date = [NSDate date];
+//    NSDateFormatter *format = [[NSDateFormatter alloc] init];
+//    [format setDateFormat:@"yyyyMMddHHmmss"];
+//    NSString *dateTime = [[format stringFromDate:_date] substringToIndex:8];
+//    return dateTime;
+//}
+
 + (NSString *)getCurrentDate
 {
     NSDate *_date = [NSDate date];
     NSDateFormatter *format = [[NSDateFormatter alloc] init];
-    [format setDateFormat:@"yyyyMMddHHmmss"];
-    NSString *dateTime = [[format stringFromDate:_date] substringToIndex:8];
+    [format setDateFormat:@"MM"];
+    NSString *month = [[format stringFromDate:_date] substringToIndex:2];
+    month = [month stringByReplacingOccurrencesOfString:@"0" withString:@"" options:0 range:NSMakeRange(0, 1)];
+    [format setDateFormat:@"dd"];
+    NSString *day = [[format stringFromDate:_date] substringToIndex:2];
+    day = [day stringByReplacingOccurrencesOfString:@"0" withString:@"" options:0 range:NSMakeRange(0, 1)];
+
+    NSString* dateTime = [NSString stringWithFormat:@"%@.%@", month, day];
+
     return dateTime;
 }
 
-+ (NSString *)getYesterdayDate
-{
-    NSDate *_date = [NSDate date];
-    
-    NSDateComponents* comps;
-    NSCalendar* calendar = [NSCalendar currentCalendar];
-    comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:_date];
-
-    NSDateFormatter *format = [[NSDateFormatter alloc] init];
-    [format setDateFormat:@"yyyyMMddHHmmss"];
-    NSString *dateTime = [[format stringFromDate:_date] substringToIndex:8];
-    return dateTime;
-}
+//+ (NSString *)getYesterdayDate
+//{
+//    NSDate *_date = [NSDate date];
+//    
+//    NSDateComponents* comps;
+//    NSCalendar* calendar = [NSCalendar currentCalendar];
+//    comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:_date];
+//
+//    NSDateFormatter *format = [[NSDateFormatter alloc] init];
+//    [format setDateFormat:@"yyyyMMddHHmmss"];
+//    NSString *dateTime = [[format stringFromDate:_date] substringToIndex:8];
+//    return dateTime;
+//}
 
 +(NSDate*) returnChooseTimeUnit:(NSDate*) dateTime Year:(BOOL) needYear Month:(BOOL) needMonth Day:(BOOL) needDay Hour:(BOOL) needHour Minute:(BOOL) needMinute Second:(BOOL) needSecond
 {
@@ -96,20 +112,21 @@
 + (NSInteger) checkSunOrMoonTime
 {
     NSDate *_date = [NSDate date];
-    NSDateFormatter *format = [[NSDateFormatter alloc] init];
-    [format setDateFormat:@"yyyyMMddHHmmss"];
     
     NSDateComponents* comps;
     NSCalendar* calendar = [NSCalendar currentCalendar];
     comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:_date];
     NSInteger hour = [comps hour];
     
-    if (hour<=SUN_TIME_MAX && hour>=SUN_TIME_MIN) {
+    if (hour<SUN_TIME_MAX && hour>=SUN_TIME_MIN) {
         return IS_SUN_TIME;
-    }else if (hour<=MOON_TIME_MAX || hour>=MOON_TIME_MIN)
+    }else if (hour<MOON_TIME_MAX || hour>=MOON_TIME_MIN)
     {
         return IS_MOON_TIME;
     }
+    
+    //test
+    
     
     return  0;
 }

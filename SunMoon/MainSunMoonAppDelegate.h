@@ -7,12 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "UserInfoCloud.h"
 
 
-@interface MainSunMoonAppDelegate : UIResponder <UIApplicationDelegate>
+
+@interface MainSunMoonAppDelegate : UIResponder <UIApplicationDelegate,UserInfoCloudDelegate>
+{
+    
+    UILocalNotification *alertNotification;
+
+    
+}
 
 @property (strong, nonatomic) UIWindow *window;
-
 
 /**
  * @brief 在状态栏显示 一些Log
