@@ -34,6 +34,8 @@
 
     msg = [shareMsgPreFix stringByAppendingString:msg];
 
+    shareTitle = @"天天更美丽";
+    shareUrl = @"https://itunes.apple.com/us/app/tian-tian-geng-mei-li/id782426992?ls=1&mt=8";
     
     //构造分享内容
     id<ISSContent> publishContent = [ShareSDK content:msg
@@ -94,6 +96,8 @@
     
     msg = [shareMsgPreFix stringByAppendingString:msg];
 
+    shareTitle = @"天天更美丽";
+    shareUrl = @"https://itunes.apple.com/us/app/tian-tian-geng-mei-li/id782426992?ls=1&mt=8";
     
     //构造分享内容
     id<ISSContent> publishContent = [ShareSDK content:msg

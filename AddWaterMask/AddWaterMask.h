@@ -13,6 +13,7 @@
 
 @property (nonatomic      ) CGRect  logRect;
 @property (nonatomic      ) CGRect  waterRect;
+@property (nonatomic      ) CGRect  textRect;
 
 - (UIImage *)addImage:(UIImage *)useImage addMsakImage:(UIImage *)maskImage;
 -(UIImage *)addText:(UIImage *)img text:(NSString *)text1;

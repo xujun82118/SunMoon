@@ -120,6 +120,7 @@ typedef enum
 #define KEY_IS_REGISTER_USER @"isRegisterUser"
 #define KEY_USER_TYPE @"userType" //用户类型
 #define KEY_USER_TIME @"userTime" //用户使用次数
+#define KEY_OPEN_GUID @"openGuid" //用户引导
 
 
 //用户最近登录的时期
@@ -181,7 +182,7 @@ typedef enum
 #define ALERT_IS_MOON_TIME     @"AlertIsMoonTime"
 
 //动画光环扩出动画实体的宽度
-#define LIGHT_ANIMATION_INTERVAL  35
+#define LIGHT_ANIMATION_INTERVAL  12
 
 
 
@@ -191,7 +192,7 @@ typedef enum
 #define NAVI_BAR_BTN_Y  NAVI_BAR_HEIGHT/2 //距离导航条边,还需减去控件的高的一半
 #define TOOL_BAR_BTN_Y SCREEN_HEIGHT-TOOL_BAR_HEIGHT+5 //距离工具条上边缘
 
-#define LEFT_NAVI_BTN_TO_SIDE_X 5
+#define LEFT_NAVI_BTN_TO_SIDE_X 10
 #define RIGHT_NAVI_BTN_TO_SIDE_X SCREEN_WIDTH-5 //还需减去控件的宽
 
 #define TitleFont 18

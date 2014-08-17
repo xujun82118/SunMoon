@@ -34,7 +34,6 @@
 @interface UserInfo : NSObject
 {
 
-    NSString* test;
     
 }
 

@@ -15,7 +15,7 @@
 
 @implementation AddWaterMask
 
-@synthesize waterRect, logRect;
+@synthesize waterRect, logRect, textRect;
 
 
 /**
@@ -35,11 +35,14 @@
     
     UIFont *font = [UIFont fontWithName:@"Palatino-Roman" size:14.0];
     NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     font, NSFontAttributeName, [UIColor blueColor],NSForegroundColorAttributeName,[NSNumber numberWithFloat:1.0],
+                                     font, NSFontAttributeName,
+                                     [UIColor blueColor],NSForegroundColorAttributeName,
+                                     [NSNumber numberWithFloat:1.0],
                                      NSBaselineOffsetAttributeName, nil];
     
     //[text1 drawInRect:CGRectMake(10, h-50, 230, 80) withAttributes:attrsDictionary];
-    [text1 drawWithRect:CGRectMake(w/2-30, h-10, w, 100) options:NSStringDrawingUsesFontLeading attributes:attrsDictionary context:Nil];
+    //[text1 drawWithRect:CGRectMake(w/2-30, h-10, w, 100) options:NSStringDrawingUsesFontLeading attributes:attrsDictionary context:Nil];
+    [text1 drawWithRect:textRect options:NSStringDrawingUsesFontLeading attributes:attrsDictionary context:Nil];
 
     
     UIImage *aimg = UIGraphicsGetImageFromCurrentImageContext();

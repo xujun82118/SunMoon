@@ -17,7 +17,7 @@
     self = [super init];
     if (self) {
 
-        [self connectedToNetwork];
+        //[self connectedToNetwork];
     }
     return self;
 }

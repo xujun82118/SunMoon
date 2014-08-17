@@ -60,7 +60,7 @@
     [ShareSDK connectQQWithQZoneAppKey:@"100586310"
                      qqApiInterfaceCls:[QQApiInterface class]
                        tencentOAuthCls:[TencentOAuth class]];
-    /*
+    
      //添加腾讯微博应用
      [ShareSDK connectTencentWeiboWithAppKey:@"801307650"
      appSecret:@"ae36f4ee3946e1cbb98d6965b0b2ff5c"
@@ -69,7 +69,7 @@
      //添加QQ空间应用
      [ShareSDK connectQZoneWithAppKey:@"100371282"
      appSecret:@"aed9b0303e3ed1e27bae87c33761161d"];
-     */
+     
 
     
     return YES;
@@ -171,6 +171,28 @@
     
     //[self.userCloud upateUserInfo:self.userInfo];
     
+    //通知用户，正在育成光
+    alertNotification=[[UILocalNotification alloc] init];
+    
+    alertNotification.fireDate = Nil;
+    alertNotification.repeatInterval = kCFCalendarUnitDay;
+    alertNotification.timeZone=[NSTimeZone defaultTimeZone];
+    alertNotification.soundName = @"cute.mp3";
+    
+    //NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_SUN_TIME forKey:ALERT_SUN_MOON_TIME];
+    //alertNotification.userInfo = info;
+    NSString* temp;
+    if ([_userInfo checkIsBringUpinSunOrMoon]) {
+        temp = [NSString stringWithFormat:@"我在养育%@光了，等你回来哦!",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+    }else
+    {
+        temp = [NSString stringWithFormat:@"哎呦，没有把%@光托付给我唉!",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+    }
+
+    
+    alertNotification.alertBody = temp;
+    
+    [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
     
     
 }

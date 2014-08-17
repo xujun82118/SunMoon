@@ -66,7 +66,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)doSelect:(id)sender {
+- (void)doSelect:(id)sender {
     
     NSDate *selected = [self.datePicker date];
     
@@ -94,7 +94,7 @@
         
         //设置定时每天通知
         NSArray *myArray=[[UIApplication sharedApplication] scheduledLocalNotifications];
-        //NSLog(@"local notify is %d", [myArray count]);
+        //清空原来所有的
         for (int i=0; i<[myArray count]; i++)
         {
             UILocalNotification *myUILocalNotification=[myArray objectAtIndex:i];
@@ -106,7 +106,7 @@
             
         }
         
-        
+
         if (alertNotification!=nil)
         {
             
@@ -174,7 +174,6 @@
 //                          otherButtonTitles:nil];
 //    [alert show];
 //    
-    [self.navigationController popViewControllerAnimated:YES];
     
     
 }
@@ -182,6 +181,8 @@
 
 -(void) back
 {
+    [self doSelect:Nil];
+    
     [self.navigationController popViewControllerAnimated:YES];
     
 }

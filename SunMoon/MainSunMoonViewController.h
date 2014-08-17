@@ -14,8 +14,11 @@
 #import "REFrostedViewController.h"
 #import "VPImageCropperViewController.h"
 #import "CommonObject.h"
+#import "CustomAlertView.h"
 
-@interface MainSunMoonViewController : UIViewController<CustomImagePickerControllerDelegate,ImageFitlerProcessDelegate, UserInfoCloudDelegate,VPImageCropperDelegate>
+
+
+@interface MainSunMoonViewController : UIViewController<CustomImagePickerControllerDelegate,ImageFitlerProcessDelegate, UserInfoCloudDelegate,VPImageCropperDelegate,CustomAlertDelegate>
 {
 
 }

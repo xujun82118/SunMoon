@@ -22,7 +22,6 @@ BOOL isStartAnimation;
     NSLog(@"移动 %d 个月光", _useRepeatCount);
 
     _aminationImageView.image =[UIImage imageNamed:_imageName];
-    ///[_panSunorMoonImageView setFrame:CGRectMake(start.x, start.y, 30, 30)];
     [_aminationImageView setCenter:_startPoint];
     _aminationImageView.alpha = 1.0;
     _aminationImageView.hidden =  YES;

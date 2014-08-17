@@ -9,7 +9,7 @@
 #import "CustomImagePickerController.h"
 #import "IphoneScreen.h"
 #import "UIImage+Cut.h"
-//#import "ChooseStringViewController.h"
+#import "CustomAlertView.h"
 
 @interface CustomImagePickerController ()
 
@@ -41,9 +41,9 @@
     BOOL voiceBackAnimationLock;
     
     AminationCustom* addVauleAnimation;
-    BOOL isHaveAddValue;
+    BOOL isHaveAddValue;  //第二次触发语音，不再奖励光
 
-
+   CustomAlertView* customAlertAutoDis;
 
 }
 @end
@@ -133,7 +133,6 @@
         UITapGestureRecognizer *recognizerSunMoon = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(TapSunMoonInTakePhotoHandler:)];
         recognizerSunMoon.numberOfTouchesRequired = 1;
         recognizerSunMoon.numberOfTapsRequired = 1;
-        recognizerSunMoon.delegate = self;
         [sunMoonImageViewTop setUserInteractionEnabled:YES];
         [sunMoonImageViewTop addGestureRecognizer:recognizerSunMoon];
         [self.view addSubview:sunMoonImageViewTop];
@@ -155,14 +154,14 @@
         
         NSInteger IntervalWidth = LIGHT_ANIMATION_INTERVAL;// 光环向头像外扩的宽度
         NSInteger lightBowSkySunMoonViewWidth = sunMoonImageViewTop.frame.size.width+IntervalWidth*2;
-        NSInteger lightBowSkyUserHeaderViewHeigth = sunMoonImageViewTop.frame.size.height+IntervalWidth*2;
+        NSInteger lightBowSkySunMoonViewHeigth = sunMoonImageViewTop.frame.size.height+IntervalWidth*2;
         
-        bowLightView = [[UIImageView alloc] initWithFrame:CGRectMake(sunMoonImageViewTop.center.x-lightBowSkySunMoonViewWidth/2, sunMoonImageViewTop.center.y-lightBowSkySunMoonViewWidth/2, lightBowSkySunMoonViewWidth, lightBowSkyUserHeaderViewHeigth)];
+        bowLightView = [[UIImageView alloc] initWithFrame:CGRectMake(sunMoonImageViewTop.center.x-lightBowSkySunMoonViewWidth/2, sunMoonImageViewTop.center.y-lightBowSkySunMoonViewWidth/2, lightBowSkySunMoonViewWidth, lightBowSkySunMoonViewHeigth)];
         bowLightView.image=[UIImage imageNamed:@"空白图"];
         bowLightView.userInteractionEnabled=YES;
         bowLightView.contentMode=UIViewContentModeScaleToFill;
         bowLightView.animationImages=iArr;
-        bowLightView.animationDuration=1;
+        bowLightView.animationDuration=0.5;
         bowLightView.animationRepeatCount = 1;
         bowLightView.hidden = NO;
         [PLCameraView addSubview:bowLightView];
@@ -291,7 +290,6 @@
         UITapGestureRecognizer *recognizerSentence = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(chooseSentencePicker:)];
         recognizerSentence.numberOfTouchesRequired = 1;
         recognizerSentence.numberOfTapsRequired = 1;
-        recognizerSentence.delegate = self;
         [sentenceView setUserInteractionEnabled:YES];
         [sentenceView addGestureRecognizer:recognizerSentence];
         [PLCameraView addSubview:sentenceView];
@@ -476,12 +474,46 @@
 
 - (void)delayBtnChangeHandler:(id)sender
 {
+
     
-    if (self.userInfo.delayTakePhotoCtl ==  NO) {
+    //nil时，只为开启动画，不是按钮触发
+    if (sender == Nil) {
         
-        [self.userInfo updateDelayTakePhotoCtl:YES];
-        [delayBtn setImage:[UIImage imageNamed:@"2秒开关底图.png"] forState:UIControlStateNormal];
-        
+        if (self.userInfo.delayTakePhotoCtl ==  NO) {
+            
+            [self animationMergerButton:NO];
+            [delayBtn setImage:[UIImage imageNamed:@"2秒开关底图-关.png"] forState:UIControlStateNormal];
+            
+        }else
+        {
+            [self animationMergerButton:YES];
+            [delayBtn setImage:[UIImage imageNamed:@"2秒开关底图.png"] forState:UIControlStateNormal];
+        }
+
+    }else
+    {
+        if (self.userInfo.delayTakePhotoCtl ==  NO) {
+            
+            [self.userInfo updateDelayTakePhotoCtl:YES];
+            [self animationMergerButton:YES];
+            [delayBtn setImage:[UIImage imageNamed:@"2秒开关底图.png"] forState:UIControlStateNormal];
+            
+        }else
+        {
+            [self.userInfo updateDelayTakePhotoCtl:NO];
+            [self animationMergerButton:NO];
+            [delayBtn setImage:[UIImage imageNamed:@"2秒开关底图-关.png"] forState:UIControlStateNormal];
+        }
+    }
+
+    
+    
+}
+
+-(void) animationMergerButton:(BOOL) merger
+{
+    
+    if (merger) {
         NSLog(@"合并语音与拍照按钮");
         [UIView beginAnimations:@"MergeAnimation" context:nil];
         [UIView setAnimationDuration:1.0f];
@@ -496,13 +528,8 @@
         voicePressedBtn.alpha = 0.2;
         
         [UIView commitAnimations];
-        
-        
     }else
     {
-        [self.userInfo updateDelayTakePhotoCtl:NO];
-        [delayBtn setImage:[UIImage imageNamed:@"2秒开关底图-关.png"] forState:UIControlStateNormal];
-
         NSLog(@"分开 拍照与语音 按钮");
         [UIView beginAnimations:@"deMergeAnimation" context:(__bridge void *)(cameraBtn)];
         
@@ -523,11 +550,10 @@
         
         [UIView commitAnimations];
         
-        
     }
     
-    
 }
+
 
 - (void)deMergeAnimationDidStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *)contentBtn
 {
@@ -640,6 +666,32 @@
         // iOS 7
         [self prefersStatusBarHidden];
         [self performSelector:@selector(setNeedsStatusBarAppearanceUpdate)];
+    }
+    
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    //判断是否增加阳光月光值
+    if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
+        if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
+            
+            
+            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+            [customAlertAutoDis setAlertMsg:@"阳光时间来过了，要每天认真说一次就好呢"];
+            [customAlertAutoDis RunCumstomAlert];
+            
+            
+        }
+    }else
+    {
+        if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
+            
+            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+            [customAlertAutoDis setAlertMsg:@"月光时间来过了，要每天认真说一次就好呢"];
+            [customAlertAutoDis RunCumstomAlert];
+        }
+        
     }
     
 }
@@ -814,7 +866,10 @@
         
     }else
     {
-        [CommonObject showAlert:@"多点自信，再大点声!" titleMsg:nil DelegateObject:nil];
+        
+        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+        [customAlertAutoDis setAlertMsg:@"亲，多点自信，大点声哦！"];
+        [customAlertAutoDis RunCumstomAlert];
         
         return  NO;
     }
@@ -880,7 +935,10 @@
             [super takePicture];
     }else
     {
-        [CommonObject showAlert:@"先大声说出宣言，再拍照" titleMsg:Nil DelegateObject:Nil];
+        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+        NSString* temp = [NSString stringWithFormat:@"说出你的%@光宣言，再拍照哦!", (iSunORMoon==IS_SUN_TIME)?@"阳":@"月"];
+        [customAlertAutoDis setAlertMsg:temp];
+        [customAlertAutoDis RunCumstomAlert];
         
     }
 
@@ -892,12 +950,12 @@
 {
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
         
-        [CommonObject showActionSheetOptiontitleMsg:@"我美丽的公主，你要自拍说出宣言，才能获得阳光" ShowInView:self.view CancelMsg:@"就要用相片" DelegateObject:self Option:@"好嘞，我的太阳王子"];
+        [CommonObject showActionSheetOptiontitleMsg:@"大声地说出美丽宣言，自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"就要用相片" DelegateObject:self Option:@"好嘞"];
         
         
     }else if([CommonObject checkSunOrMoonTime] ==  IS_MOON_TIME)
     {
-        [CommonObject showActionSheetOptiontitleMsg:@"我美丽的公主，你要自拍说出宣言，才能获得月光" ShowInView:self.view CancelMsg:@"就要用相片" DelegateObject:self Option:@"好嘞，我的月光女神"];
+        [CommonObject showActionSheetOptiontitleMsg:@"大声地说出美丽宣言，自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"就要用相片" DelegateObject:self Option:@"好嘞"];
     }
     
 
@@ -1006,10 +1064,10 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     
     NSString *now = nil;
     if(iSunORMoon == IS_SUN_TIME) {
-        now = self.userInfo.current_sun_sentence;
+        now = [self.userInfo.sunDataSourceArray objectAtIndex:row];
     }else if (iSunORMoon == IS_MOON_TIME)
     {
-        now = self.userInfo.current_moon_sentence;
+        now = [self.userInfo.moonDataSourceArray objectAtIndex:row];
         
     }
     

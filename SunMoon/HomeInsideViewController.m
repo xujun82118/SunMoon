@@ -66,12 +66,6 @@
     //云同步
     self.userCloud = [[UserInfoCloud alloc] init];
     self.userCloud.userInfoCloudDelegate = self;
-
-    //[self.navigationItem setNewTitle:@"测试"];
-    //[self.navigationItem setRightItemWithTarget:self  action:@selector(back) image:@"HomeInside_0000s_0001_设置.png"];
-    
-    //[self.navigationItem setLeftItemWithTarget:self  action:@selector(back) image:@"HomeInside_0000s_0000_返回.png"];
-
     
     //增加scroll图片
     [self addScrollUserImageSunReFresh:NO];
@@ -112,11 +106,10 @@
     
     //语音回放控制
     pressedVoiceForPlay = [[VoicePressedHold alloc] init];
-
-    [_voiceReplaySunBtn setImage:[UIImage imageNamed:@"放音-细黄.PNG"] forState:UIControlStateNormal];
-    [_voiceReplayMoonBtn setImage:[UIImage imageNamed:@"放音-细黄.PNG"] forState:UIControlStateNormal];
+    //回放音按钮
     [_voiceReplaySunBtn setImage:[UIImage imageNamed:@"停止放音-细黄.PNG"] forState:UIControlStateSelected];
     [_voiceReplayMoonBtn setImage:[UIImage imageNamed:@"停止放音-细黄.PNG"] forState:UIControlStateSelected];
+
 
 
 }
@@ -128,8 +121,8 @@
     for (int i = 0; i<4; i++) {
         [setSun addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                            [UIImage imageNamed:@"null-相片.png"],@"image_data",
-                           @" ",@"image_name_time",
-                           @" ",@"image_sentence",
+                           @"",@"image_name_time",
+                           @"",@"image_sentence",
                            nil]];
         
     }
@@ -170,8 +163,8 @@
         for (int i = realCount; i<8; i++) {
             [setSun addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                [UIImage imageNamed:@"null-相片.png"],@"image_data",
-                               @" ",@"image_name_time",
-                               @" ",@"image_sentence",
+                               @"",@"image_name_time",
+                               @"",@"image_sentence",
                                nil]];
             
         }
@@ -226,8 +219,8 @@
     for (int i = 0; i<4; i++) {
         [setMoon addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                            [UIImage imageNamed:@"null-相片.png"],@"image_data",
-                           @" ",@"image_name_time",
-                           @" ",@"image_sentence",
+                           @"",@"image_name_time",
+                           @"",@"image_sentence",
                            nil]];
         
     }
@@ -263,8 +256,8 @@
         for (int i = realCount; i<8; i++) {
             [setMoon addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                 [UIImage imageNamed:@"null-相片.png"],@"image_data",
-                                @" ",@"image_name_time",
-                                @" ",@"image_sentence",
+                                @"",@"image_name_time",
+                                @"",@"image_sentence",
                                 nil]];
             
         }
@@ -396,13 +389,18 @@
 -(void) animateIncreaseValue:(NSTimer *)timer
 {
     //显示阳光，月光值, 从1增加到最大
-    int count = [userData count];
-    for (int i = 0; i<count; i++) {
-        UserInfo* userInfo = [userData objectAtIndex:i];
-        sunValueStatic.text = userInfo.sun_value;
-        moonValueStatic.text = userInfo.moon_value;
+    int count = [[self.user getMaxUserSunValue] integerValue];
+    for (int i = 0; i<=count; i++) {
+        sunValueStatic.text = [NSString stringWithFormat:@"%d", i];
         sleep(0.5);
     }
+    
+    count = [[self.user getMaxUserMoonValue] integerValue];
+    for (int i = 0; i<=count; i++) {
+        moonValueStatic.text = [NSString stringWithFormat:@"%d", i];
+        sleep(0.5);
+    }
+    
 }
 
 
@@ -659,10 +657,17 @@
 #pragma mark - 回放语音
 - (IBAction)replaySunVoice:(id)sender
 {
+    
+
 
     NSString*  timeSun = [currentSelectDataSun objectForKey:@"image_name_time"];
     NSString* nameSun = [NSString stringWithFormat:@"%@_%d", timeSun, IS_SUN_TIME];
     [pressedVoiceForPlay setVoiceName:nameSun];
+ 
+    if (![pressedVoiceForPlay checkVoiceFile]) {
+        return;
+    }
+    
     
     if (_voiceReplaySunBtn.selected == NO) {
         [pressedVoiceForPlay playRecording];
@@ -684,6 +689,10 @@
     NSString*  timeMoon = [currentSelectDataMoon objectForKey:@"image_name_time"];
     NSString* nameMoon = [NSString stringWithFormat:@"%@_%d", timeMoon, IS_MOON_TIME];
     [pressedVoiceForPlay setVoiceName:nameMoon];
+    
+    if (![pressedVoiceForPlay checkVoiceFile]) {
+        return;
+    }
     
     if (_voiceReplayMoonBtn.selected == NO) {
         [pressedVoiceForPlay playRecording];
@@ -727,11 +736,48 @@
     {
         moonTimeBtn.hidden = NO;
         [moonTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-打开.png"] forState:UIControlStateNormal ];
+        
+        
+        UILocalNotification *alertNotification = [[UILocalNotification alloc] init];
+
+        if (alertNotification!=nil)
+        {
+
+            NSDate *alertTime = [UserInfo  sharedSingleUserInfo].moonAlertTime;
+
+            alertNotification.fireDate = alertTime;
+            alertNotification.repeatInterval = kCFCalendarUnitDay;
+            alertNotification.timeZone=[NSTimeZone defaultTimeZone];
+            alertNotification.soundName = @"cute.mp3";
+            
+            NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_MOON_TIME forKey:ALERT_SUN_MOON_TIME];
+            alertNotification.userInfo = info;
+            
+            alertNotification.alertBody = NSLocalizedString(@"Moon time is on", @"");
+            
+            [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
+            
+        }
 
     }else
     {
         moonTimeBtn.hidden = YES;
         [moonTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-关闭.png"] forState:UIControlStateNormal ];
+        
+        
+        //清空原来所有的
+        NSArray *myArray=[[UIApplication sharedApplication] scheduledLocalNotifications];
+        for (int i=0; i<[myArray count]; i++)
+        {
+            UILocalNotification *myUILocalNotification=[myArray objectAtIndex:i];
+            
+            if ([[[myUILocalNotification userInfo] objectForKey:ALERT_SUN_MOON_TIME] isEqualToString:ALERT_IS_MOON_TIME])
+            {
+                [[UIApplication sharedApplication] cancelLocalNotification:myUILocalNotification];
+            }
+            
+        }
+        
        
     }
     
@@ -745,10 +791,45 @@
     {
         sunTimeBtn.hidden = NO;
         [sunTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-打开.png"] forState:UIControlStateNormal ];
+        
+        UILocalNotification *alertNotification = [[UILocalNotification alloc] init];
+        
+        if (alertNotification!=nil)
+        {
+            
+            NSDate *alertTime = [UserInfo  sharedSingleUserInfo].sunAlertTime;
+            
+            alertNotification.fireDate = alertTime;
+            alertNotification.repeatInterval = kCFCalendarUnitDay;
+            alertNotification.timeZone=[NSTimeZone defaultTimeZone];
+            alertNotification.soundName = @"cute.mp3";
+            
+            NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_SUN_TIME forKey:ALERT_SUN_MOON_TIME];
+            alertNotification.userInfo = info;
+            
+            alertNotification.alertBody = NSLocalizedString(@"Sun time is on", @"");
+            
+            [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
+            
+        }
+        
     }else
     {
         sunTimeBtn.hidden = YES;
         [sunTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-关闭.png"] forState:UIControlStateNormal ];
+        
+        //清空原来所有的
+        NSArray *myArray=[[UIApplication sharedApplication] scheduledLocalNotifications];
+        for (int i=0; i<[myArray count]; i++)
+        {
+            UILocalNotification *myUILocalNotification=[myArray objectAtIndex:i];
+            
+            if ([[[myUILocalNotification userInfo] objectForKey:ALERT_SUN_MOON_TIME] isEqualToString:ALERT_IS_SUN_TIME])
+            {
+                [[UIApplication sharedApplication] cancelLocalNotification:myUILocalNotification];
+            }
+            
+        }
         
     }
     
@@ -767,9 +848,16 @@
         //UIImageView* imageData = [(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex] objectForKey:@"image_data"];
         
         NSString* imageSentence    = [currentSelectDataSun objectForKey:@"image_sentence"];
+
         sunWordShow.text       = imageSentence;
         
-        sunTimeText.text =[currentSelectDataSun objectForKey:@"image_name_time"];
+        if (![imageSentence isEqualToString:@""]) {
+            NSString* tempTime =[currentSelectDataSun objectForKey:@"image_name_time"];
+            tempTime = [tempTime stringByReplacingOccurrencesOfString:@"." withString:@"月"];
+            tempTime = [tempTime stringByAppendingString:@"日"];
+            sunTimeText.text =tempTime;
+        }
+
         [self.view bringSubviewToFront:sunTimeText];
     
         
@@ -791,7 +879,13 @@
         NSString* imageSentence    = [currentSelectDataMoon objectForKey:@"image_sentence"];
         moonWordShow.text      = imageSentence;
         
-        moonTimeText.text =[currentSelectDataMoon objectForKey:@"image_name_time"];
+        if (![imageSentence isEqualToString:@""]) {
+            NSString* tempTime =[currentSelectDataSun objectForKey:@"image_name_time"];
+            tempTime = [tempTime stringByReplacingOccurrencesOfString:@"." withString:@"月"];
+            tempTime = [tempTime stringByAppendingString:@"日"];
+            sunTimeText.text =tempTime;
+        }
+        
         [self.view bringSubviewToFront:moonTimeText];
         
     }
@@ -815,7 +909,8 @@
         _shareSunCtlBtn.alpha = 0.1;
         lightSunSentence.alpha = 0.1;
         
-        _voiceReplaySunBtn.alpha = 0.1;
+        //test
+       // _voiceReplaySunBtn.alpha = 0.1;
         
         
         

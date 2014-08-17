@@ -96,7 +96,8 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [self.contentViewController endAppearanceTransition];
+    //起动时，会先调用mainview:viewDidDisappear,不需要，注调
+    //[self.contentViewController endAppearanceTransition];
 }
 
 - (void)viewWillDisappear:(BOOL)animated

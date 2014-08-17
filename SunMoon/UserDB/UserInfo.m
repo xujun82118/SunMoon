@@ -29,15 +29,15 @@ static UserInfo *sharedUserInfo;
 + (UserInfo *)sharedSingleUserInfo
 {
     
-    //@synchronized(self)
-    //{
+    @synchronized(self)
+    {
         if (!sharedUserInfo)
         {
            sharedUserInfo = [[UserInfo alloc] init];
         }
     
         return sharedUserInfo;
-    //}
+    }
 }
 
 
@@ -137,11 +137,11 @@ static UserInfo *sharedUserInfo;
     [userBaseData setBool:_sunAlertTimeCtl forKey:SUN_ALERT_TIME_CTL];
     [userBaseData setBool:_moonAlertTimeCtl forKey:MOON_ALERT_TIME_CTL];
     
-    _cloudSynAutoCtl = YES;
-    [userBaseData setBool:_moonAlertTimeCtl forKey:CLOUD_SYN_CTL];
-    _photoSaveAutoCtl = YES;
+    _cloudSynAutoCtl = NO;
+    [userBaseData setBool:_cloudSynAutoCtl forKey:CLOUD_SYN_CTL];
+    _photoSaveAutoCtl = NO;
     [userBaseData setBool:_photoSaveAutoCtl forKey:PHOTO_SAVE_CTL];
-    _delayTakePhotoCtl = YES;
+    _delayTakePhotoCtl = NO;
     [userBaseData setBool:_delayTakePhotoCtl forKey:DELAY_TAKE_PHOTO_CTL];
     
     
@@ -369,8 +369,7 @@ static UserInfo *sharedUserInfo;
     if ([userDB getUserDataByDateTime:user.date_time]) {
         NSLog(@"Datetime=%@， 重复，先删后插入一条!", user.date_time);
         //有错误，导致存入后数据乱，原因不明，暂时用先删后存的方法
-        //test
-        //[userDB deleteUserWithDataTime:user.date_time];
+        [userDB deleteUserWithDataTime:user.date_time];
         [userDB saveUser:user];
     }else
     {
@@ -383,11 +382,21 @@ static UserInfo *sharedUserInfo;
 
 -(NSString*)getMaxUserSunValue
 {
+    
     UserDB* userDB = [[UserDB alloc] init];
     UserInfo* tempInfo = [userDB findMaxByField:@"sun_value"];
     
+
+    
     if (tempInfo) {
-        return  tempInfo.sun_value;
+        if ([tempInfo.sun_value integerValue] < [_sun_value integerValue]) {
+            NSLog(@"由于读库后，又新奖励了光 ，未入库，所次当天值大于库中值，返回最大值");
+            return _sun_value;
+        }else
+        {
+            return  tempInfo.sun_value;
+            
+        }
     }else
     {
         return  @"0";
@@ -401,7 +410,14 @@ static UserInfo *sharedUserInfo;
     UserInfo* tempInfo = [userDB findMaxByField:@"moon_value"];
     
     if (tempInfo) {
-        return  tempInfo.moon_value;
+        if ([tempInfo.moon_value integerValue] < [_moon_value integerValue]) {
+            NSLog(@"由于读库后，又新奖励了光 ，未入库，所次当天值大于库中值，返回最大值");
+            return _moon_value;
+        }else
+        {
+            return  tempInfo.moon_value;
+            
+        }
     }else
     {
         return  @"0";

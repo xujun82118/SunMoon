@@ -15,10 +15,10 @@
 "Moon_sentenc_2" = "我觉得，我今天美到无与伦比，哇咔咔！";
 "Moon_sentenc_3" = "晚安，好好睡个美容觉吧！";
 
-"Sun time is on" = "是时候来一次阳光宣言了~";
-"Moon time is on" = "是时候来一次月光宣言了~";
+"Sun time is on" = "阳光时间到了，想美丽又自信吗，快来美丽宣言吧~";
+"Moon time is on" = "月光时间到了，快来和月光说句美丽宣言了吧~";
 
-"FromUri" = "（App:天天更美丽）";
+"FromUri" = "（天天更美丽）";
 
 "Change to sun time hi message" = "阳光时间开始了，和太阳打个招呼吧！";
 "Change to moon time hi message" = "月光时间开始了，和月亮说声晚安吧！";
@@ -36,4 +36,4 @@
 "TEXT_YOUDAO_NOTE" = "有道云笔记";
 "TEXT_SOHU_KAN" = "搜狐随身看";
 "TEXT_UNAUTH" = "此平台尚未授权!";
-"TEXT_UNAUTH_2" = "尚未授权";
+"TEXT_UNAUTH_2" = "尚未绑定登录";

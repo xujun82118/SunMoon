@@ -11,6 +11,7 @@
 #import "ColorMatrix.h"
 #import "IphoneScreen.h"
 #import "ShareByShareSDR.h"
+#import "CustomAlertView.h"
 
 @interface ImageFilterProcessViewController ()
 
@@ -79,7 +80,7 @@
     [self.view addSubview:toolBarImageView];
     
     //加重拍按钮
-    NSInteger rePhotoBtnWidth = 20;
+    NSInteger rePhotoBtnWidth = 25;
     NSInteger rePhotoBtnHeight = 20;
     UIButton *rePhotoBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [rePhotoBtn setImage:[UIImage imageNamed:@"拍照-small.png"] forState:UIControlStateNormal];
@@ -88,20 +89,20 @@
     [self.view addSubview:rePhotoBtn];
     
     //加分享按钮
-    NSInteger shareBtnWidth = 20;
-    NSInteger shareBtnHeight = 20;
+    NSInteger shareBtnWidth = 30;
+    NSInteger shareBtnHeight = 30;
     UIButton *shareBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [shareBtn setImage:[UIImage imageNamed:@"editePhoto_分享.png"] forState:UIControlStateNormal];
+    [shareBtn setImage:[UIImage imageNamed:@"分享.png"] forState:UIControlStateNormal];
     [shareBtn setFrame:CGRectMake(ScreenWidth/2-shareBtnWidth/2, toolBarImageView.center.y-shareBtnHeight/2, shareBtnWidth, shareBtnHeight)];
     [shareBtn addTarget:self action:@selector(doShare) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareBtn];
     
     
     //加保存到相册按钮
-    NSInteger saveBtnWidth = 20;
-    NSInteger saveBtnHeight = 20;
+    NSInteger saveBtnWidth = 25;
+    NSInteger saveBtnHeight = 25;
     UIButton *saveBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [saveBtn setImage:[UIImage imageNamed:@"选择.png"] forState:UIControlStateNormal];
+    [saveBtn setImage:[UIImage imageNamed:@"save.png"] forState:UIControlStateNormal];
     [saveBtn setFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X- saveBtnWidth, toolBarImageView.center.y-saveBtnHeight/2, saveBtnWidth, saveBtnHeight)];
     [saveBtn addTarget:self action:@selector(savetoAlbumHandle:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:saveBtn];
@@ -161,9 +162,9 @@
 
     //时间框
     int timeImageHeight = 25;
-    int timeImageWidth = 100;
+    int timeImageWidth = 85;
     UIImage *timeImage = [UIImage imageNamed:@"时间框.png"];
-    UIImageView *timeImageView = [[UIImageView alloc]initWithFrame:CGRectMake(rootImageView.frame.origin.x+imageWideth/2-60/2, rootImageView.frame.origin.y+imageHeight+5, timeImageWidth, timeImageHeight)];
+    UIImageView *timeImageView = [[UIImageView alloc]initWithFrame:CGRectMake(rootImageView.frame.origin.x+imageWideth/2-timeImageWidth/2, rootImageView.frame.origin.y+imageHeight+5, timeImageWidth, timeImageHeight)];
     timeImageView.image = timeImage;
     [self.view addSubview:timeImageView];
     
@@ -184,10 +185,12 @@
     
 
     //时间值
-    timeString = [imagePickerData objectForKey:CAMERA_TIME_KEY];
+    NSString* tempTime =[imagePickerData objectForKey:CAMERA_TIME_KEY];
+    tempTime = [tempTime stringByReplacingOccurrencesOfString:@"." withString:@"月"];
+    timeString = [tempTime stringByAppendingString:@"日"];
     int timelabelHeight = 20;
     int timelabelWidth = 100;
-    timelabel = [[UILabel alloc] initWithFrame:CGRectMake(timeImageView.frame.origin.x+10, timeImageView.center.y-timelabelHeight/2, timelabelWidth,timelabelHeight)];
+    timelabel = [[UILabel alloc] initWithFrame:CGRectMake(timeImageView.frame.origin.x+5, timeImageView.center.y-timelabelHeight/2, timelabelWidth,timelabelHeight)];
     [timelabel setBackgroundColor:[UIColor clearColor]];
     [timelabel setText:timeString];
     [timelabel setTextAlignment:NSTextAlignmentCenter];
@@ -311,9 +314,9 @@
     
     NSInteger IntervalWidth = LIGHT_ANIMATION_INTERVAL;// 光环向头像外扩的宽度
     NSInteger lightBowSkySunMoonViewWidth = sunMoonImageViewTop.frame.size.width+IntervalWidth*2;
-    NSInteger lightBowSkyUserHeaderViewHeigth = sunMoonImageViewTop.frame.size.height+IntervalWidth*2;
+    NSInteger lightBowSkySunMoonViewHeigth = sunMoonImageViewTop.frame.size.height+IntervalWidth*2;
     
-    bowLightView = [[UIImageView alloc] initWithFrame:CGRectMake(sunMoonImageViewTop.center.x-lightBowSkySunMoonViewWidth/2, sunMoonImageViewTop.center.y-lightBowSkySunMoonViewWidth/2, lightBowSkySunMoonViewWidth, lightBowSkyUserHeaderViewHeigth)];
+    bowLightView = [[UIImageView alloc] initWithFrame:CGRectMake(sunMoonImageViewTop.center.x-lightBowSkySunMoonViewWidth/2, sunMoonImageViewTop.center.y-lightBowSkySunMoonViewWidth/2, lightBowSkySunMoonViewWidth, lightBowSkySunMoonViewHeigth)];
     bowLightView.image=[UIImage imageNamed:@"空白图"];
     bowLightView.userInteractionEnabled=YES;
     bowLightView.contentMode=UIViewContentModeScaleToFill;
@@ -339,14 +342,12 @@
 
 -(void)savetoAlbumHandle:(UIButton*)sender
 {
+    NSLog(@"保存到相册");
     UIImageWriteToSavedPhotosAlbum(currentImage, nil, nil,nil);
-    UIAlertView *alert = [[UIAlertView alloc]
-                          initWithTitle:@"保存成功！"
-                          message:nil
-                          delegate:self
-                          cancelButtonTitle:@"确定"
-                          otherButtonTitles: nil];
-    [alert show];
+   
+    CustomAlertView* customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+    [customAlertAutoDis setAlertMsg:@"已保存到相册"];
+    [customAlertAutoDis RunCumstomAlert];
     
     
 }
@@ -422,6 +423,7 @@
         NSLog(@" 获得的光的个数为0，返回");
         return;
     }
+
     
     //增加光的动画准备
     [addVauleAnimation setStartPoint:sunMoonImageViewTop.center];
@@ -437,10 +439,26 @@
     [addVauleAnimation setAminationImageViewframe:CGRectMake(sunMoonImageViewTop.frame.origin.x, sunMoonImageViewTop.frame.origin.y, 60, 60)];
     
     //判断是否增加阳光月光值
+    CustomAlertView* customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:nil posionShowMode:userSet];
+    [customAlertAutoDis setStartCenterPoint:editImageOldView.center];
+    [customAlertAutoDis setEndCenterPoint:self.view.center];
+    [customAlertAutoDis setStartAlpha:0.1];
+    [customAlertAutoDis setEndAlpha:1.0];
+    [customAlertAutoDis setStartHeight:0];
+    [customAlertAutoDis setStartWidth:0];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
+    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+    [customAlertAutoDis setDelayDisappearTime:5.0];
+    [customAlertAutoDis setMsgFrontSize:30];
+
     if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
         if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
             
-            [CommonObject showAlert:@"已增加过阳光值" titleMsg:@"提示" DelegateObject:self];
+            
+
+            [customAlertAutoDis setAlertMsg:@"咦，今天已经奖励过阳光了哦"];
+            [customAlertAutoDis RunCumstomAlert];
+            
             
         }else
         {
@@ -453,8 +471,8 @@
     {
         if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
             
-            [CommonObject showAlert:@"已增加过月光值" titleMsg:@"提示" DelegateObject:self];
-            
+            [customAlertAutoDis setAlertMsg:@"咦，今天已经奖励过月光了哦"];
+            [customAlertAutoDis RunCumstomAlert];
         }else
         {
             [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
@@ -496,14 +514,30 @@
 //丢弃返回， 减少一个阳光
 - (void)abandonAction
 {
+
+    
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
         
-        [CommonObject showActionSheetOptiontitleMsg:@"放弃将失去此次增加的阳光值" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+        if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
+            [CommonObject showActionSheetOptiontitleMsg:@"Oh,放弃吗" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+        }else
+        {
+            [CommonObject showActionSheetOptiontitleMsg:@"Oh,放弃将失去此次奖励的阳光" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+        }
+        
+
         
         
     }else if([CommonObject checkSunOrMoonTime] ==  IS_MOON_TIME)
     {
-        [CommonObject showActionSheetOptiontitleMsg:@"放弃将失去此次增加的   月光值" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+        if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
+            [CommonObject showActionSheetOptiontitleMsg:@"Oh,放弃吗" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+        }else
+        {
+            [CommonObject showActionSheetOptiontitleMsg:@"Oh, 放弃将失去此次奖励的月光" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+        }
+        
+
     }
     
     
@@ -620,6 +654,10 @@
     {
         tempOld = [UIImage imageWithData:self.userInfo.moon_image];
         tempOldstring = self.userInfo.moon_image_sentence;
+    }
+    
+    if (!tempOld || !tempOldstring) {
+        return;
     }
     
     //交换新旧图片
