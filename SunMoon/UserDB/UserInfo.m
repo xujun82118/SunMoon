@@ -218,6 +218,8 @@ static UserInfo *sharedUserInfo;
     return self;
 }
 
+
+/*
 -(instancetype) registerNewUserWithName:(NSString*) name regTime:(NSString*) time snsID:(NSString*) snsID headerImage:(UIImage*)image
 {
   
@@ -240,7 +242,7 @@ static UserInfo *sharedUserInfo;
     
     return self;
 }
-
+*/
 
 //除用户身份信息外的信息
 -(void)getUserCommonData

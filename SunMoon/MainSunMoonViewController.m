@@ -173,18 +173,7 @@
     [self.view addSubview:lightSkySunOrMoonView];
     [self.view bringSubviewToFront:_skySunorMoonImage];
     
-    //初始化头像爆闪动画图
-    lightBowSkyUserHeaderView=[[UIImageView alloc] init];
-    lightBowSkyUserHeaderView.image=[UIImage imageNamed:@"空白图"];
-    lightBowSkyUserHeaderView.userInteractionEnabled=YES;
-    lightBowSkyUserHeaderView.contentMode=UIViewContentModeScaleToFill;
-    
-    NSInteger IntervalWidth1 = LIGHT_ANIMATION_INTERVAL;// 光环向头像外扩的宽度
-    NSInteger lightBowSkyUserHeaderViewWidth = _userHeaderImageView.frame.size.width+IntervalWidth1*2;
-    NSInteger lightBowSkyUserHeaderViewHeigth = _userHeaderImageView.frame.size.height+IntervalWidth1*2;
-    [lightBowSkyUserHeaderView setFrame:CGRectMake(_userHeaderImageView.center.x-lightBowSkyUserHeaderViewWidth/2, _userHeaderImageView.center.y-lightBowSkyUserHeaderViewHeigth/2, lightBowSkyUserHeaderViewWidth, lightBowSkyUserHeaderViewHeigth)];
-    [self.view addSubview:lightBowSkyUserHeaderView];
-    [self.view bringSubviewToFront:_userHeaderImageView];
+
     
     
     //日月点击爆闪
@@ -351,12 +340,14 @@
     NSLog(@"---->viewWillAppear");
     //起动引导界面
     if (guidInfo.fristlyOpenGuidCtl) {
-        //优化：不要占用第一个界面
+
         [self showIntroWithCrossDissolve];
         
         //关闭引导
         [guidInfo updateFirstlyOpenGuidCtl:NO];
     }
+    
+    
 
 
     //重取一次数
@@ -369,6 +360,21 @@
 {
     [super viewDidAppear:animated];
     NSLog(@"---->viewDidAppear");
+    
+    
+    //初始化头像爆闪动画图
+    //不能放到veiwDidload 和viewWillapear中
+    lightBowSkyUserHeaderView=[[UIImageView alloc] init];
+    lightBowSkyUserHeaderView.image=[UIImage imageNamed:@"空白图"];
+    lightBowSkyUserHeaderView.userInteractionEnabled=YES;
+    lightBowSkyUserHeaderView.contentMode=UIViewContentModeScaleToFill;
+    
+    NSInteger IntervalWidth1 = LIGHT_ANIMATION_INTERVAL;// 光环向头像外扩的宽度
+    NSInteger lightBowSkyUserHeaderViewWidth = _userHeaderImageView.frame.size.width+IntervalWidth1*2;
+    NSInteger lightBowSkyUserHeaderViewHeigth = _userHeaderImageView.frame.size.height+IntervalWidth1*2;
+    [lightBowSkyUserHeaderView setFrame:CGRectMake(_userHeaderImageView.center.x-lightBowSkyUserHeaderViewWidth/2, _userHeaderImageView.center.y-lightBowSkyUserHeaderViewHeigth/2, lightBowSkyUserHeaderViewWidth, lightBowSkyUserHeaderViewHeigth)];
+    [self.view addSubview:lightBowSkyUserHeaderView];
+    [self.view bringSubviewToFront:_userHeaderImageView];
 
     //退出了小屋
     isGetinToHome = NO;
@@ -379,27 +385,29 @@
     
     //test
     //self.userInfo.userType =USER_TYPE_NEW;
-
-
-    //test
-//    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
-//    [customAlertAutoDis setStartCenterPoint:_showBringLightBtn.center];
-//    [customAlertAutoDis setEndCenterPoint:self.view.center];
-//    [customAlertAutoDis setStartAlpha:0.1];
-//    [customAlertAutoDis setEndAlpha:1.0];
-//    [customAlertAutoDis setStartHeight:0];
-//    [customAlertAutoDis setStartWidth:0];
-//    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
-//    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-//    [customAlertAutoDis setDelayDisappearTime:5.0];
-//    [customAlertAutoDis setMsgFrontSize:30];
-//    [customAlertAutoDis setAlertMsg:@"首次登录，奖励一个阳光，或月光, 点击光"];
-//    [customAlertAutoDis RunCumstomAlert];
     
-    
-    //起动引导界面
     if (!guidInfo.fristlyOpenGuidCtl)
     {
+        //第二次进入主界面时，提示滑屏
+        if (!guidInfo.guidPanToBring) {
+            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
+            [customAlertAutoDis setStartCenterPoint:_showBringLightBtn.center];
+            [customAlertAutoDis setEndCenterPoint:self.view.center];
+            [customAlertAutoDis setStartAlpha:0.1];
+            [customAlertAutoDis setEndAlpha:1.0];
+            [customAlertAutoDis setStartHeight:0];
+            [customAlertAutoDis setStartWidth:0];
+            [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
+            [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+            [customAlertAutoDis setDelayDisappearTime:5.0];
+            [customAlertAutoDis setMsgFrontSize:30];
+            NSString* lightType = ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月";
+            [customAlertAutoDis setAlertMsg:[NSString stringWithFormat:@"拖动%@到%@，3小时可养成1个%@光哦", lightType,lightType,lightType]];
+            [customAlertAutoDis RunCumstomAlert];
+            
+            [guidInfo updateGuidPanToBring:YES];
+        }
+        
         [self whenCommonOpenViewHandle];
     }
 
@@ -448,9 +456,6 @@
 -(void)whenCommonOpenViewHandle
 {
     
-    isContineGiveLight = NO;
-    
-    
     //始终弹出相机按键
     [self animationForIntoCameraBtnPop:YES];
     
@@ -473,6 +478,7 @@
             [self.userInfo addSunOrMoonValue:1];
             
             //奖励提示
+            isContineGiveLight = YES;
             customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
             if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
                 [customAlertAutoDis setAlertMsg:@"阳光时间连续登录，奖励一个阳光"];
@@ -486,7 +492,7 @@
             
             //弹出育成图
             [self animationForShowBringLightBtnPop:YES];
-            isContineGiveLight = YES;
+  
 
             
             //改：光存在了日月里
@@ -615,8 +621,10 @@
 
 -(void) animationForShowBringLightBtnPop:(BOOL)isPop
 {
-    //有光在育成才弹出
-    if (isPop && [self.userInfo checkIsBringUpinSunOrMoon]) {
+    
+
+    //有光在育成才弹出,或是奖励的一个光也弹出
+    if (isPop && ([self.userInfo checkIsBringUpinSunOrMoon]||isContineGiveLight)) {
         [UIView beginAnimations:@"popOut_showBringLightBtn" context:Nil];
         [UIView setAnimationDuration:0.8f];
         [UIView setAnimationDelegate:self];
@@ -625,6 +633,12 @@
         [_showBringLightBtn setFrame:destShowBringLightBtnFrame];
         [UIView commitAnimations];
         isPopOutShowBringLightBtn = YES;
+        
+        
+        //奖励光，但又没有光在育成时，设为有光
+        if (isContineGiveLight) {
+            [self setShowBringLightBtnHaveLight:YES];
+        }
 
         
     }else
@@ -679,6 +693,10 @@
             [self moveLightWithRepeatCount:1 StartPoint:_skySunorMoonImage.center EndPoint:_userHeaderImageView.center IsUseRepeatCount:YES];
             //更新育成光环状态
             [self setShowBringLightBtnHaveLight:NO];
+            
+            isContineGiveLight = NO;
+            isStartSunOrmoonImageMoveToHeaderAnimation = YES;
+
             
         }else
         {

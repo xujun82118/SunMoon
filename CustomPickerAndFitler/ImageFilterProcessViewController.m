@@ -30,6 +30,8 @@
     UIImageView* bowLightView;
     
     AminationCustom* addVauleAnimation;
+    
+    CustomAlertView*  customAlertAutoDis;
 }
 
 @end
@@ -66,22 +68,22 @@
     
     currentImage = [imagePickerData objectForKey:CAMERA_IMAGE_KEY];
     
-    //UIImage *bkImage = [UIImage imageNamed:@"小屋内底图.png"];
-    UIImageView *bkImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 20, SCREEN_WIDTH, 460)];
-    //bkImageView.image = bkImage;
+    UIImage *bkImage = [UIImage imageNamed:@"编辑背景图.png"];
+    UIImageView *bkImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    bkImageView.image = bkImage;
     bkImageView.backgroundColor = [UIColor blackColor];
     [self.view addSubview:bkImageView];
     
     //工具条
-    UIImage *toolBarImage = [UIImage imageNamed:@"下部圆弧001.png"];
+    UIImage *toolBarImage = [UIImage imageNamed:@"下部底图-绿.png"];
     //UIImageView *toolBarImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, ScreenHeight-TOOL_BAR_HEIGHT, ScreenWidth, TOOL_BAR_HEIGHT)];
-    UIImageView *toolBarImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 420, SCREEN_WIDTH, 60)];
+    UIImageView *toolBarImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, SCREEN_HEIGHT-40, SCREEN_WIDTH, 40)];
     toolBarImageView.image = toolBarImage;
     [self.view addSubview:toolBarImageView];
     
     //加重拍按钮
-    NSInteger rePhotoBtnWidth = 25;
-    NSInteger rePhotoBtnHeight = 20;
+    NSInteger rePhotoBtnWidth = 20;
+    NSInteger rePhotoBtnHeight = 15;
     UIButton *rePhotoBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [rePhotoBtn setImage:[UIImage imageNamed:@"拍照-small.png"] forState:UIControlStateNormal];
     [rePhotoBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, toolBarImageView.center.y-rePhotoBtnHeight/2, rePhotoBtnWidth, rePhotoBtnHeight)];
@@ -89,8 +91,8 @@
     [self.view addSubview:rePhotoBtn];
     
     //加分享按钮
-    NSInteger shareBtnWidth = 30;
-    NSInteger shareBtnHeight = 30;
+    NSInteger shareBtnWidth = 25;
+    NSInteger shareBtnHeight = 25;
     UIButton *shareBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [shareBtn setImage:[UIImage imageNamed:@"分享.png"] forState:UIControlStateNormal];
     [shareBtn setFrame:CGRectMake(ScreenWidth/2-shareBtnWidth/2, toolBarImageView.center.y-shareBtnHeight/2, shareBtnWidth, shareBtnHeight)];
@@ -99,8 +101,8 @@
     
     
     //加保存到相册按钮
-    NSInteger saveBtnWidth = 25;
-    NSInteger saveBtnHeight = 25;
+    NSInteger saveBtnWidth = 20;
+    NSInteger saveBtnHeight = 20;
     UIButton *saveBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [saveBtn setImage:[UIImage imageNamed:@"save.png"] forState:UIControlStateNormal];
     [saveBtn setFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X- saveBtnWidth, toolBarImageView.center.y-saveBtnHeight/2, saveBtnWidth, saveBtnHeight)];
@@ -130,7 +132,14 @@
     float imageWideth = 180;
     float imageHeight = imageWideth*960/640;
     [self.view setBackgroundColor:[UIColor colorWithWhite:0.388 alpha:1.000]];
-    rootImageView = [[UIImageView alloc ] initWithFrame:CGRectMake(ScreenWidth/2-imageWideth/2, 40, imageWideth, imageHeight)];
+    NSInteger y;
+    if (SCREEN_HEIGHT>480) {
+        y = 100;
+    }else
+    {
+        y = 40 ;
+    }
+    rootImageView = [[UIImageView alloc ] initWithFrame:CGRectMake(ScreenWidth/2-imageWideth/2, y, imageWideth, imageHeight)];
     rootImageView.image = currentImage;
     rootImageView.tag = TAG_EDITE_IMAGE_VIEW;
     [self.view addSubview:rootImageView];
@@ -212,10 +221,10 @@
     [self.view addSubview:valuelabel];
     
 
-    //语录,暂时没用
+    //语录
     currentSentence = [imagePickerData objectForKey:CAMERA_SENTENCE_KEY];
     int sentencelabelHeight = 20;
-    int sentencelabelWidth = 70;
+    int sentencelabelWidth = 200;
     sentencelabel = [[UILabel alloc] initWithFrame:CGRectMake(timeImageView.frame.origin.x+timeImageWidth/2-sentencelabelWidth/2, timeImageView.frame.origin.y+timeImageHeight+5, sentencelabelWidth, sentencelabelHeight)];
     [sentencelabel setBackgroundColor:[UIColor clearColor]];
     [sentencelabel setText:currentSentence];
@@ -226,8 +235,16 @@
     
 
     //调色盘
+    NSInteger scrollWidth = SCREEN_WIDTH;
+    NSInteger scrollHeight;
+    if (SCREEN_HEIGHT>480) {
+        scrollHeight = 120;
+    }else
+    {
+        scrollHeight = 60;
+    }
     NSArray *arr = [NSArray arrayWithObjects:@"原图",@"LOMO",@"黑白",@"复古",@"哥特",@"锐色",@"淡雅",@"酒红",@"青柠",@"浪漫",@"光晕",@"蓝调",@"梦幻",@"夜色", nil];
-    scrollerView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, timelabel.frame.origin.y+timelabelHeight+5, 320, 80)];
+    scrollerView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, sentencelabel.frame.origin.y+sentencelabelHeight, scrollWidth, scrollHeight)];
     scrollerView.tag = TAG_EDITE_PHOTO_SCROLL_VIEW;
     scrollerView.backgroundColor = [UIColor clearColor];
     scrollerView.indicatorStyle = UIScrollViewIndicatorStyleBlack;
@@ -252,7 +269,17 @@
         UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(setImageStyle:)];
         recognizer.numberOfTouchesRequired = 1;
         recognizer.numberOfTapsRequired = 1;
-        recognizer.delegate = self;
+        NSInteger labelWidth;
+        NSInteger labellHeight;
+        NSInteger bgImageWidth;
+        NSInteger bgImageHeight;
+        
+//        if (SCREEN_HEIGHT>480) {
+//            labelWidth =
+//        }else
+//        {
+//            scrollHeight = 60;
+//        }
         
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(x-5, 53, 40, 23)];
         [label setBackgroundColor:[UIColor clearColor]];
@@ -343,9 +370,9 @@
 -(void)savetoAlbumHandle:(UIButton*)sender
 {
     NSLog(@"保存到相册");
-    UIImageWriteToSavedPhotosAlbum(currentImage, nil, nil,nil);
+    UIImageWriteToSavedPhotosAlbum(rootImageView.image, nil, nil,nil);
    
-    CustomAlertView* customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
     [customAlertAutoDis setAlertMsg:@"已保存到相册"];
     [customAlertAutoDis RunCumstomAlert];
     
@@ -439,8 +466,8 @@
     [addVauleAnimation setAminationImageViewframe:CGRectMake(sunMoonImageViewTop.frame.origin.x, sunMoonImageViewTop.frame.origin.y, 60, 60)];
     
     //判断是否增加阳光月光值
-    CustomAlertView* customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:nil posionShowMode:userSet];
-    [customAlertAutoDis setStartCenterPoint:editImageOldView.center];
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
+    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, 0)];
     [customAlertAutoDis setEndCenterPoint:self.view.center];
     [customAlertAutoDis setStartAlpha:0.1];
     [customAlertAutoDis setEndAlpha:1.0];
@@ -454,8 +481,6 @@
     if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
         if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
             
-            
-
             [customAlertAutoDis setAlertMsg:@"咦，今天已经奖励过阳光了哦"];
             [customAlertAutoDis RunCumstomAlert];
             

@@ -11,7 +11,7 @@
 
 @implementation GuidController
 @synthesize fristlyOpenGuidCtl=_fristlyOpenGuidCtl;
-@synthesize guidInfo=_guidInfo;
+@synthesize guidInfo=_guidInfo, guidIntoCamera=_guidIntoCamera,guidTapLight=_guidTapLight,guid2SDelay=_guid2SDelay,guidPanToBring=_guidPanToBring;
 
 static GuidController *sharedGuidCtl;
 
@@ -40,26 +40,14 @@ static GuidController *sharedGuidCtl;
 
 - (BOOL)fristlyOpenGuidCtl {
 
-    return [_guidInfo boolForKey:KEY_OPEN_GUID];
+    return [_guidInfo boolForKey:KEY_GUID_FIRSTLY_OPEN];
 
 }
 
--(instancetype) initDefaultInfoAtFirstOpen:(BOOL) isGuid
-{
-    //_guidInfo = [NSUserDefaults standardUserDefaults];
-    [_guidInfo setBool:isGuid forKey:KEY_OPEN_GUID];
-    [_guidInfo synchronize];
-    
-    _fristlyOpenGuidCtl = isGuid;
-    
-    
-    return self;
-    
-}
 
 -(void) updateFirstlyOpenGuidCtl:(BOOL) isGuid
 {
-    [_guidInfo setBool:isGuid forKey:KEY_OPEN_GUID];
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_FIRSTLY_OPEN];
     [_guidInfo synchronize];
     
     _fristlyOpenGuidCtl = isGuid;
@@ -67,6 +55,69 @@ static GuidController *sharedGuidCtl;
     
 }
 
+- (BOOL)guidIntoCamera {
+    
+    return [_guidInfo boolForKey:KEY_GUID_INTO_CAMERA];
+    
+}
+
+-(void) updateGuidIntoCamera:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_INTO_CAMERA];
+    [_guidInfo synchronize];
+    
+    _guidIntoCamera = isGuid;
+    
+    
+}
+
+- (BOOL)guidTapLight {
+    
+    return [_guidInfo boolForKey:KEY_GUID_TAP_BRING_LIGHT];
+    
+}
+
+-(void) updateGuidITapLight:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_TAP_BRING_LIGHT];
+    [_guidInfo synchronize];
+    
+    _guidTapLight = isGuid;
+    
+    
+}
+
+- (BOOL)guid2SDelay {
+    
+    return [_guidInfo boolForKey:KEY_GUID_2S_DELAY];
+    
+}
+
+-(void) updateGuid2sDelay:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_2S_DELAY];
+    [_guidInfo synchronize];
+    
+    _guid2SDelay = isGuid;
+    
+    
+}
+
+- (BOOL)guidPanToBring {
+    
+    return [_guidInfo boolForKey:KEY_GUID_PAN_TO_BRING];
+    
+}
+
+-(void) updateGuidPanToBring:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_PAN_TO_BRING];
+    [_guidInfo synchronize];
+    
+    _guidPanToBring = isGuid;
+    
+    
+}
 
 
 @end

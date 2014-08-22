@@ -67,9 +67,7 @@
     self.userCloud = [[UserInfoCloud alloc] init];
     self.userCloud.userInfoCloudDelegate = self;
     
-    //增加scroll图片
-    [self addScrollUserImageSunReFresh:NO];
-    [self addScrollUserImageMoonReFresh:NO];
+
     
     
     [_cloudCtlBtn setImage:[UIImage imageNamed:@"小云-touch.png"] forState:UIControlStateHighlighted];
@@ -287,6 +285,7 @@
     [imageScrollMoon setAlphaOfobjs:0.5];
     [imageScrollMoon setMode:IS_MOON_TIME];
     [imageScrollMoon setScrollDelegate:self];
+    //[imageScrollMoon setBackgroundColor:[UIColor redColor]];
     [self.view addSubview:imageScrollMoon];
 
     
@@ -370,6 +369,11 @@
 - (void) viewDidAppear:(BOOL)animated
 {
 
+    
+    //增加scroll图片,不能放在viewDisload中，会产生autolayout错误
+    [self addScrollUserImageSunReFresh:NO];
+    [self addScrollUserImageMoonReFresh:NO];
+    
     //高亮相框移动到最上层
 //    UIImageView* highlightSun = (UIImageView*)[self.view viewWithTag:TAG_IMAGE_HIGH_LIGHT_SUN];
 //    highlightSun.contentMode = UIViewContentModeRedraw;
@@ -713,14 +717,14 @@
     if ([[segue identifier] isEqualToString:@"SetSunTime"]) {
 
         SunMoonAlertTime *destinationVC = (SunMoonAlertTime *)segue.destinationViewController;
-        destinationVC.iSunORMoon = 1;
+        destinationVC.iSunORMoon = IS_SUN_TIME;
  
     }
     
     if ([[segue identifier] isEqualToString:@"SetMoonTime"]) {
         
         SunMoonAlertTime *destinationVC = (SunMoonAlertTime *)segue.destinationViewController;
-        destinationVC.iSunORMoon = 2;
+        destinationVC.iSunORMoon = IS_MOON_TIME;
         
     }
 
@@ -851,8 +855,8 @@
 
         sunWordShow.text       = imageSentence;
         
-        if (![imageSentence isEqualToString:@""]) {
-            NSString* tempTime =[currentSelectDataSun objectForKey:@"image_name_time"];
+        NSString* tempTime =[currentSelectDataSun objectForKey:@"image_name_time"];
+        if (![tempTime isEqualToString:@""]) {
             tempTime = [tempTime stringByReplacingOccurrencesOfString:@"." withString:@"月"];
             tempTime = [tempTime stringByAppendingString:@"日"];
             sunTimeText.text =tempTime;
@@ -878,12 +882,12 @@
         //UIImageView* imageData = [(NSDictionary*)[infiniteScrollPicker.imageStore objectAtIndex:infiniteScrollPicker.selectedIndex] objectForKey:@"image_data"];
         NSString* imageSentence    = [currentSelectDataMoon objectForKey:@"image_sentence"];
         moonWordShow.text      = imageSentence;
-        
-        if (![imageSentence isEqualToString:@""]) {
-            NSString* tempTime =[currentSelectDataSun objectForKey:@"image_name_time"];
+       
+        NSString* tempTime =[currentSelectDataMoon objectForKey:@"image_name_time"];
+        if (![tempTime isEqualToString:@""]) {
             tempTime = [tempTime stringByReplacingOccurrencesOfString:@"." withString:@"月"];
             tempTime = [tempTime stringByAppendingString:@"日"];
-            sunTimeText.text =tempTime;
+            moonTimeText.text =tempTime;
         }
         
         [self.view bringSubviewToFront:moonTimeText];
@@ -908,10 +912,6 @@
         
         _shareSunCtlBtn.alpha = 0.1;
         lightSunSentence.alpha = 0.1;
-        
-        //test
-       // _voiceReplaySunBtn.alpha = 0.1;
-        
         
         
     }else if (picker.mode == IS_MOON_TIME)

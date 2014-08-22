@@ -65,6 +65,11 @@
      [ShareSDK connectTencentWeiboWithAppKey:@"801307650"
      appSecret:@"ae36f4ee3946e1cbb98d6965b0b2ff5c"
      redirectUri:@"http://www.sharesdk.cn"];
+    
+    [ShareSDK connectTencentWeiboWithAppKey:@"801307650"
+                                  appSecret:@"ae36f4ee3946e1cbb98d6965b0b2ff5c"
+                                redirectUri:@"http://www.sharesdk.cn"
+                                   wbApiCls:[WeiboApi class]];
      
      //添加QQ空间应用
      [ShareSDK connectQZoneWithAppKey:@"100371282"
@@ -73,6 +78,25 @@
 
     
     return YES;
+}
+
+
+- (BOOL)application:(UIApplication *)application
+      handleOpenURL:(NSURL *)url
+{
+    return [ShareSDK handleOpenURL:url
+                        wxDelegate:self];
+}
+
+- (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation
+{
+    return [ShareSDK handleOpenURL:url
+                 sourceApplication:sourceApplication
+                        annotation:annotation
+                        wxDelegate:self];
 }
 
 - (void)application:(UIApplication *)app didReceiveLocalNotification:(UILocalNotification *)notif
@@ -155,6 +179,8 @@
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+    
+
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
@@ -171,29 +197,49 @@
     
     //[self.userCloud upateUserInfo:self.userInfo];
     
-    //通知用户，正在育成光
-    alertNotification=[[UILocalNotification alloc] init];
+
+    //3小时内不重复通知
+    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
+    NSDate* lastNotify = [userBaseData objectForKey:KEY_NOTIFY_ISBRINGING_LAST_TIME];
+    NSTimeInterval time =[[NSDate date] timeIntervalSinceDate:lastNotify];
+    int days=((int)time)/(3600*24);
+    int hours=((int)time)%(3600*24)/3600;
+    int totalHours = days*24+hours;
     
-    alertNotification.fireDate = Nil;
-    alertNotification.repeatInterval = kCFCalendarUnitDay;
-    alertNotification.timeZone=[NSTimeZone defaultTimeZone];
-    alertNotification.soundName = @"cute.mp3";
-    
-    //NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_SUN_TIME forKey:ALERT_SUN_MOON_TIME];
-    //alertNotification.userInfo = info;
-    NSString* temp;
-    if ([_userInfo checkIsBringUpinSunOrMoon]) {
-        temp = [NSString stringWithFormat:@"我在养育%@光了，等你回来哦!",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-    }else
-    {
-        temp = [NSString stringWithFormat:@"哎呦，没有把%@光托付给我唉!",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+    if (totalHours>3 || totalHours<0) {
+        //通知用户，正在育成光
+        alertNotification=[[UILocalNotification alloc] init];
+        
+        alertNotification.fireDate = Nil;
+        alertNotification.repeatInterval = kCFCalendarUnitDay;
+        alertNotification.timeZone=[NSTimeZone defaultTimeZone];
+        alertNotification.soundName = @"cute.mp3";
+        
+        //NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_SUN_TIME forKey:ALERT_SUN_MOON_TIME];
+        //alertNotification.userInfo = info;
+        NSString* temp;
+        if ([_userInfo checkIsBringUpinSunOrMoon]) {
+            temp = [NSString stringWithFormat:@"我在养育%@光了，等你回来哦!",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+        }else
+        {
+            temp = [NSString stringWithFormat:@"哎呦，没有把%@光托付给我唉!",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+        }
+        
+        alertNotification.alertBody = temp;
+        
+        [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
+        
+        
+        //更新本次时间
+        [userBaseData setObject:[NSDate date] forKey:KEY_NOTIFY_ISBRINGING_LAST_TIME];
+        [userBaseData synchronize];
     }
 
     
-    alertNotification.alertBody = temp;
+
     
-    [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
-    
+
+
     
 }
 

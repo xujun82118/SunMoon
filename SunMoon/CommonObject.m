@@ -124,8 +124,7 @@
     {
         return IS_MOON_TIME;
     }
-    
-    //test
+
     
     
     return  0;

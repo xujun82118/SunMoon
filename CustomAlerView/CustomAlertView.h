@@ -8,17 +8,19 @@
 
 //*******示例代码******
 /*后续可增加对字体等的定义
- CustomAlertView*   customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:userSet];
-[customAlertAutoDis setStartCenterPoint:_skySunorMoonImage.center];
-[customAlertAutoDis setEndCenterPoint:self.view.center];
-[customAlertAutoDis setStartAlpha:0.1];
-[customAlertAutoDis setEndAlpha:1.0];
-[customAlertAutoDis setStartHeight:0];
-[customAlertAutoDis setStartWidth:0];
-[customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*3];
-[customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-[customAlertAutoDis setAlertMsg:@"111111111111111111111111"];
-[customAlertAutoDis RunCumstomAlert];
+ customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
+ [customAlertAutoDis setStartCenterPoint:_showBringLightBtn.center];
+ [customAlertAutoDis setEndCenterPoint:self.view.center];
+ [customAlertAutoDis setStartAlpha:0.1];
+ [customAlertAutoDis setEndAlpha:1.0];
+ [customAlertAutoDis setStartHeight:0];
+ [customAlertAutoDis setStartWidth:0];
+ [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
+ [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+ [customAlertAutoDis setDelayDisappearTime:5.0];
+ [customAlertAutoDis setMsgFrontSize:30];
+ [customAlertAutoDis setAlertMsg:@"首次登录，奖励一个阳光，或月光, 点击光"];
+ [customAlertAutoDis RunCumstomAlert];
 */
 //*******************
 

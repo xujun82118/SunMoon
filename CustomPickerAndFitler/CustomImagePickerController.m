@@ -90,7 +90,7 @@
 //    else{
 //        [navigationController.navigationBar insertSubview:[[UIImageView alloc] initWithImage:backgroundImage] atIndex:1];
 //    }
-//
+
     
     //获取单例用户数据
     //self.userInfo= [UserInfo  sharedSingleUserInfo];
@@ -107,6 +107,9 @@
     addVauleAnimation.aminationCustomDelegate =  self;
     isHaveAddValue = NO;
     isOverMaxVoiceValue = NO;
+    
+    
+    
     
     if(self.sourceType == UIImagePickerControllerSourceTypeCamera){
    
@@ -140,6 +143,7 @@
         
         UIView *PLCameraView=[self findView:viewController.view withName:@"PLCameraView"];
 
+        //PLCameraView.frame = CGRectMake(0, 50, SCREEN_WIDTH, SCREEN_HEIGHT);
         
         //日月闪烁
         NSMutableArray *iArr=[NSMutableArray arrayWithCapacity:0];
@@ -247,17 +251,21 @@
         overlyView = [[UIView alloc] initWithFrame:CGRectMake(0, ScreenHeight - 70, overlyViewWidth, overlyViewHeigth)];
         [overlyView setBackgroundColor:[UIColor clearColor]];
         
+        
+        [PLCameraView addSubview:overlyView];
+        
+        
         //控件背景图
         NSInteger overlyViewBKWidth = SCREEN_WIDTH-20;
         NSInteger overlyViewBKHeigth =overlyViewHeigth-10;
         UIImageView* overlyViewBk = [[UIImageView alloc] initWithFrame:CGRectMake(overlyViewWidth/2-overlyViewBKWidth/2, overlyViewWidth/2-overlyViewBKWidth/2, overlyViewBKWidth, overlyViewBKHeigth)];
         overlyViewBk.image = [UIImage imageNamed:@"拍照控件底图001.png"];
-        [overlyView addSubview:overlyViewBk];
+        //[overlyView addSubview:overlyViewBk];
       
         //语录label
         NSInteger sentenceLabelWidth = 280;
         NSInteger sentenceLabelHeigth =80;
-        UILabel *labelSentence = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth/2-sentenceLabelWidth/2, overlyView.frame.origin.y-sentenceLabelHeigth-40, sentenceLabelWidth, sentenceLabelHeigth)];
+        UILabel *labelSentence = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth/2-sentenceLabelWidth/2, overlyView.frame.origin.y-sentenceLabelHeigth, sentenceLabelWidth, sentenceLabelHeigth)];
         labelSentence.tag = TAG_CAMERA_DECLEAR_LABEL;
         //设置标签文本
         //NSString *preString = @"Say:\n";
@@ -294,6 +302,17 @@
         [sentenceView addGestureRecognizer:recognizerSentence];
         [PLCameraView addSubview:sentenceView];
 
+        
+        //返回按钮
+        NSInteger backBtnImageWidth = 40;
+        NSInteger backBtnImageHeigth =30;
+        UIImage *backImage = [UIImage imageNamed:@"返回.png"];
+        UIButton *backBtn = [[UIButton alloc] initWithFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, overlyViewBk.center.y-backBtnImageHeigth/2, backBtnImageWidth, backBtnImageHeigth)];
+        [backBtn setImage: backImage forState:UIControlStateNormal];
+        [backBtn addTarget:self action:@selector(closeView) forControlEvents:UIControlEventTouchUpInside];
+        [overlyView addSubview:backBtn];
+        
+        
         //2秒延迟开关
         NSInteger delayBtnWidth = overlyViewBKHeigth-15;
         NSInteger delayBtnHeigth =delayBtnWidth;
@@ -308,10 +327,12 @@
         
         delayBtn = [UIButton buttonWithType: UIButtonTypeCustom];
         [delayBtn setImage:delayBtnImage forState:UIControlStateNormal];
-        [delayBtn setFrame:CGRectMake(20, overlyView.frame.origin.y-delayBtnHeigth-5, delayBtnWidth, delayBtnHeigth)];
+        //[delayBtn setFrame:CGRectMake(20, overlyView.frame.origin.y-delayBtnHeigth-5, delayBtnWidth, delayBtnHeigth)];
+        [delayBtn setFrame:CGRectMake(backBtn.frame.origin.x+backBtnImageWidth+3, overlyViewBk.center.y-delayBtnHeigth/2, delayBtnWidth, delayBtnHeigth)];
         [delayBtn addTarget:self action:@selector(delayBtnChangeHandler:) forControlEvents:UIControlEventTouchUpInside];
-        [PLCameraView addSubview:delayBtn];
-        
+        //[PLCameraView addSubview:delayBtn];
+        [overlyView addSubview:delayBtn];
+
         //2秒字
         UILabel *delayTime = [[UILabel alloc] init];
         delayTime.frame = delayBtn.frame;
@@ -325,37 +346,18 @@
         //设置字体大小适应label宽度
         delayTime.adjustsFontSizeToFitWidth = YES;
         delayTime.numberOfLines = 1;
-        [PLCameraView addSubview:delayTime];
+        //[PLCameraView addSubview:delayTime];
+        [overlyView addSubview:delayTime];
                               
         
-        //回放语音按钮
-        //优化：有语音时显示
-        NSInteger voiceReplayWidth = 25;
-        NSInteger voiceReplayHeigth =voiceReplayWidth;
-        UIImage *voiceReplayImage;
-        if (![pressedVoice checkVoiceFile])
-        {
-            voiceReplayImage = [UIImage imageNamed:@"放音-空.png"];
 
-        }else
-        {
-            voiceReplayImage = [UIImage imageNamed:@"放音.png"];
- 
-        }
-        voiceReplayBtn = [[UIButton alloc] initWithFrame:
-                                    CGRectMake(delayBtn.frame.origin.x+delayBtnWidth+10,delayBtn.center.y-voiceReplayHeigth/2,voiceReplayWidth, voiceReplayHeigth)];
-        [voiceReplayBtn setImage:voiceReplayImage forState:UIControlStateNormal];
-        [voiceReplayBtn setImage:[UIImage imageNamed:@"放音-实-关.png"] forState:UIControlStateSelected];
-        [voiceReplayBtn addTarget:self action:@selector(rePlayMyVoice) forControlEvents:UIControlEventTouchUpInside];
 
-        
-        [PLCameraView addSubview:voiceReplayBtn];
 
         //按住说语录按钮
         NSInteger voicePressedWidth = overlyViewBKHeigth-15;
         NSInteger voicePressedHeigth =voicePressedWidth;
         UIImage *voicePressedImage = [UIImage imageNamed:@"Voice.png"];
-        voicePressedBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2-voicePressedWidth-10, overlyViewBk.center.y-voicePressedHeigth/2, voicePressedWidth, voicePressedHeigth)];
+        voicePressedBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2-voicePressedWidth-5, overlyViewBk.center.y-voicePressedHeigth/2, voicePressedWidth, voicePressedHeigth)];
         [voicePressedBtn setImage:voicePressedImage forState:UIControlStateNormal];
         UILongPressGestureRecognizer *gesture = [[UILongPressGestureRecognizer alloc]
                                                  initWithTarget:self
@@ -366,16 +368,34 @@
 
         
         //拍照按钮
-        //优化：未说语录之前，淡化
         NSInteger camerImageWidth = overlyViewBKHeigth-15;
         NSInteger camerImageHeigth =camerImageWidth;
         UIImage *camerImage = [UIImage imageNamed:@"拍照.png"];
-        cameraBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2+10, overlyViewBk.center.y-camerImageHeigth/2, camerImageWidth, camerImageHeigth)];
+        cameraBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2+5, overlyViewBk.center.y-camerImageHeigth/2, camerImageWidth, camerImageHeigth)];
         [cameraBtn setImage:camerImage forState:UIControlStateNormal];
         [cameraBtn addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
         [overlyView addSubview:cameraBtn];
         
-
+        //回放语音按钮
+        NSInteger voiceReplayWidth = overlyViewBKHeigth-15;
+        NSInteger voiceReplayHeigth =voiceReplayWidth;
+        UIImage *voiceReplayImage;
+        if (![pressedVoice checkVoiceFile])
+        {
+            voiceReplayImage = [UIImage imageNamed:@"放音-空.png"];
+            
+        }else
+        {
+            voiceReplayImage = [UIImage imageNamed:@"放音.png"];
+            
+        }
+        voiceReplayBtn = [[UIButton alloc] initWithFrame:
+                          CGRectMake(cameraBtn.frame.origin.x+delayBtnWidth+10,overlyViewBk.center.y-voiceReplayHeigth/2,voiceReplayWidth, voiceReplayHeigth)];
+        [voiceReplayBtn setImage:voiceReplayImage forState:UIControlStateNormal];
+        [voiceReplayBtn setImage:[UIImage imageNamed:@"放音-实-关.png"] forState:UIControlStateSelected];
+        [voiceReplayBtn addTarget:self action:@selector(rePlayMyVoice) forControlEvents:UIControlEventTouchUpInside];
+        //[PLCameraView addSubview:voiceReplayBtn];
+        [overlyView addSubview:voiceReplayBtn];
         
         
         //合并拍照和语音后的按钮
@@ -396,43 +416,6 @@
         //是否延迟
         [self delayBtnChangeHandler:Nil];
         
-
-
-        
-        /*
-        //是否延迟
-        if (self.userInfo.delayTakePhotoCtl==YES) {
-            //隐藏
-            [cameraBtn setFrame:CGRectMake(SCREEN_WIDTH/2-cameraBtn.frame.size.width/2, cameraBtn.frame.origin.y,cameraBtn.frame.size.width,cameraBtn.frame.size.height)];
-            cameraBtn.opaque = YES;
-            cameraBtn.hidden = YES;
-            
-            [voicePressedBtn setFrame:CGRectMake(SCREEN_WIDTH/2-voicePressedBtn.frame.size.width/2, voicePressedBtn.frame.origin.y,voicePressedBtn.frame.size.width,voicePressedBtn.frame.size.height)];
-            voicePressedBtn.opaque = YES;
-            voicePressedBtn.hidden = YES;
-            
-            mergedBtn.hidden = NO;
-            
-        }else
-        {
-            //不隐藏
-            [cameraBtn setFrame:CGRectMake(ScreenWidth/2+10, cameraBtn.frame.origin.y,cameraBtn.frame.size.width,cameraBtn.frame.size.height)];
-            cameraBtn.opaque = YES;
-            cameraBtn.alpha = 1.0;
-            cameraBtn.hidden = NO;
-            
-            [voicePressedBtn setFrame:CGRectMake(ScreenWidth/2-voicePressedBtn.frame.size.width-10,voicePressedBtn.frame.origin.y,voicePressedBtn.frame.size.width,voicePressedBtn.frame.size.height)];
-            voicePressedBtn.opaque = YES;
-            voicePressedBtn.alpha = 1.0;
-            voicePressedBtn.hidden = NO;
-            
-            mergedBtn.hidden = YES;
-
-            
-        }
-         */
-        
-
         
         //打开相册按钮
         NSInteger albumImageWidth = 25;
@@ -444,20 +427,12 @@
         
         [overlyView addSubview:albumImageBtn];
         
-        //返回按钮
-        NSInteger backBtnImageWidth = 40;
-        NSInteger backBtnImageHeigth =30;
-        UIImage *backImage = [UIImage imageNamed:@"返回.png"];
-        UIButton *backBtn = [[UIButton alloc] initWithFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, overlyViewBk.center.y-backBtnImageHeigth/2, backBtnImageWidth, backBtnImageHeigth)];
-        [backBtn setImage: backImage forState:UIControlStateNormal];
-        [backBtn addTarget:self action:@selector(closeView) forControlEvents:UIControlEventTouchUpInside];
-        [overlyView addSubview:backBtn];
-        
-
 
         
         self.cameraOverlayView = overlyView;
     }
+
+    
 }
 
 
@@ -673,11 +648,21 @@
 -(void)viewDidAppear:(BOOL)animated
 {
     //判断是否增加阳光月光值
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
+    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, 0)];
+    [customAlertAutoDis setEndCenterPoint:self.view.center];
+    [customAlertAutoDis setStartAlpha:0.1];
+    [customAlertAutoDis setEndAlpha:1.0];
+    [customAlertAutoDis setStartHeight:0];
+    [customAlertAutoDis setStartWidth:0];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
+    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+    [customAlertAutoDis setDelayDisappearTime:5.0];
+    [customAlertAutoDis setMsgFrontSize:30];
+    
     if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
         if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
-            
-            
-            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+
             [customAlertAutoDis setAlertMsg:@"阳光时间来过了，要每天认真说一次就好呢"];
             [customAlertAutoDis RunCumstomAlert];
             
@@ -686,8 +671,7 @@
     }else
     {
         if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
-            
-            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+
             [customAlertAutoDis setAlertMsg:@"月光时间来过了，要每天认真说一次就好呢"];
             [customAlertAutoDis RunCumstomAlert];
         }

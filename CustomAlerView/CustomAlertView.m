@@ -70,7 +70,7 @@
         _endHeight =_endWidth;
         _startAlpha = 0.0;
         _endAlpha = 1.0;
-        
+        _MsgFrontSize = 25;
         _delayDisappearTime = 5.0;
     }
 
@@ -81,9 +81,7 @@
 
 - (void)yesButtonHandler:(id)sender
 {
-
-    
-    
+   
     //回到原位
     [UIView beginAnimations:@"cutomeAlert_backPostion" context:nil];
     [UIView setAnimationDuration:0.8f];
@@ -97,7 +95,9 @@
         [_yesBtn setFrame:CGRectMake(_viewBkImageView.frame.origin.x+_viewBkImageView.frame.size.width/2-yesW/2, _viewBkImageView.frame.origin.y+_viewBkImageView.frame.size.height-yesH, yesW, yesH)];
     }
     
-    [_customAlertDelegate CustomAlertOkReturn];
+    if ([_customAlertDelegate respondsToSelector:@selector(CustomAlertOkReturn)]) {
+        [_customAlertDelegate CustomAlertOkReturn];
+    }
     
 }
 

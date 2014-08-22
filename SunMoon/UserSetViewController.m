@@ -740,31 +740,35 @@
                                    result:^(BOOL result, id<ISSPlatformUser> userInfo, id<ICMErrorInfo> error) {
                                        if (result)
                                        {
+                                           //授权成功
                                            [item setObject:[userInfo nickname] forKey:@"username"];
                                            NSString* temp =[userInfo uid];
                                            NSLog(@"uid = %@", temp);
                                            [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/authListCache.plist",NSTemporaryDirectory()] atomically:YES];
+                                           
+                                           //取消另一个登录
+                                           NSArray *shareTypes = [ShareSDK connectedPlatformTypes];
+                                           for (int i = 0; i < [shareTypes count]; i++)
+                                           {
+                                               NSNumber *typeNum = [shareTypes objectAtIndex:i];
+                                               ShareType typeAll = (ShareType)[typeNum integerValue];
+                                               
+                                               //当前授权的
+                                               //NSMutableDictionary *item = [_shareTypeArray objectAtIndex:index];
+                                               //ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
+                                               if (typeAll!=[userInfo type]) {
+                                                   //取消授权
+                                                   [ShareSDK cancelAuthWithType:typeAll];
+                                                   //[self.tableView reloadData];
+                                               }
+                                               
+                                           }
+                                           
                                        }
                                        NSLog(@"%ld:%@",(long)[error errorCode], [error errorDescription]);
 
                                        
-                                       //取消另一个登录
-                                       NSArray *shareTypes = [ShareSDK connectedPlatformTypes];
-                                       for (int i = 0; i < [shareTypes count]; i++)
-                                       {
-                                           NSNumber *typeNum = [shareTypes objectAtIndex:i];
-                                           ShareType typeAll = (ShareType)[typeNum integerValue];
-                                           
-                                           //当前授权的
-                                           //NSMutableDictionary *item = [_shareTypeArray objectAtIndex:index];
-                                           //ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
-                                           if (typeAll!=[userInfo type]) {
-                                               //取消授权
-                                               [ShareSDK cancelAuthWithType:typeAll];
-                                               //[self.tableView reloadData];
-                                           }
-                                           
-                                       }
+
                                        
                                        [self.tableView reloadData];
                                    }];

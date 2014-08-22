@@ -120,13 +120,15 @@ typedef enum
 #define KEY_IS_REGISTER_USER @"isRegisterUser"
 #define KEY_USER_TYPE @"userType" //用户类型
 #define KEY_USER_TIME @"userTime" //用户使用次数
-#define KEY_OPEN_GUID @"openGuid" //用户引导
 
 
-//用户最近登录的时期
+
+//用户最近登录的时间
 #define KEY_LOGIN_LAST_SUN_DATE   @"userLoginLastSunDate"
 #define KEY_LOGIN_LAST_MOON_DATE   @"userLoginLastMoonDate"
 
+//通知用户在育成光的时间
+#define KEY_NOTIFY_ISBRINGING_LAST_TIME @"notifyIsBringLastTime"
 
 //用户连续登录次数
 #define KEY_CONTINUE_LOGIN_SUN_COUNT @"continueLoginSunCount"
@@ -192,7 +194,7 @@ typedef enum
 #define NAVI_BAR_BTN_Y  NAVI_BAR_HEIGHT/2 //距离导航条边,还需减去控件的高的一半
 #define TOOL_BAR_BTN_Y SCREEN_HEIGHT-TOOL_BAR_HEIGHT+5 //距离工具条上边缘
 
-#define LEFT_NAVI_BTN_TO_SIDE_X 10
+#define LEFT_NAVI_BTN_TO_SIDE_X 8
 #define RIGHT_NAVI_BTN_TO_SIDE_X SCREEN_WIDTH-5 //还需减去控件的宽
 
 #define TitleFont 18

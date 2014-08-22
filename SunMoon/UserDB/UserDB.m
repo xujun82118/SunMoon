@@ -163,10 +163,7 @@
     if (![_db executeUpdate:query withArgumentsInArray:arguments]) {
         NSLog(@"save failed!");
     };
-    
-    
-    //test
-    //UserInfo * user1 = [self getUserDataByDateTime:user.date_time];
+
 }
 
 
@@ -305,10 +302,6 @@
         NSLog(@"ERROR: mergeWithUserByDateTime executeUpdate return NO!");
         
     }
-    
-    //test
-    //UserInfo * user1 = (UserInfo * )[self getUserDataByDateTime:user.date_time];
-    
     
 }
 
