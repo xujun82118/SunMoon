@@ -34,6 +34,8 @@
     
     BOOL  isGiveFirstLight;
     
+    EAIntroView *intro ;
+    
     BOOL  isFromHeaderBegin;
     BOOL  isFromSunMoonBegin;
     UIImageView* bringupImageView;    //光育成中要用的动画View
@@ -338,15 +340,13 @@
 {
     [super viewWillAppear:animated];
     NSLog(@"---->viewWillAppear");
+
     //起动引导界面
     if (guidInfo.fristlyOpenGuidCtl) {
-
-        [self showIntroWithCrossDissolve];
         
-        //关闭引导
-        [guidInfo updateFirstlyOpenGuidCtl:NO];
+        [self showIntroWithCrossDissolve];
+
     }
-    
     
 
 
@@ -409,7 +409,23 @@
         }
         
         [self whenCommonOpenViewHandle];
+
     }
+    
+    
+
+    //把引导界面显示到最前面
+    if (guidInfo.fristlyOpenGuidCtl) {
+    
+        [self.view bringSubviewToFront:intro];
+        
+        //关闭引导
+        [guidInfo updateFirstlyOpenGuidCtl:NO];
+    }
+    
+
+    
+
 
 
 }
@@ -2032,10 +2048,12 @@
     page1.titleImage = [UIImage imageNamed:@"Guid-start"];
     
     
-    EAIntroView *intro = [[EAIntroView alloc] initWithFrame:self.view.bounds andPages:@[page1]];
+    intro = [[EAIntroView alloc] initWithFrame:self.view.bounds andPages:@[page1]];
     
     [intro setDelegate:self];
-    [intro showInView:self.view animateDuration:0.0];
+    //[intro showInView:self.view animateDuration:0.0];
+    [self.view addSubview:intro];
+    
 }
 
 
