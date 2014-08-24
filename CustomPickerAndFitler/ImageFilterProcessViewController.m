@@ -237,12 +237,13 @@
     //调色盘
     NSInteger scrollWidth = SCREEN_WIDTH;
     NSInteger scrollHeight;
-    if (SCREEN_HEIGHT>480) {
-        scrollHeight = 120;
-    }else
-    {
-        scrollHeight = 60;
-    }
+//    if (SCREEN_HEIGHT>480) {
+//        scrollHeight = 120;
+//    }else
+//    {
+//        scrollHeight = 60;
+//    }
+    scrollHeight = 70;
     NSArray *arr = [NSArray arrayWithObjects:@"原图",@"LOMO",@"黑白",@"复古",@"哥特",@"锐色",@"淡雅",@"酒红",@"青柠",@"浪漫",@"光晕",@"蓝调",@"梦幻",@"夜色", nil];
     scrollerView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, sentencelabel.frame.origin.y+sentencelabelHeight, scrollWidth, scrollHeight)];
     scrollerView.tag = TAG_EDITE_PHOTO_SCROLL_VIEW;
@@ -372,9 +373,9 @@
     NSLog(@"保存到相册");
     UIImageWriteToSavedPhotosAlbum(rootImageView.image, nil, nil,nil);
    
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-    [customAlertAutoDis setAlertMsg:@"已保存到相册"];
-    [customAlertAutoDis RunCumstomAlert];
+//    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+//    [customAlertAutoDis setAlertMsg:@"已保存到相册"];
+//    [customAlertAutoDis RunCumstomAlert];
     
     
 }
@@ -466,23 +467,23 @@
     [addVauleAnimation setAminationImageViewframe:CGRectMake(sunMoonImageViewTop.frame.origin.x, sunMoonImageViewTop.frame.origin.y, 60, 60)];
     
     //判断是否增加阳光月光值
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
-    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, 0)];
-    [customAlertAutoDis setEndCenterPoint:self.view.center];
-    [customAlertAutoDis setStartAlpha:0.1];
-    [customAlertAutoDis setEndAlpha:1.0];
-    [customAlertAutoDis setStartHeight:0];
-    [customAlertAutoDis setStartWidth:0];
-    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
-    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-    [customAlertAutoDis setDelayDisappearTime:5.0];
-    [customAlertAutoDis setMsgFrontSize:30];
+//    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
+//    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, 0)];
+//    [customAlertAutoDis setEndCenterPoint:self.view.center];
+//    [customAlertAutoDis setStartAlpha:0.1];
+//    [customAlertAutoDis setEndAlpha:1.0];
+//    [customAlertAutoDis setStartHeight:0];
+//    [customAlertAutoDis setStartWidth:0];
+//    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
+//    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+//    [customAlertAutoDis setDelayDisappearTime:5.0];
+//    [customAlertAutoDis setMsgFrontSize:30];
 
     if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
         if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
             
-            [customAlertAutoDis setAlertMsg:@"咦，今天已经奖励过阳光了哦"];
-            [customAlertAutoDis RunCumstomAlert];
+            //[customAlertAutoDis setAlertMsg:@"咦，今天已经奖励过阳光了哦"];
+            //[customAlertAutoDis RunCumstomAlert];
             
             
         }else
@@ -496,8 +497,8 @@
     {
         if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
             
-            [customAlertAutoDis setAlertMsg:@"咦，今天已经奖励过月光了哦"];
-            [customAlertAutoDis RunCumstomAlert];
+            //[customAlertAutoDis setAlertMsg:@"咦，今天已经奖励过月光了哦"];
+            //[customAlertAutoDis RunCumstomAlert];
         }else
         {
             [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
@@ -606,22 +607,47 @@
 }
 
 - (IBAction)reDoPhoto:(id)sender {
+
     
+    CustomImagePickerController *controller = [[CustomImagePickerController alloc] init];
     
-    //调用自定义的图片处理控制器
-    CustomImagePickerController* picker = [[CustomImagePickerController alloc] init];
-    //判断是否有相机
-    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]){
-        [picker setSourceType:UIImagePickerControllerSourceTypeCamera];
-    }else{
-        [picker setIsSingle:YES];
-        [picker setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+    // 拍照
+    if ([self isCameraAvailable] && [self doesCameraSupportTakingPhotos])
+    {
+        
+        controller.sourceType = UIImagePickerControllerSourceTypeCamera;
+        if ([self isFrontCameraAvailable])
+        {
+            controller.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+        }
+        NSMutableArray *mediaTypes = [[NSMutableArray alloc] init];
+        [mediaTypes addObject:(__bridge NSString *)kUTTypeImage];
+        controller.mediaTypes = mediaTypes;
+        
     }
-    [picker setCustomDelegate:self];
+    else
+    {
+        // 从相册中选取
+        if ([self isPhotoLibraryAvailable]) {
+            controller.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+            NSMutableArray *mediaTypes = [[NSMutableArray alloc] init];
+            [mediaTypes addObject:(__bridge NSString *)kUTTypeImage];
+            controller.mediaTypes = mediaTypes;
+            [controller setIsSingle:YES];
+        }
+    }
     
-    //调起pick处理器，及其view
-    [picker setISunORMoon:[CommonObject checkSunOrMoonTime]];
-    [self presentViewController:picker animated:YES completion:NULL];
+    //指向他的委托函数
+    [controller setCustomDelegate:self];
+    [controller setISunORMoon:[CommonObject checkSunOrMoonTime]];
+    [controller setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+    [controller setUserInfo:self.userInfo];
+    [self presentViewController:controller
+                       animated:YES
+                     completion:^(void){
+                         //NSLog(@"Picker View Controller is presented");
+                     }];
+    
     
 }
 
@@ -788,5 +814,54 @@
     }
     return image;
 }
+
+
+
+#pragma mark - camera utility
+- (BOOL) isCameraAvailable{
+    return [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+}
+
+- (BOOL) isRearCameraAvailable{
+    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear];
+}
+
+- (BOOL) isFrontCameraAvailable {
+    return [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront];
+}
+
+- (BOOL) doesCameraSupportTakingPhotos {
+    return [self cameraSupportsMedia:(__bridge NSString *)kUTTypeImage sourceType:UIImagePickerControllerSourceTypeCamera];
+}
+
+- (BOOL) isPhotoLibraryAvailable{
+    return [UIImagePickerController isSourceTypeAvailable:
+            UIImagePickerControllerSourceTypePhotoLibrary];
+}
+- (BOOL) canUserPickVideosFromPhotoLibrary{
+    return [self
+            cameraSupportsMedia:(__bridge NSString *)kUTTypeMovie sourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+}
+- (BOOL) canUserPickPhotosFromPhotoLibrary{
+    return [self
+            cameraSupportsMedia:(__bridge NSString *)kUTTypeImage sourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+}
+
+- (BOOL) cameraSupportsMedia:(NSString *)paramMediaType sourceType:(UIImagePickerControllerSourceType)paramSourceType{
+    __block BOOL result = NO;
+    if ([paramMediaType length] == 0) {
+        return NO;
+    }
+    NSArray *availableMediaTypes = [UIImagePickerController availableMediaTypesForSourceType:paramSourceType];
+    [availableMediaTypes enumerateObjectsUsingBlock: ^(id obj, NSUInteger idx, BOOL *stop) {
+        NSString *mediaType = (NSString *)obj;
+        if ([mediaType isEqualToString:paramMediaType]){
+            result = YES;
+            *stop= YES;
+        }
+    }];
+    return result;
+}
+
 
 @end

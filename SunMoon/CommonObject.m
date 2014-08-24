@@ -120,10 +120,17 @@
     
     if (hour<SUN_TIME_MAX && hour>=SUN_TIME_MIN) {
         return IS_SUN_TIME;
-    }else if (hour<MOON_TIME_MAX || hour>=MOON_TIME_MIN)
+    }else
     {
         return IS_MOON_TIME;
+
     }
+    
+    
+//    else if (hour<MOON_TIME_MAX || hour>=MOON_TIME_MIN)
+//    {
+//        return IS_MOON_TIME;
+//    }
 
     
     

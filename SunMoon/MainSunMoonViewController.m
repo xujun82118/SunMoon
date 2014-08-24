@@ -386,24 +386,36 @@
     //test
     //self.userInfo.userType =USER_TYPE_NEW;
     
+    
+    //test
+    //[guidInfo updateGuidPanToBring:NO];
+    //[guidInfo updateFirstlyOpenGuidCtl:NO];
+   
     if (!guidInfo.fristlyOpenGuidCtl)
     {
         //第二次进入主界面时，提示滑屏
         if (!guidInfo.guidPanToBring) {
-            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
-            [customAlertAutoDis setStartCenterPoint:_showBringLightBtn.center];
-            [customAlertAutoDis setEndCenterPoint:self.view.center];
-            [customAlertAutoDis setStartAlpha:0.1];
-            [customAlertAutoDis setEndAlpha:1.0];
-            [customAlertAutoDis setStartHeight:0];
-            [customAlertAutoDis setStartWidth:0];
-            [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
-            [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-            [customAlertAutoDis setDelayDisappearTime:5.0];
-            [customAlertAutoDis setMsgFrontSize:30];
-            NSString* lightType = ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月";
-            [customAlertAutoDis setAlertMsg:[NSString stringWithFormat:@"拖动%@到%@，3小时可养成1个%@光哦", lightType,lightType,lightType]];
-            [customAlertAutoDis RunCumstomAlert];
+//            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:@"ok" posionShowMode:userSet];
+//            [customAlertAutoDis setStartCenterPoint:self.view.center];
+//            [customAlertAutoDis setEndCenterPoint:self.view.center];
+//            [customAlertAutoDis setStartAlpha:0.1];
+//            [customAlertAutoDis setEndAlpha:1.0];
+//            [customAlertAutoDis setStartHeight:0];
+//            [customAlertAutoDis setStartWidth:0];
+//            [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
+//            [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+//            [customAlertAutoDis setDelayDisappearTime:5.0];
+//            [customAlertAutoDis setMsgFrontSize:30];
+
+            if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+                //[customAlertAutoDis setAlertMsg:@"可以拖动阳光回到太阳，3小时可以养成1个小阳光哦!"];
+            }else
+            {
+                //[customAlertAutoDis setAlertMsg:@"可以拖动月光回到月亮，3小时可以养成1个小月光哦!"];
+
+            }
+
+            //[customAlertAutoDis RunCumstomAlert];
             
             [guidInfo updateGuidPanToBring:YES];
         }
@@ -495,16 +507,16 @@
             
             //奖励提示
             isContineGiveLight = YES;
-            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+            //customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:@"ok.png" posionShowMode:viewCenterBig];
             if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-                [customAlertAutoDis setAlertMsg:@"阳光时间连续登录，奖励一个阳光"];
+                //[customAlertAutoDis setAlertMsg:@"阳光时间连续登录，奖励一个阳光"];
 
             }else
             {
-                [customAlertAutoDis setAlertMsg:@"月光时间连续登录，奖励一个月光"];
+                //[customAlertAutoDis setAlertMsg:@"月光时间连续登录，奖励一个月光"];
 
             }
-            [customAlertAutoDis RunCumstomAlert];
+            //[customAlertAutoDis RunCumstomAlert];
             
             //弹出育成图
             [self animationForShowBringLightBtnPop:YES];
@@ -682,19 +694,19 @@
     if ([animationID isEqualToString:@"popOut_showBringLightBtn"]) {
         
         if (isGiveFirstLight) {
-            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:nil posionShowMode:userSet];
-            [customAlertAutoDis setStartCenterPoint:_showBringLightBtn.center];
-            [customAlertAutoDis setEndCenterPoint:self.view.center];
-            [customAlertAutoDis setStartAlpha:0.1];
-            [customAlertAutoDis setEndAlpha:1.0];
-            [customAlertAutoDis setStartHeight:0];
-            [customAlertAutoDis setStartWidth:0];
-            [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
-            [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-            [customAlertAutoDis setDelayDisappearTime:5.0];
-            [customAlertAutoDis setMsgFrontSize:30];
-            [customAlertAutoDis setAlertMsg:@"首次登录，奖励一个阳光，或月光, 点击光"];
-            [customAlertAutoDis RunCumstomAlert];
+//            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:nil posionShowMode:userSet];
+//            [customAlertAutoDis setStartCenterPoint:_showBringLightBtn.center];
+//            [customAlertAutoDis setEndCenterPoint:self.view.center];
+//            [customAlertAutoDis setStartAlpha:0.1];
+//            [customAlertAutoDis setEndAlpha:1.0];
+//            [customAlertAutoDis setStartHeight:0];
+//            [customAlertAutoDis setStartWidth:0];
+//            [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
+//            [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+//            [customAlertAutoDis setDelayDisappearTime:5.0];
+//            [customAlertAutoDis setMsgFrontSize:30];
+//            [customAlertAutoDis setAlertMsg:@"首次登录，奖励一个阳光，或月光, 点击光"];
+//            [customAlertAutoDis RunCumstomAlert];
             isGiveFirstLight = NO;
         }
 
@@ -1350,9 +1362,9 @@
 
                     NSString* time = [NSString stringWithFormat:@"开始养育%@光了", ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
                     NSLog(@"%@", time);
-                    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-                    [customAlertAutoDis setAlertMsg:time];
-                    [customAlertAutoDis RunCumstomAlert];
+//                    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+//                    [customAlertAutoDis setAlertMsg:time];
+//                    [customAlertAutoDis RunCumstomAlert];
                     
                     
                 }else
@@ -1595,16 +1607,16 @@
     
     if (totalHours>0 && totalHours<3) {
         NSString* timeAlert = [NSString stringWithFormat:(@"%@光养育了%d小时, 每3个小时奖励1个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-        [customAlertAutoDis setAlertMsg:timeAlert];
-        [customAlertAutoDis RunCumstomAlert];
+//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+//        [customAlertAutoDis setAlertMsg:timeAlert];
+//        [customAlertAutoDis RunCumstomAlert];
     }
     
     if (totalHours>3) {
         NSString* timeAlert = [NSString stringWithFormat:(@"%@光养育了%d小时，奖励%d个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours, giveCount,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-        [customAlertAutoDis setAlertMsg:timeAlert];
-        [customAlertAutoDis RunCumstomAlert];
+//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+//        [customAlertAutoDis setAlertMsg:timeAlert];
+//        [customAlertAutoDis RunCumstomAlert];
     }
 
     

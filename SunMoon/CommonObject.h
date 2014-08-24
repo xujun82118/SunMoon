@@ -94,16 +94,16 @@ typedef enum
 
 
 //阳光，月光时间
-//#define SUN_TIME_MIN  6
-//#define SUN_TIME_MAX  18
-//#define MOON_TIME_MIN  18
-//#define MOON_TIME_MAX  6  //次日
+#define SUN_TIME_MIN  6
+#define SUN_TIME_MAX  18
+#define MOON_TIME_MIN  18
+#define MOON_TIME_MAX  6  //次日
 
 //test
-#define MOON_TIME_MIN  6
-#define MOON_TIME_MAX  18
-#define SUN_TIME_MIN  18
-#define SUN_TIME_MAX  6
+//#define MOON_TIME_MIN  6
+//#define MOON_TIME_MAX  18
+//#define SUN_TIME_MIN  18
+//#define SUN_TIME_MAX  6
 
 
 

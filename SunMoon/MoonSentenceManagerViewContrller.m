@@ -68,11 +68,11 @@
     NSInteger r = [self.moonSentenceTable numberOfRowsInSection:s-1];
     if (r<1) return;
     
-    if (user.sunSentenceSelect>r) {
+    if (user.moonSentenceSelect>r) {
         return;
     }
     
-    NSIndexPath *ip = [NSIndexPath indexPathForRow:user.sunSentenceSelect inSection:s-1];
+    NSIndexPath *ip = [NSIndexPath indexPathForRow:user.moonSentenceSelect inSection:s-1];
     [moonSentenceTable scrollToRowAtIndexPath:ip atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
     
     

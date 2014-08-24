@@ -648,23 +648,23 @@
 -(void)viewDidAppear:(BOOL)animated
 {
     //判断是否增加阳光月光值
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
-    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, 0)];
-    [customAlertAutoDis setEndCenterPoint:self.view.center];
-    [customAlertAutoDis setStartAlpha:0.1];
-    [customAlertAutoDis setEndAlpha:1.0];
-    [customAlertAutoDis setStartHeight:0];
-    [customAlertAutoDis setStartWidth:0];
-    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
-    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-    [customAlertAutoDis setDelayDisappearTime:5.0];
-    [customAlertAutoDis setMsgFrontSize:30];
+//    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
+//    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, 0)];
+//    [customAlertAutoDis setEndCenterPoint:self.view.center];
+//    [customAlertAutoDis setStartAlpha:0.1];
+//    [customAlertAutoDis setEndAlpha:1.0];
+//    [customAlertAutoDis setStartHeight:0];
+//    [customAlertAutoDis setStartWidth:0];
+//    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
+//    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+//    [customAlertAutoDis setDelayDisappearTime:5.0];
+//    [customAlertAutoDis setMsgFrontSize:30];
     
     if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
         if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
 
-            [customAlertAutoDis setAlertMsg:@"阳光时间来过了，要每天认真说一次就好呢"];
-            [customAlertAutoDis RunCumstomAlert];
+            //[customAlertAutoDis setAlertMsg:@"阳光时间来过了，要每天认真说一次就好呢"];
+            //[customAlertAutoDis RunCumstomAlert];
             
             
         }
@@ -672,8 +672,8 @@
     {
         if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
 
-            [customAlertAutoDis setAlertMsg:@"月光时间来过了，要每天认真说一次就好呢"];
-            [customAlertAutoDis RunCumstomAlert];
+            //[customAlertAutoDis setAlertMsg:@"月光时间来过了，要每天认真说一次就好呢"];
+            //[customAlertAutoDis RunCumstomAlert];
         }
         
     }
@@ -851,9 +851,9 @@
     }else
     {
         
-        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-        [customAlertAutoDis setAlertMsg:@"亲，多点自信，大点声哦！"];
-        [customAlertAutoDis RunCumstomAlert];
+//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+//        [customAlertAutoDis setAlertMsg:@"亲，多点自信，大点声哦！"];
+//        [customAlertAutoDis RunCumstomAlert];
         
         return  NO;
     }
@@ -919,10 +919,10 @@
             [super takePicture];
     }else
     {
-        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-        NSString* temp = [NSString stringWithFormat:@"说出你的%@光宣言，再拍照哦!", (iSunORMoon==IS_SUN_TIME)?@"阳":@"月"];
-        [customAlertAutoDis setAlertMsg:temp];
-        [customAlertAutoDis RunCumstomAlert];
+//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+//        NSString* temp = [NSString stringWithFormat:@"说出你的%@光宣言，再拍照哦!", (iSunORMoon==IS_SUN_TIME)?@"阳":@"月"];
+//        [customAlertAutoDis setAlertMsg:temp];
+//        [customAlertAutoDis RunCumstomAlert];
         
     }
 

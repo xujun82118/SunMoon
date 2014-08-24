@@ -22,6 +22,8 @@
 
 
 }
+@property (weak, nonatomic) IBOutlet InfiniteScrollPicker *sunScroll;
+@property (weak, nonatomic) IBOutlet InfiniteScrollPicker *moonScroll;
 @property (weak, nonatomic) IBOutlet UITextField *sunTimeText;
 @property (weak, nonatomic) IBOutlet UITextField *moonTimeText;
 @property (weak, nonatomic) IBOutlet UILabel *moonValueStatic;

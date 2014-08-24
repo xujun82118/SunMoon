@@ -95,7 +95,11 @@
         [_yesBtn setFrame:CGRectMake(_viewBkImageView.frame.origin.x+_viewBkImageView.frame.size.width/2-yesW/2, _viewBkImageView.frame.origin.y+_viewBkImageView.frame.size.height-yesH, yesW, yesH)];
     }
     
+    [UIView commitAnimations];
+
+    
     if ([_customAlertDelegate respondsToSelector:@selector(CustomAlertOkReturn)]) {
+        //test
         [_customAlertDelegate CustomAlertOkReturn];
     }
     

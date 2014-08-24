@@ -33,6 +33,7 @@
     self.navigationController.navigationBarHidden = YES;
     self.navigationController.navigationBar.opaque = YES;
     
+    
     //加返回按钮
     NSInteger backBtnWidth = 18;
     NSInteger backBtnHeight = 22;

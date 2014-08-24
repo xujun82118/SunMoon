@@ -24,7 +24,7 @@
 
 @implementation HomeInsideViewController
 
-@synthesize user,userData,userDB,sunWordShow,moonWordShow,currentSelectDataSun,currentSelectDataMoon;
+@synthesize user,userData,userDB,sunWordShow,moonWordShow,currentSelectDataSun,currentSelectDataMoon,sunScroll=_sunScroll,moonScroll = _moonScroll;
 @synthesize sunTimeBtn,moonTimeBtn,moonTimeCtlBtn,sunTimeCtlBtn,sunValueStatic,moonValueStatic,sunTimeText,moonTimeText,lightSunSentence,lightMoonSentence;
 @synthesize cloudCtlBtn = _cloudCtlBtn,shareSunCtlBtn = _shareSunCtlBtn, shareMoonCtlBtn=_shareMoonCtlBtn, voiceReplaySunBtn = _voiceReplaySunBtn, voiceReplayMoonBtn = _voiceReplayMoonBtn;
 @synthesize userCloud=_userCloud;
@@ -67,8 +67,6 @@
     self.userCloud = [[UserInfoCloud alloc] init];
     self.userCloud.userInfoCloudDelegate = self;
     
-
-    
     
     [_cloudCtlBtn setImage:[UIImage imageNamed:@"小云-touch.png"] forState:UIControlStateHighlighted];
     [_shareSunCtlBtn setImage:[UIImage imageNamed:@"分享-touch.png"] forState:UIControlStateHighlighted];
@@ -108,7 +106,18 @@
     [_voiceReplaySunBtn setImage:[UIImage imageNamed:@"停止放音-细黄.PNG"] forState:UIControlStateSelected];
     [_voiceReplayMoonBtn setImage:[UIImage imageNamed:@"停止放音-细黄.PNG"] forState:UIControlStateSelected];
 
+    
+    
+    //增加scroll图片,不能放在viewDisload中，会产生autolayout错误
+    [self addScrollUserImageSunReFresh:NO];
+    [self addScrollUserImageMoonReFresh:NO];
 
+
+}
+
+-(void) loadView
+{
+    [super loadView];
 
 }
 
@@ -195,16 +204,24 @@
 
     }
     
-    
+    if (!imageScrollSun) {
+
+
+    }
     imageScrollSun = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition.frame.origin.y-15, SCREEN_WIDTH, 100)];
-    [imageScrollSun setImageAry:setSun];
     [imageScrollSun setItemSize:size];
     [imageScrollSun setHeightOffset:30];
     [imageScrollSun setPositionRatio:2];
     [imageScrollSun setAlphaOfobjs:0.5];
     [imageScrollSun setMode:IS_SUN_TIME];
     [imageScrollSun setScrollDelegate:self];
+    [imageScrollSun setImageAry:setSun];
     [self.view addSubview:imageScrollSun];
+
+    if (isFresh) {
+
+
+    }
     
 
 }
@@ -277,6 +294,9 @@
     }
     
     UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
+    NSLog(@"1---%f,%f,%f,%f", scrollPosition1.frame.origin.x,scrollPosition1.frame.origin.y,scrollPosition1.frame.size.width,scrollPosition1.frame.size.height);
+    if (!imageScrollMoon) {
+    }
     imageScrollMoon = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100)];
     [imageScrollMoon setImageAry:setMoon];
     [imageScrollMoon setItemSize:size];
@@ -288,6 +308,7 @@
     //[imageScrollMoon setBackgroundColor:[UIColor redColor]];
     [self.view addSubview:imageScrollMoon];
 
+    imageScrollMoon.hidden = YES;
     
     
     
@@ -325,7 +346,7 @@
     
     [super viewWillAppear:animated];
 
-    
+
     
     /*
     UIImage *backButtonBackgroundImage = [UIImage imageNamed:@"返回.png"];
@@ -368,11 +389,23 @@
 
 - (void) viewDidAppear:(BOOL)animated
 {
-
+    [super viewDidAppear:animated];
     
-    //增加scroll图片,不能放在viewDisload中，会产生autolayout错误
-    [self addScrollUserImageSunReFresh:NO];
-    [self addScrollUserImageMoonReFresh:NO];
+    UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
+    imageScrollMoon.frame = CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100);
+    imageScrollMoon.hidden = NO;
+
+    NSLog(@"2---%f,%f,%f,%f", scrollPosition1.frame.origin.x,scrollPosition1.frame.origin.y,scrollPosition1.frame.size.width,scrollPosition1.frame.size.height);
+    
+//    
+//    UIImageView* scrollPosition = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_SUN];
+//    imageScrollSun.frame =CGRectMake(0, scrollPosition.frame.origin.y-15, SCREEN_WIDTH, 100);
+//    [self.view addSubview:imageScrollSun];
+//    
+//    UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
+//    imageScrollMoon.frame =CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100);
+//    [self.view addSubview:imageScrollMoon];
+
     
     //高亮相框移动到最上层
 //    UIImageView* highlightSun = (UIImageView*)[self.view viewWithTag:TAG_IMAGE_HIGH_LIGHT_SUN];
@@ -389,6 +422,20 @@
     
 }
 
+//- (void)updateViewConstraints
+//{
+//    [super updateViewConstraints];
+//    
+//    
+
+//}
+
+- (void)viewDidLayoutSubviews
+{
+    
+    [super viewDidLayoutSubviews];
+
+}
 
 -(void) animateIncreaseValue:(NSTimer *)timer
 {
@@ -859,8 +906,8 @@
         if (![tempTime isEqualToString:@""]) {
             tempTime = [tempTime stringByReplacingOccurrencesOfString:@"." withString:@"月"];
             tempTime = [tempTime stringByAppendingString:@"日"];
-            sunTimeText.text =tempTime;
         }
+        sunTimeText.text =tempTime;
 
         [self.view bringSubviewToFront:sunTimeText];
     
@@ -887,9 +934,9 @@
         if (![tempTime isEqualToString:@""]) {
             tempTime = [tempTime stringByReplacingOccurrencesOfString:@"." withString:@"月"];
             tempTime = [tempTime stringByAppendingString:@"日"];
-            moonTimeText.text =tempTime;
         }
-        
+        moonTimeText.text =tempTime;
+
         [self.view bringSubviewToFront:moonTimeText];
         
     }
@@ -912,6 +959,9 @@
         
         _shareSunCtlBtn.alpha = 0.1;
         lightSunSentence.alpha = 0.1;
+        
+        _voiceReplaySunBtn.alpha = 0.1;
+
         
         
     }else if (picker.mode == IS_MOON_TIME)
