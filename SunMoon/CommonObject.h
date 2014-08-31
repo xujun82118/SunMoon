@@ -92,6 +92,13 @@ typedef enum
 }CloudSynchronizeContent;
 
 
+typedef enum
+{
+    netPhone = 0,
+    netWifi = 1,
+    netNon = 2
+    
+}NetConnectType;
 
 //阳光，月光时间
 #define SUN_TIME_MIN  6
@@ -128,7 +135,9 @@ typedef enum
 #define KEY_LOGIN_LAST_MOON_DATE   @"userLoginLastMoonDate"
 
 //通知用户在育成光的时间
-#define KEY_NOTIFY_ISBRINGING_LAST_TIME @"notifyIsBringLastTime"
+#define KEY_NOTIFY_NEED_BRINGING_LAST_TIME @"notifyNeedBringLastTime"
+#define KEY_NOTIFY_IS_BRINGING_LAST_TIME @"notifyIsBringLastTime"
+#define REMINDER_INTERVEL_TIME 1 //提醒时间间隔
 
 //用户连续登录次数
 #define KEY_CONTINUE_LOGIN_SUN_COUNT @"continueLoginSunCount"
@@ -221,7 +230,7 @@ typedef enum
 #define  TAG_LIGHT_TRACE 1000 //1000以后
 
 
-#define ORIGINAL_MAX_WIDTH 640.0f
+#define ORIGINAL_MAX_WIDTH 320.0f
 
 
 #define DEFAULT_CHOOSE_STRING_KEY  @"DefaultChooseString"
@@ -244,5 +253,7 @@ typedef enum
 +(void)showAlert:(NSString *)msg titleMsg:(NSString *)title DelegateObject:(id) delegateObject;
 
 +(void)showActionSheetOptiontitleMsg:(NSString *)title ShowInView:(UIView*)view CancelMsg:(NSString*) cancelMsg  DelegateObject:(id) delegateObject Option:(NSString*)option,...;
+
++ (NetConnectType) CheckConnectedToNetwork;
 
 @end

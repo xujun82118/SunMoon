@@ -919,10 +919,10 @@
             [super takePicture];
     }else
     {
-//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-//        NSString* temp = [NSString stringWithFormat:@"说出你的%@光宣言，再拍照哦!", (iSunORMoon==IS_SUN_TIME)?@"阳":@"月"];
-//        [customAlertAutoDis setAlertMsg:temp];
-//        [customAlertAutoDis RunCumstomAlert];
+        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+        NSString* temp = [NSString stringWithFormat:@"说出你的%@光宣言，再拍照哦!", (iSunORMoon==IS_SUN_TIME)?@"阳":@"月"];
+        [customAlertAutoDis setAlertMsg:temp];
+        [customAlertAutoDis RunCumstomAlert];
         
     }
 
@@ -934,12 +934,12 @@
 {
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
         
-        [CommonObject showActionSheetOptiontitleMsg:@"大声地说出美丽宣言，自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"就要用相片" DelegateObject:self Option:@"好嘞"];
+        [CommonObject showActionSheetOptiontitleMsg:@"大声地说出美丽宣言，自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"使用相片" DelegateObject:self Option:@"宣言&自拍"];
         
         
     }else if([CommonObject checkSunOrMoonTime] ==  IS_MOON_TIME)
     {
-        [CommonObject showActionSheetOptiontitleMsg:@"大声地说出美丽宣言，自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"就要用相片" DelegateObject:self Option:@"好嘞"];
+        [CommonObject showActionSheetOptiontitleMsg:@"大声地说出美丽宣言，自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"使用相片" DelegateObject:self Option:@"宣言&自拍"];
     }
     
 

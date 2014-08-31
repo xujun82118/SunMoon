@@ -596,6 +596,11 @@ static UserInfo *sharedUserInfo;
 
 -(void)updateUserHeaderImage:(UIImage*) image
 {
+    
+    if (!image) {
+        image = [UIImage imageNamed:@"默认头像.png"];
+    }
+    
     NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
     [userBaseData setObject:UIImagePNGRepresentation(image) forKey:KEY_USER_HEADER_IMAGE];
     [userBaseData synchronize];

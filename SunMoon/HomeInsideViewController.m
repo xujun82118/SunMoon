@@ -103,8 +103,8 @@
     //语音回放控制
     pressedVoiceForPlay = [[VoicePressedHold alloc] init];
     //回放音按钮
-    [_voiceReplaySunBtn setImage:[UIImage imageNamed:@"停止放音-细黄.PNG"] forState:UIControlStateSelected];
-    [_voiceReplayMoonBtn setImage:[UIImage imageNamed:@"停止放音-细黄.PNG"] forState:UIControlStateSelected];
+    [_voiceReplaySunBtn setImage:[UIImage imageNamed:@"停止放音-白.PNG"] forState:UIControlStateSelected];
+    [_voiceReplayMoonBtn setImage:[UIImage imageNamed:@"停止放音-白.PNG"] forState:UIControlStateSelected];
 
     
     
@@ -613,6 +613,13 @@
 #pragma mark -  云同步
 -(IBAction)synClouderUserInfo:(id)sender
 {
+    
+    //查看网络
+    NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
+    if (typeNet == netNon) {
+        [CommonObject showAlert:@"啊，网络不见了~" titleMsg:nil DelegateObject:self];
+        return;
+    }
     
     if (self.user.cloudSynAutoCtl) {
         [CommonObject showAlert:@"已开启自动云同步，退出时自动同步" titleMsg:Nil DelegateObject:self];

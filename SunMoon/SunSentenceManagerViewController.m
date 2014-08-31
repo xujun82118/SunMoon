@@ -45,11 +45,11 @@
     
     
     //加编辑按钮
-    NSInteger editeBtnWidth = 15;
-    NSInteger editeBtnHeight = 15;
+    NSInteger editeBtnWidth = 20;
+    NSInteger editeBtnHeight = 20;
     UIButton *editeBtn =[UIButton buttonWithType:UIButtonTypeCustom];
     [editeBtn setImage:[UIImage imageNamed:@"编辑.png"] forState:UIControlStateNormal];
-    [editeBtn setFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X-editeBtnWidth, NAVI_BAR_BTN_Y-editeBtnHeight/2, editeBtnWidth, editeBtnHeight)];
+    [editeBtn setFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X-editeBtnWidth, NAVI_BAR_BTN_Y-editeBtnHeight/2+7, editeBtnWidth, editeBtnHeight)];
     [editeBtn addTarget:self action:@selector(canEditSentence:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:editeBtn];
     

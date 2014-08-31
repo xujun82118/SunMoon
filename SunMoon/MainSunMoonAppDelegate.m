@@ -200,45 +200,54 @@
 
     //3小时内不重复通知
     NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
-    NSDate* lastNotify = [userBaseData objectForKey:KEY_NOTIFY_ISBRINGING_LAST_TIME];
-    NSTimeInterval time =[[NSDate date] timeIntervalSinceDate:lastNotify];
-    int days=((int)time)/(3600*24);
-    int hours=((int)time)%(3600*24)/3600;
-    int totalHours = days*24+hours;
+    NSDate* lastNotifyNeed = [userBaseData objectForKey:KEY_NOTIFY_NEED_BRINGING_LAST_TIME];
+    NSDate* lastNotifyIs = [userBaseData objectForKey:KEY_NOTIFY_IS_BRINGING_LAST_TIME];
+    NSTimeInterval timeNeed =[[NSDate date] timeIntervalSinceDate:lastNotifyNeed];
+    NSTimeInterval timeIs =[[NSDate date] timeIntervalSinceDate:lastNotifyIs];
+
+    int daysNeed=((int)timeNeed)/(3600*24);
+    int hoursNeed=((int)timeNeed)%(3600*24)/3600;
+    int totalHoursNeed = daysNeed*24+hoursNeed;
     
-    if (totalHours>3 || totalHours<0) {
-        //通知用户，正在育成光
-        alertNotification=[[UILocalNotification alloc] init];
+    int daysIs=((int)timeIs)/(3600*24);
+    int hoursIs=((int)timeIs)%(3600*24)/3600;
+    int totalHoursIs = daysIs*24+hoursIs;
+   
+    //构造通知
+    alertNotification=[[UILocalNotification alloc] init];
+    alertNotification.fireDate = Nil;
+    alertNotification.repeatInterval = kCFCalendarUnitDay;
+    alertNotification.timeZone=[NSTimeZone defaultTimeZone];
+    alertNotification.soundName = @"cute.mp3";
+    
+    NSString* temp;
+    if ([_userInfo checkIsBringUpinSunOrMoon] && (totalHoursIs>REMINDER_INTERVEL_TIME || totalHoursIs<0 || lastNotifyIs == nil)) {
         
-        alertNotification.fireDate = Nil;
-        alertNotification.repeatInterval = kCFCalendarUnitDay;
-        alertNotification.timeZone=[NSTimeZone defaultTimeZone];
-        alertNotification.soundName = @"cute.mp3";
-        
-        //NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_SUN_TIME forKey:ALERT_SUN_MOON_TIME];
-        //alertNotification.userInfo = info;
-        NSString* temp;
-        if ([_userInfo checkIsBringUpinSunOrMoon]) {
-            temp = [NSString stringWithFormat:@"我在养育%@光了，等你回来哦!",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-        }else
-        {
-            temp = [NSString stringWithFormat:@"哎呦，没有把%@光托付给我唉!",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-        }
+        //告知会用在养育光了
+        temp = [NSString stringWithFormat:@"我在养育%@光了，等你回来哦!",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
         
         alertNotification.alertBody = temp;
+
         
         [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
         
+        //更新本次时间
+        [userBaseData setObject:[NSDate date] forKey:KEY_NOTIFY_IS_BRINGING_LAST_TIME];
+        [userBaseData synchronize];
+        
+    }else if(totalHoursNeed>REMINDER_INTERVEL_TIME || totalHoursNeed<0 || lastNotifyNeed == nil)
+    {
+        temp = [NSString stringWithFormat:@"哎呦，没有把%@光托付给我唉!",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+        
+        alertNotification.alertBody = temp;
+        
+        
+        [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
         
         //更新本次时间
-        [userBaseData setObject:[NSDate date] forKey:KEY_NOTIFY_ISBRINGING_LAST_TIME];
+        [userBaseData setObject:[NSDate date] forKey:KEY_NOTIFY_NEED_BRINGING_LAST_TIME];
         [userBaseData synchronize];
     }
-
-    
-
-    
-
 
     
 }

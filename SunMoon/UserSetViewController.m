@@ -123,7 +123,7 @@
         imageView.image = self.user.userHeaderImage;
         imageView.layer.masksToBounds = YES;
         imageView.layer.cornerRadius = 35.0;
-        imageView.layer.borderColor = [UIColor yellowColor].CGColor;
+        imageView.layer.borderColor = [UIColor brownColor].CGColor;
         imageView.layer.borderWidth = 3.0f;
         imageView.layer.rasterizationScale = [UIScreen mainScreen].scale;
         imageView.layer.shouldRasterize = YES;
@@ -348,7 +348,9 @@
 //相机或相册的回调函数
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     [picker dismissViewControllerAnimated:YES completion:^() {
-        UIImage *portraitImg = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
+       // UIImage *portraitImg = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
+        UIImage* portraitImg = [info objectForKey:UIImagePickerControllerOriginalImage];
+
         portraitImg = [self imageByScalingToMaxSize:portraitImg];
         // 裁剪
         VPImageCropperViewController *imgEditorVC = [[VPImageCropperViewController alloc] initWithImage:portraitImg cropFrame:CGRectMake(0, 100.0f, self.view.frame.size.width, self.view.frame.size.width) limitScaleRatio:3.0];
@@ -487,12 +489,26 @@
     if (indexPath.section  == 2 && indexPath.row == 0)
     {
         
+        //查看网络
+        NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
+        if (typeNet == netNon) {
+            [CommonObject showAlert:@"啊，网络不见了~" titleMsg:nil DelegateObject:self];
+            return;
+        }
+        
         NSURL *url = [NSURL URLWithString:@"https://itunes.apple.com/us/app/tian-tian-geng-mei-li/id782426992?ls=1&mt=8"];
         [[UIApplication sharedApplication] openURL:url];
     }
     
     if (indexPath.section  == 2 && indexPath.row == 1)
     {
+        //查看网络
+        NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
+        if (typeNet == netNon) {
+            [CommonObject showAlert:@"啊，网络不见了~" titleMsg:nil DelegateObject:self];
+            return;
+        }
+        
         [CommonObject showAlert:@"亲的任何意见，我都无比重视^_^" titleMsg:@"用户关怀" DelegateObject:self];
         
         
@@ -682,12 +698,21 @@
 - (void)autoCloudSwitchChangeHandler:(UISwitch *)sender
 {
     if (sender.on) {
+        
+        //查看网络
+        NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
+        if (typeNet == netNon) {
+            [CommonObject showAlert:@"啊，网络不见了~" titleMsg:nil DelegateObject:self];
+            sender.on = FALSE;
+            return;
+        }
+        
         //判断是否注册过
         if (!self.user.isRegisterUser) {
             //没注册过，则关闭
             sender.on = NO;
             
-            [CommonObject showAlert:@"请选绑定账户进行注册" titleMsg:Nil DelegateObject:self];
+            [CommonObject showAlert:@"请选绑定账户进行登录~" titleMsg:Nil DelegateObject:self];
         }
     }
     
@@ -710,6 +735,8 @@
 {
     //MainSunMoonAppDelegate *appDelegate = (MainSunMoonAppDelegate *)[UIApplication sharedApplication].delegate;
     
+    
+    
     //tag与表中的授权选项行对应
     NSInteger index = sender.tag;
     
@@ -718,6 +745,15 @@
         NSMutableDictionary *item = [_shareTypeArray objectAtIndex:index];
         if (sender.on)
         {
+            
+            //查看网络
+            NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
+            if (typeNet == netNon) {
+                [CommonObject showAlert:@"啊，网络不见了~" titleMsg:nil DelegateObject:self];
+                sender.on = FALSE;
+                return;
+            }
+            
             //用户用户信息
             ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
             

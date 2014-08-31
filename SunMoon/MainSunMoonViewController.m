@@ -1166,15 +1166,15 @@
     _userHeaderImageView.layer.shadowOpacity = 0.5;
     _userHeaderImageView.layer.shadowRadius = 2.0;
     if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-        _userHeaderImageView.layer.borderColor = [[UIColor orangeColor] CGColor];
+        _userHeaderImageView.layer.borderColor = [[UIColor brownColor] CGColor];
 
     }else
     {
-        _userHeaderImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
+        _userHeaderImageView.layer.borderColor = [[UIColor brownColor] CGColor];
 
     }
     _userHeaderImageView.layer.borderWidth = 3.5f;
-    _userHeaderImageView.layer.cornerRadius =40.0;
+    _userHeaderImageView.layer.cornerRadius =50.0;
     _userHeaderImageView.userInteractionEnabled = YES;
     _userHeaderImageView.backgroundColor = [UIColor blackColor];
     UITapGestureRecognizer *portraitTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapUserHeader)];
@@ -1906,6 +1906,9 @@
         
     }
     
+    if (realRange == 0) {
+        return;
+    }
 
     NSLog(@"开启头像闪烁动画, range=%d！", realRange);
     
