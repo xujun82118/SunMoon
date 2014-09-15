@@ -69,8 +69,8 @@
     
     
     [_cloudCtlBtn setImage:[UIImage imageNamed:@"小云-touch.png"] forState:UIControlStateHighlighted];
-    [_shareSunCtlBtn setImage:[UIImage imageNamed:@"分享-touch.png"] forState:UIControlStateHighlighted];
-    [_shareMoonCtlBtn setImage:[UIImage imageNamed:@"分享-touch.png"] forState:UIControlStateHighlighted];
+//    [_shareSunCtlBtn setImage:[UIImage imageNamed:@"分享-touch.png"] forState:UIControlStateHighlighted];
+//    [_shareMoonCtlBtn setImage:[UIImage imageNamed:@"分享-touch.png"] forState:UIControlStateHighlighted];
     
     if(self.user.sunAlertTimeCtl)
     {
@@ -103,8 +103,8 @@
     //语音回放控制
     pressedVoiceForPlay = [[VoicePressedHold alloc] init];
     //回放音按钮
-    [_voiceReplaySunBtn setImage:[UIImage imageNamed:@"停止放音-白.PNG"] forState:UIControlStateSelected];
-    [_voiceReplayMoonBtn setImage:[UIImage imageNamed:@"停止放音-白.PNG"] forState:UIControlStateSelected];
+    [_voiceReplaySunBtn setImage:[UIImage imageNamed:@"停止放音-白.png"] forState:UIControlStateSelected];
+    [_voiceReplayMoonBtn setImage:[UIImage imageNamed:@"停止放音-白.png"] forState:UIControlStateSelected];
 
     
     
@@ -294,7 +294,7 @@
     }
     
     UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
-    NSLog(@"1---%f,%f,%f,%f", scrollPosition1.frame.origin.x,scrollPosition1.frame.origin.y,scrollPosition1.frame.size.width,scrollPosition1.frame.size.height);
+    //NSLog(@"1---%f,%f,%f,%f", scrollPosition1.frame.origin.x,scrollPosition1.frame.origin.y,scrollPosition1.frame.size.width,scrollPosition1.frame.size.height);
     if (!imageScrollMoon) {
     }
     imageScrollMoon = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100)];
@@ -395,7 +395,7 @@
     imageScrollMoon.frame = CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100);
     imageScrollMoon.hidden = NO;
 
-    NSLog(@"2---%f,%f,%f,%f", scrollPosition1.frame.origin.x,scrollPosition1.frame.origin.y,scrollPosition1.frame.size.width,scrollPosition1.frame.size.height);
+   // NSLog(@"2---%f,%f,%f,%f", scrollPosition1.frame.origin.x,scrollPosition1.frame.origin.y,scrollPosition1.frame.size.width,scrollPosition1.frame.size.height);
     
 //    
 //    UIImageView* scrollPosition = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_SUN];
@@ -562,6 +562,10 @@
     UIImageView* imageData = [currentSelectDataMoon objectForKey:@"image_data"];
     NSString* imageSentence = [currentSelectDataMoon objectForKey:@"image_sentence"];
     
+    if ([imageSentence isEqual:@""]) {
+        return;
+    }
+    
     ShareByShareSDR* share = [ShareByShareSDR alloc];
     share.shareTitle = @"天天更美丽";
     share.shareImage =imageData.image;
@@ -590,6 +594,10 @@
      
      UIImageView* imageData = [currentSelectDataSun objectForKey:@"image_data"];
      NSString* imageSentence = [currentSelectDataSun objectForKey:@"image_sentence"];
+     
+     if ([imageSentence isEqual:@""]) {
+         return;
+     }
      
      ShareByShareSDR* share = [ShareByShareSDR alloc];
      share.shareTitle = @"天天更美丽";
@@ -653,72 +661,125 @@
 #pragma mark -
 - (IBAction)DeleteMoonImage:(id)sender
 {
-    NSString* imageName = [currentSelectDataMoon objectForKey:@"image_name_time"];
-    //查出包含此条的数据
-    UserInfo* selectUserInfo = [userDB getUserDataByDateTime:imageName];
-    
-    if ([userDB getUserDataByDateTime:selectUserInfo.date_time]) {
-        NSLog(@"DeleteNightImage, Datetime=%@， 此条存在，先删后插入新的一条!", selectUserInfo.date_time);
-        [userDB deleteUserWithDataTime:selectUserInfo.date_time];
-        //置空删除的相片
-        selectUserInfo.moon_image = Nil;
-        //重存此条数据
-        [userDB saveUser:selectUserInfo];
-    }else
-    {
-        NSLog(@"DeleteNightImage，错误，此条不存在!");
-        [userDB saveUser:selectUserInfo];
+    //空相片返回
+    NSString*  timeMoon = [currentSelectDataMoon objectForKey:@"image_name_time"];
+    if ([timeMoon isEqualToString:@""]) {
+        return;
     }
     
-    //删除语音
-    NSString*  timeMoon = [currentSelectDataMoon objectForKey:@"image_name_time"];
-    NSString* nameMoon = [NSString stringWithFormat:@"%@_%d", timeMoon, IS_MOON_TIME];
-    [pressedVoiceForPlay setVoiceName:nameMoon];
-    [pressedVoiceForPlay deleteVoiceFile];
+    [CommonObject showActionSheetOptiontitleMsg:@"确定删除月光相片?" ShowInView:self.view CancelMsg:@"不删除" DelegateObject:self Option:@"删除"];
     
-    NSLog(@"刷新 月光 数据");
-    [self refreshScrollUserImageMoon];
-    
+
 }
 - (IBAction)DeleteSunImage:(id)sender
 {
     
-    NSString* imageName = [currentSelectDataSun objectForKey:@"image_name_time"];
-    //查出包含此条的数据
-    UserInfo* selectUserInfo = [userDB getUserDataByDateTime:imageName];
-    
-    if (selectUserInfo) {
-        NSLog(@"DeleteMorningImage, Datetime=%@， 此条存在，先删后插入新的一条!", selectUserInfo.date_time);
-        [userDB deleteUserWithDataTime:selectUserInfo.date_time];
-        //置空删除的相片
-        selectUserInfo.sun_image = Nil;
-        //重存此条数据
-        [userDB saveUser:selectUserInfo];
-    }else
-    {
-        NSLog(@"DeleteMorningImage，错误，此条不存在!");
-        [userDB saveUser:selectUserInfo];
+    NSString*  timeSun = [currentSelectDataSun objectForKey:@"image_name_time"];
+    if ([timeSun isEqualToString:@""]) {
+        return;
     }
     
-    //删除语音
-    NSString*  timeSun = [currentSelectDataSun objectForKey:@"image_name_time"];
-    NSString* nameSun = [NSString stringWithFormat:@"%@_%d", timeSun, IS_SUN_TIME];
-    [pressedVoiceForPlay setVoiceName:nameSun];
-    [pressedVoiceForPlay deleteVoiceFile];
+    [CommonObject showActionSheetOptiontitleMsg:@"确定删除阳光相片?" ShowInView:self.view CancelMsg:@"不删除" DelegateObject:self Option:@"删除"];
     
-    NSLog(@"刷新 阳光 数据");
-    [self refreshScrollUserImageSun];
+    
     
 }
+
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if ([actionSheet.title isEqualToString:@"确定删除月光相片?"]) {
+        
+        if (buttonIndex == 0) {
+            //删除
+            NSString* imageName = [currentSelectDataMoon objectForKey:@"image_name_time"];
+            //查出包含此条的数据
+            UserInfo* selectUserInfo = [userDB getUserDataByDateTime:imageName];
+            
+            if ([userDB getUserDataByDateTime:selectUserInfo.date_time]) {
+                NSLog(@"DeleteNightImage, Datetime=%@， 此条存在，先删后插入新的一条!", selectUserInfo.date_time);
+                [userDB deleteUserWithDataTime:selectUserInfo.date_time];
+                //置空删除的相片
+                selectUserInfo.moon_image = Nil;
+                //重存此条数据
+                [userDB saveUser:selectUserInfo];
+            }else
+            {
+                NSLog(@"DeleteNightImage，错误，此条不存在!");
+                [userDB saveUser:selectUserInfo];
+            }
+            
+            //删除语音
+            NSString*  timeMoon = [currentSelectDataMoon objectForKey:@"image_name_time"];
+            NSString* nameMoon = [NSString stringWithFormat:@"%@_%d", timeMoon, IS_MOON_TIME];
+            [pressedVoiceForPlay setVoiceName:nameMoon];
+            [pressedVoiceForPlay deleteVoiceFile];
+            
+            NSLog(@"刷新 月光 数据");
+            [self refreshScrollUserImageMoon];
+            
+        }else if (buttonIndex == 1) {
+            
+            //不删除
+            
+        }
+    }
+         
+         
+    if ([actionSheet.title isEqualToString:@"确定删除阳光相片?"]) {
+        
+        if (buttonIndex == 0) {
+            //删除
+            NSString* imageName = [currentSelectDataSun objectForKey:@"image_name_time"];
+            //查出包含此条的数据
+            UserInfo* selectUserInfo = [userDB getUserDataByDateTime:imageName];
+            
+            if (selectUserInfo) {
+                NSLog(@"DeleteMorningImage, Datetime=%@， 此条存在，先删后插入新的一条!", selectUserInfo.date_time);
+                [userDB deleteUserWithDataTime:selectUserInfo.date_time];
+                //置空删除的相片
+                selectUserInfo.sun_image = Nil;
+                //重存此条数据
+                [userDB saveUser:selectUserInfo];
+            }else
+            {
+                NSLog(@"DeleteMorningImage，错误，此条不存在!");
+                [userDB saveUser:selectUserInfo];
+            }
+            
+            //删除语音
+            NSString*  timeSun = [currentSelectDataSun objectForKey:@"image_name_time"];
+            NSString* nameSun = [NSString stringWithFormat:@"%@_%d", timeSun, IS_SUN_TIME];
+            [pressedVoiceForPlay setVoiceName:nameSun];
+            [pressedVoiceForPlay deleteVoiceFile];
+            
+            NSLog(@"刷新 阳光 数据");
+            [self refreshScrollUserImageSun];
+            
+        }else if (buttonIndex == 1) {
+            
+            //不删除
+
+
+            
+        }
+
+    }
+
+    
+}
+
 
 
 #pragma mark - 回放语音
 - (IBAction)replaySunVoice:(id)sender
 {
-    
-
 
     NSString*  timeSun = [currentSelectDataSun objectForKey:@"image_name_time"];
+    if ([timeSun isEqualToString:@""]) {
+        return;
+    }
+    
     NSString* nameSun = [NSString stringWithFormat:@"%@_%d", timeSun, IS_SUN_TIME];
     [pressedVoiceForPlay setVoiceName:nameSun];
  
@@ -745,6 +806,9 @@
 
     
     NSString*  timeMoon = [currentSelectDataMoon objectForKey:@"image_name_time"];
+    if ([timeMoon isEqualToString:@""]) {
+        return;
+    }
     NSString* nameMoon = [NSString stringWithFormat:@"%@_%d", timeMoon, IS_MOON_TIME];
     [pressedVoiceForPlay setVoiceName:nameMoon];
     

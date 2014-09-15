@@ -11,7 +11,7 @@
 
 @implementation GuidController
 @synthesize fristlyOpenGuidCtl=_fristlyOpenGuidCtl;
-@synthesize guidInfo=_guidInfo, guidIntoCamera=_guidIntoCamera,guidTapLight=_guidTapLight,guid2SDelay=_guid2SDelay,guidPanToBring=_guidPanToBring;
+@synthesize guidInfo=_guidInfo, guidIntoCamera=_guidIntoCamera,guidTapLight=_guidTapLight,guid2SDelay=_guid2SDelay,guidPanToBring=_guidPanToBring, guidHaveTakePhoto = _guidHaveTakePhoto, guidHaveGiveLight = _guidHaveGiveLight;
 
 static GuidController *sharedGuidCtl;
 
@@ -40,6 +40,9 @@ static GuidController *sharedGuidCtl;
 
 - (BOOL)fristlyOpenGuidCtl {
 
+    //test
+    //return YES;
+    
     return [_guidInfo boolForKey:KEY_GUID_FIRSTLY_OPEN];
 
 }
@@ -119,5 +122,38 @@ static GuidController *sharedGuidCtl;
     
 }
 
+
+- (BOOL)guidHaveTakePhoto {
+    
+    return [_guidInfo boolForKey:KEY_GUID_HAVE_TAKE_PHOTO];
+    
+}
+
+-(void) updateGuidHaveTakePhoto:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_HAVE_TAKE_PHOTO];
+    [_guidInfo synchronize];
+    
+    _guidHaveTakePhoto = isGuid;
+    
+    
+}
+
+
+- (BOOL)guidHaveGiveLight {
+    
+    return [_guidInfo boolForKey:KEY_GUID_HAVE_GIVEN_LIGHT];
+    
+}
+
+-(void) updateGuidHaveGiveLight:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_HAVE_GIVEN_LIGHT];
+    [_guidInfo synchronize];
+    
+    _guidHaveGiveLight = isGuid;
+    
+    
+}
 
 @end

@@ -29,7 +29,7 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.tableHeaderView = ({
         //UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 184.0f)];
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 20)];
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 40)];
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 40, 100, 100)];
         imageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         imageView.image = [UIImage imageNamed:@"默认头像.png"];
@@ -44,7 +44,11 @@
         //[view addSubview:imageView];
         view;
     });
+    
+    
+    //self.tableView.frame = CGRectMake(100, 100, 100, 200);
 }
+
 
 #pragma mark -
 #pragma mark UITableView Delegate
@@ -136,7 +140,7 @@
     
     NSArray *titles = @[@"我的天空", @"我的设置"];
     cell.textLabel.text = titles[indexPath.row];
-
+    cell.textAlignment = NSTextAlignmentCenter;
     
     return cell;
 }

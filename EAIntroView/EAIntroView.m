@@ -242,6 +242,10 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     self.currentPageIndex = scrollView.contentOffset.x/self.scrollView.frame.size.width;
+  
+    if ([(id)self.delegate respondsToSelector:@selector(introDidEndScrollAt:TotalCount:)]) {
+        [self.delegate introDidEndScrollAt:self.currentPageIndex  TotalCount:pageViews.count];
+    }
     
     if (self.currentPageIndex == (pageViews.count)) {
         if ([(id)self.delegate respondsToSelector:@selector(introDidFinish)]) {

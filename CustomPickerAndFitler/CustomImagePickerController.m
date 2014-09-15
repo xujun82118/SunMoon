@@ -10,17 +10,22 @@
 #import "IphoneScreen.h"
 #import "UIImage+Cut.h"
 #import "CustomAlertView.h"
+#import "ImageFilterProcessViewController.h"
+#import "GuidController.h"
+#import "CustomIndicatorView.h"
+
 
 @interface CustomImagePickerController ()
 
 {
     UIView *overlyView;
+    UIView *PLCameraView;
     UIImageView* sunMoonImageViewTop;
     UIImageView* bowLightView;
     
     UIImageView* voiceValueView;
     UIImageView* giveMaxView;
-    //UILabel *voiceValueLabel ;
+    UILabel *voiceValueLabel ;
     //UILabel *giveValueLabel;
 
 
@@ -32,7 +37,10 @@
     
     UIButton *voiceReplayBtn;
     
+    UIImageView* sayView;
+
     float maxVoiceValue;
+    float newPitchValue;
     NSInteger srcVoiceValueHeight;
     
     BOOL isOverMaxVoiceValue;
@@ -44,6 +52,8 @@
     BOOL isHaveAddValue;  //第二次触发语音，不再奖励光
 
    CustomAlertView* customAlertAutoDis;
+    
+    CustomIndicatorView *indicator;
 
 }
 @end
@@ -102,23 +112,20 @@
     
     pressedVoice = [VoicePressedHold alloc];
     pressedVoice.getPitchDelegate = self;
+    [pressedVoice setVoiceName:_voiceName];
     
     addVauleAnimation = [[AminationCustom alloc] initWithKey:@"addValueinEdite"];
     addVauleAnimation.aminationCustomDelegate =  self;
     isHaveAddValue = NO;
     isOverMaxVoiceValue = NO;
     
-    
+
     
     
     if(self.sourceType == UIImagePickerControllerSourceTypeCamera){
-   
-
         
         [self setShowsCameraControls:NO];
-        
 
-        
         //日月最上方的
         UIImage *sunMoonImageTop;
         if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
@@ -141,8 +148,13 @@
         [self.view addSubview:sunMoonImageViewTop];
         
         
-        UIView *PLCameraView=[self findView:viewController.view withName:@"PLCameraView"];
-
+        PLCameraView=[self findView:viewController.view withName:@"PLCameraView"];
+        
+        //初始化指示器
+        NSInteger indiW = 50;
+        NSInteger indiH = 50;
+        indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
+        
         //PLCameraView.frame = CGRectMake(0, 50, SCREEN_WIDTH, SCREEN_HEIGHT);
         
         //日月闪烁
@@ -175,13 +187,13 @@
         
         //相机方向
         NSInteger deviceImageWidth = 30;
-        NSInteger deviceImageHeigth =25;
-        UIImage *deviceImage = [UIImage imageNamed:@"相机方向.png"];
+        NSInteger deviceImageHeigth =30;
+        UIImage *deviceImage = [UIImage imageNamed:@"换镜头.png"];
         UIButton *deviceBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [deviceBtn setImage:deviceImage forState:UIControlStateNormal];
         [deviceBtn addTarget:self action:@selector(swapFrontAndBackCameras:) forControlEvents:UIControlEventTouchUpInside];
         self.cameraDevice = UIImagePickerControllerCameraDeviceFront;
-        [deviceBtn setFrame:CGRectMake(250, 30, deviceImageWidth, deviceImageHeigth)];
+        [deviceBtn setFrame:CGRectMake(SCREEN_WIDTH-deviceImageWidth-10, 30, deviceImageWidth, deviceImageHeigth)];
         [PLCameraView addSubview:deviceBtn];
         
         //音量动画图,上升的光
@@ -205,25 +217,7 @@
         [PLCameraView addSubview:voiceValueView];
 
         
-        //音量显示
-//        NSInteger voiceLabelWidth = 30;
-//        NSInteger voiceLabelHeigth =30;
-//        voiceValueLabel = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth/2-voiceLabelWidth/2, voiceValueView.frame.origin.y-30, voiceLabelWidth, voiceLabelHeigth)];
-//        voiceValueLabel.tag = TAB_VOICE_VALUE;
-//        voiceValueLabel.text = @"0";
-//        UIColor *color;
-//        if (iSunORMoon==IS_SUN_TIME ) {
-//            color = [UIColor colorWithPatternImage:[UIImage imageNamed:@"sun.png"]];
-//        }else
-//        {
-//            color = [UIColor colorWithPatternImage:[UIImage imageNamed:@"moon.png"]];
-//        }        [voiceValueLabel setBackgroundColor:color];
-//        voiceValueLabel.hidden = YES;
-//        voiceValueLabel.font = [UIFont fontWithName:@"Arial" size:20];
-//        voiceValueLabel.textColor = [UIColor whiteColor];
-//        voiceValueLabel.textAlignment = NSTextAlignmentCenter;
-//        voiceValueLabel.adjustsFontSizeToFitWidth = YES;
-//        [PLCameraView addSubview:voiceValueLabel];
+
       
         //奖励光的最大音量
 //        NSInteger giveMaxViewWidth = SCREEN_WIDTH+200;
@@ -241,9 +235,6 @@
 //        }
 //        giveMaxView.hidden = YES;
 //        [PLCameraView addSubview:giveMaxView];
-
-        
-        
 
         
         NSInteger overlyViewWidth = SCREEN_WIDTH;
@@ -302,6 +293,28 @@
         [sentenceView addGestureRecognizer:recognizerSentence];
         [PLCameraView addSubview:sentenceView];
 
+        //说话提示
+        NSInteger sayViewWidth = 150;
+        NSInteger sayViewHeigth =150;
+        sayView = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2-sayViewWidth/2, sentenceView.frame.origin.y-sayViewHeigth-5, sayViewWidth, sayViewHeigth)];
+        sayView.image = [UIImage imageNamed:@"说话.png"];
+        sayView.hidden = YES;
+        sayView.alpha = 0.8;
+        [PLCameraView addSubview:sayView];
+        
+        
+        //音量显示
+        NSInteger voiceLabelWidth = 100;
+        NSInteger voiceLabelHeigth =30;
+        voiceValueLabel = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth/2-voiceLabelWidth/2, sayView.frame.origin.y+sayViewHeigth-voiceLabelHeigth-7, voiceLabelWidth, voiceLabelHeigth)];
+        voiceValueLabel.tag = TAB_VOICE_VALUE;
+        voiceValueLabel.text = @"0";
+        voiceValueLabel.hidden = YES;
+        voiceValueLabel.font = [UIFont fontWithName:@"Arial" size:30];
+        voiceValueLabel.textColor = [UIColor whiteColor];
+        voiceValueLabel.textAlignment = NSTextAlignmentCenter;
+        //voiceValueLabel.adjustsFontSizeToFitWidth = YES;
+        [PLCameraView addSubview:voiceValueLabel];
         
         //返回按钮
         NSInteger backBtnImageWidth = 40;
@@ -348,20 +361,17 @@
         delayTime.numberOfLines = 1;
         //[PLCameraView addSubview:delayTime];
         [overlyView addSubview:delayTime];
-                              
-        
-
 
 
         //按住说语录按钮
         NSInteger voicePressedWidth = overlyViewBKHeigth-15;
         NSInteger voicePressedHeigth =voicePressedWidth;
         UIImage *voicePressedImage = [UIImage imageNamed:@"Voice.png"];
-        voicePressedBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2-voicePressedWidth-5, overlyViewBk.center.y-voicePressedHeigth/2, voicePressedWidth, voicePressedHeigth)];
+        voicePressedBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2-voicePressedWidth-3, overlyViewBk.center.y-voicePressedHeigth/2, voicePressedWidth, voicePressedHeigth)];
         [voicePressedBtn setImage:voicePressedImage forState:UIControlStateNormal];
         UILongPressGestureRecognizer *gesture = [[UILongPressGestureRecognizer alloc]
                                                  initWithTarget:self
-                                                 action:@selector(myButtonLongPressed:)];
+                                                 action:@selector(VoiceBtnLongPressed:)];
         gesture.minimumPressDuration =0;
         [voicePressedBtn addGestureRecognizer:gesture];
         [overlyView addSubview:voicePressedBtn];
@@ -371,7 +381,7 @@
         NSInteger camerImageWidth = overlyViewBKHeigth-15;
         NSInteger camerImageHeigth =camerImageWidth;
         UIImage *camerImage = [UIImage imageNamed:@"拍照.png"];
-        cameraBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2+5, overlyViewBk.center.y-camerImageHeigth/2, camerImageWidth, camerImageHeigth)];
+        cameraBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2+3, overlyViewBk.center.y-camerImageHeigth/2, camerImageWidth, camerImageHeigth)];
         [cameraBtn setImage:camerImage forState:UIControlStateNormal];
         [cameraBtn addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
         [overlyView addSubview:cameraBtn];
@@ -382,17 +392,17 @@
         UIImage *voiceReplayImage;
         if (![pressedVoice checkVoiceFile])
         {
-            voiceReplayImage = [UIImage imageNamed:@"放音-空.png"];
+            voiceReplayImage = [UIImage imageNamed:@"放音-白.png"];
             
         }else
         {
-            voiceReplayImage = [UIImage imageNamed:@"放音.png"];
+            voiceReplayImage = [UIImage imageNamed:@"放音-白-点.png"];
             
         }
         voiceReplayBtn = [[UIButton alloc] initWithFrame:
                           CGRectMake(cameraBtn.frame.origin.x+delayBtnWidth+10,overlyViewBk.center.y-voiceReplayHeigth/2,voiceReplayWidth, voiceReplayHeigth)];
         [voiceReplayBtn setImage:voiceReplayImage forState:UIControlStateNormal];
-        [voiceReplayBtn setImage:[UIImage imageNamed:@"放音-实-关.png"] forState:UIControlStateSelected];
+        [voiceReplayBtn setImage:[UIImage imageNamed:@"停止放音-白.png"] forState:UIControlStateSelected];
         [voiceReplayBtn addTarget:self action:@selector(rePlayMyVoice) forControlEvents:UIControlEventTouchUpInside];
         //[PLCameraView addSubview:voiceReplayBtn];
         [overlyView addSubview:voiceReplayBtn];
@@ -401,7 +411,7 @@
         //合并拍照和语音后的按钮
         NSInteger mergedBtnWidth = overlyViewBKHeigth-15;
         NSInteger mergedBtnHeigth =mergedBtnWidth;
-        UIImage *mergedBtnImage = [UIImage imageNamed:@"拍照.png"];
+        UIImage *mergedBtnImage = [UIImage imageNamed:@"2s.png"];
         mergedBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2-mergedBtnWidth/2, overlyViewBk.center.y-mergedBtnHeigth/2, mergedBtnWidth, mergedBtnHeigth)];
         [mergedBtn setImage:mergedBtnImage forState:UIControlStateNormal];
         UILongPressGestureRecognizer *gestureMerge = [[UILongPressGestureRecognizer alloc]
@@ -513,12 +523,12 @@
         [UIView setAnimationDuration:1.0f];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(deMergeAnimationDidStop:finished:context:)];
-        [cameraBtn setFrame:CGRectMake(ScreenWidth/2+10, cameraBtn.frame.origin.y,cameraBtn.frame.size.width,cameraBtn.frame.size.height)];
+        [cameraBtn setFrame:CGRectMake(ScreenWidth/2+3, cameraBtn.frame.origin.y,cameraBtn.frame.size.width,cameraBtn.frame.size.height)];
         cameraBtn.opaque = YES;
         cameraBtn.alpha = 1.0;
         cameraBtn.hidden = NO;
         
-        [voicePressedBtn setFrame:CGRectMake(ScreenWidth/2-voicePressedBtn.frame.size.width-10,voicePressedBtn.frame.origin.y,voicePressedBtn.frame.size.width,voicePressedBtn.frame.size.height)];
+        [voicePressedBtn setFrame:CGRectMake(ScreenWidth/2-voicePressedBtn.frame.size.width-3,voicePressedBtn.frame.origin.y,voicePressedBtn.frame.size.width,voicePressedBtn.frame.size.height)];
         voicePressedBtn.opaque = YES;
         voicePressedBtn.alpha = 1.0;
         voicePressedBtn.hidden = NO;
@@ -561,49 +571,85 @@
 
 - (void) MergeButtonLongPressed:(UILongPressGestureRecognizer *)gesture
 {
-    //执行语音动作
-    //语音名称 “时间_日月”
-    [pressedVoice setVoiceName:_voiceName];
-    [pressedVoice myButtonLongPressed:gesture];
+    
+    if (gesture.state == UIGestureRecognizerStateBegan) {
+        
+        sayView.hidden = NO;
+        voiceValueLabel.hidden = NO;
+        voiceValueLabel.text = @"0";
+
+        
+    }
+    
+    
+    if (gesture.state == UIGestureRecognizerStateBegan|| gesture.state == UIGestureRecognizerStateEnded) {
+        //执行语音动作
+        //语音名称 “时间_日月”
+        [pressedVoice setVoiceName:_voiceName];
+        [pressedVoice myButtonLongPressed:gesture];
+    }
+
     if (gesture.state == UIGestureRecognizerStateEnded) {
         
+        sayView.hidden = YES;
+        voiceValueLabel.hidden = YES;
+
         NSLog(@"Voice Long press Ended---take photo： Delay 2s!");
  
-        [NSTimer scheduledTimerWithTimeInterval:3.0
-                                         target:self
-                                       selector:@selector(takePicture)
-                                       userInfo:[self userInfo]
-                                        repeats:NO];
+        //判断是否奖励光
+        if ([self checkwetherAndGiveLight]!=1) {
+            
+            [NSTimer scheduledTimerWithTimeInterval:3.0
+                                             target:self
+                                           selector:@selector(takePicture)
+                                           userInfo:[self userInfo]
+                                            repeats:NO];
+        }
         
     }
     
     
 }
 
-- (void) myButtonLongPressed:(UILongPressGestureRecognizer *)gesture
+- (void) VoiceBtnLongPressed:(UILongPressGestureRecognizer *)gesture
 {
-    //执行语音动作
-    [pressedVoice setVoiceName:_voiceName];
-    [pressedVoice myButtonLongPressed:gesture];
     
+    if (gesture.state == UIGestureRecognizerStateBegan) {
+        
+        sayView.hidden = NO;
+        voiceValueLabel.hidden = NO;
+        voiceValueLabel.text = @"0";
+
+    }
     
+    if (gesture.state == UIGestureRecognizerStateBegan || gesture.state == UIGestureRecognizerStateEnded) {
+        //执行语音动作
+        [pressedVoice setVoiceName:_voiceName];
+        [pressedVoice myButtonLongPressed:gesture];
+    }
+
+
     if (gesture.state == UIGestureRecognizerStateEnded) {
         
-        if (![pressedVoice checkVoiceFile])
-        {
-            [voiceReplayBtn setImage:[UIImage imageNamed:@"放音-空.png"] forState:UIControlStateNormal];
-            
-        }else
-        {
-            [voiceReplayBtn setImage:[UIImage imageNamed:@"放音.png"] forState:UIControlStateNormal];
-        }
-        
-        
+        sayView.hidden = YES;
+        voiceValueLabel.hidden = YES;
         
         //判断是否奖励光
-        if ([self checkwetherAndGiveLight]) {
-            //giveMaxView.hidden = YES;
-        };
+        if ([self checkwetherAndGiveLight]!=1) {
+            if (![pressedVoice checkVoiceFile])
+            {
+                [voiceReplayBtn setImage:[UIImage imageNamed:@"放音-白.png"] forState:UIControlStateNormal];
+                
+            }else
+            {
+                [voiceReplayBtn setImage:[UIImage imageNamed:@"放音-白-点.png"] forState:UIControlStateNormal];
+            }
+        }else
+        {
+            //声音不够大，删了音频
+            [pressedVoice deleteVoiceFile];
+
+        }
     }
 
 }
@@ -612,6 +658,10 @@
 {
 
     [pressedVoice setVoiceName:_voiceName];
+    
+    if ([pressedVoice checkVoiceFile] == NO) {
+        return;
+    }
     
     if (voiceReplayBtn.selected == NO) {
         [pressedVoice playRecording];
@@ -647,36 +697,44 @@
 
 -(void)viewDidAppear:(BOOL)animated
 {
-    //判断是否增加阳光月光值
-//    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
-//    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, 0)];
-//    [customAlertAutoDis setEndCenterPoint:self.view.center];
-//    [customAlertAutoDis setStartAlpha:0.1];
-//    [customAlertAutoDis setEndAlpha:1.0];
-//    [customAlertAutoDis setStartHeight:0];
-//    [customAlertAutoDis setStartWidth:0];
-//    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
-//    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-//    [customAlertAutoDis setDelayDisappearTime:5.0];
-//    [customAlertAutoDis setMsgFrontSize:30];
     
-    if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
-        if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
-
-            //[customAlertAutoDis setAlertMsg:@"阳光时间来过了，要每天认真说一次就好呢"];
-            //[customAlertAutoDis RunCumstomAlert];
-            
-            
-        }
-    }else
-    {
-        if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
-
-            //[customAlertAutoDis setAlertMsg:@"月光时间来过了，要每天认真说一次就好呢"];
-            //[customAlertAutoDis RunCumstomAlert];
-        }
+    if (![GuidController sharedSingleUserInfo].guidHaveTakePhoto) {
+        //判断是否增加阳光月光值
+        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
+        [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, 0)];
+        [customAlertAutoDis setEndCenterPoint:self.view.center];
+        [customAlertAutoDis setStartAlpha:0.1];
+        [customAlertAutoDis setEndAlpha:1.0];
+        [customAlertAutoDis setStartHeight:0];
+        [customAlertAutoDis setStartWidth:0];
+        [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*4];
+        [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+        [customAlertAutoDis setDelayDisappearTime:5.0];
+        [customAlertAutoDis setMsgFrontSize:20];
         
+        if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
+            if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
+                
+                [customAlertAutoDis setAlertMsg:@"阳光时间来过了，要每天认真说一次就好呢"];
+                [customAlertAutoDis RunCumstomAlert];
+                
+                [[GuidController sharedSingleUserInfo] updateGuidHaveTakePhoto:YES];
+            }
+        }else
+        {
+            if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
+                
+                [customAlertAutoDis setAlertMsg:@"月光时间来过了，要每天认真说一次就好呢"];
+                [customAlertAutoDis RunCumstomAlert];
+                
+                [[GuidController sharedSingleUserInfo] updateGuidHaveTakePhoto:YES];
+
+            }
+
+        }
     }
+    
+
     
 }
 
@@ -685,6 +743,8 @@
     [super viewWillDisappear:YES];
     
     sunMoonImageViewTop.hidden = YES;
+    
+
   
 }
 
@@ -704,7 +764,7 @@
 - (void)setNewPith:(float)pitchValue
 {
     
-    float newPitchValue = lroundf(pitchValue*700);
+    newPitchValue = lroundf(pitchValue*700);
     NSLog(@"Voice value pitch = %f,  newPicth=%f", pitchValue,newPitchValue);
 
     if (newPitchValue <50) {
@@ -715,6 +775,10 @@
     //需大于原高度,需两个动画都结束
     if (newPitchValue>srcVoiceValueHeight && voiceAnimationLock == NO /*&&voiceBackAnimationLock == NO*/)
     {
+        
+        voiceValueLabel.text = [NSString stringWithFormat:@"%ld", lroundf(newPitchValue)];
+
+        
         //保证升到最高值
 //        float creaseValue;
 //        if (newPitchValue > maxVoiceValue) {
@@ -724,7 +788,9 @@
 //            creaseValue = maxVoiceValue;
 //        }
         [UIView beginAnimations:@"voiceValueAnimation" context:nil];
-        [UIView setAnimationDuration:0.8f];
+        float fTime = newPitchValue/100;
+        NSLog(@"######%f",fTime);
+        [UIView setAnimationDuration:fTime];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(VoiceValueAnimationDidStop:finished:context:)];
         //CGRect temp = CGRectMake(voiceValueView.frame.origin.x, SCREEN_HEIGHT-newPitchValue,voiceValueView.frame.size.width,voiceValueView.frame.size.height);
@@ -732,19 +798,22 @@
         //[voiceValueView setFrame:temp];
         
         voiceAnimationLock = YES;
+      
+        //音量动画跟随,停在最高点
+        [voiceValueView setFrame:CGRectMake(voiceValueView.frame.origin.x, SCREEN_HEIGHT-newPitchValue, voiceValueView.frame.size.width, voiceValueView.frame.size.height)];
+        voiceValueView.alpha = 0.4;
         
         if (maxVoiceValue<newPitchValue) {
             maxVoiceValue = newPitchValue;
             NSLog(@"Max voice value 语音量 = %f", maxVoiceValue);
             
-            //音量动画跟随,停在最高点
-            [voiceValueView setFrame:CGRectMake(voiceValueView.frame.origin.x, SCREEN_HEIGHT-newPitchValue, voiceValueView.frame.size.width, voiceValueView.frame.size.height)];
-            voiceValueView.alpha = 0.6;
+
             
             //是否超过音量设定
             if (newPitchValue > GIVE_ONE_LIGHT_VOICE_VALUE) {
                 isOverMaxVoiceValue = YES;
             }
+            
             
             //显示最大的音量值
             //giveMaxView.hidden = NO;
@@ -762,8 +831,6 @@
 
 
         [UIView commitAnimations];
-        
-
     
     }
     
@@ -781,7 +848,7 @@
         voiceAnimationLock = NO;
         
         //延时1秒回原地
-        [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(voiceValueViewBacktoPosition:) userInfo:nil repeats:NO];
+        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(voiceValueViewBacktoPosition:) userInfo:nil repeats:NO];
 
     }
     
@@ -799,7 +866,8 @@
 
     if (voiceBackAnimationLock == NO) {
         [UIView beginAnimations:@"voiceValueBackAnimation" context:nil];
-        [UIView setAnimationDuration:2.0f];
+        float fTime = newPitchValue/100+1;
+        [UIView setAnimationDuration:fTime];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(VoiceValueAnimationDidStop:finished:context:)];
         //CGRect temp = CGRectMake(voiceValueView.frame.origin.x, SCREEN_HEIGHT - srcVoiceValueHeight,voiceValueView.frame.size.width,voiceValueView.frame.size.height);
@@ -818,12 +886,14 @@
     
 }
 
-
--(BOOL)checkwetherAndGiveLight
+//0:已增加过阳光，不用再增加
+//1:音量不够大
+//2：增加成功
+-(NSInteger)checkwetherAndGiveLight
 {
     
     if (isHaveAddValue) {
-        return NO;
+        return 0;
     }
     
     if (isOverMaxVoiceValue)
@@ -846,16 +916,16 @@
         [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
         isHaveAddValue = YES;
         
-        return  YES;
+        return  2;
         
     }else
     {
         
-//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-//        [customAlertAutoDis setAlertMsg:@"亲，多点自信，大点声哦！"];
-//        [customAlertAutoDis RunCumstomAlert];
+        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+        [customAlertAutoDis setAlertMsg:@"亲，多点自信，大点声哦！"];
+        [customAlertAutoDis RunCumstomAlert];
         
-        return  NO;
+        return  1;
     }
     
     
@@ -916,10 +986,16 @@
 - (void)takePicture
 {
     if ([pressedVoice checkVoiceFile]) {
-            [super takePicture];
+       
+        [indicator startAnimating];
+        [PLCameraView addSubview:indicator];
+        [PLCameraView setUserInteractionEnabled:NO];
+       
+        [super takePicture];
+        
     }else
     {
-        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
         NSString* temp = [NSString stringWithFormat:@"说出你的%@光宣言，再拍照哦!", (iSunORMoon==IS_SUN_TIME)?@"阳":@"月"];
         [customAlertAutoDis setAlertMsg:temp];
         [customAlertAutoDis RunCumstomAlert];
@@ -934,12 +1010,12 @@
 {
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
         
-        [CommonObject showActionSheetOptiontitleMsg:@"大声地说出美丽宣言，自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"使用相片" DelegateObject:self Option:@"宣言&自拍"];
+        [CommonObject showActionSheetOptiontitleMsg:@"大声地说出美丽宣言，自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"宣言&自拍" DelegateObject:self Option:@"使用相片"];
         
         
     }else if([CommonObject checkSunOrMoonTime] ==  IS_MOON_TIME)
     {
-        [CommonObject showActionSheetOptiontitleMsg:@"大声地说出美丽宣言，自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"使用相片" DelegateObject:self Option:@"宣言&自拍"];
+        [CommonObject showActionSheetOptiontitleMsg:@"大声地说出美丽宣言，自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"宣言&自拍" DelegateObject:self Option:@"使用相片"];
     }
     
 
@@ -948,14 +1024,15 @@
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
-        //继续自拍
-        
-    }else if (buttonIndex == 1) {
         
         //用相片
         [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
         [self setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
         
+    }else if (buttonIndex == 1) {
+
+        //继续自拍
+
     }
     
 }
@@ -966,6 +1043,9 @@
 didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
 
+    [indicator stopAnimating];
+
+    
     UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
 
     
@@ -980,7 +1060,33 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     }
     
     image = [image clipImageWithScaleWithsize:CGSizeMake(320, 480)] ;
+    
+    
+
+    /*
     [picker dismissViewControllerAnimated:YES completion:^{
+        
+        //test
+        NSDictionary *imageData = [NSDictionary dictionaryWithObjectsAndKeys:
+                                   image,CAMERA_IMAGE_KEY,
+                                   [CommonObject getCurrentDate], CAMERA_TIME_KEY,
+                                   labelSentence, CAMERA_SENTENCE_KEY,
+                                   _voiceName, CAMERA_VOICE_NAEM_KEY,
+                                   @"1", CAMERA_LIGHT_COUNT,
+                                   nil];
+        
+        ImageFilterProcessViewController*  fitler = [[ImageFilterProcessViewController alloc] init];
+        
+        [fitler setDelegate:self];
+        [fitler setISunORMoon:[CommonObject checkSunOrMoonTime]];
+        [fitler setUserInfo:self.userInfo];
+        fitler.imagePickerData = imageData;
+        [self presentViewController:fitler animated:YES completion:NULL];
+    }];
+    */
+     
+
+    [picker dismissViewControllerAnimated:NO completion:^{
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
         
         NSDictionary *imageData = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -1001,10 +1107,21 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
 //                                   _voiceName, CAMERA_VOICE_NAEM_KEY,
 //                                   nil];
         
-        
         [_customDelegate cameraPhoto:imageData];
 
     }];
+    
+}
+
+
+#pragma mark - imagefilter delegate
+#pragma mark - 照完象， 存用户据
+- (void)imageFitlerProcessDone:(NSDictionary*) imageFilterData
+{
+    [self dismissViewControllerAnimated:NO completion:NULL];
+
+    [_customDelegate cameraPhoto:imageFilterData];
+
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker

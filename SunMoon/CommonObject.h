@@ -153,7 +153,7 @@ typedef enum
 #define KEY_IS_HAVE_ADD_MOON @"isHaveAddMoon"
 
 //奖励光的音量
-#define GIVE_ONE_LIGHT_VOICE_VALUE  300
+#define GIVE_ONE_LIGHT_VOICE_VALUE  200
 
 //开始养育光的时间
 #define KEY_START_BRING_UP_SUN_TIME @"startBringupSunTime"
@@ -193,7 +193,7 @@ typedef enum
 #define ALERT_IS_MOON_TIME     @"AlertIsMoonTime"
 
 //动画光环扩出动画实体的宽度
-#define LIGHT_ANIMATION_INTERVAL  12
+#define LIGHT_ANIMATION_INTERVAL  7
 
 
 
@@ -203,8 +203,8 @@ typedef enum
 #define NAVI_BAR_BTN_Y  NAVI_BAR_HEIGHT/2 //距离导航条边,还需减去控件的高的一半
 #define TOOL_BAR_BTN_Y SCREEN_HEIGHT-TOOL_BAR_HEIGHT+5 //距离工具条上边缘
 
-#define LEFT_NAVI_BTN_TO_SIDE_X 8
-#define RIGHT_NAVI_BTN_TO_SIDE_X SCREEN_WIDTH-5 //还需减去控件的宽
+#define LEFT_NAVI_BTN_TO_SIDE_X 15
+#define RIGHT_NAVI_BTN_TO_SIDE_X SCREEN_WIDTH-15 //还需减去控件的宽
 
 #define TitleFont 18
 #define TitleColor [UIColor whiteColor]

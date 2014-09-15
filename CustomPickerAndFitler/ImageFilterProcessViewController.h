@@ -14,14 +14,13 @@
 @protocol ImageFitlerProcessDelegate;
 @interface ImageFilterProcessViewController : UIViewController<CustomImagePickerControllerDelegate,AminationCustomDelegate>
 {
-    UIImageView *rootImageView;
     UIScrollView *scrollerView;
     UIImage *currentImage;
     id <ImageFitlerProcessDelegate> delegate;
     
     NSDictionary* imagePickerData;
     
-    bool isHaveRemindValue;
+    bool isHaveSavePhoto;
 
     
 }

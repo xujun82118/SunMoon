@@ -374,4 +374,29 @@
     //return YES;
 }
 
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if ([string isEqualToString:@"\n"]){
+        return YES;
+    }
+    
+    NSString * aString = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    if (self.addNewSentence == textField)
+    {
+        if ([aString length] > 20) {
+            textField.text = [aString substringToIndex:20];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                            message:@"阳光宣言太长了~"
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"Ok"
+                                                  otherButtonTitles:nil, nil];
+            [alert show];
+            return NO;
+        }
+    }
+    return YES;
+    
+}
+
 @end

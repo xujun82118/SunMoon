@@ -137,6 +137,34 @@ static UserInfo *sharedUserInfo;
     [userBaseData setBool:_sunAlertTimeCtl forKey:SUN_ALERT_TIME_CTL];
     [userBaseData setBool:_moonAlertTimeCtl forKey:MOON_ALERT_TIME_CTL];
     
+    //起动定时时间
+    UILocalNotification *alertNotification = [[UILocalNotification alloc] init];
+    if (alertNotification!=nil)
+    {
+        alertNotification.fireDate = _sunAlertTime;
+        alertNotification.repeatInterval = kCFCalendarUnitDay;
+        alertNotification.timeZone=[NSTimeZone defaultTimeZone];
+        alertNotification.soundName = @"cute.mp3";
+        
+        NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_SUN_TIME forKey:ALERT_SUN_MOON_TIME];
+        alertNotification.userInfo = info;
+        
+        alertNotification.alertBody = NSLocalizedString(@"Sun time is on", @"");
+        
+        [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
+        
+        
+        alertNotification.fireDate = _moonAlertTime;
+        
+        NSDictionary* info1 = [NSDictionary dictionaryWithObject:ALERT_IS_MOON_TIME forKey:ALERT_SUN_MOON_TIME];
+        alertNotification.userInfo = info1;
+        
+        alertNotification.alertBody = NSLocalizedString(@"Moon time is on", @"");
+        
+        [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
+    }
+    
+    
     _cloudSynAutoCtl = NO;
     [userBaseData setBool:_cloudSynAutoCtl forKey:CLOUD_SYN_CTL];
     _photoSaveAutoCtl = NO;
@@ -300,7 +328,6 @@ static UserInfo *sharedUserInfo;
         self.moon_image_name =userInfoDB.moon_image_name;
         self.moon_image_sentence =userInfoDB.moon_image_sentence;
         
-       // UIImage* editImageOld = [UIImage imageWithData:self.moon_image];
     }
     
     //取得定时时间
@@ -476,6 +503,11 @@ static UserInfo *sharedUserInfo;
 
 -(void)updateSunSentenceSelected:(NSInteger) sentenceSelect
 {
+    if (sentenceSelect>=sunDataSourceArray.count) {
+        NSLog(@"sentenceSelect should not bigger than  sunDataSourceArray.count");
+        return;
+    }
+    
     NSAssert((sentenceSelect<sunDataSourceArray.count), @"ERROR:sentenceSelect should not bigger than  sunDataSourceArray.count");
     
     NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];

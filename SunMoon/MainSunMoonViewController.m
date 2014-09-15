@@ -112,7 +112,7 @@
         //初始化用户为新用户
         self.userInfo = [self.userInfo initDefaultInfoAtFirstOpenwithTime:[CommonObject getCurrentTime]];
         
-        [guidInfo updateFirstlyOpenGuidCtl:YES];
+        //[guidInfo updateFirstlyOpenGuidCtl:YES];
 
     }else
     {
@@ -206,7 +206,7 @@
     
     //初始化头像闪烁动画图
     for (int i=0 ; i<7; i++) {
-        lightUserHeader = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"lightCircle.png"]];
+        lightUserHeader = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"空白图.png"]];
         lightUserHeader.tag = TAG_LIGHT_USER_HEADER+i;
         lightUserHeader.userInteractionEnabled=YES;
         lightUserHeader.contentMode=UIViewContentModeScaleToFill;
@@ -340,9 +340,9 @@
 {
     [super viewWillAppear:animated];
     NSLog(@"---->viewWillAppear");
-
+    
     //起动引导界面
-    if (guidInfo.fristlyOpenGuidCtl) {
+    if (!guidInfo.fristlyOpenGuidCtl) {
         
         [self showIntroWithCrossDissolve];
 
@@ -391,48 +391,51 @@
     //[guidInfo updateGuidPanToBring:NO];
     //[guidInfo updateFirstlyOpenGuidCtl:NO];
    
-    if (!guidInfo.fristlyOpenGuidCtl)
+    if (guidInfo.fristlyOpenGuidCtl)
     {
+        
+        [self whenCommonOpenViewHandle];
+        
         //第二次进入主界面时，提示滑屏
         if (!guidInfo.guidPanToBring) {
-//            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:@"ok" posionShowMode:userSet];
-//            [customAlertAutoDis setStartCenterPoint:self.view.center];
-//            [customAlertAutoDis setEndCenterPoint:self.view.center];
-//            [customAlertAutoDis setStartAlpha:0.1];
-//            [customAlertAutoDis setEndAlpha:1.0];
-//            [customAlertAutoDis setStartHeight:0];
-//            [customAlertAutoDis setStartWidth:0];
-//            [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
-//            [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-//            [customAlertAutoDis setDelayDisappearTime:5.0];
-//            [customAlertAutoDis setMsgFrontSize:30];
+            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"拖动光.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
+            [customAlertAutoDis setStartCenterPoint:self.view.center];
+            [customAlertAutoDis setEndCenterPoint:self.view.center];
+            [customAlertAutoDis setStartAlpha:0.1];
+            [customAlertAutoDis setEndAlpha:1.0];
+            [customAlertAutoDis setStartHeight:SCREEN_HEIGHT];
+            [customAlertAutoDis setStartWidth:SCREEN_WIDTH];
+            [customAlertAutoDis setEndWidth:SCREEN_WIDTH];
+            [customAlertAutoDis setEndHeight:SCREEN_HEIGHT];
+            [customAlertAutoDis setDelayDisappearTime:5.0];
+            [customAlertAutoDis setMsgFrontSize:20];
+            [customAlertAutoDis setCustomAlertDelegate:self];
 
             if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-                //[customAlertAutoDis setAlertMsg:@"可以拖动阳光回到太阳，3小时可以养成1个小阳光哦!"];
+                [customAlertAutoDis setAlertMsg:@"离开之前，拖动阳光回到太阳，3小时可以养成1个小阳光哦!"];
             }else
             {
-                //[customAlertAutoDis setAlertMsg:@"可以拖动月光回到月亮，3小时可以养成1个小月光哦!"];
+                [customAlertAutoDis setAlertMsg:@"离开之前，拖动月光回到月亮，3小时可以养成1个小月光哦!"];
 
             }
 
-            //[customAlertAutoDis RunCumstomAlert];
+            [customAlertAutoDis RunCumstomAlert];
             
             [guidInfo updateGuidPanToBring:YES];
         }
         
-        [self whenCommonOpenViewHandle];
 
     }
     
     
 
     //把引导界面显示到最前面
-    if (guidInfo.fristlyOpenGuidCtl) {
+    if (!guidInfo.fristlyOpenGuidCtl) {
     
         [self.view bringSubviewToFront:intro];
         
         //关闭引导
-        [guidInfo updateFirstlyOpenGuidCtl:NO];
+        [guidInfo updateFirstlyOpenGuidCtl:YES];
     }
     
 
@@ -507,16 +510,16 @@
             
             //奖励提示
             isContineGiveLight = YES;
-            //customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:@"ok.png" posionShowMode:viewCenterBig];
+            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:@"ok.png" posionShowMode:viewCenterBig];
             if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-                //[customAlertAutoDis setAlertMsg:@"阳光时间连续登录，奖励一个阳光"];
+                [customAlertAutoDis setAlertMsg:@"阳光时间连续登录，奖励一个阳光"];
 
             }else
             {
-                //[customAlertAutoDis setAlertMsg:@"月光时间连续登录，奖励一个月光"];
+                [customAlertAutoDis setAlertMsg:@"月光时间连续登录，奖励一个月光"];
 
             }
-            //[customAlertAutoDis RunCumstomAlert];
+            [customAlertAutoDis RunCumstomAlert];
             
             //弹出育成图
             [self animationForShowBringLightBtnPop:YES];
@@ -549,7 +552,7 @@
 
     
     //是否有光在育成
-    if (self.userInfo.sun_value || self.userInfo.moon_value)
+    if ([self.userInfo.sun_value intValue] !=0 || [self.userInfo.moon_value intValue]!=0)
     {
         
         
@@ -694,19 +697,19 @@
     if ([animationID isEqualToString:@"popOut_showBringLightBtn"]) {
         
         if (isGiveFirstLight) {
-//            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话-蓝.png"  yesBtnImageName:nil posionShowMode:userSet];
-//            [customAlertAutoDis setStartCenterPoint:_showBringLightBtn.center];
-//            [customAlertAutoDis setEndCenterPoint:self.view.center];
-//            [customAlertAutoDis setStartAlpha:0.1];
-//            [customAlertAutoDis setEndAlpha:1.0];
-//            [customAlertAutoDis setStartHeight:0];
-//            [customAlertAutoDis setStartWidth:0];
-//            [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
-//            [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-//            [customAlertAutoDis setDelayDisappearTime:5.0];
-//            [customAlertAutoDis setMsgFrontSize:30];
-//            [customAlertAutoDis setAlertMsg:@"首次登录，奖励一个阳光，或月光, 点击光"];
-//            [customAlertAutoDis RunCumstomAlert];
+            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:userSet];
+            [customAlertAutoDis setStartCenterPoint:_showBringLightBtn.center];
+            [customAlertAutoDis setEndCenterPoint:self.view.center];
+            [customAlertAutoDis setStartAlpha:0.1];
+            [customAlertAutoDis setEndAlpha:1.0];
+            [customAlertAutoDis setStartHeight:0];
+            [customAlertAutoDis setStartWidth:0];
+            [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
+            [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+            [customAlertAutoDis setDelayDisappearTime:5.0];
+            [customAlertAutoDis setMsgFrontSize:30];
+            [customAlertAutoDis setAlertMsg:@"首次登录，奖励一个阳光，或月光, 点击光"];
+            [customAlertAutoDis RunCumstomAlert];
             isGiveFirstLight = NO;
         }
 
@@ -754,9 +757,9 @@
 //                    [JumpTimer invalidate];
 //                }
                 
-//                customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-//                [customAlertAutoDis setAlertMsg:@"停止育成光"];
-//                [customAlertAutoDis RunCumstomAlert];
+                customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+                [customAlertAutoDis setAlertMsg:@"停止育成光"];
+                [customAlertAutoDis RunCumstomAlert];
                 
 
                 
@@ -902,6 +905,8 @@
 
 - (void)intoCamera:(id)sender {
     
+    
+    
     CustomImagePickerController *controller = [[CustomImagePickerController alloc] init];
     
     // 拍照
@@ -945,6 +950,40 @@
     
 }
 
+
+#pragma mark -  照片超限判断
+- (BOOL)CheckPhotoCountOver
+{
+    
+    NSInteger count = [self.userInfo.userDataBase count];
+    if (count==0) {
+        return  NO;
+    }
+    
+    NSInteger sunImageCount = 0;
+    NSInteger moonImageCount = 0;
+    for (int i = 0; i < count; i++) {
+        UserInfo* tempUserInfo = nil;
+        tempUserInfo = [self.userInfo.userDataBase objectAtIndex:i];
+    
+        UIImage* tempImage = [UIImage imageWithData:userInfo.sun_image];
+        if (tempImage != Nil) {
+
+            sunImageCount++;
+            
+        }
+    
+        UIImage* tempImage1 = [UIImage imageWithData:userInfo.moon_image];
+        if (tempImage1 != Nil) {
+            
+            moonImageCount++;
+            
+        }
+        
+    }
+    
+}
+
 #pragma mark - customimagePicker delegate
 - (void)cameraPhoto:(NSDictionary *)imagePickerDataReturn
 {
@@ -958,7 +997,7 @@
     [fitler setISunORMoon:[CommonObject checkSunOrMoonTime]];
     [fitler setUserInfo:self.userInfo];
     fitler.imagePickerData = imagePickerDataReturn;
-    [self presentViewController:fitler animated:YES completion:NULL];
+    [self presentViewController:fitler animated:NO completion:NULL];
     
     
     
@@ -974,9 +1013,6 @@
 #pragma mark - 照完象， 存用户据
 - (void)imageFitlerProcessDone:(NSDictionary*) imageFilterData
 {
-    
-
-    
     //存图片到数据库
     
     //获取时间
@@ -1166,11 +1202,11 @@
     _userHeaderImageView.layer.shadowOpacity = 0.5;
     _userHeaderImageView.layer.shadowRadius = 2.0;
     if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-        _userHeaderImageView.layer.borderColor = [[UIColor brownColor] CGColor];
+        _userHeaderImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
 
     }else
     {
-        _userHeaderImageView.layer.borderColor = [[UIColor brownColor] CGColor];
+        _userHeaderImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
 
     }
     _userHeaderImageView.layer.borderWidth = 3.5f;
@@ -1240,7 +1276,7 @@
 - (void)handlePan:(UIPanGestureRecognizer *)gestureRecognizer {
     
     if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-        if (self.userInfo.sun_value==0  ) {
+        if ([self.userInfo.sun_value integerValue]==0  ) {
             NSLog(@"sun_value==0 handlePan return");
             return;
         }
@@ -1249,7 +1285,7 @@
         
     }else
     {
-        if (self.userInfo.moon_value == 0) {
+        if ([self.userInfo.moon_value integerValue] == 0) {
             NSLog(@"moon_value==0 handlePan return");
             return;
         }
@@ -1362,9 +1398,9 @@
 
                     NSString* time = [NSString stringWithFormat:@"开始养育%@光了", ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
                     NSLog(@"%@", time);
-//                    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-//                    [customAlertAutoDis setAlertMsg:time];
-//                    [customAlertAutoDis RunCumstomAlert];
+                    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+                    [customAlertAutoDis setAlertMsg:time];
+                    [customAlertAutoDis RunCumstomAlert];
                     
                     
                 }else
@@ -1599,24 +1635,24 @@
     NSLog(@"%@", timeshow);
     
 //    if (totalHours==0) {
-//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
 //        [customAlertAutoDis setAlertMsg:@"Oh,养育时间太短了"];
 //        [customAlertAutoDis RunCumstomAlert];
-//    
+//
 //    }
     
     if (totalHours>0 && totalHours<3) {
         NSString* timeAlert = [NSString stringWithFormat:(@"%@光养育了%d小时, 每3个小时奖励1个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-//        [customAlertAutoDis setAlertMsg:timeAlert];
-//        [customAlertAutoDis RunCumstomAlert];
+        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+        [customAlertAutoDis setAlertMsg:timeAlert];
+        [customAlertAutoDis RunCumstomAlert];
     }
     
     if (totalHours>3) {
         NSString* timeAlert = [NSString stringWithFormat:(@"%@光养育了%d小时，奖励%d个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours, giveCount,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"天空对话.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-//        [customAlertAutoDis setAlertMsg:timeAlert];
-//        [customAlertAutoDis RunCumstomAlert];
+        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+        [customAlertAutoDis setAlertMsg:timeAlert];
+        [customAlertAutoDis RunCumstomAlert];
     }
 
     
@@ -1911,10 +1947,16 @@
     }
 
     NSLog(@"开启头像闪烁动画, range=%d！", realRange);
+   
+    
+    
+    //test
+    realRange = 9;
     
     NSInteger bigRang = realRange/7+1;
-    NSInteger smallRang = realRange%7;
+    NSInteger smallRang = realRange%7+1;
     
+    //此版本无效
     NSInteger rainBowCount = bigRang/7;
     if (rainBowCount>=1) {
         NSLog(@"超过7个光环，增加彩虹！");
@@ -1923,6 +1965,7 @@
 
         }
     }
+
 
   
     //NSInteger everyBigRangWidth = 10;
@@ -1948,16 +1991,17 @@
         NSInteger lightBowSkyUserHeaderViewWidth;
         NSInteger lightBowSkyUserHeaderViewHeigth;
         if (i==0) {
-            lightBowSkyUserHeaderViewWidth = _userHeaderImageView.frame.size.width+56;
-            lightBowSkyUserHeaderViewHeigth = _userHeaderImageView.frame.size.height+56;
+            //定位第一个环的位置
+            lightBowSkyUserHeaderViewWidth = _userHeaderImageView.frame.size.width+75;
+            lightBowSkyUserHeaderViewHeigth = _userHeaderImageView.frame.size.height+75;
         }else
         {
-            lightBowSkyUserHeaderViewWidth = _userHeaderImageView.frame.size.width+IntervalWidth*2;
-            lightBowSkyUserHeaderViewHeigth = _userHeaderImageView.frame.size.height+IntervalWidth*2;
+            lightBowSkyUserHeaderViewWidth = lightBowSkyUserHeaderViewWidth+IntervalWidth*2;
+            lightBowSkyUserHeaderViewHeigth = lightBowSkyUserHeaderViewHeigth+IntervalWidth*2;
         }
 
         [lightUserHeaderTag setFrame:CGRectMake(_userHeaderImageView.center.x-lightBowSkyUserHeaderViewWidth/2, _userHeaderImageView.center.y-lightBowSkyUserHeaderViewHeigth/2, lightBowSkyUserHeaderViewWidth, lightBowSkyUserHeaderViewHeigth)];
-        lightUserHeaderTag.animationDuration=1;
+        lightUserHeaderTag.animationDuration=1.0;
         [self.view insertSubview:lightUserHeaderTag belowSubview:_userHeaderImageView];
         [lightUserHeaderTag startAnimating];
         
@@ -2057,14 +2101,30 @@
 
 - (void)showIntroWithCrossDissolve {
     EAIntroPage *page1 = [EAIntroPage page];
+    EAIntroPage *page2 = [EAIntroPage page];
+
     //page1.title = @"";
     //page1.desc = @"";
     //page1.bgImage = [UIImage imageNamed:@"intro-1"];
-    page1.titleImage = [UIImage imageNamed:@"Guid-start"];
+    
+    if (SCREEN_HEIGHT>480) {
+        page1.titleImage = [UIImage imageNamed:@"引导1.png"];
+        page2.titleImage = [UIImage imageNamed:@"引导2.png"];
+    }else
+    {
+        page1.titleImage = [UIImage imageNamed:@"引导1-4.png"];
+        page2.titleImage = [UIImage imageNamed:@"引导2-4.png"];
+    }
+ 
+    //page1.title = @"";
+    //page1.desc = @"";
+    //page1.bgImage = [UIImage imageNamed:@"intro-1"];
     
     
-    intro = [[EAIntroView alloc] initWithFrame:self.view.bounds andPages:@[page1]];
     
+    intro = [[EAIntroView alloc] initWithFrame:self.view.bounds andPages:@[page1,page2]];
+    [intro.skipButton setHidden:YES];
+
     [intro setDelegate:self];
     //[intro showInView:self.view animateDuration:0.0];
     [self.view addSubview:intro];
@@ -2079,6 +2139,18 @@
     [self whenFirstlyOpenViewHandle];
 }
 
+- (void)introDidEndScrollAt:(NSInteger) currentIndex  TotalCount:(NSInteger)pageCount
+{
+    
+    if (currentIndex == pageCount-1) {
+        //最后一页
+        [intro.skipButton setFrame:CGRectMake(SCREEN_WIDTH/2-20, SCREEN_HEIGHT-100, 30, 30)];
+        [intro.skipButton setTitle:@"" forState:UIControlStateNormal];
+        [intro.skipButton setHidden:NO];
+
+    }
+    
+}
 
 
 -(void) saveUserDataFromCamera:(NSDictionary*)imageData
