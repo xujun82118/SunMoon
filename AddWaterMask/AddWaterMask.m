@@ -116,7 +116,7 @@
 - (UIImage *)addImage:(UIImage *)useImage addMsakImage:(UIImage *)maskImage
 {
     UIGraphicsBeginImageContext(useImage.size);
-    NSLog(@"useimage.width = %f, height = %f", useImage.size.width,useImage.size.height);
+    //NSLog(@"useimage.width = %f, height = %f", useImage.size.width,useImage.size.height);
     [useImage drawInRect:CGRectMake(0, 0, useImage.size.width, useImage.size.height)];
     
     [maskImage drawInRect:CGRectMake(waterRect.origin.x, waterRect.origin.y, waterRect.size.width, waterRect.size.height)];

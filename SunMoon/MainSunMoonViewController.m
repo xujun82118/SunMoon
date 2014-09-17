@@ -388,8 +388,7 @@
     
     
     //test
-    //[guidInfo updateGuidPanToBring:NO];
-    //[guidInfo updateFirstlyOpenGuidCtl:NO];
+    //[CommonObject showCustomYesAlertSuperView:self AlertMsg:@"1233333333333333"];
    
     if (guidInfo.fristlyOpenGuidCtl)
     {
@@ -398,28 +397,15 @@
         
         //第二次进入主界面时，提示滑屏
         if (!guidInfo.guidPanToBring) {
-            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"拖动光.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
-            [customAlertAutoDis setStartCenterPoint:self.view.center];
-            [customAlertAutoDis setEndCenterPoint:self.view.center];
-            [customAlertAutoDis setStartAlpha:0.1];
-            [customAlertAutoDis setEndAlpha:1.0];
-            [customAlertAutoDis setStartHeight:SCREEN_HEIGHT];
-            [customAlertAutoDis setStartWidth:SCREEN_WIDTH];
-            [customAlertAutoDis setEndWidth:SCREEN_WIDTH];
-            [customAlertAutoDis setEndHeight:SCREEN_HEIGHT];
-            [customAlertAutoDis setDelayDisappearTime:5.0];
-            [customAlertAutoDis setMsgFrontSize:20];
-            [customAlertAutoDis setCustomAlertDelegate:self];
 
             if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-                [customAlertAutoDis setAlertMsg:@"离开之前，拖动阳光回到太阳，3小时可以养成1个小阳光哦!"];
+
+                [self showCustomYesAlertSuperView:@"离开之前，拖动阳光回到太阳，3小时可以养成1个小阳光哦!"];
             }else
             {
-                [customAlertAutoDis setAlertMsg:@"离开之前，拖动月光回到月亮，3小时可以养成1个小月光哦!"];
+                [self showCustomYesAlertSuperView:@"离开之前，拖动月光回到月亮，3小时可以养成1个小月光哦!"];
 
             }
-
-            [customAlertAutoDis RunCumstomAlert];
             
             [guidInfo updateGuidPanToBring:YES];
         }
@@ -444,6 +430,7 @@
 
 
 }
+
 
 -(void) viewDidDisappear:(BOOL)animated
 {
@@ -587,11 +574,7 @@
     
 }
 
-#pragma mark - CustomAlertDelegate
-- (void) CustomAlertOkReturn
-{
-    NSLog(@"custom aler ok return");
-}
+
 
 #pragma mark -  弹出动画
 -(void) animationForIntoCameraBtnPop:(BOOL)isPop
@@ -704,7 +687,7 @@
             [customAlertAutoDis setEndAlpha:1.0];
             [customAlertAutoDis setStartHeight:0];
             [customAlertAutoDis setStartWidth:0];
-            [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*2];
+            [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*3];
             [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
             [customAlertAutoDis setDelayDisappearTime:5.0];
             [customAlertAutoDis setMsgFrontSize:30];
@@ -905,6 +888,16 @@
 
 - (void)intoCamera:(id)sender {
     
+    //先判断照片是否超限
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        
+        if ([self.userInfo checkSunPhotoCountOver]) {
+
+        
+        }
+        
+        
+    }
     
     
     CustomImagePickerController *controller = [[CustomImagePickerController alloc] init];
@@ -951,38 +944,6 @@
 }
 
 
-#pragma mark -  照片超限判断
-- (BOOL)CheckPhotoCountOver
-{
-    
-    NSInteger count = [self.userInfo.userDataBase count];
-    if (count==0) {
-        return  NO;
-    }
-    
-    NSInteger sunImageCount = 0;
-    NSInteger moonImageCount = 0;
-    for (int i = 0; i < count; i++) {
-        UserInfo* tempUserInfo = nil;
-        tempUserInfo = [self.userInfo.userDataBase objectAtIndex:i];
-    
-        UIImage* tempImage = [UIImage imageWithData:userInfo.sun_image];
-        if (tempImage != Nil) {
-
-            sunImageCount++;
-            
-        }
-    
-        UIImage* tempImage1 = [UIImage imageWithData:userInfo.moon_image];
-        if (tempImage1 != Nil) {
-            
-            moonImageCount++;
-            
-        }
-        
-    }
-    
-}
 
 #pragma mark - customimagePicker delegate
 - (void)cameraPhoto:(NSDictionary *)imagePickerDataReturn
@@ -2073,6 +2034,34 @@
     // Dispose of any resources that can be recreated.
     NSLog(@"-MainSunMoonViewController----ReceiveMemoryWarning!");
 }
+
+#pragma mark - Customer alert
+-(void) showCustomYesAlertSuperView:(NSString*) msg
+{
+    
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
+    [customAlertAutoDis setStartCenterPoint:self.view.center];
+    [customAlertAutoDis setEndCenterPoint:self.view.center];
+    [customAlertAutoDis setStartAlpha:0.1];
+    [customAlertAutoDis setEndAlpha:1.0];
+    [customAlertAutoDis setStartHeight:0];
+    [customAlertAutoDis setStartWidth:0];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+    [customAlertAutoDis setDelayDisappearTime:5.0];
+    [customAlertAutoDis setMsgFrontSize:20];
+    [customAlertAutoDis setAlertMsg:msg];
+    [customAlertAutoDis setCustomAlertDelegate:self];
+    [customAlertAutoDis RunCumstomAlert];
+    
+}
+
+#pragma mark - CustomAlertDelegate
+- (void) CustomAlertOkReturn
+{
+    NSLog(@"custom aler ok return");
+}
+
 
 #pragma mark - Seques
 

@@ -30,6 +30,7 @@
 typedef enum {
     userSet                   = 1,
     viewCenterBig             = 2,
+    commonYesAlertViewCenter  = 3,
 
 } CustomAlertShowMode;
 

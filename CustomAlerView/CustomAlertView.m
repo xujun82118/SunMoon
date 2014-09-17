@@ -55,6 +55,7 @@
         
         [_yesBtn addTarget:self action:@selector(yesButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
         _yesBtn.hidden = YES;
+        _yesBtn.tag = TAG_CUSTOM_ALER_BTN;
         [_superView addSubview:_yesBtn];
 
     }
@@ -73,11 +74,11 @@
         _MsgFrontSize = 25;
         _delayDisappearTime = 5.0;
     }
-
     
     return self;
     
 }
+
 
 - (void)yesButtonHandler:(id)sender
 {
@@ -97,6 +98,8 @@
     
     [UIView commitAnimations];
 
+    //打开消息
+    [self EnableUserInteractionInView:_superView];
     
     if ([_customAlertDelegate respondsToSelector:@selector(CustomAlertOkReturn)]) {
         //test
@@ -108,6 +111,7 @@
 
 -(void) RunCumstomAlert
 {
+    
     
     
     //将msg以水印形式加上，把label变成图片
@@ -129,8 +133,6 @@
     [_msgLabel drawTextInRect:CGRectMake(x,y,w,h)];
     _viewBkImageView.image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    
-
     
     //动画起点frame
     [_viewBkImageView setFrame:CGRectMake(_startCenterPoint.x-_startWidth/2, _startCenterPoint.y-_startHeight/2, _startWidth, _startHeight)];
@@ -159,6 +161,15 @@
     
     [UIView commitAnimations];
     
+    
+    //有按钮时，禁消息
+    if (_yesBtn) {
+        
+        [self DisableUserInteractionInView:_superView exceptViewWithTag:_yesBtn.tag];
+
+    }
+
+    
 }
 
 - (void)animationCustomAlert:(NSString *)animationID finished:(NSNumber *)finished context:(void *) contextImage
@@ -168,6 +179,8 @@
     {
         _viewBkImageView.hidden = YES;
         _yesBtn.hidden = YES;
+        [_viewBkImageView removeFromSuperview];
+        [_yesBtn removeFromSuperview];
     }
     
     if ([animationID isEqualToString:@"cutomeAlert"])
@@ -224,5 +237,49 @@
     
 }
 
+#pragma mark get/show the UIView we want
+- (UIView *)findView:(UIView *)aView withName:(NSString *)name {
+	Class cl = [aView class];
+	NSString *desc = [cl description];
+    NSLog(@"---%@", desc);
+	
+	if ([name isEqualToString:desc])
+		return aView;
+	
+	for (NSUInteger i = 0; i < [aView.subviews count]; i++) {
+		UIView *subView = [aView.subviews objectAtIndex:i];
+		subView = [self findView:subView withName:name];
+		if (subView)
+			return subView;
+	}
+	return nil;
+}
+
+
+- (void)DisableUserInteractionInView:(UIView *)superView exceptViewWithTag:(NSInteger)enableViewTag
+{
+	
+	for (NSUInteger i = 0; i < [superView.subviews count]; i++) {
+		UIView *subView = [superView.subviews objectAtIndex:i];
+        if (subView.tag != enableViewTag) {
+            [subView setUserInteractionEnabled:NO];
+            NSLog(@"Disable userinteraction with view tag: %d of view:%@", subView.tag, [[subView class] description]);
+        }else
+        {
+            [subView setUserInteractionEnabled:YES];
+            NSLog(@"Enable userinteraction with view tag: %d of view:%@", subView.tag, [[subView class] description]);
+
+        }
+	}
+}
+
+- (void)EnableUserInteractionInView:(UIView *)superView
+{
+	
+	for (NSUInteger i = 0; i < [superView.subviews count]; i++) {
+		UIView *subView = [superView.subviews objectAtIndex:i];
+        [subView setUserInteractionEnabled:YES];
+	}
+}
 
 @end

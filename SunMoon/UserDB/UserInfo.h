@@ -222,4 +222,7 @@
 
 -(void)updateSunorMoonBringupTime:(NSDate*) bringupTime;
 
+- (BOOL)checkSunPhotoCountOver;
+- (BOOL)checkMoonPhotoCountOver;
+
 @end

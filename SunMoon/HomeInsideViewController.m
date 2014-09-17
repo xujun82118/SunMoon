@@ -604,7 +604,7 @@
      share.shareImage =imageData.image;
      share.shareMsg = imageSentence;
      share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
-     share.shareMsgPreFix = @"晚安，送上我的阳光语录：";
+     share.shareMsgPreFix = @"早啊，送上我的阳光语录：";
      share.waterImage = [UIImage imageNamed:@"waterlogo.png"];
      NSInteger x = share.shareImage.size.width/4;
      NSInteger y = share.shareImage.size.width*3/4;

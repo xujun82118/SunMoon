@@ -293,7 +293,7 @@ static UserInfo *sharedUserInfo;
 
     //获取用户数据库数据
     //优化：线程处理
-    _userDataBase = [userDB getUserImageLimite:1000];
+    _userDataBase = [userDB getUserImageLimite:MAX_PHOTO_COUNT];
     
     //获阳用户当天数据
     //优化：渡过半夜，重新更新
@@ -451,6 +451,67 @@ static UserInfo *sharedUserInfo;
     {
         return  @"0";
     }
+}
+
+- (BOOL)checkSunPhotoCountOver
+{
+    
+    NSInteger count = [_userDataBase count];
+    if (count==0) {
+        return  NO;
+    }
+    
+    NSInteger sunImageCount = 0;
+    for (int i = 0; i < count; i++) {
+        UserInfo* tempUserInfo = nil;
+        tempUserInfo = [_userDataBase objectAtIndex:i];
+        
+        UIImage* tempImage = [UIImage imageWithData:tempUserInfo.sun_image];
+        if (tempImage != Nil) {
+            
+            sunImageCount++;
+            
+        }
+        
+    }
+    
+    if (sunImageCount>MAX_PHOTO_COUNT) {
+        return YES;
+    }else
+    {
+        return NO;
+    }
+    
+}
+
+- (BOOL)checkMoonPhotoCountOver
+{
+    
+    NSInteger count = [_userDataBase count];
+    if (count==0) {
+        return  NO;
+    }
+    
+    NSInteger moonImageCount = 0;
+    for (int i = 0; i < count; i++) {
+        UserInfo* tempUserInfo = nil;
+        tempUserInfo = [_userDataBase objectAtIndex:i];
+        UIImage* tempImage = [UIImage imageWithData:tempUserInfo.moon_image];
+        if (tempImage != Nil) {
+            
+            moonImageCount++;
+            
+        }
+        
+    }
+    
+    if (moonImageCount>MAX_PHOTO_COUNT) {
+        return YES;
+    }else
+    {
+        return NO;
+    }
+    
 }
 
 

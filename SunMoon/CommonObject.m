@@ -7,6 +7,8 @@
 //
 
 #import "CommonObject.h"
+#import "CustomAlertView.h"
+
 
 @implementation CommonObject
 
@@ -160,7 +162,6 @@
     
     [actionSheet showInView:view];
 }
-
 
 
 + (NetConnectType) CheckConnectedToNetwork

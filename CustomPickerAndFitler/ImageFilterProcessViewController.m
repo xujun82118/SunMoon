@@ -394,20 +394,18 @@
 
 -(void)savetoAlbumHandle:(UIButton*)sender
 {
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
     
     if (isHaveSavePhoto) {
-        [customAlertAutoDis setAlertMsg:@"请不要重复保存"];
+        [self showCustomDelayAlertSuperView:@"请不要重复保存"];
     }else
     {
         NSLog(@"保存到相册");
         UIImageWriteToSavedPhotosAlbum(rootImageView.image, nil, nil,nil);
         isHaveSavePhoto = YES;
-        [customAlertAutoDis setAlertMsg:@"保存相册成功"];
+        [self showCustomDelayAlertSuperView:@"成功保存到相册"];
 
     }
     
-    [customAlertAutoDis RunCumstomAlert];
     
     
 }
@@ -503,23 +501,10 @@
     //判断是否增加阳光月光值
     if (![GuidController sharedSingleUserInfo].guidHaveGiveLight) {
         
-        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
-        [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, 0)];
-        [customAlertAutoDis setEndCenterPoint:self.view.center];
-        [customAlertAutoDis setStartAlpha:0.1];
-        [customAlertAutoDis setEndAlpha:1.0];
-        [customAlertAutoDis setStartHeight:0];
-        [customAlertAutoDis setStartWidth:0];
-        [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*4];
-        [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-        [customAlertAutoDis setDelayDisappearTime:5.0];
-        [customAlertAutoDis setMsgFrontSize:20];
-        
         if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
             if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
                 
-                [customAlertAutoDis setAlertMsg:@"今天已经奖励过阳光了，不再重复奖励"];
-                [customAlertAutoDis RunCumstomAlert];
+                [self showCustomYesAlertSuperView:@"今天已经奖励过阳光了，不再重复奖励"];
                 
                 [[GuidController sharedSingleUserInfo] updateGuidHaveGiveLight:YES];
 
@@ -534,8 +519,7 @@
         {
             if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
                 
-                [customAlertAutoDis setAlertMsg:@"今天已经奖励过月光了，不再重复奖励"];
-                [customAlertAutoDis RunCumstomAlert];
+                [self showCustomYesAlertSuperView:@"今天已经奖励过月光了，不再重复奖励"];
                 
                 [[GuidController sharedSingleUserInfo] updateGuidHaveGiveLight:YES];
 
@@ -935,5 +919,41 @@
     return result;
 }
 
+
+#pragma mark - Customer alert
+-(void) showCustomYesAlertSuperView:(NSString*) msg
+{
+    
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
+    [customAlertAutoDis setStartCenterPoint:self.view.center];
+    [customAlertAutoDis setEndCenterPoint:self.view.center];
+    [customAlertAutoDis setStartAlpha:0.1];
+    [customAlertAutoDis setEndAlpha:1.0];
+    [customAlertAutoDis setStartHeight:0];
+    [customAlertAutoDis setStartWidth:0];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+    [customAlertAutoDis setDelayDisappearTime:5.0];
+    [customAlertAutoDis setMsgFrontSize:20];
+    [customAlertAutoDis setAlertMsg:msg];
+    [customAlertAutoDis setCustomAlertDelegate:self];
+    [customAlertAutoDis RunCumstomAlert];
+    
+}
+
+-(void) showCustomDelayAlertSuperView:(NSString*) msg
+{
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+    [customAlertAutoDis setAlertMsg:msg];
+    [customAlertAutoDis RunCumstomAlert];
+    
+}
+
+
+#pragma mark - CustomAlertDelegate
+- (void) CustomAlertOkReturn
+{
+    NSLog(@"custom aler ok return");
+}
 
 @end

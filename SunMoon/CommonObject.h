@@ -225,9 +225,11 @@ typedef enum
 
 #define  TAG_EDITE_PHOTO_SCROLL_VIEW 109
 #define  TAG_EDITE_PHOTO_SCROLL_LABEL 200 //200到215
+#define  TAG_CUSTOM_ALER_BTN  250   //自定义aler的BTN
 
 #define  TAG_LIGHT_USER_HEADER 300 //300到307
 #define  TAG_LIGHT_TRACE 1000 //1000以后
+
 
 
 #define ORIGINAL_MAX_WIDTH 320.0f
@@ -237,6 +239,8 @@ typedef enum
 #define FONT_SIZE 14.0f
 #define CELL_CONTENT_WIDTH 320.0f
 #define CELL_CONTENT_MARGIN 10.0f
+
+#define MAX_PHOTO_COUNT  100  //最大照片数
 
 #define BUNDLE_NAME @"Resource"
 
@@ -253,6 +257,8 @@ typedef enum
 +(void)showAlert:(NSString *)msg titleMsg:(NSString *)title DelegateObject:(id) delegateObject;
 
 +(void)showActionSheetOptiontitleMsg:(NSString *)title ShowInView:(UIView*)view CancelMsg:(NSString*) cancelMsg  DelegateObject:(id) delegateObject Option:(NSString*)option,...;
+
++(void) showCustomYesAlertSuperView:(id) sViewID  AlertMsg:(NSString*) msg;
 
 + (NetConnectType) CheckConnectedToNetwork;
 

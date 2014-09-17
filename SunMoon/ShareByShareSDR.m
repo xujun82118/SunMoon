@@ -72,7 +72,6 @@
                             }];
     
     
-    NSLog(@"shareImageNews return!");
     
     return  TRUE;
 }

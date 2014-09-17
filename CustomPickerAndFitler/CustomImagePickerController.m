@@ -700,23 +700,11 @@
     
     if (![GuidController sharedSingleUserInfo].guidHaveTakePhoto) {
         //判断是否增加阳光月光值
-        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:@"ok.png" posionShowMode:userSet];
-        [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, 0)];
-        [customAlertAutoDis setEndCenterPoint:self.view.center];
-        [customAlertAutoDis setStartAlpha:0.1];
-        [customAlertAutoDis setEndAlpha:1.0];
-        [customAlertAutoDis setStartHeight:0];
-        [customAlertAutoDis setStartWidth:0];
-        [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*4];
-        [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-        [customAlertAutoDis setDelayDisappearTime:5.0];
-        [customAlertAutoDis setMsgFrontSize:20];
         
         if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
             if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
                 
-                [customAlertAutoDis setAlertMsg:@"阳光时间来过了，要每天认真说一次就好呢"];
-                [customAlertAutoDis RunCumstomAlert];
+                [self showCustomYesAlertSuperView:@"阳光时间来过了，要每天认真说一次就好呢"];
                 
                 [[GuidController sharedSingleUserInfo] updateGuidHaveTakePhoto:YES];
             }
@@ -724,9 +712,8 @@
         {
             if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
                 
-                [customAlertAutoDis setAlertMsg:@"月光时间来过了，要每天认真说一次就好呢"];
-                [customAlertAutoDis RunCumstomAlert];
-                
+                [self showCustomYesAlertSuperView:@"月光时间来过了，要每天认真说一次就好呢"];
+
                 [[GuidController sharedSingleUserInfo] updateGuidHaveTakePhoto:YES];
 
             }
@@ -920,10 +907,7 @@
         
     }else
     {
-        
-        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-        [customAlertAutoDis setAlertMsg:@"亲，多点自信，大点声哦！"];
-        [customAlertAutoDis RunCumstomAlert];
+        [self showCustomDelayAlertSuperView:@"亲，多点自信，大点声哦"];
         
         return  1;
     }
@@ -983,6 +967,8 @@
     sunMoonImageViewTop.hidden = YES;
     [self dismissViewControllerAnimated:NO completion:NULL];
 }
+
+
 - (void)takePicture
 {
     if ([pressedVoice checkVoiceFile]) {
@@ -995,10 +981,9 @@
         
     }else
     {
-        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
         NSString* temp = [NSString stringWithFormat:@"说出你的%@光宣言，再拍照哦!", (iSunORMoon==IS_SUN_TIME)?@"阳":@"月"];
-        [customAlertAutoDis setAlertMsg:temp];
-        [customAlertAutoDis RunCumstomAlert];
+        [self showCustomDelayAlertSuperView:temp];
+
         
     }
 
@@ -1200,4 +1185,43 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     }
     
 }
+
+
+#pragma mark - Customer alert
+-(void) showCustomYesAlertSuperView:(NSString*) msg
+{
+    
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
+    [customAlertAutoDis setStartCenterPoint:self.view.center];
+    [customAlertAutoDis setEndCenterPoint:self.view.center];
+    [customAlertAutoDis setStartAlpha:0.1];
+    [customAlertAutoDis setEndAlpha:1.0];
+    [customAlertAutoDis setStartHeight:0];
+    [customAlertAutoDis setStartWidth:0];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
+    [customAlertAutoDis setDelayDisappearTime:5.0];
+    [customAlertAutoDis setMsgFrontSize:20];
+    [customAlertAutoDis setAlertMsg:msg];
+    [customAlertAutoDis setCustomAlertDelegate:self];
+    [customAlertAutoDis RunCumstomAlert];
+    
+}
+
+-(void) showCustomDelayAlertSuperView:(NSString*) msg
+{
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+    [customAlertAutoDis setAlertMsg:msg];
+    [customAlertAutoDis RunCumstomAlert];
+    
+}
+
+
+#pragma mark - CustomAlertDelegate
+- (void) CustomAlertOkReturn
+{
+    NSLog(@"custom aler ok return");
+}
+
+
 @end
