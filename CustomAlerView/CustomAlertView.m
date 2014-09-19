@@ -34,7 +34,7 @@
     NSInteger msgLabelHeigth =80;
     _msgLabel = [[UILabel alloc] initWithFrame:CGRectMake(_superView.center.x-msgLabelWidth/2, _superView.center.y-msgLabelHeigth/2, msgLabelWidth, msgLabelHeigth)];
     //设置标签文本字体和字体大小
-    _msgLabel.font = [UIFont fontWithName:@"Arial" size:25];
+    _msgLabel.font = [UIFont fontWithName:@"Arial" size:35];
     _msgLabel.textColor = [UIColor blackColor];
     _msgLabel.backgroundColor = [UIColor redColor];
     
@@ -71,7 +71,7 @@
         _endHeight =_endWidth;
         _startAlpha = 0.0;
         _endAlpha = 1.0;
-        _MsgFrontSize = 25;
+        _MsgFrontSize = 35;
         _delayDisappearTime = 5.0;
     }
     
@@ -85,7 +85,7 @@
    
     //回到原位
     [UIView beginAnimations:@"cutomeAlert_backPostion" context:nil];
-    [UIView setAnimationDuration:0.8f];
+    [UIView setAnimationDuration:0.6f];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDidStopSelector:@selector(animationCustomAlert:finished:context:)];
     [_viewBkImageView setFrame:CGRectMake(_startCenterPoint.x-_startWidth/2, _startCenterPoint.y-_startHeight/2, _startWidth, _startHeight)];
@@ -122,9 +122,9 @@
 
 
     //构造水印图
-    NSInteger w = _viewBkImageView.frame.size.width;
+    NSInteger x = 40;
+    NSInteger w = _viewBkImageView.frame.size.width-x*2;
     NSInteger h = _viewBkImageView.frame.size.height/5*2;
-    NSInteger x = 0;
     NSInteger y = _viewBkImageView.frame.size.height/2-h/2;
 
     UIGraphicsBeginImageContext(_viewBkImageView.image.size);
@@ -138,14 +138,14 @@
     [_viewBkImageView setFrame:CGRectMake(_startCenterPoint.x-_startWidth/2, _startCenterPoint.y-_startHeight/2, _startWidth, _startHeight)];
     
     if (_yesBtn) {
-        NSInteger yesW =_viewBkImageView.frame.size.width/8;
+        NSInteger yesW =_viewBkImageView.frame.size.width/7;
         NSInteger yesH =yesW;
         [_yesBtn setFrame:CGRectMake(_viewBkImageView.frame.origin.x+_viewBkImageView.frame.size.width/2-yesW/2, _viewBkImageView.frame.origin.y+_viewBkImageView.frame.size.height-yesH, yesW, yesH)];
     }
     
     //开始动画
     [UIView beginAnimations:@"cutomeAlert" context:nil];
-    [UIView setAnimationDuration:0.8f];
+    [UIView setAnimationDuration:0.6f];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDidStopSelector:@selector(animationCustomAlert:finished:context:)];
     NSLog(@"Show alert custom!");

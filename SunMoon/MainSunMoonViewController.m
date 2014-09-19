@@ -388,7 +388,7 @@
     
     
     //test
-    //[CommonObject showCustomYesAlertSuperView:self AlertMsg:@"1233333333333333"];
+    //[self showCustomYesAlertSuperView:@"测试。。。测试。。。。测试。。"];
    
     if (guidInfo.fristlyOpenGuidCtl)
     {
@@ -473,9 +473,7 @@
 
 -(void)whenCommonOpenViewHandle
 {
-    
-    //始终弹出相机按键
-    [self animationForIntoCameraBtnPop:YES];
+
     
     //判断是否是新登录, 新登录，连续登录值置为1， 连续登录，连续值加1
     //连续登录可得阳光，月光值1个
@@ -497,7 +495,7 @@
             
             //奖励提示
             isContineGiveLight = YES;
-            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:@"ok.png" posionShowMode:viewCenterBig];
+            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:viewCenterBig];
             if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
                 [customAlertAutoDis setAlertMsg:@"阳光时间连续登录，奖励一个阳光"];
 
@@ -537,6 +535,10 @@
     //更新登录时间
     [self.userInfo setLoginToday];
 
+    
+    
+    //始终弹出相机按键,需放到updateIsHaveAddSunValueForTodayPhoto 之后
+    [self animationForIntoCameraBtnPop:YES];
     
     //是否有光在育成
     if ([self.userInfo.sun_value intValue] !=0 || [self.userInfo.moon_value intValue]!=0)
@@ -680,7 +682,7 @@
     if ([animationID isEqualToString:@"popOut_showBringLightBtn"]) {
         
         if (isGiveFirstLight) {
-            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:userSet];
+            customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:nil posionShowMode:userSet];
             [customAlertAutoDis setStartCenterPoint:_showBringLightBtn.center];
             [customAlertAutoDis setEndCenterPoint:self.view.center];
             [customAlertAutoDis setStartAlpha:0.1];
@@ -740,7 +742,7 @@
 //                    [JumpTimer invalidate];
 //                }
                 
-                customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+                customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
                 [customAlertAutoDis setAlertMsg:@"停止育成光"];
                 [customAlertAutoDis RunCumstomAlert];
                 
@@ -1359,7 +1361,7 @@
 
                     NSString* time = [NSString stringWithFormat:@"开始养育%@光了", ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
                     NSLog(@"%@", time);
-                    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+                    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
                     [customAlertAutoDis setAlertMsg:time];
                     [customAlertAutoDis RunCumstomAlert];
                     
@@ -1596,7 +1598,7 @@
     NSLog(@"%@", timeshow);
     
 //    if (totalHours==0) {
-//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
 //        [customAlertAutoDis setAlertMsg:@"Oh,养育时间太短了"];
 //        [customAlertAutoDis RunCumstomAlert];
 //
@@ -1604,14 +1606,14 @@
     
     if (totalHours>0 && totalHours<3) {
         NSString* timeAlert = [NSString stringWithFormat:(@"%@光养育了%d小时, 每3个小时奖励1个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
         [customAlertAutoDis setAlertMsg:timeAlert];
         [customAlertAutoDis RunCumstomAlert];
     }
     
     if (totalHours>3) {
         NSString* timeAlert = [NSString stringWithFormat:(@"%@光养育了%d小时，奖励%d个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours, giveCount,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
         [customAlertAutoDis setAlertMsg:timeAlert];
         [customAlertAutoDis RunCumstomAlert];
     }
@@ -1920,7 +1922,7 @@
     //此版本无效
     NSInteger rainBowCount = bigRang/7;
     if (rainBowCount>=1) {
-        NSLog(@"超过7个光环，增加彩虹！");
+        NSLog(@"超过7个光环，增加提示框v1！");
         for (int i = 0; i<rainBowCount; i++) {
             [self animationRainbow:rainBowCount];
 
@@ -2039,7 +2041,7 @@
 -(void) showCustomYesAlertSuperView:(NSString*) msg
 {
     
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框方案.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
     [customAlertAutoDis setStartCenterPoint:self.view.center];
     [customAlertAutoDis setEndCenterPoint:self.view.center];
     [customAlertAutoDis setStartAlpha:0.1];
@@ -2049,7 +2051,7 @@
     [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
     [customAlertAutoDis setDelayDisappearTime:5.0];
-    [customAlertAutoDis setMsgFrontSize:20];
+    [customAlertAutoDis setMsgFrontSize:45];
     [customAlertAutoDis setAlertMsg:msg];
     [customAlertAutoDis setCustomAlertDelegate:self];
     [customAlertAutoDis RunCumstomAlert];

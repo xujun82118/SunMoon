@@ -924,7 +924,7 @@
 -(void) showCustomYesAlertSuperView:(NSString*) msg
 {
     
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
     [customAlertAutoDis setStartCenterPoint:self.view.center];
     [customAlertAutoDis setEndCenterPoint:self.view.center];
     [customAlertAutoDis setStartAlpha:0.1];
@@ -934,7 +934,7 @@
     [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
     [customAlertAutoDis setDelayDisappearTime:5.0];
-    [customAlertAutoDis setMsgFrontSize:20];
+    [customAlertAutoDis setMsgFrontSize:45];
     [customAlertAutoDis setAlertMsg:msg];
     [customAlertAutoDis setCustomAlertDelegate:self];
     [customAlertAutoDis RunCumstomAlert];
@@ -943,7 +943,7 @@
 
 -(void) showCustomDelayAlertSuperView:(NSString*) msg
 {
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"彩虹.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
     [customAlertAutoDis setAlertMsg:msg];
     [customAlertAutoDis RunCumstomAlert];
     
