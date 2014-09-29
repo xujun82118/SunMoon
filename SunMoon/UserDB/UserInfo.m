@@ -583,6 +583,11 @@ static UserInfo *sharedUserInfo;
 
 -(void)updateMoonSentenceSelected:(NSInteger) sentenceSelect
 {
+    if (sentenceSelect>=moonDataSourceArray.count) {
+        NSLog(@"sentenceSelect should not bigger than  moonDataSourceArray.count");
+        return;
+    }
+    
    NSAssert((sentenceSelect<moonDataSourceArray.count), @"ERROR:sentenceSelect should not bigger than  moonDataSourceArray.count");
     
     NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];

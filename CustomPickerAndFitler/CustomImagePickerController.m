@@ -51,7 +51,8 @@
     AminationCustom* addVauleAnimation;
     BOOL isHaveAddValue;  //第二次触发语音，不再奖励光
 
-   CustomAlertView* customAlertAutoDis;
+    CustomAlertView* customAlertAutoDis;
+    CustomAlertView* customAlertAutoDisYes;
     
     CustomIndicatorView *indicator;
 
@@ -759,6 +760,11 @@
         return;
     }
     
+    //限高
+    if (newPitchValue>300) {
+        newPitchValue = 300;
+    }
+    
     //需大于原高度,需两个动画都结束
     if (newPitchValue>srcVoiceValueHeight && voiceAnimationLock == NO /*&&voiceBackAnimationLock == NO*/)
     {
@@ -907,7 +913,7 @@
         
     }else
     {
-        [self showCustomDelayAlertSuperView:@"亲，多点自信，大点声哦"];
+        [self showCustomDelayAlertBottom:@"亲，多点自信，大点声哦"];
         
         return  1;
     }
@@ -982,7 +988,7 @@
     }else
     {
         NSString* temp = [NSString stringWithFormat:@"说出你的%@光宣言，再拍照哦!", (iSunORMoon==IS_SUN_TIME)?@"阳":@"月"];
-        [self showCustomDelayAlertSuperView:temp];
+        [self showCustomDelayAlertBottom:temp];
 
         
     }
@@ -1191,31 +1197,49 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
 -(void) showCustomYesAlertSuperView:(NSString*) msg
 {
     
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
-    [customAlertAutoDis setStartCenterPoint:self.view.center];
-    [customAlertAutoDis setEndCenterPoint:self.view.center];
-    [customAlertAutoDis setStartAlpha:0.1];
-    [customAlertAutoDis setEndAlpha:1.0];
-    [customAlertAutoDis setStartHeight:0];
-    [customAlertAutoDis setStartWidth:0];
-    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*3];
-    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-    [customAlertAutoDis setDelayDisappearTime:5.0];
-    [customAlertAutoDis setMsgFrontSize:45];
-    [customAlertAutoDis setAlertMsg:msg];
-    [customAlertAutoDis setCustomAlertDelegate:self];
-    [customAlertAutoDis RunCumstomAlert];
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
+    [customAlertAutoDisYes setStartCenterPoint:self.view.center];
+    [customAlertAutoDisYes setEndCenterPoint:self.view.center];
+    [customAlertAutoDisYes setStartAlpha:0.1];
+    [customAlertAutoDisYes setEndAlpha:1.0];
+    [customAlertAutoDisYes setStartHeight:0];
+    [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
+    [customAlertAutoDisYes setDelayDisappearTime:5.0];
+    [customAlertAutoDisYes setMsgFrontSize:45];
+    [customAlertAutoDisYes setAlertMsg:msg];
+    [customAlertAutoDisYes setCustomAlertDelegate:self];
+    [customAlertAutoDisYes RunCumstomAlert];
     
 }
 
--(void) showCustomDelayAlertSuperView:(NSString*) msg
+- (void)yesButtonHandler:(id)sender
 {
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+    [customAlertAutoDisYes yesButtonHandler:nil];
+    
+}
+
+
+
+
+-(void) showCustomDelayAlertBottom:(NSString*) msg
+{
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet];
+    [customAlertAutoDis setStartHeight:0];
+    [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
+    [customAlertAutoDis setEndHeight:50];
+    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
+    [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2, customAlertAutoDis.endHeight/2+60)];
+    [customAlertAutoDis setStartAlpha:0.1];
+    [customAlertAutoDis setEndAlpha:0.8];
+    [customAlertAutoDis setDelayDisappearTime:5.0];
+    [customAlertAutoDis setMsgFrontSize:30];
     [customAlertAutoDis setAlertMsg:msg];
     [customAlertAutoDis RunCumstomAlert];
     
 }
-
 
 #pragma mark - CustomAlertDelegate
 - (void) CustomAlertOkReturn

@@ -364,20 +364,17 @@
         return YES;
     }
     
-    NSString * aString = [textField.text stringByReplacingCharactersInRange:range withString:string];
-    if (self.addNewSentence == textField)
-    {
-        if ([aString length] > 20) {
-            textField.text = [aString substringToIndex:20];
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                            message:@"月光宣言太长了~"
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"Ok"
-                                                  otherButtonTitles:nil, nil];
-            [alert show];
-            return NO;
-        }
+    if ([textField.text length] > 20) {
+        textField.text = [textField.text substringToIndex:20];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                        message:@"月光宣言太长了~"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"Ok"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+        return NO;
     }
+    
     return YES;
     
 }

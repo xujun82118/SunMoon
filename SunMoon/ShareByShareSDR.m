@@ -10,10 +10,12 @@
 #import "AddWaterMask.h"
 #import <ShareSDK/ShareSDK.h>
 
+
+
 @implementation ShareByShareSDR
 
-@synthesize shareImage, shareMsg,shareMsgSignature,shareMsgPreFix,shareTitle,shareUrl,logImage,waterImage,logRect,waterRect;
 
+@synthesize shareImage, shareMsg,shareMsgSignature,shareMsgPreFix,shareTitle,shareUrl,logImage,waterImage,logRect,waterRect;
 
 
 -(BOOL) shareImageNews
@@ -54,12 +56,26 @@
                           ShareTypeQQ,
                           ShareTypeCopy,
                           nil];
+    
+    id<ISSAuthOptions> authOptions = [ShareSDK authOptionsWithAutoAuth:YES
+                                                         allowCallback:YES
+                                                         authViewStyle:SSAuthViewStyleFullScreenPopup
+                                                          viewDelegate:nil
+                                               authManagerViewDelegate:nil];
     [ShareSDK showShareActionSheet:nil
                          shareList:shareList
                            content:publishContent
                      statusBarTips:YES
-                       authOptions:nil
-                      shareOptions: nil
+                       authOptions:authOptions
+                      shareOptions:[ShareSDK defaultShareOptionsWithTitle:nil
+                                                          oneKeyShareList:nil
+                                                           qqButtonHidden:YES
+                                                    wxSessionButtonHidden:YES
+                                                   wxTimelineButtonHidden:YES
+                                                     showKeyboardOnAppear:YES
+                                                        shareViewDelegate:nil
+                                                      friendsViewDelegate:nil
+                                                    picViewerViewDelegate:nil]
                             result:^(ShareType type, SSResponseState state, id<ISSPlatformShareInfo> statusInfo, id<ICMErrorInfo> error, BOOL end) {
                                 if (state == SSResponseStateSuccess)
                                 {
@@ -75,7 +91,6 @@
     
     return  TRUE;
 }
-
 
 
 -(BOOL) shareTexts
@@ -173,9 +188,9 @@
     //[container setIPadContainerWithView:sender arrowDirect:UIPopoverArrowDirectionUp];
     
     
-    NSArray *oneKeyShareList = [ShareSDK getShareListWithType:
-                                ShareTypeSinaWeibo,
-                                nil];
+    //NSArray *oneKeyShareList = [ShareSDK getShareListWithType:
+        //                        ShareTypeSinaWeibo,
+      //                          nil];
     
     //显示分享菜单
     [ShareSDK showShareViewWithType:ShareTypeSinaWeibo
@@ -184,7 +199,7 @@
                       statusBarTips:YES
                         authOptions:authOptions
                        shareOptions:[ShareSDK defaultShareOptionsWithTitle:nil
-                                                           oneKeyShareList:oneKeyShareList
+                                                           oneKeyShareList:nil
                                                             qqButtonHidden:YES
                                                      wxSessionButtonHidden:YES
                                                     wxTimelineButtonHidden:YES

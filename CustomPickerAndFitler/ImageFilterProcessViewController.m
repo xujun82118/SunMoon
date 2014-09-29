@@ -36,7 +36,8 @@
     
     AminationCustom* addVauleAnimation;
     
-    CustomAlertView*  customAlertAutoDis;
+    CustomAlertView* customAlertAutoDis;
+    CustomAlertView* customAlertAutoDisYes;
     
     CustomIndicatorView *indicator;
 
@@ -396,13 +397,13 @@
 {
     
     if (isHaveSavePhoto) {
-        [self showCustomDelayAlertSuperView:@"请不要重复保存"];
+        [self showCustomDelayAlertBottom:@"请不要重复保存"];
     }else
     {
         NSLog(@"保存到相册");
         UIImageWriteToSavedPhotosAlbum(rootImageView.image, nil, nil,nil);
         isHaveSavePhoto = YES;
-        [self showCustomDelayAlertSuperView:@"成功保存到相册"];
+        [self showCustomDelayAlertBottom:@"成功保存到相册"];
 
     }
     
@@ -417,10 +418,6 @@
 
     sunMoonImageViewTop.hidden = YES;
 
-    
-    if (self.userInfo.photoSaveAutoCtl) {
-        [self savetoAlbumHandle:Nil];
-    }
     
 }
 
@@ -605,6 +602,12 @@
         //动画:...
         [self.userInfo decreaseSunOrMoonValue:1];
         
+        //删除语音
+        VoicePressedHold* pressedVoiceFordelete = [[VoicePressedHold alloc] init];
+        NSString* nameVoice = [imagePickerData objectForKey:CAMERA_VOICE_NAEM_KEY];
+        [pressedVoiceFordelete setVoiceName:nameVoice];
+        [pressedVoiceFordelete deleteVoiceFile];
+        
         [self dismissViewControllerAnimated:YES completion:NULL];
 
     }
@@ -624,7 +627,11 @@
                                          nil];
         [delegate imageFitlerProcessDone:imageFilterData];
         
-
+        
+        
+        if (self.userInfo.photoSaveAutoCtl) {
+            [self savetoAlbumHandle:Nil];
+        }
         
     }];
 }
@@ -680,8 +687,8 @@
     
     ShareByShareSDR* share = [ShareByShareSDR alloc];
     share.shareTitle = @"天天更美丽";
-    share.shareImage =currentImage;
-    share.shareMsg = currentSentence;
+    share.shareImage =rootImageView.image;
+    share.shareMsg = [imagePickerData objectForKey:CAMERA_SENTENCE_KEY];
     share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
     share.waterImage = [UIImage imageNamed:@"waterlogo.png"];
     NSInteger x = share.shareImage.size.width/4;
@@ -924,26 +931,44 @@
 -(void) showCustomYesAlertSuperView:(NSString*) msg
 {
     
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
-    [customAlertAutoDis setStartCenterPoint:self.view.center];
-    [customAlertAutoDis setEndCenterPoint:self.view.center];
-    [customAlertAutoDis setStartAlpha:0.1];
-    [customAlertAutoDis setEndAlpha:1.0];
-    [customAlertAutoDis setStartHeight:0];
-    [customAlertAutoDis setStartWidth:0];
-    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*3];
-    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth];
-    [customAlertAutoDis setDelayDisappearTime:5.0];
-    [customAlertAutoDis setMsgFrontSize:45];
-    [customAlertAutoDis setAlertMsg:msg];
-    [customAlertAutoDis setCustomAlertDelegate:self];
-    [customAlertAutoDis RunCumstomAlert];
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
+    [customAlertAutoDisYes setStartCenterPoint:self.view.center];
+    [customAlertAutoDisYes setEndCenterPoint:self.view.center];
+    [customAlertAutoDisYes setStartAlpha:0.1];
+    [customAlertAutoDisYes setEndAlpha:1.0];
+    [customAlertAutoDisYes setStartHeight:0];
+    [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
+    [customAlertAutoDisYes setDelayDisappearTime:5.0];
+    [customAlertAutoDisYes setMsgFrontSize:45];
+    [customAlertAutoDisYes setAlertMsg:msg];
+    [customAlertAutoDisYes setCustomAlertDelegate:self];
+    [customAlertAutoDisYes RunCumstomAlert];
     
 }
 
--(void) showCustomDelayAlertSuperView:(NSString*) msg
+- (void)yesButtonHandler:(id)sender
 {
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
+    [customAlertAutoDisYes yesButtonHandler:nil];
+    
+}
+
+
+
+-(void) showCustomDelayAlertBottom:(NSString*) msg
+{
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet];
+    [customAlertAutoDis setStartHeight:0];
+    [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
+    [customAlertAutoDis setEndHeight:50];
+    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
+    [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2, customAlertAutoDis.endHeight/2+60)];
+    [customAlertAutoDis setStartAlpha:0.1];
+    [customAlertAutoDis setEndAlpha:0.8];
+    [customAlertAutoDis setDelayDisappearTime:5.0];
+    [customAlertAutoDis setMsgFrontSize:30];
     [customAlertAutoDis setAlertMsg:msg];
     [customAlertAutoDis RunCumstomAlert];
     

@@ -53,6 +53,9 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *panSunorMoonImageView;
 
+@property (weak, nonatomic) IBOutlet UIButton* menuBtn;
+
+
 //@property (weak, nonatomic) IBOutlet UIButton * intoCameraBtn;
 //@property (weak, nonatomic) IBOutlet UIButton * showBringLightBtn;
 

@@ -10,31 +10,48 @@
 	<string>SunMoon</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>BE77D5F7-7AA8-4919-B109-41E648D3C3A3</key>
+		<key>1a0beb16-39a9-491a-8432-0dfbb1476d54++7897</key>
+		<string>https://svn.duapp.com/appid9kgedf0yca/1/iphone/MeiJiaLove/MeiJiaLove/UIImage-Extensions</string>
+		<key>E29256EA3F64F06E957762AF1431F70536ED2218</key>
 		<string>https://github.com/xujun82118/SunMoon.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>SunMoon.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>BE77D5F7-7AA8-4919-B109-41E648D3C3A3</key>
+		<key>1a0beb16-39a9-491a-8432-0dfbb1476d54++7897</key>
+		<string>../../CustomPickerAndFitler/UIImage-Extensions</string>
+		<key>E29256EA3F64F06E957762AF1431F70536ED2218</key>
 		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>1a0beb16-39a9-491a-8432-0dfbb1476d54++7897</key>
+		<string>https://svn.duapp.com/appid9kgedf0yca</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/xujun82118/SunMoon.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>BE77D5F7-7AA8-4919-B109-41E648D3C3A3</string>
+	<string>E29256EA3F64F06E957762AF1431F70536ED2218</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>BE77D5F7-7AA8-4919-B109-41E648D3C3A3</string>
+			<string>E29256EA3F64F06E957762AF1431F70536ED2218</string>
 			<key>IDESourceControlWCCName</key>
 			<string>SunMoon</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>1a0beb16-39a9-491a-8432-0dfbb1476d54++7897</string>
+			<key>IDESourceControlWCCName</key>
+			<string>UIImage-Extensions</string>
 		</dict>
 	</array>
 </dict>

@@ -50,9 +50,6 @@
 
 #endif
 
-//全局变量
-static BOOL isOpenGuid = NO; //全部提醒功能的总开关
-
 
 //默认用户名
 #define INIT_DEFAULT_USER_NAME @"MyDefaultNameWithoutRegister"
@@ -147,6 +144,11 @@ typedef enum
 //是否有光在育成
 #define KEY_IS_BRING_UP_SUN @"isBringUpSun"
 #define KEY_IS_BRING_UP_MOON @"isBringUpMoon"
+
+//退出后台的时间
+#define KEY_BACK_GROUND_TIME @"backGroundTime"
+#define KEY_BACK_GROUND_TIME_CHANGE @"backGroundTimeChange"
+
 
 //当天照片是否加过光值
 #define KEY_IS_HAVE_ADD_SUN @"isHaveAddSun"

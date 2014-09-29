@@ -9,23 +9,25 @@
 #import "HomeInsideViewController.h"
 #import "Navbar.h"
 #import "AddWaterMask.h"
-#import <ShareSDK/ShareSDK.h>
 #import "SunMoonAlertTime.h"
 #import "ShareByShareSDR.h"
 
 
 @interface HomeInsideViewController ()
-{
+/**
+ *	@brief	用户信息更新
+ *
+ *	@param 	notif 	通知
+ */
+- (void)userInfoUpdateHandler:(NSNotification *)notif;
 
-
-}
 
 @end
 
 @implementation HomeInsideViewController
 
 @synthesize user,userData,userDB,sunWordShow,moonWordShow,currentSelectDataSun,currentSelectDataMoon,sunScroll=_sunScroll,moonScroll = _moonScroll;
-@synthesize sunTimeBtn,moonTimeBtn,moonTimeCtlBtn,sunTimeCtlBtn,sunValueStatic,moonValueStatic,sunTimeText,moonTimeText,lightSunSentence,lightMoonSentence;
+@synthesize bkGroundImageView,sunScrollImageView,moonScrollImageView,sunTimeBtn,moonTimeBtn,moonTimeCtlBtn,sunTimeCtlBtn,sunValueStatic,moonValueStatic,sunTimeText,moonTimeText,lightSunSentence,lightMoonSentence;
 @synthesize cloudCtlBtn = _cloudCtlBtn,shareSunCtlBtn = _shareSunCtlBtn, shareMoonCtlBtn=_shareMoonCtlBtn, voiceReplaySunBtn = _voiceReplaySunBtn, voiceReplayMoonBtn = _voiceReplayMoonBtn;
 @synthesize userCloud=_userCloud;
 
@@ -54,6 +56,53 @@
     [backBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y-backBtnHeight/2+10, backBtnWidth, backBtnHeight)];
     [backBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:backBtn];
+
+      //  sunScrollImageView.frame = CGRectMake(sunScrollImageView.frame.origin.x, sunScrollImageView.frame.origin.y, sunScrollImageView.frame.size.width, 20);
+    
+    //shareSdk**********
+    //监听用户信息变更
+    [ShareSDK removeAllNotificationWithTarget:self];
+    [ShareSDK addNotificationWithName:SSN_USER_INFO_UPDATE
+                               target:self
+                               action:@selector(userInfoUpdateHandler:)];
+    
+    _shareTypeArray = [[NSMutableArray alloc] init];
+    
+    NSArray *shareTypes = [ShareSDK connectedPlatformTypes];
+    for (int i = 0; i < [shareTypes count]; i++)
+    {
+        NSNumber *typeNum = [shareTypes objectAtIndex:i];
+        ShareType type = (ShareType)[typeNum integerValue];
+        id<ISSPlatformApp> app = [ShareSDK getClientWithType:type];
+
+        if (type == ShareTypeSinaWeibo || type == ShareTypeTencentWeibo)
+        {
+            [_shareTypeArray addObject:[NSMutableDictionary dictionaryWithObject:[shareTypes objectAtIndex:i]
+                                                                          forKey:@"type"]];
+        }
+    }
+    
+    NSArray *authList = [NSArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()]];
+    if (authList == nil)
+    {
+        [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()] atomically:YES];
+    }
+    else
+    {
+        for (int i = 0; i < [authList count]; i++)
+        {
+            NSDictionary *item = [authList objectAtIndex:i];
+            for (int j = 0; j < [_shareTypeArray count]; j++)
+            {
+                if ([[[_shareTypeArray objectAtIndex:j] objectForKey:@"type"] integerValue] == [[item objectForKey:@"type"] integerValue])
+                {
+                    [_shareTypeArray replaceObjectAtIndex:j withObject:[NSMutableDictionary dictionaryWithDictionary:item]];
+                    break;
+                }
+            }
+        }
+    }
+    //shareSdk**********
     
     //获取单例用户数据
     //self.user= [UserInfo  sharedSingleUserInfo];
@@ -341,6 +390,14 @@
     
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    [ShareSDK removeAllNotificationWithTarget:self];
+    
+}
+
 - (void) viewWillAppear:(BOOL)animated
 {
     
@@ -390,6 +447,8 @@
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    
+
     
     UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
     imageScrollMoon.frame = CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100);
@@ -592,13 +651,19 @@
  *
  */- (IBAction)shareMorning:(id)sender {
      
+     //test
+//     ShareByShareSDR* share = [ShareByShareSDR alloc];
+//     [share WeiBoMe];
+     
+     
      UIImageView* imageData = [currentSelectDataSun objectForKey:@"image_data"];
      NSString* imageSentence = [currentSelectDataSun objectForKey:@"image_sentence"];
      
      if ([imageSentence isEqual:@""]) {
          return;
      }
-     
+
+
      ShareByShareSDR* share = [ShareByShareSDR alloc];
      share.shareTitle = @"天天更美丽";
      share.shareImage =imageData.image;
@@ -617,6 +682,92 @@
      [share shareImageNews];
      
 }
+
+//增加用户信息时，才会调用，删除鉴权时不会
+- (void)userInfoUpdateHandler:(NSNotification *)notif
+{
+    NSInteger plat = [[[notif userInfo] objectForKey:SSK_PLAT] integerValue];
+    id<ISSPlatformUser> userInfo = [[notif userInfo] objectForKey:SSK_USER_INFO];
+    
+    for (int i = 0; i < [_shareTypeArray count]; i++)
+    {
+        NSMutableDictionary *item = [_shareTypeArray objectAtIndex:i];
+        ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
+        if (type == plat)
+        {
+            [item setObject:[userInfo nickname] forKey:@"username"];
+        }else
+        {
+            //取消另一个授权，保持只有一个
+            [ShareSDK cancelAuthWithType:type];
+            
+        }
+    }
+    
+    
+    //存用户授权信息
+    NSMutableArray *authList = [NSMutableArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()]];
+    if (authList == nil)
+    {
+        authList = [NSMutableArray array];
+    }
+    
+    NSString *platName = nil;
+    //NSInteger plat = [[[notif userInfo] objectForKey:SSK_PLAT] integerValue];
+    switch (plat)
+    {
+        case ShareTypeSinaWeibo:
+            platName = NSLocalizedString(@"TEXT_SINA_WEIBO", @"新浪微博");
+            break;
+
+        case ShareTypeTencentWeibo:
+            platName = NSLocalizedString(@"TEXT_TENCENT_WEIBO", @"腾讯微博");
+            break;
+
+        default:
+            platName = NSLocalizedString(@"TEXT_UNKNOWN", @"未知");
+    }
+    
+    //id<ISSPlatformUser> userInfo = [[notif userInfo] objectForKey:SSK_USER_INFO];
+    BOOL hasExists = NO;
+    for (int i = 0; i < [authList count]; i++)
+    {
+        NSMutableDictionary *item = [authList objectAtIndex:i];
+        ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
+        if (type == plat)
+        {
+            [item setObject:[userInfo nickname] forKey:@"username"];
+            hasExists = YES;
+            break;
+        }
+    }
+    
+    if (!hasExists)
+    {
+        NSDictionary *newItem = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                 platName,
+                                 @"title",
+                                 [NSNumber numberWithInteger:plat],
+                                 @"type",
+                                 [userInfo nickname],
+                                 @"username",
+                                 nil];
+        [authList addObject:newItem];
+    }
+    
+    [authList writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()] atomically:YES];
+    
+    
+    //更新本地用户信息
+    [self.user updateSns_ID:[userInfo uid] PlateType:[userInfo type]];
+    [self.user updateuserName:[userInfo nickname]];
+    
+    NSURL *portraitUrl = [NSURL URLWithString:[userInfo profileImage]];
+    UIImage *protraitImg = [UIImage imageWithData:[NSData dataWithContentsOfURL:portraitUrl]];
+    [self.user updateUserHeaderImage:protraitImg];
+
+}
+
 
 #pragma mark -  云同步
 -(IBAction)synClouderUserInfo:(id)sender

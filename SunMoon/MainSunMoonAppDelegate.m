@@ -12,6 +12,8 @@
 #import <TencentOpenAPI/QQApiInterface.h>
 #import <TencentOpenAPI/TencentOAuth.h>
 #import "WeiboApi.h"
+#import "MainSunMoonViewController.h"
+#import "UserSetViewController.h"
 
 
 @interface MainSunMoonAppDelegate ()
@@ -40,6 +42,8 @@
     
     //test 解决相机起动黑屏问题
     self.window.backgroundColor = [UIColor whiteColor];
+    
+
     
     //ShareSDK 设置
     [ShareSDK registerApp:@"fe35485ae4a"];
@@ -248,6 +252,11 @@
         [userBaseData setObject:[NSDate date] forKey:KEY_NOTIFY_NEED_BRINGING_LAST_TIME];
         [userBaseData synchronize];
     }
+    
+    
+    //记录后台时的时间
+    [userBaseData setObject:[CommonObject getCurrentDate] forKey:KEY_BACK_GROUND_TIME];
+    [userBaseData synchronize];
 
     
 }
@@ -285,11 +294,32 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    
+
+
+
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    
+    //初始化判断并更新时间,用于从后台进入前台时变换时间
+    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
+    if (![userBaseData objectForKey:KEY_BACK_GROUND_TIME]) {
+        [userBaseData setObject:[CommonObject getCurrentDate] forKey:KEY_BACK_GROUND_TIME];
+        [userBaseData synchronize];
+    }
+
+    //上次回到后台的时间不是今天
+    if (![[CommonObject getCurrentDate] isEqualToString:[userBaseData objectForKey:KEY_BACK_GROUND_TIME]] )
+        
+    {
+        [userBaseData setBool:YES forKey:KEY_BACK_GROUND_TIME_CHANGE];
+        [userBaseData synchronize];
+        
+    }
+
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

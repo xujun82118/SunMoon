@@ -127,14 +127,14 @@
 
 - (void)tapOneImageViewHandle:(UITapGestureRecognizer *)sender
 {
-    NSLog(@" one view is tapper");
+    //NSLog(@" one view is tapper");
     
     
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    NSLog(@" one view is touchesEnded");
+    //NSLog(@" one view is touchesEnded");
 
     
 }

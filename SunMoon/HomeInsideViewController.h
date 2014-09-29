@@ -11,6 +11,7 @@
 #import "UserDB.h"
 #import "VoicePressedHold.h"
 #import "UserInfoCloud.h"
+#import <ShareSDK/ShareSDK.h>
 
 
 
@@ -20,10 +21,17 @@
       InfiniteScrollPicker *imageScrollMoon;
       VoicePressedHold* pressedVoiceForPlay;
 
+      NSMutableArray *_shareTypeArray;
+
 
 }
 @property (weak, nonatomic) IBOutlet InfiniteScrollPicker *sunScroll;
 @property (weak, nonatomic) IBOutlet InfiniteScrollPicker *moonScroll;
+@property (weak, nonatomic) IBOutlet UIImageView * bkGroundImageView;
+@property (weak, nonatomic) IBOutlet UIImageView * sunScrollImageView;
+@property (weak, nonatomic) IBOutlet UIImageView * moonScrollImageView;
+
+
 @property (weak, nonatomic) IBOutlet UITextField *sunTimeText;
 @property (weak, nonatomic) IBOutlet UITextField *moonTimeText;
 @property (weak, nonatomic) IBOutlet UILabel *moonValueStatic;

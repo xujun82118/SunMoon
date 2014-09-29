@@ -60,9 +60,12 @@
     [self setTableHeaderView];
     
     //监听用户信息变更
+    //[ShareSDK addNotificationWithName:SSN_USER_INFO_UPDATE
+     //                          target:self
+       //                        action:@selector(userInfoUpdateHandler:)];
     [ShareSDK addNotificationWithName:SSN_USER_INFO_UPDATE
-                               target:self
-                               action:@selector(userInfoUpdateHandler:)];
+                              target:self
+                            action:@selector(userInfoUpdateHandler:)];
     
     _shareTypeArray = [[NSMutableArray alloc] init];
     
@@ -82,10 +85,10 @@
         }
     }
     
-    NSArray *authList = [NSArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/authListCache.plist",NSTemporaryDirectory()]];
+    NSArray *authList = [NSArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()]];
     if (authList == nil)
     {
-        [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/authListCache.plist",NSTemporaryDirectory()] atomically:YES];
+        [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()] atomically:YES];
     }
     else
     {
@@ -156,122 +159,16 @@
     
 }
 
-
-//增加用户信息时，才会调用，删除鉴权时不会
-- (void)userInfoUpdateHandler:(NSNotification *)notif
+- (void)viewWillDisappear:(BOOL)animated
 {
-    NSInteger plat = [[[notif userInfo] objectForKey:SSK_PLAT] integerValue];
-    id<ISSPlatformUser> userInfo = [[notif userInfo] objectForKey:SSK_USER_INFO];
+    [super viewWillDisappear:animated];
     
-    for (int i = 0; i < [_shareTypeArray count]; i++)
-    {
-        NSMutableDictionary *item = [_shareTypeArray objectAtIndex:i];
-        ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
-        if (type == plat)
-        {
-            [item setObject:[userInfo nickname] forKey:@"username"];
-            [self.tableView reloadData];
-        }
-    }
+    [ShareSDK removeAllNotificationWithTarget:self];
     
-    
-    //存用户授权信息
-    NSMutableArray *authList = [NSMutableArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/authListCache.plist",NSTemporaryDirectory()]];
-    if (authList == nil)
-    {
-        authList = [NSMutableArray array];
-    }
-    
-    NSString *platName = nil;
-    //NSInteger plat = [[[notif userInfo] objectForKey:SSK_PLAT] integerValue];
-    switch (plat)
-    {
-        case ShareTypeSinaWeibo:
-            platName = NSLocalizedString(@"TEXT_SINA_WEIBO", @"新浪微博");
-            break;
-        case ShareType163Weibo:
-            platName = NSLocalizedString(@"TEXT_NETEASE_WEIBO", @"网易微博");
-            break;
-        case ShareTypeDouBan:
-            platName = NSLocalizedString(@"TEXT_DOUBAN", @"豆瓣");
-            break;
-        case ShareTypeFacebook:
-            platName = @"Facebook";
-            break;
-        case ShareTypeKaixin:
-            platName = NSLocalizedString(@"TEXT_KAIXIN", @"开心网");
-            break;
-        case ShareTypeQQSpace:
-            platName = NSLocalizedString(@"TEXT_QZONE", @"QQ空间");
-            break;
-        case ShareTypeRenren:
-            platName = NSLocalizedString(@"TEXT_RENREN", @"人人网");
-            break;
-        case ShareTypeSohuWeibo:
-            platName = NSLocalizedString(@"TEXT_SOHO_WEIBO", @"搜狐微博");
-            break;
-        case ShareTypeTencentWeibo:
-            platName = NSLocalizedString(@"TEXT_TENCENT_WEIBO", @"腾讯微博");
-            break;
-        case ShareTypeTwitter:
-            platName = @"Twitter";
-            break;
-        case ShareTypeInstapaper:
-            platName = @"Instapaper";
-            break;
-        case ShareTypeYouDaoNote:
-            platName = NSLocalizedString(@"TEXT_YOUDAO_NOTE", @"有道云笔记");
-            break;
-        case ShareTypeGooglePlus:
-            platName = @"Google+";
-            break;
-        case ShareTypeLinkedIn:
-            platName = @"LinkedIn";
-            break;
-        default:
-            platName = NSLocalizedString(@"TEXT_UNKNOWN", @"未知");
-    }
-    
-    //id<ISSPlatformUser> userInfo = [[notif userInfo] objectForKey:SSK_USER_INFO];
-    BOOL hasExists = NO;
-    for (int i = 0; i < [authList count]; i++)
-    {
-        NSMutableDictionary *item = [authList objectAtIndex:i];
-        ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
-        if (type == plat)
-        {
-            [item setObject:[userInfo nickname] forKey:@"username"];
-            hasExists = YES;
-            break;
-        }
-    }
-    
-    if (!hasExists)
-    {
-        NSDictionary *newItem = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                 platName,
-                                 @"title",
-                                 [NSNumber numberWithInteger:plat],
-                                 @"type",
-                                 [userInfo nickname],
-                                 @"username",
-                                 nil];
-        [authList addObject:newItem];
-    }
-    
-    [authList writeToFile:[NSString stringWithFormat:@"%@/authListCache.plist",NSTemporaryDirectory()] atomically:YES];
-    
-    
-    //更新本地用户信息
-    [self.user updateSns_ID:[userInfo uid] PlateType:[userInfo type]];
-    [self.user updateuserName:[userInfo nickname]];
-    
-    NSURL *portraitUrl = [NSURL URLWithString:[userInfo profileImage]];
-    UIImage *protraitImg = [UIImage imageWithData:[NSData dataWithContentsOfURL:portraitUrl]];
-    [self.user updateUserHeaderImage:protraitImg];
-    //刷新头像
-    [self setTableHeaderView];
 }
+
+
+
 
 
 -(void)changeHeaderImage;
@@ -780,7 +677,7 @@
                                            [item setObject:[userInfo nickname] forKey:@"username"];
                                            NSString* temp =[userInfo uid];
                                            NSLog(@"uid = %@", temp);
-                                           [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/authListCache.plist",NSTemporaryDirectory()] atomically:YES];
+                                           [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()] atomically:YES];
                                            
                                            //取消另一个登录
                                            NSArray *shareTypes = [ShareSDK connectedPlatformTypes];
@@ -789,13 +686,10 @@
                                                NSNumber *typeNum = [shareTypes objectAtIndex:i];
                                                ShareType typeAll = (ShareType)[typeNum integerValue];
                                                
-                                               //当前授权的
-                                               //NSMutableDictionary *item = [_shareTypeArray objectAtIndex:index];
-                                               //ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
                                                if (typeAll!=[userInfo type]) {
                                                    //取消授权
                                                    [ShareSDK cancelAuthWithType:typeAll];
-                                                   //[self.tableView reloadData];
+
                                                }
                                                
                                            }
@@ -803,9 +697,6 @@
                                        }
                                        NSLog(@"%ld:%@",(long)[error errorCode], [error errorDescription]);
 
-                                       
-
-                                       
                                        [self.tableView reloadData];
                                    }];
             
@@ -843,7 +734,96 @@
     
 }
 
+#pragma mark - shareSDK 回调
+//增加用户信息时，才会调用，删除鉴权时不会
+- (void)userInfoUpdateHandler:(NSNotification *)notif
+{
+    NSInteger plat = [[[notif userInfo] objectForKey:SSK_PLAT] integerValue];
+    id<ISSPlatformUser> userInfo = [[notif userInfo] objectForKey:SSK_USER_INFO];
+    
+    for (int i = 0; i < [_shareTypeArray count]; i++)
+    {
+        NSMutableDictionary *item = [_shareTypeArray objectAtIndex:i];
+        ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
+        if (type == plat)
+        {
+            [item setObject:[userInfo nickname] forKey:@"username"];
+        }else
+        {
+            //取消另一个授权，保持只有一个
+            [ShareSDK cancelAuthWithType:type];
 
+        }
+        [self.tableView reloadData];
+
+    }
+    
+    
+    //存用户授权信息
+    NSMutableArray *authList = [NSMutableArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()]];
+    if (authList == nil)
+    {
+        authList = [NSMutableArray array];
+    }
+    
+    NSString *platName = nil;
+    //NSInteger plat = [[[notif userInfo] objectForKey:SSK_PLAT] integerValue];
+    switch (plat)
+    {
+        case ShareTypeSinaWeibo:
+            platName = NSLocalizedString(@"TEXT_SINA_WEIBO", @"新浪微博");
+            break;
+        case ShareTypeTencentWeibo:
+            platName = NSLocalizedString(@"TEXT_TENCENT_WEIBO", @"腾讯微博");
+            break;
+            
+        default:
+            platName = NSLocalizedString(@"TEXT_UNKNOWN", @"未知");
+    }
+    
+    //id<ISSPlatformUser> userInfo = [[notif userInfo] objectForKey:SSK_USER_INFO];
+    BOOL hasExists = NO;
+    for (int i = 0; i < [authList count]; i++)
+    {
+        NSMutableDictionary *item = [authList objectAtIndex:i];
+        ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
+        if (type == plat)
+        {
+            [item setObject:[userInfo nickname] forKey:@"username"];
+            hasExists = YES;
+            break;
+        }
+    }
+    
+    if (!hasExists)
+    {
+        NSDictionary *newItem = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                 platName,
+                                 @"title",
+                                 [NSNumber numberWithInteger:plat],
+                                 @"type",
+                                 [userInfo nickname],
+                                 @"username",
+                                 nil];
+        [authList addObject:newItem];
+    }
+    
+    [authList writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()] atomically:YES];
+    
+    
+    //更新本地用户信息
+    [self.user updateSns_ID:[userInfo uid] PlateType:[userInfo type]];
+    [self.user updateuserName:[userInfo nickname]];
+    
+    NSURL *portraitUrl = [NSURL URLWithString:[userInfo profileImage]];
+    UIImage *protraitImg = [UIImage imageWithData:[NSData dataWithContentsOfURL:portraitUrl]];
+    [self.user updateUserHeaderImage:protraitImg];
+    //刷新头像
+    [self setTableHeaderView];
+    
+    [self.tableView reloadData];
+
+}
 
 
 #pragma mark - image scale utility

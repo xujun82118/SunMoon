@@ -40,10 +40,10 @@ static GuidController *sharedGuidCtl;
 
 - (BOOL)fristlyOpenGuidCtl {
 
-    //test
-    //return YES;
+    BOOL Rtemp = [_guidInfo boolForKey:KEY_GUID_FIRSTLY_OPEN];
+
+    return Rtemp;
     
-    return [_guidInfo boolForKey:KEY_GUID_FIRSTLY_OPEN];
 
 }
 

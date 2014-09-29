@@ -73,9 +73,11 @@ typedef enum {
 @property (nonatomic, ) NSInteger endHeight ;
 
 
--(instancetype) InitCustomAlertViewWithSuperView:(UIView*) superView  bkImageName:(NSString*) bkImage yesBtnImageName:(NSString*) btnImage  posionShowMode:(CustomAlertShowMode) mode;
+-(instancetype) InitCustomAlertViewWithSuperView:(UIView*) superView  taget:(id) superSelf  bkImageName:(NSString*) bkImage yesBtnImageName:(NSString*) btnImage  posionShowMode:(CustomAlertShowMode) mode;
 
 -(void) RunCumstomAlert;
+
+- (void)yesButtonHandler:(id)sender;
 
 @end
 
