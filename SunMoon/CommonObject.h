@@ -17,10 +17,10 @@
 #import <Foundation/Foundation.h>
 #import "UserDB.h"
 
+//常用
+//[NSString stringWithFormat:(@"%@光养育了%d小时, 每3个小时奖励1个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
 
 
-
-#define  FIRST_START_OPEN_GUID  @"isFirstTimeUseAndOpenGuid"
 
 #if __IPHONE_6_0 // iOS6 and later
 
@@ -97,6 +97,16 @@ typedef enum
     
 }NetConnectType;
 
+typedef enum
+{
+    iphone4_4s = 0,
+    iphone5_5s = 1,
+    iphone6 = 2,
+    iphone6Pluse = 3,
+    iphoneOther = 4
+    
+}DeviceTypeVersion;
+
 //阳光，月光时间
 #define SUN_TIME_MIN  6
 #define SUN_TIME_MAX  18
@@ -114,6 +124,10 @@ typedef enum
 //阳光，月光标识
 #define IS_SUN_TIME 1
 #define IS_MOON_TIME 2
+
+
+//无穷大的数
+#define BIGGEST_NUMBER 1
 
 //用户基础信息
 #define KEY_USER_ID @"userID"
@@ -213,6 +227,7 @@ typedef enum
 
 
 //tag 定义
+#define  TAG_HOME_MAIN_VIEW 90
 #define  TAG_CAMERA_DECLEAR_LABEL 91
 #define  TAG_EDITE_IMAGE_VIEW  92
 #define  TAG_CAMERA_OLD_IMAGE_VIEW 93
@@ -228,6 +243,8 @@ typedef enum
 #define  TAG_EDITE_PHOTO_SCROLL_VIEW 109
 #define  TAG_EDITE_PHOTO_SCROLL_LABEL 200 //200到215
 #define  TAG_CUSTOM_ALER_BTN  250   //自定义aler的BTN
+#define  TAG_BRING_LING_BTN   251
+#define  TAG_INTO_CAMERA_BTN   252
 
 #define  TAG_LIGHT_USER_HEADER 300 //300到307
 #define  TAG_LIGHT_TRACE 1000 //1000以后
@@ -260,8 +277,14 @@ typedef enum
 
 +(void)showActionSheetOptiontitleMsg:(NSString *)title ShowInView:(UIView*)view CancelMsg:(NSString*) cancelMsg  DelegateObject:(id) delegateObject Option:(NSString*)option,...;
 
-+(void) showCustomYesAlertSuperView:(id) sViewID  AlertMsg:(NSString*) msg;
+//+(void) showCustomYesAlertSuperView:(id) sViewID  AlertMsg:(NSString*) msg;
 
 + (NetConnectType) CheckConnectedToNetwork;
+
++ (DeviceTypeVersion) CheckDeviceTypeVersion;
+
++ (void)DisableUserInteractionInView:(UIView *)superView exceptViewWithTag:(NSInteger)enableViewTag;
++ (void)EnableUserInteractionInView:(UIView *)superView;
+
 
 @end

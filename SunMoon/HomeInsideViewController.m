@@ -157,9 +157,10 @@
 
     
     
-    //增加scroll图片,不能放在viewDisload中，会产生autolayout错误
-    [self addScrollUserImageSunReFresh:NO];
-    [self addScrollUserImageMoonReFresh:NO];
+    //增加scroll图片,不能放在viewDidload中，会产生autolayout错误
+    //临时解决方法，在viewDidAppear中重新布局MOON的位置
+    //[self addScrollUserImageSunReFresh:NO];
+    //[self addScrollUserImageMoonReFresh:NO];
 
 
 }
@@ -172,9 +173,39 @@
 
 -(void) addScrollUserImageSunReFresh:(BOOL) isFresh
 {
+
     NSMutableArray *setSun = [[NSMutableArray alloc] init];
+    
+    //前nullCount为空，第nullCount+1为中间的位置，此处插入第一张相片,全屏显示fullCount张
+    NSInteger nullCount;
+    NSInteger fullCount;
+    DeviceTypeVersion tempType = [CommonObject CheckDeviceTypeVersion];
+    switch (tempType) {
+        case iphone4_4s:
+            nullCount = 4;
+            fullCount = 8;
+            break;
+        case iphone5_5s:
+            nullCount = 2;
+            fullCount = 5;
+            break;
+        case iphone6:
+            nullCount = 2;
+            fullCount = 5;
+            break;
+        case iphone6Pluse:
+            nullCount = 3;
+            fullCount = 6;
+            break;
+            
+        default:
+            nullCount = 4;
+            fullCount = 9;
+            break;
+    }
+    
     //前4个为空，第5个为最新日期的照片
-    for (int i = 0; i<4; i++) {
+    for (int i = 0; i<nullCount; i++) {
         [setSun addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                            [UIImage imageNamed:@"null-相片.png"],@"image_data",
                            @"",@"image_name_time",
@@ -211,12 +242,12 @@
     }
    
     //第一次起动初始化时照片为空，前端4张固定为空
-    NSInteger realCount = [setSun count] + 4;
+    NSInteger realCount = [setSun count] + nullCount;
 
     
     //全屏相示8张相片，小于8张的用默认图片填充
-    if (realCount<8) {
-        for (int i = realCount; i<8; i++) {
+    if (realCount<fullCount) {
+        for (int i = realCount; i<fullCount; i++) {
             [setSun addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                [UIImage imageNamed:@"null-相片.png"],@"image_data",
                                @"",@"image_name_time",
@@ -234,13 +265,13 @@
     
     //取得时间轴的相对位置
     UIImageView* scrollPosition = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_SUN];
-    //如果时间轴高度小于相片的高度，则缩小相片,使时间轴包进相片
-    //    if (scrollPosition.frame.size.height<=size.height) {
-    //        float rat = size.width/size.height;
-    //        size.height = scrollPosition.frame.size.height -5;
-    //        size.width = size.height*rat;
-    //
-    //    }
+    //如果时间轴高度小于相片的高度，则缩小相片,使时间轴包进相片,此时的frame还未autolayout
+//    if (scrollPosition.frame.size.height<=size.height) {
+//        float rat = size.width/size.height;
+//        size.height = scrollPosition.frame.size.height -5;
+//        size.width = size.height*rat;
+//
+//    }
     
 
 
@@ -252,25 +283,16 @@
         sunWordShow.text = @"";
 
     }
-    
-    if (!imageScrollSun) {
 
-
-    }
-    imageScrollSun = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition.frame.origin.y-15, SCREEN_WIDTH, 100)];
+    imageScrollSun = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition.frame.origin.y-10, SCREEN_WIDTH, scrollPosition.frame.size.height+20)];
     [imageScrollSun setItemSize:size];
-    [imageScrollSun setHeightOffset:30];
+    [imageScrollSun setHeightOffset:15];//30
     [imageScrollSun setPositionRatio:2];
     [imageScrollSun setAlphaOfobjs:0.5];
     [imageScrollSun setMode:IS_SUN_TIME];
     [imageScrollSun setScrollDelegate:self];
     [imageScrollSun setImageAry:setSun];
     [self.view addSubview:imageScrollSun];
-
-    if (isFresh) {
-
-
-    }
     
 
 }
@@ -280,7 +302,42 @@
 {
     NSMutableArray *setMoon = [[NSMutableArray alloc] init];
     //前4个为空，第5个为最新日期的照片
-    for (int i = 0; i<4; i++) {
+    //前nullCount为空，第nullCount+1为中间的位置，此处插入第一张相片,全屏显示fullCount张
+    NSInteger nullCount;
+    NSInteger fullCount;
+    /*
+    iphone6, 6+: 第3张在中间， 共5张
+    iphone6+: 第3张在中间， 共5张
+    iphone5s,5: 第4张在中间， 共6张
+    iphone4,4s: 第5张在中间， 共9张
+     */
+    DeviceTypeVersion tempType = [CommonObject CheckDeviceTypeVersion];
+    switch (tempType) {
+        case iphone4_4s:
+            nullCount = 3;
+            fullCount = 8;
+            break;
+        case iphone5_5s:
+            nullCount = 2;
+            fullCount = 5;
+            break;
+        case iphone6:
+            nullCount = 2;
+            fullCount = 5;
+            break;
+        case iphone6Pluse:
+            nullCount = 3;
+            fullCount = 6;
+            break;
+            
+        default:
+            nullCount = 4;
+            fullCount = 9;
+            break;
+    }
+    
+    
+    for (int i = 0; i<nullCount; i++) {
         [setMoon addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                            [UIImage imageNamed:@"null-相片.png"],@"image_data",
                            @"",@"image_name_time",
@@ -312,12 +369,12 @@
         
     }
     
-    NSInteger realCount = [setMoon count];
+    NSInteger realCount = [setMoon count]+ nullCount;
 
     
-    //全屏相示8张相片，小于8张的用默认图片填充
-    if (realCount<8) {
-        for (int i = realCount; i<8; i++) {
+    //全屏相示fullCount张相片，小于fullCount张的用默认图片填充
+    if (realCount<fullCount) {
+        for (int i = realCount; i<fullCount; i++) {
             [setMoon addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                 [UIImage imageNamed:@"null-相片.png"],@"image_data",
                                 @"",@"image_name_time",
@@ -342,14 +399,13 @@
         
     }
     
-    UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
-    //NSLog(@"1---%f,%f,%f,%f", scrollPosition1.frame.origin.x,scrollPosition1.frame.origin.y,scrollPosition1.frame.size.width,scrollPosition1.frame.size.height);
-    if (!imageScrollMoon) {
-    }
-    imageScrollMoon = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100)];
+    UIImageView* scrollPosition = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
+    
+    
+    imageScrollMoon = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition.frame.origin.y-10, SCREEN_WIDTH, scrollPosition.frame.size.height+20)];
     [imageScrollMoon setImageAry:setMoon];
     [imageScrollMoon setItemSize:size];
-    [imageScrollMoon setHeightOffset:30];
+    [imageScrollMoon setHeightOffset:15];
     [imageScrollMoon setPositionRatio:2];
     [imageScrollMoon setAlphaOfobjs:0.5];
     [imageScrollMoon setMode:IS_MOON_TIME];
@@ -357,7 +413,7 @@
     //[imageScrollMoon setBackgroundColor:[UIColor redColor]];
     [self.view addSubview:imageScrollMoon];
 
-    imageScrollMoon.hidden = YES;
+    //imageScrollMoon.hidden = YES;
     
     
     
@@ -448,46 +504,20 @@
 {
     [super viewDidAppear:animated];
     
-
     
-    UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
-    imageScrollMoon.frame = CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100);
-    imageScrollMoon.hidden = NO;
+    //test,暂时成功，可能会有别的问题，时，需开启以下注释
+    [self addScrollUserImageSunReFresh:YES];
+    [self addScrollUserImageMoonReFresh:YES];
 
-   // NSLog(@"2---%f,%f,%f,%f", scrollPosition1.frame.origin.x,scrollPosition1.frame.origin.y,scrollPosition1.frame.size.width,scrollPosition1.frame.size.height);
-    
-//    
-//    UIImageView* scrollPosition = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_SUN];
-//    imageScrollSun.frame =CGRectMake(0, scrollPosition.frame.origin.y-15, SCREEN_WIDTH, 100);
-//    [self.view addSubview:imageScrollSun];
-//    
+
+    //重新布局MOON的位置
 //    UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
-//    imageScrollMoon.frame =CGRectMake(0, scrollPosition1.frame.origin.y-15, SCREEN_WIDTH, 100);
-//    [self.view addSubview:imageScrollMoon];
-
-    
-    //高亮相框移动到最上层
-//    UIImageView* highlightSun = (UIImageView*)[self.view viewWithTag:TAG_IMAGE_HIGH_LIGHT_SUN];
-//    highlightSun.contentMode = UIViewContentModeRedraw;
-//    [highlightSun setFrame:CGRectMake(0,30,40,40)];
-//    [self.view bringSubviewToFront:highlightSun];
-    
-//    UIImageView *highlightSun = [[UIImageView alloc] initWithFrame:CGRectMake(0,30,40,40)];
-//    highlightSun.image = [UIImage imageNamed:@"相框.png"];
-//    [self.view addSubview:highlightSun];
-    
-    
+//    imageScrollMoon.frame = CGRectMake(0, scrollPosition1.frame.origin.y-10, SCREEN_WIDTH, scrollPosition1.frame.size.height+20);
+//    imageScrollMoon.hidden = NO;
 
     
 }
 
-//- (void)updateViewConstraints
-//{
-//    [super updateViewConstraints];
-//    
-//    
-
-//}
 
 - (void)viewDidLayoutSubviews
 {
@@ -621,24 +651,18 @@
     UIImageView* imageData = [currentSelectDataMoon objectForKey:@"image_data"];
     NSString* imageSentence = [currentSelectDataMoon objectForKey:@"image_sentence"];
     
-    if ([imageSentence isEqual:@""]) {
-        return;
-    }
-    
     ShareByShareSDR* share = [ShareByShareSDR alloc];
     share.shareTitle = @"天天更美丽";
     share.shareImage =imageData.image;
     share.shareMsg = imageSentence;
     share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
     share.shareMsgPreFix = @"晚安，送上我的月光语录：";
-    share.waterImage = [UIImage imageNamed:@"waterlogo.png"];
-    NSInteger x = share.shareImage.size.width/4;
-    NSInteger y = share.shareImage.size.width*3/4;
-    NSInteger w = share.shareImage.size.width/5;
-    NSInteger h = share.shareImage.size.width/5*(share.waterImage.size.height/share.waterImage.size.width);
-    share.waterRect = CGRectMake(x,y,w,h);
-
-    [share addWater];
+    share.waterImage = [UIImage imageNamed:@"water-moon.png"];
+    share.timeString = moonTimeText.text;
+    share.lightCount = moonValueStatic.text;
+    share.senttence = moonWordShow.text;
+    
+    [self ShareImageWitheWater:share.shareImage WaterImage:share.waterImage shareObject:share];
     
     [share shareImageNews];
     
@@ -670,18 +694,57 @@
      share.shareMsg = imageSentence;
      share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
      share.shareMsgPreFix = @"早啊，送上我的阳光语录：";
-     share.waterImage = [UIImage imageNamed:@"waterlogo.png"];
-     NSInteger x = share.shareImage.size.width/4;
-     NSInteger y = share.shareImage.size.width*3/4;
-     NSInteger w = share.shareImage.size.width/5;
-     NSInteger h = share.shareImage.size.width/5*(share.waterImage.size.height/share.waterImage.size.width);
-     share.waterRect = CGRectMake(x,y,w,h);
+     share.waterImage = [UIImage imageNamed:@"water-sun.png"];
+     share.timeString = sunTimeText.text;
+     share.lightCount = sunValueStatic.text;
+     share.senttence = sunWordShow.text;
      
-     [share addWater];
+    [self ShareImageWitheWater:share.shareImage WaterImage:share.waterImage shareObject:share];
      
      [share shareImageNews];
      
 }
+
+
+//增加水印
+-(void) ShareImageWitheWater:(UIImage*) shareImage  WaterImage:(UIImage*)waterImage  shareObject:(ShareByShareSDR*) share
+{
+    
+    //计算水印位置
+    CGFloat w = shareImage.size.width;
+    CGFloat h = shareImage.size.width*(waterImage.size.height/waterImage.size.width);
+    CGFloat x = 0;
+    CGFloat y = shareImage.size.height-h;
+    share.waterRect = CGRectMake(x,y,w,h);
+    [share addWater];
+    
+    //计算水印日期位置
+    CGFloat w1 = 30;
+    CGFloat h1 = 30;
+    CGFloat x1 = 40;
+    CGFloat y1 = share.shareImage.size.height -20 -h1/2;
+    share.textRect = CGRectMake(x1,y1,w1,h1);
+    [share addTimeText];
+    
+    //计算水印光个数的位置
+    CGFloat w2 = 30;
+    CGFloat h2 = 30;
+    CGFloat x2 = 25;
+    CGFloat y2 = y+30;
+    share.textRect = CGRectMake(x2,y2,w2,h2);
+    [share addLightCounText];
+    
+    //计算水印语录的位置
+    CGFloat w3 = (share.shareImage.size.width);
+    CGFloat h3 = 30;
+    CGFloat x3 = (share.shareImage.size.width)/2-w3/2;
+    CGFloat y3 = share.shareImage.size.height -25 -h3/2;
+    share.textRect = CGRectMake(x3,y3,w3,h3);
+    [share addSentenceText];
+    
+    
+}
+
 
 //增加用户信息时，才会调用，删除鉴权时不会
 - (void)userInfoUpdateHandler:(NSNotification *)notif

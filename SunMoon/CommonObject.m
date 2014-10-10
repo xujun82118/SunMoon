@@ -215,4 +215,70 @@
     return kind;
 }
 
++ (DeviceTypeVersion) CheckDeviceTypeVersion
+{
+    //6: 375*667
+    //6+:414*736
+    
+    if (SCREEN_HEIGHT == 480) {
+        
+        return iphone4_4s;
+        
+    }else if (SCREEN_HEIGHT == 568)
+    {
+        return iphone5_5s;
+        
+    }else if(SCREEN_HEIGHT == 667)
+    {
+        return iphone6;
+        
+    }else if(SCREEN_HEIGHT == 736)
+    {
+        return iphone6Pluse;
+    }else
+    {
+        return iphoneOther;
+    }
+    
+}
+
+//BIGGEST_NUMBER:禁止所有的
+//gustureRecogernaize不能禁止
++ (void)DisableUserInteractionInView:(UIView *)superView exceptViewWithTag:(NSInteger)enableViewTag
+{
+    
+    for (NSUInteger i = 0; i < [superView.subviews count]; i++) {
+        UIView *subView = [superView.subviews objectAtIndex:i];
+        if (enableViewTag == BIGGEST_NUMBER) {
+            [subView setUserInteractionEnabled:NO];
+
+        }else
+        {
+            if (subView.tag != enableViewTag) {
+                [subView setUserInteractionEnabled:NO];
+                //NSLog(@"Disable userinteraction with view tag: %d of view:%@", subView.tag, [[subView class] description]);
+            }else
+            {
+                [subView setUserInteractionEnabled:YES];
+                //NSLog(@"Enable userinteraction with view tag: %d of view:%@", subView.tag, [[subView class] description]);
+                
+            }
+        }
+        
+
+    }
+
+    
+}
+
++ (void)EnableUserInteractionInView:(UIView *)superView
+{
+    
+    for (NSUInteger i = 0; i < [superView.subviews count]; i++) {
+        UIView *subView = [superView.subviews objectAtIndex:i];
+        [subView setUserInteractionEnabled:YES];
+    }
+
+}
+
 @end

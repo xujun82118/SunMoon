@@ -77,8 +77,8 @@
     comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:selected];
     NSInteger hour = [comps hour];
     NSInteger miniute = [comps minute];
-    NSString *message = [[NSString alloc] initWithFormat:
-                         @"%d:%d", hour, miniute];
+    //NSString *message = [[NSString alloc] initWithFormat:
+     //                    @"%d:%d", hour, miniute];
     
     NSDateComponents *components = [[NSDateComponents alloc] init];
     

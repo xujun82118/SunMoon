@@ -21,11 +21,21 @@
 @property (nonatomic, copy      ) NSString * shareUrl;
 
 
+@property (nonatomic, copy      ) NSString * timeString;
+@property (nonatomic, copy      ) NSString * lightCount;
+@property (nonatomic, copy      ) NSString * senttence;
+
+
+
+
 
 @property (nonatomic, copy      ) UIImage * logImage;
 @property (nonatomic, copy      ) UIImage * waterImage;
+//相对于分享图片的frame
 @property (nonatomic      ) CGRect  logRect;
 @property (nonatomic      ) CGRect  waterRect;
+@property (nonatomic      ) CGRect  textRect;
+
 
 
 
@@ -38,7 +48,9 @@
 
 -(void) addWater;
 -(void) addLog;
-
+-(void) addTimeText;
+-(void) addLightCounText;
+-(void) addSentenceText;
 
 
 @end

@@ -30,7 +30,9 @@
 
 
     UIButton *cameraBtn;
+    CGRect cameraBtnFrame;
     UIButton *voicePressedBtn;
+    CGRect  voicePressedBtnFrame;
     UIButton *mergedBtn;
     
     UIButton *delayBtn;
@@ -119,10 +121,7 @@
     addVauleAnimation.aminationCustomDelegate =  self;
     isHaveAddValue = NO;
     isOverMaxVoiceValue = NO;
-    
 
-    
-    
     if(self.sourceType == UIImagePickerControllerSourceTypeCamera){
         
         [self setShowsCameraControls:NO];
@@ -237,9 +236,16 @@
 //        giveMaxView.hidden = YES;
 //        [PLCameraView addSubview:giveMaxView];
 
+        //以下等分6份，间隔为10，每个控件两边为5,overlyView要比everyW高10
+        NSInteger everyDis = 5;
+        NSInteger toBorder = 5;
+        NSInteger everyW = (SCREEN_WIDTH-toBorder*2)/6-5*2;
+        //****************************************************************************
+        //*****||-toBorder-|everyDis,everyW,everyDis|everyDis,everyW,everyDis|..*6...|-toBorder-||
+        //****************************************************************************
         
         NSInteger overlyViewWidth = SCREEN_WIDTH;
-        NSInteger overlyViewHeigth =70;
+        NSInteger overlyViewHeigth =everyW+10;
         overlyView = [[UIView alloc] initWithFrame:CGRectMake(0, ScreenHeight - 70, overlyViewWidth, overlyViewHeigth)];
         [overlyView setBackgroundColor:[UIColor clearColor]];
         
@@ -298,7 +304,7 @@
         NSInteger sayViewWidth = 150;
         NSInteger sayViewHeigth =150;
         sayView = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2-sayViewWidth/2, sentenceView.frame.origin.y-sayViewHeigth-5, sayViewWidth, sayViewHeigth)];
-        sayView.image = [UIImage imageNamed:@"说话.png"];
+        sayView.image = [UIImage imageNamed:@"说话-1.png"];
         sayView.hidden = YES;
         sayView.alpha = 0.8;
         [PLCameraView addSubview:sayView];
@@ -317,18 +323,21 @@
         //voiceValueLabel.adjustsFontSizeToFitWidth = YES;
         [PLCameraView addSubview:voiceValueLabel];
         
+        
+        
+
         //返回按钮
-        NSInteger backBtnImageWidth = 40;
-        NSInteger backBtnImageHeigth =30;
+        NSInteger backBtnImageWidth = everyW;
+        NSInteger backBtnImageHeigth =backBtnImageWidth/4*3;
         UIImage *backImage = [UIImage imageNamed:@"返回.png"];
-        UIButton *backBtn = [[UIButton alloc] initWithFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, overlyViewBk.center.y-backBtnImageHeigth/2, backBtnImageWidth, backBtnImageHeigth)];
+        UIButton *backBtn = [[UIButton alloc] initWithFrame:CGRectMake(toBorder+everyDis, overlyViewBk.center.y-backBtnImageHeigth/2, backBtnImageWidth, backBtnImageHeigth)];
         [backBtn setImage: backImage forState:UIControlStateNormal];
         [backBtn addTarget:self action:@selector(closeView) forControlEvents:UIControlEventTouchUpInside];
         [overlyView addSubview:backBtn];
         
         
         //2秒延迟开关
-        NSInteger delayBtnWidth = overlyViewBKHeigth-15;
+        NSInteger delayBtnWidth = everyW;
         NSInteger delayBtnHeigth =delayBtnWidth;
         UIImage *delayBtnImage;
         if (self.userInfo.delayTakePhotoCtl) {
@@ -342,7 +351,7 @@
         delayBtn = [UIButton buttonWithType: UIButtonTypeCustom];
         [delayBtn setImage:delayBtnImage forState:UIControlStateNormal];
         //[delayBtn setFrame:CGRectMake(20, overlyView.frame.origin.y-delayBtnHeigth-5, delayBtnWidth, delayBtnHeigth)];
-        [delayBtn setFrame:CGRectMake(backBtn.frame.origin.x+backBtnImageWidth+3, overlyViewBk.center.y-delayBtnHeigth/2, delayBtnWidth, delayBtnHeigth)];
+        [delayBtn setFrame:CGRectMake(backBtn.frame.origin.x+backBtnImageWidth+everyDis*2, overlyViewBk.center.y-delayBtnHeigth/2, delayBtnWidth, delayBtnHeigth)];
         [delayBtn addTarget:self action:@selector(delayBtnChangeHandler:) forControlEvents:UIControlEventTouchUpInside];
         //[PLCameraView addSubview:delayBtn];
         [overlyView addSubview:delayBtn];
@@ -365,10 +374,12 @@
 
 
         //按住说语录按钮
-        NSInteger voicePressedWidth = overlyViewBKHeigth-15;
+        NSInteger voicePressedWidth = everyW;
         NSInteger voicePressedHeigth =voicePressedWidth;
         UIImage *voicePressedImage = [UIImage imageNamed:@"Voice.png"];
-        voicePressedBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2-voicePressedWidth-3, overlyViewBk.center.y-voicePressedHeigth/2, voicePressedWidth, voicePressedHeigth)];
+        //voicePressedBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2-voicePressedWidth-3, overlyViewBk.center.y-voicePressedHeigth/2, voicePressedWidth, voicePressedHeigth)];
+        voicePressedBtnFrame = CGRectMake(delayBtn.frame.origin.x+delayBtnWidth+everyDis*2, overlyViewBk.center.y-voicePressedHeigth/2, voicePressedWidth, voicePressedHeigth);
+        voicePressedBtn = [[UIButton alloc] initWithFrame:voicePressedBtnFrame];
         [voicePressedBtn setImage:voicePressedImage forState:UIControlStateNormal];
         UILongPressGestureRecognizer *gesture = [[UILongPressGestureRecognizer alloc]
                                                  initWithTarget:self
@@ -379,16 +390,17 @@
 
         
         //拍照按钮
-        NSInteger camerImageWidth = overlyViewBKHeigth-15;
+        NSInteger camerImageWidth = everyW;
         NSInteger camerImageHeigth =camerImageWidth;
         UIImage *camerImage = [UIImage imageNamed:@"拍照.png"];
-        cameraBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2+3, overlyViewBk.center.y-camerImageHeigth/2, camerImageWidth, camerImageHeigth)];
+        cameraBtnFrame =CGRectMake(voicePressedBtn.frame.origin.x+voicePressedWidth+everyDis*2, overlyViewBk.center.y-camerImageHeigth/2, camerImageWidth, camerImageHeigth);
+        cameraBtn = [[UIButton alloc]initWithFrame:cameraBtnFrame];
         [cameraBtn setImage:camerImage forState:UIControlStateNormal];
         [cameraBtn addTarget:self action:@selector(takePicture) forControlEvents:UIControlEventTouchUpInside];
         [overlyView addSubview:cameraBtn];
         
         //回放语音按钮
-        NSInteger voiceReplayWidth = overlyViewBKHeigth-15;
+        NSInteger voiceReplayWidth = everyW;
         NSInteger voiceReplayHeigth =voiceReplayWidth;
         UIImage *voiceReplayImage;
         if (![pressedVoice checkVoiceFile])
@@ -401,7 +413,7 @@
             
         }
         voiceReplayBtn = [[UIButton alloc] initWithFrame:
-                          CGRectMake(cameraBtn.frame.origin.x+delayBtnWidth+10,overlyViewBk.center.y-voiceReplayHeigth/2,voiceReplayWidth, voiceReplayHeigth)];
+                          CGRectMake(cameraBtn.frame.origin.x+camerImageWidth+everyDis*2,overlyViewBk.center.y-voiceReplayHeigth/2,voiceReplayWidth, voiceReplayHeigth)];
         [voiceReplayBtn setImage:voiceReplayImage forState:UIControlStateNormal];
         [voiceReplayBtn setImage:[UIImage imageNamed:@"停止放音-白.png"] forState:UIControlStateSelected];
         [voiceReplayBtn addTarget:self action:@selector(rePlayMyVoice) forControlEvents:UIControlEventTouchUpInside];
@@ -410,7 +422,7 @@
         
         
         //合并拍照和语音后的按钮
-        NSInteger mergedBtnWidth = overlyViewBKHeigth-15;
+        NSInteger mergedBtnWidth = everyW;
         NSInteger mergedBtnHeigth =mergedBtnWidth;
         UIImage *mergedBtnImage = [UIImage imageNamed:@"2s.png"];
         mergedBtn = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth/2-mergedBtnWidth/2, overlyViewBk.center.y-mergedBtnHeigth/2, mergedBtnWidth, mergedBtnHeigth)];
@@ -429,10 +441,10 @@
         
         
         //打开相册按钮
-        NSInteger albumImageWidth = 25;
-        NSInteger albumImageHeigth =25;
+        NSInteger albumImageWidth = everyW;
+        NSInteger albumImageHeigth =albumImageWidth;
         UIImage *albumImage = [UIImage imageNamed:@"相册.png"];
-        UIButton *albumImageBtn = [[UIButton alloc] initWithFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X-albumImageWidth-15, overlyViewBk.center.y-albumImageHeigth/2, albumImageWidth, albumImageHeigth)];
+        UIButton *albumImageBtn = [[UIButton alloc] initWithFrame:CGRectMake(voiceReplayBtn.frame.origin.x+voiceReplayWidth+everyDis*2, overlyViewBk.center.y-albumImageHeigth/2, albumImageWidth, albumImageHeigth)];
         [albumImageBtn setImage:albumImage forState:UIControlStateNormal];
         [albumImageBtn addTarget:self action:@selector(showPhoto) forControlEvents:UIControlEventTouchUpInside];
         
@@ -524,12 +536,12 @@
         [UIView setAnimationDuration:1.0f];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(deMergeAnimationDidStop:finished:context:)];
-        [cameraBtn setFrame:CGRectMake(ScreenWidth/2+3, cameraBtn.frame.origin.y,cameraBtn.frame.size.width,cameraBtn.frame.size.height)];
+        [cameraBtn setFrame:cameraBtnFrame];
         cameraBtn.opaque = YES;
         cameraBtn.alpha = 1.0;
         cameraBtn.hidden = NO;
         
-        [voicePressedBtn setFrame:CGRectMake(ScreenWidth/2-voicePressedBtn.frame.size.width-3,voicePressedBtn.frame.origin.y,voicePressedBtn.frame.size.width,voicePressedBtn.frame.size.height)];
+        [voicePressedBtn setFrame:voicePressedBtnFrame];
         voicePressedBtn.opaque = YES;
         voicePressedBtn.alpha = 1.0;
         voicePressedBtn.hidden = NO;
@@ -705,7 +717,7 @@
         if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
             if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"阳光时间来过了，要每天认真说一次就好呢"];
+                [self showCustomYesAlertSuperView:@"阳光时间来过了，要每天认真说一次就好呢" AlertKey:@"reminderOnce"];
                 
                 [[GuidController sharedSingleUserInfo] updateGuidHaveTakePhoto:YES];
             }
@@ -713,7 +725,7 @@
         {
             if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"月光时间来过了，要每天认真说一次就好呢"];
+                [self showCustomYesAlertSuperView:@"月光时间来过了，要每天认真说一次就好呢" AlertKey:@"reminderOnce"];
 
                 [[GuidController sharedSingleUserInfo] updateGuidHaveTakePhoto:YES];
 
@@ -747,7 +759,7 @@
     //[super dealloc];
 }
 
-#pragma mark - pitchDelegate
+#pragma mark - 音量动画设置，pitchDelegate
 
 - (void)setNewPith:(float)pitchValue
 {
@@ -764,6 +776,20 @@
     if (newPitchValue>300) {
         newPitchValue = 300;
     }
+    
+    //变换音量动画
+    if (newPitchValue<100 && newPitchValue>=50) {
+        sayView.image = [UIImage imageNamed:@"说话-1.png"];
+    }else if (newPitchValue<200 && newPitchValue>=100)
+    {
+        sayView.image = [UIImage imageNamed:@"说话-2.png"];
+
+    }else
+    {
+        sayView.image = [UIImage imageNamed:@"说话-3.png"];
+
+    }
+    
     
     //需大于原高度,需两个动画都结束
     if (newPitchValue>srcVoiceValueHeight && voiceAnimationLock == NO /*&&voiceBackAnimationLock == NO*/)
@@ -1194,10 +1220,10 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
 
 
 #pragma mark - Customer alert
--(void) showCustomYesAlertSuperView:(NSString*) msg
+-(void) showCustomYesAlertSuperView:(NSString*) msg AlertKey:alertKey
 {
     
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet AlertKey:alertKey];
     [customAlertAutoDisYes setStartCenterPoint:self.view.center];
     [customAlertAutoDisYes setEndCenterPoint:self.view.center];
     [customAlertAutoDisYes setStartAlpha:0.1];
@@ -1225,7 +1251,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
 
 -(void) showCustomDelayAlertBottom:(NSString*) msg
 {
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet];
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
     [customAlertAutoDis setStartHeight:0];
     [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
     [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
@@ -1242,7 +1268,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
 }
 
 #pragma mark - CustomAlertDelegate
-- (void) CustomAlertOkReturn
+- (void) CustomAlertOkAnimationFinish:(NSString*) alertKey
 {
     NSLog(@"custom aler ok return");
 }

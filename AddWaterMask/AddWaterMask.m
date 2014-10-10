@@ -15,7 +15,7 @@
 
 @implementation AddWaterMask
 
-@synthesize waterRect, logRect, textRect;
+@synthesize waterRect, logRect, textRect,textFrontSize;
 
 
 /**
@@ -26,23 +26,34 @@
  */
 -(UIImage *)addText:(UIImage *)img text:(NSString *)text1
 {
-    int w = img.size.width;
-    int h = img.size.height;
+    CGFloat w = img.size.width;
+    CGFloat h = img.size.height;
     UIGraphicsBeginImageContext(img.size);
     [[UIColor whiteColor] set];
     [img drawInRect:CGRectMake(0, 0, w, h)];
     //[text1 drawInRect:CGRectMake(10, 55, 130, 80) withFont:[UIFont systemFontOfSize:18]];
     
-    UIFont *font = [UIFont fontWithName:@"Palatino-Roman" size:14.0];
-    NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     font, NSFontAttributeName,
-                                     [UIColor blueColor],NSForegroundColorAttributeName,
-                                     [NSNumber numberWithFloat:1.0],
-                                     NSBaselineOffsetAttributeName, nil];
+    //UIFont *font = [UIFont fontWithName:@"Palatino-Roman" size:14.0];
+//    //NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+//                                     font, NSFontAttributeName,
+//                                     [UIColor blueColor],NSForegroundColorAttributeName,
+//                                     [NSNumber numberWithFloat:1.0],
+//                                     NSBaselineOffsetAttributeName, nil];
     
     //[text1 drawInRect:CGRectMake(10, h-50, 230, 80) withAttributes:attrsDictionary];
     //[text1 drawWithRect:CGRectMake(w/2-30, h-10, w, 100) options:NSStringDrawingUsesFontLeading attributes:attrsDictionary context:Nil];
-    [text1 drawWithRect:textRect options:NSStringDrawingUsesFontLeading attributes:attrsDictionary context:Nil];
+    //[text1 drawWithRect:textRect options:NSStringDrawingUsesFontLeading attributes:attrsDictionary context:Nil];
+    
+    UILabel* _msgLabel = [[UILabel alloc] init];
+    _msgLabel.font = [UIFont fontWithName:@"Arial" size:textFrontSize];
+    _msgLabel.textColor = [UIColor blackColor];
+    _msgLabel.backgroundColor = [UIColor clearColor];
+    _msgLabel.textAlignment = NSTextAlignmentCenter;
+    _msgLabel.adjustsFontSizeToFitWidth = YES;
+    _msgLabel.numberOfLines = 3;
+    _msgLabel.text =text1;
+    [_msgLabel drawTextInRect:textRect];
+
 
     
     UIImage *aimg = UIGraphicsGetImageFromCurrentImageContext();
@@ -91,10 +102,10 @@
 -(UIImage *)addImageLogo:(UIImage *)img text:(UIImage *)logo
 {
     //get image width and height
-    int w = img.size.width;
-    int h = img.size.height;
-    int logoWidth = logo.size.width;
-    int logoHeight = logo.size.height;
+    CGFloat w = img.size.width;
+    CGFloat h = img.size.height;
+    CGFloat logoWidth = logo.size.width;
+    CGFloat logoHeight = logo.size.height;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     //create a graphic context with CGBitmapContextCreate
     CGContextRef context = CGBitmapContextCreate(NULL, w, h, 8, 4 * w, colorSpace, kCGImageAlphaPremultipliedFirst);

@@ -35,6 +35,8 @@
         
         _imageAry = [[NSMutableArray alloc] init];
         _imageStore = [[NSMutableArray alloc] init];
+        
+
     }
     return self;
 }
@@ -62,12 +64,13 @@
     }
     
     if (_itemSize.height>self.frame.size.height) {
-        int temp =_itemSize.height;
-        _itemSize.height = self.frame.size.height-50;
-        _itemSize.width = _itemSize.height * (_itemSize.width/temp);
+        CGFloat rate = _itemSize.width/_itemSize.height;
+        _itemSize.height = self.frame.size.height-30;
+        _itemSize.width = _itemSize.height *rate
+        ;
     }
     
-    NSAssert((_itemSize.height < self.frame.size.height), @"item's height must not bigger than scrollpicker's height");
+    //NSAssert((_itemSize.height < self.frame.size.height), @"item's height must not bigger than scrollpicker's height");
     
     self.pagingEnabled = NO;
     self.showsHorizontalScrollIndicator = NO;
@@ -156,7 +159,7 @@
 
 - (void)setItemSize:(CGSize)itemSize
 {
-    itemSize = itemSize;
+    _itemSize = itemSize;
     [self initInfiniteScrollView];
 }
 

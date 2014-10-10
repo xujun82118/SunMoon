@@ -47,6 +47,8 @@ typedef enum {
 
 @property (nonatomic,strong) UIView * superView;
 
+@property (nonatomic,strong) NSString* alertKey;
+
 @property (nonatomic) UILabel* msgLabel;
 
 @property (nonatomic,strong) NSString* alertMsg;
@@ -73,7 +75,7 @@ typedef enum {
 @property (nonatomic, ) NSInteger endHeight ;
 
 
--(instancetype) InitCustomAlertViewWithSuperView:(UIView*) superView  taget:(id) superSelf  bkImageName:(NSString*) bkImage yesBtnImageName:(NSString*) btnImage  posionShowMode:(CustomAlertShowMode) mode;
+-(instancetype) InitCustomAlertViewWithSuperView:(UIView*) superView  taget:(id) superSelf  bkImageName:(NSString*) bkImage yesBtnImageName:(NSString*) btnImage  posionShowMode:(CustomAlertShowMode) mode AlertKey:alertKey;
 
 -(void) RunCumstomAlert;
 
@@ -83,7 +85,7 @@ typedef enum {
 
 @protocol CustomAlertDelegate <NSObject >
 
-- (void) CustomAlertOkReturn;
+- (void) CustomAlertOkAnimationFinish:(NSString*) alertKey;
 
 
 @end

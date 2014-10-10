@@ -15,7 +15,7 @@
 @implementation ShareByShareSDR
 
 
-@synthesize shareImage, shareMsg,shareMsgSignature,shareMsgPreFix,shareTitle,shareUrl,logImage,waterImage,logRect,waterRect;
+@synthesize shareImage, shareMsg,shareMsgSignature,shareMsgPreFix,shareTitle,shareUrl,logImage,waterImage,logRect,waterRect,textRect,timeString,lightCount,senttence;
 
 
 -(BOOL) shareImageNews
@@ -47,7 +47,7 @@
                                                 title:shareTitle
                                                   url:shareUrl
                                           description:nil
-                                            mediaType:SSPublishContentMediaTypeNews];
+                                            mediaType:SSPublishContentMediaTypeImage];
     NSArray *shareList = [ShareSDK getShareListWithType:
                           ShareTypeWeixiSession,
                           ShareTypeWeixiTimeline,
@@ -88,6 +88,15 @@
                             }];
     
     
+    
+    return  TRUE;
+}
+
+
+-(BOOL) shareOnlyImage
+{
+    
+
     
     return  TRUE;
 }
@@ -222,7 +231,7 @@
     
 }
 
--(void) addWater;
+-(void) addWater
 {
     AddWaterMask* addWaterMask = [AddWaterMask alloc];
     [addWaterMask setWaterRect:waterRect];
@@ -230,7 +239,45 @@
     
 }
 
+-(void) addTimeText
+{
+    AddWaterMask* addWaterMask = [AddWaterMask alloc];
+    //构造日期Text图,相对于底图的位置
+    UIImage* textImageBk = [UIImage imageNamed:@"timeImage.png"];
+    CGFloat w = textImageBk.size.width;
+    CGFloat h = textImageBk.size.height/2;
+    CGFloat x = textImageBk.size.width/2-w/2;
+    CGFloat y = textImageBk.size.height/2-h/2;
+    [addWaterMask setTextRect:CGRectMake(x,y, w, h)];
+    [addWaterMask setTextFrontSize:30];
+    UIImage*  textImageWater =[addWaterMask addText:textImageBk text:timeString];
+    
+    //放置日期水印图
+    [addWaterMask setWaterRect:textRect];
+    shareImage =[addWaterMask addImage:shareImage addMsakImage:textImageWater];
 
+    
+}
+
+
+-(void) addLightCounText
+{
+    AddWaterMask* addWaterMask = [AddWaterMask alloc];
+    [addWaterMask setTextRect:textRect];
+    [addWaterMask setTextFrontSize:30];
+    shareImage =[addWaterMask addText:shareImage text:lightCount];
+    
+}
+
+
+-(void) addSentenceText
+{
+    AddWaterMask* addWaterMask = [AddWaterMask alloc];
+    [addWaterMask setTextRect:textRect];
+    [addWaterMask setTextFrontSize:15];
+    shareImage =[addWaterMask addText:shareImage text:senttence];
+    
+}
 
 -(void) addLog
 {

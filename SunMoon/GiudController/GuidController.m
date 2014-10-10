@@ -10,8 +10,8 @@
 
 
 @implementation GuidController
-@synthesize fristlyOpenGuidCtl=_fristlyOpenGuidCtl;
-@synthesize guidInfo=_guidInfo, guidIntoCamera=_guidIntoCamera,guidTapLight=_guidTapLight,guid2SDelay=_guid2SDelay,guidPanToBring=_guidPanToBring, guidHaveTakePhoto = _guidHaveTakePhoto, guidHaveGiveLight = _guidHaveGiveLight;
+@synthesize fristlyOpenGuidCtl=_fristlyOpenGuidCtl,guidStepNumber=_guidStepNumber;
+@synthesize guidInfo=_guidInfo, guidIntoCamera=_guidIntoCamera,guidTapLight=_guidTapLight,guid2SDelay=_guid2SDelay,guidPanToBring=_guidPanToBring, guidHaveTakePhoto = _guidHaveTakePhoto, guidHaveGiveLight = _guidHaveGiveLight, guidFirstlyGiveLight=_guidFirstlyGiveLight;
 
 static GuidController *sharedGuidCtl;
 
@@ -55,6 +55,58 @@ static GuidController *sharedGuidCtl;
     
     _fristlyOpenGuidCtl = isGuid;
 
+    
+}
+
+
+- (NSInteger)guidStepNumber {
+    
+    return [_guidInfo integerForKey:KEY_GUID_STEP_NUMBER];
+    
+}
+
+//100:依次增1步, 1000:清0步开始
+//其它指定步
+-(void) updateGuidStepNumber:(GuidStepNum) guidNum
+{
+    if (guidNum == guid_oneByOne) {
+        
+        NSInteger temp = ++_guidStepNumber;
+        [_guidInfo setInteger:temp  forKey:KEY_GUID_STEP_NUMBER];
+        _guidStepNumber = temp;
+
+    }else if(guidNum == guid_backToStar)
+    {
+        [_guidInfo setInteger:guid_Start  forKey:KEY_GUID_STEP_NUMBER];
+        _guidStepNumber = guid_Start;
+
+    }else
+    {
+        [_guidInfo setInteger:guidNum  forKey:KEY_GUID_STEP_NUMBER];
+        _guidStepNumber = guidNum;
+
+    }
+    
+    [_guidInfo synchronize];
+    
+    NSLog(@"Guid Step current = %d", _guidStepNumber);
+
+    
+}
+
+- (BOOL)guidFirstlyGiveLight {
+    
+    return [_guidInfo boolForKey:KEY_GUID_FIRSTLY_GIVE_LIGHT];
+    
+}
+
+-(void) updateGuidFirstlyGiveLight:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_FIRSTLY_GIVE_LIGHT];
+    [_guidInfo synchronize];
+    
+    _guidFirstlyGiveLight = isGuid;
+    
     
 }
 

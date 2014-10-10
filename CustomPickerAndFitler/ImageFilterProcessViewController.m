@@ -87,13 +87,28 @@
     //工具条
     UIImage *toolBarImage = [UIImage imageNamed:@"下部底图-黄.png"];
     //UIImageView *toolBarImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, ScreenHeight-TOOL_BAR_HEIGHT, ScreenWidth, TOOL_BAR_HEIGHT)];
-    UIImageView *toolBarImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, SCREEN_HEIGHT-40, SCREEN_WIDTH, 40)];
+    NSInteger toolHeight;
+    if ([CommonObject CheckDeviceTypeVersion]==iphone6Pluse) {
+        toolHeight = 60;
+    }else
+    {
+        toolHeight = 40;
+    }
+    UIImageView *toolBarImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, SCREEN_HEIGHT-toolHeight, SCREEN_WIDTH, toolHeight)];
     toolBarImageView.image = toolBarImage;
     [self.view addSubview:toolBarImageView];
     
     //加重拍按钮
     NSInteger rePhotoBtnWidth = 25;
     NSInteger rePhotoBtnHeight = 20;
+    if ([CommonObject CheckDeviceTypeVersion]==iphone6Pluse) {
+        rePhotoBtnWidth = 35;
+        rePhotoBtnHeight = 30;
+    }else
+    {
+        rePhotoBtnWidth = 25;
+        rePhotoBtnHeight = 20;
+    }
     UIButton *rePhotoBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [rePhotoBtn setImage:[UIImage imageNamed:@"camera.png"] forState:UIControlStateNormal];
     [rePhotoBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, toolBarImageView.center.y-rePhotoBtnHeight/2, rePhotoBtnWidth, rePhotoBtnHeight)];
@@ -103,6 +118,14 @@
     //加分享按钮
     NSInteger shareBtnWidth = 25;
     NSInteger shareBtnHeight = 25;
+    if ([CommonObject CheckDeviceTypeVersion]==iphone6Pluse) {
+        shareBtnWidth = 35;
+        shareBtnHeight = 35;
+    }else
+    {
+        shareBtnWidth = 25;
+        shareBtnHeight = 25;
+    }
     UIButton *shareBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [shareBtn setImage:[UIImage imageNamed:@"分享-黄.png"] forState:UIControlStateNormal];
     [shareBtn setFrame:CGRectMake(ScreenWidth/2-shareBtnWidth/2, toolBarImageView.center.y-shareBtnHeight/2, shareBtnWidth, shareBtnHeight)];
@@ -113,6 +136,14 @@
     //加保存到相册按钮
     NSInteger saveBtnWidth = 20;
     NSInteger saveBtnHeight = 20;
+    if ([CommonObject CheckDeviceTypeVersion]==iphone6Pluse) {
+        saveBtnWidth = 35;
+        saveBtnHeight = 35;
+    }else
+    {
+        saveBtnWidth = 20;
+        saveBtnHeight = 20;
+    }
     UIButton *saveBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [saveBtn setImage:[UIImage imageNamed:@"save.png"] forState:UIControlStateNormal];
     [saveBtn setFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X- saveBtnWidth, toolBarImageView.center.y-saveBtnHeight/2, saveBtnWidth, saveBtnHeight)];
@@ -126,6 +157,14 @@
     //加OK返回按钮
     NSInteger okBtnWidth = 20;
     NSInteger okBtnHeight = 20;
+    if ([CommonObject CheckDeviceTypeVersion]==iphone6Pluse) {
+        okBtnWidth = 35;
+        okBtnHeight = 35;
+    }else
+    {
+        okBtnWidth = 20;
+        okBtnHeight = 20;
+    }
     UIButton *okBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [okBtn setImage:[UIImage imageNamed:@"返回.png"] forState:UIControlStateNormal];
     [okBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y, okBtnWidth, okBtnHeight)];
@@ -135,6 +174,14 @@
     //加丢弃并返回按钮
     NSInteger rightBtnWidth = 20;
     NSInteger rightBtnHeight = 20;
+    if ([CommonObject CheckDeviceTypeVersion]==iphone6Pluse) {
+        rightBtnWidth = 35;
+        rightBtnHeight = 35;
+    }else
+    {
+        okBtnWidth = 20;
+        okBtnHeight = 20;
+    }
     UIButton *rightBtn =[UIButton buttonWithType:UIButtonTypeCustom];
     [rightBtn setImage:[UIImage imageNamed:@"丢弃.png"] forState:UIControlStateNormal];
     [rightBtn setFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X-rightBtnWidth, NAVI_BAR_BTN_Y, rightBtnWidth, rightBtnHeight)];
@@ -142,16 +189,34 @@
     [self.view addSubview:rightBtn];
     
     //相片显示
-    float imageWideth = 180;
-    float imageHeight = imageWideth*960/640;
+
     [self.view setBackgroundColor:[UIColor colorWithWhite:0.388 alpha:1.000]];
-    NSInteger y;
-    if (SCREEN_HEIGHT>480) {
-        y = 100;
+    NSInteger y = 60;
+    float imageWideth ;
+    if ([CommonObject CheckDeviceTypeVersion] == iphone4_4s) {
+        imageWideth = SCREEN_WIDTH/2+20;
+    }else if ([CommonObject CheckDeviceTypeVersion] == iphone5_5s)
+    {
+        imageWideth = SCREEN_WIDTH/4*3-20;
+
+    }else if([CommonObject CheckDeviceTypeVersion] == iphone6)
+    {
+        imageWideth = SCREEN_WIDTH/4*3;
+
     }else
     {
-        y = 40 ;
+        imageWideth = SCREEN_WIDTH/4*3;
+        y = 70;
+
     }
+    //NSLog(@"****&&&&&****%f", [[UIScreen mainScreen] bounds].size.width);
+    //NSLog(@"****&&&&&****%f", [[UIScreen mainScreen] bounds].size.height);
+    
+
+    
+    
+    float imageHeight = imageWideth*960/640;
+
     rootImageView = [[UIImageView alloc ] initWithFrame:CGRectMake(ScreenWidth/2-imageWideth/2, y, imageWideth, imageHeight)];
     rootImageView.image = currentImage;
     rootImageView.tag = TAG_EDITE_IMAGE_VIEW;
@@ -251,12 +316,16 @@
     //调色盘
     NSInteger scrollWidth = SCREEN_WIDTH;
     NSInteger scrollHeight;
-    if (SCREEN_HEIGHT>480) {
+    if ([CommonObject CheckDeviceTypeVersion] == iphone4_4s) {
+        scrollHeight = 90;
+    }else if ([CommonObject CheckDeviceTypeVersion] == iphone5_5s)
+    {
         scrollHeight = 90;
     }else
     {
-        scrollHeight = 90;
+        scrollHeight = 100;
     }
+
 
     NSArray *arr = [NSArray arrayWithObjects:@"原图",@"LOMO",@"黑白",@"复古",@"哥特",@"锐色",@"淡雅",@"酒红",@"青柠",@"浪漫",@"光晕",@"蓝调",@"梦幻",@"夜色", nil];
     scrollerView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, valuelabel.frame.origin.y+valuelabelHeight+10, scrollWidth, scrollHeight)];
@@ -401,6 +470,8 @@
     }else
     {
         NSLog(@"保存到相册");
+        //相片加水印
+        
         UIImageWriteToSavedPhotosAlbum(rootImageView.image, nil, nil,nil);
         isHaveSavePhoto = YES;
         [self showCustomDelayAlertBottom:@"成功保存到相册"];
@@ -501,7 +572,7 @@
         if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
             if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"今天已经奖励过阳光了，不再重复奖励"];
+                [self showCustomYesAlertSuperView:@"今天已经奖励过阳光了，不再重复奖励" AlertKey:@"reminderOnce"];
                 
                 [[GuidController sharedSingleUserInfo] updateGuidHaveGiveLight:YES];
 
@@ -516,7 +587,7 @@
         {
             if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"今天已经奖励过月光了，不再重复奖励"];
+                [self showCustomYesAlertSuperView:@"今天已经奖励过月光了，不再重复奖励" AlertKey:@"reminderOnce"];
                 
                 [[GuidController sharedSingleUserInfo] updateGuidHaveGiveLight:YES];
 
@@ -928,10 +999,10 @@
 
 
 #pragma mark - Customer alert
--(void) showCustomYesAlertSuperView:(NSString*) msg
+-(void) showCustomYesAlertSuperView:(NSString*) msg AlertKey:alertKey
 {
     
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet];
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet AlertKey:alertKey];
     [customAlertAutoDisYes setStartCenterPoint:self.view.center];
     [customAlertAutoDisYes setEndCenterPoint:self.view.center];
     [customAlertAutoDisYes setStartAlpha:0.1];
@@ -958,7 +1029,7 @@
 
 -(void) showCustomDelayAlertBottom:(NSString*) msg
 {
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet];
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
     [customAlertAutoDis setStartHeight:0];
     [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
     [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
@@ -976,7 +1047,7 @@
 
 
 #pragma mark - CustomAlertDelegate
-- (void) CustomAlertOkReturn
+- (void) CustomAlertOkAnimationFinish:(NSString*) alertKey
 {
     NSLog(@"custom aler ok return");
 }

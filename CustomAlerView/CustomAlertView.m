@@ -13,17 +13,18 @@
 @synthesize selfMode=_selfMode;
 @synthesize customAlertDelegate=_customAlertDelegate;
 @synthesize viewBkImageView=_viewBkImageView, yesBtn=_yesBtn;
-@synthesize msgLabel=_msgLabel;
+@synthesize msgLabel=_msgLabel,alertKey=_alertKey;
 @synthesize alertMsg=_alertMsg;
 @synthesize MsgFrontSize=_MsgFrontSize;
 @synthesize delayDisappearTime = _delayDisappearTime, startAlpha=_startAlpha,endAlpha=_endAlpha,startCenterPoint=_startCenterPoint,endCenterPoint=_endCenterPoint,startWidth=_startWidth,startHeight=_startHeight,endWidth=_endWidth, endHeight=_endHeight;
 
 
--(instancetype) InitCustomAlertViewWithSuperView:(UIView*) superView  taget:(id) superSelf  bkImageName:(NSString*) bkImage yesBtnImageName:(NSString*) btnImage  posionShowMode:(CustomAlertShowMode) mode;
+-(instancetype) InitCustomAlertViewWithSuperView:(UIView*) superView  taget:(id) superSelf  bkImageName:(NSString*) bkImage yesBtnImageName:(NSString*) btnImage  posionShowMode:(CustomAlertShowMode) mode AlertKey:alertKey;
 
 {
     
     _superView = superView;
+    _alertKey = alertKey;
     
     //初始化，此时大小等未指定
     UIImage *tempImage = [UIImage imageNamed:bkImage];
@@ -46,8 +47,8 @@
     [_superView addSubview:_msgLabel];
     
     if (btnImage) {
-        NSInteger yesW =_viewBkImageView.frame.size.width/5*2;
-        NSInteger yesH =yesW;
+        NSInteger yesW =_viewBkImageView.frame.size.width/5*4;
+        NSInteger yesH =_viewBkImageView.frame.size.height/5*1;
         UIImage *tempImage1 = [UIImage imageNamed:btnImage];
         //需先初始化frame, 否则动时就立刻显示，原因不明？？
         _yesBtn = [[UIButton alloc] initWithFrame:CGRectMake(_viewBkImageView.frame.origin.x+_viewBkImageView.frame.size.width/2-yesW/2, _viewBkImageView.frame.origin.y+_viewBkImageView.frame.size.height-yesH, yesW, yesH)];
@@ -80,7 +81,7 @@
     [_viewBkImageView setFrame:CGRectMake(_startCenterPoint.x-_startWidth/2, _startCenterPoint.y-_startHeight/2, _startWidth, _startHeight)];
     
     if (_yesBtn) {
-        NSInteger yesW =_viewBkImageView.frame.size.width/8;
+        NSInteger yesW =_viewBkImageView.frame.size.width/6*5;
         NSInteger yesH =0;
         [_yesBtn setFrame:CGRectMake(_viewBkImageView.frame.origin.x+_viewBkImageView.frame.size.width/2-yesW/2, _viewBkImageView.frame.origin.y+_viewBkImageView.frame.size.height-yesH, yesW, yesH)];
     }
@@ -90,10 +91,7 @@
     //打开消息
     [self EnableUserInteractionInView:_superView];
     
-    if ([_customAlertDelegate respondsToSelector:@selector(CustomAlertOkReturn)]) {
-        //test
-        [_customAlertDelegate CustomAlertOkReturn];
-    }
+
     
 }
 
@@ -126,7 +124,7 @@
     [_viewBkImageView setFrame:CGRectMake(_startCenterPoint.x-_startWidth/2, _startCenterPoint.y-_startHeight/2, _startWidth, _startHeight)];
     
     if (_yesBtn) {
-        NSInteger yesW =_viewBkImageView.frame.size.width/6;
+        NSInteger yesW =_viewBkImageView.frame.size.width/6*5;
         NSInteger yesH =0;
         [_yesBtn setFrame:CGRectMake(_viewBkImageView.frame.origin.x+_viewBkImageView.frame.size.width/2-yesW/2, _viewBkImageView.frame.origin.y+_viewBkImageView.frame.size.height-yesH-_viewBkImageView.frame.size.height/8, yesW, yesH)];
 
@@ -142,9 +140,9 @@
     _viewBkImageView.hidden = NO;
     
     if (_yesBtn) {
-        NSInteger yesW =_viewBkImageView.frame.size.width/6*1;
-        NSInteger yesH =yesW;
-        [_yesBtn setFrame:CGRectMake(_viewBkImageView.frame.origin.x+_viewBkImageView.frame.size.width/2-yesW/2, _viewBkImageView.frame.origin.y+_viewBkImageView.frame.size.height-yesH-_viewBkImageView.frame.size.height/8, yesW, yesH)];
+        NSInteger yesW =_viewBkImageView.frame.size.width/6*5;
+        NSInteger yesH =_viewBkImageView.frame.size.height/5;
+        [_yesBtn setFrame:CGRectMake(_viewBkImageView.frame.origin.x+_viewBkImageView.frame.size.width/2-yesW/2, _viewBkImageView.frame.origin.y+_viewBkImageView.frame.size.height-yesH-_viewBkImageView.frame.size.height/10, yesW, yesH)];
         _yesBtn.hidden = NO;
     }
     
@@ -170,6 +168,15 @@
         _yesBtn.hidden = YES;
         [_viewBkImageView removeFromSuperview];
         [_yesBtn removeFromSuperview];
+        
+        if (_yesBtn) {
+            //动画完成后，再回调
+            if ([_customAlertDelegate respondsToSelector:@selector(CustomAlertOkAnimationFinish:)]) {
+                //test
+                [_customAlertDelegate CustomAlertOkAnimationFinish:_alertKey];
+            }
+        }
+        
     }
     
     if ([animationID isEqualToString:@"cutomeAlert"])
@@ -260,6 +267,7 @@
 
         }
 	}
+
 }
 
 - (void)EnableUserInteractionInView:(UIView *)superView
@@ -269,6 +277,8 @@
 		UIView *subView = [superView.subviews objectAtIndex:i];
         [subView setUserInteractionEnabled:YES];
 	}
+    
+
 }
 
 @end
