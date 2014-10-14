@@ -37,6 +37,8 @@ typedef enum
     guidStep_guidIntoCamera,
     guidStep_guidIntoCamera_waitForTouch,
     guidStep_mainView_End,
+    guid_camera_start,
+    guid_camera_End,
     guid_oneByOne = 100, //依次增1步,
     guid_backToStar = 101, // 1000:清0步开始
     guid_setNumber = 102, //指定第几步
@@ -87,5 +89,14 @@ typedef enum
 
 -(void) updateGuidHaveGiveLight:(BOOL) isGuid;
 
+-(void) AddTouchIndication:(UIView*) intoSuperView  TouchImageName:(NSString*) touchImageName  TouchFrame:(CGRect) touchedFrame;
+
+-(void) RemoveTouchIndication;
+@end
+
+@protocol GuidControllerDelegate <NSObject >
+
+
 
 @end
+

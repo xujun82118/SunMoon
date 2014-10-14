@@ -132,7 +132,7 @@
     
     //开始动画
     [UIView beginAnimations:@"cutomeAlert" context:nil];
-    [UIView setAnimationDuration:0.7f];
+    [UIView setAnimationDuration:0.5f];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDidStopSelector:@selector(animationCustomAlert:finished:context:)];
     NSLog(@"Show alert custom!");

@@ -7,21 +7,27 @@
 */
 
 
+
 "Sun_sentenc_1" = "全新的一天，全新的我！";  //初始默认
-"Sun_sentenc_2" = "全新的一天，自信的我！";
+"Sun_sentenc_2" = "阳光自信每一天，这就是我！";
 "Sun_sentenc_3" = "努力，我最棒！";
 
 "Moon_sentenc_1" = "我是月光公主！";  //初始默认
 "Moon_sentenc_2" = "我觉得，我今天美到无与伦比，哇咔咔！";
 "Moon_sentenc_3" = "晚安，好好睡个美容觉吧！";
 
-"Sun time is on" = "阳光时间到了，想美丽又自信吗，快来美丽宣言吧~";
-"Moon time is on" = "月光时间到了，快来和月光说句美丽宣言了吧~";
+"Sun time is on" = "阳光时间到了，向着太阳说出你的美丽宣言！";
+"Moon time is on" = "月光时间到了，和月亮说一句美丽宣言！";
 
-"FromUri" = "（天天更美丽）";
+"appName" = "日月美拍";
+"appUrl"  = "www.baidu.com";
+"FromUri" = "(日月美拍)";
+"MsgFrefixSun" = "今天的阳光宣言：";
+"MsgFrefixMoon" = "今天的月光宣言：";
 
-"Change to sun time hi message" = "阳光时间开始了，和太阳打个招呼吧！";
-"Change to moon time hi message" = "月光时间开始了，和月亮说声晚安吧！";
+
+"Change to sun time hi message" = "阳光时间到了，向着太阳说出你的美丽宣言！";
+"Change to moon time hi message" = "月光时间到了，和月亮说一句美丽宣言！";
 
 
 

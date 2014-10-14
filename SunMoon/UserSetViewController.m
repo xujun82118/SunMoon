@@ -389,7 +389,7 @@
         //查看网络
         NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
         if (typeNet == netNon) {
-            [CommonObject showAlert:@"啊，网络不见了~" titleMsg:nil DelegateObject:self];
+            [CommonObject showAlert:@"请检查网络" titleMsg:nil DelegateObject:self];
             return;
         }
         
@@ -402,11 +402,11 @@
         //查看网络
         NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
         if (typeNet == netNon) {
-            [CommonObject showAlert:@"啊，网络不见了~" titleMsg:nil DelegateObject:self];
+            [CommonObject showAlert:@"请检查网络" titleMsg:nil DelegateObject:self];
             return;
         }
         
-        [CommonObject showAlert:@"亲的任何意见，我都无比重视^_^" titleMsg:@"用户关怀" DelegateObject:self];
+        [CommonObject showAlert:@"你的任何意见，我们都无比重视^" titleMsg:@"用户关怀" DelegateObject:self];
         
         
         ShareByShareSDR* share = [ShareByShareSDR alloc];
@@ -599,7 +599,7 @@
         //查看网络
         NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
         if (typeNet == netNon) {
-            [CommonObject showAlert:@"啊，网络不见了~" titleMsg:nil DelegateObject:self];
+            [CommonObject showAlert:@"请检查网络" titleMsg:nil DelegateObject:self];
             sender.on = FALSE;
             return;
         }
@@ -646,7 +646,7 @@
             //查看网络
             NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
             if (typeNet == netNon) {
-                [CommonObject showAlert:@"啊，网络不见了~" titleMsg:nil DelegateObject:self];
+                [CommonObject showAlert:@"请检查网络" titleMsg:nil DelegateObject:self];
                 sender.on = FALSE;
                 return;
             }

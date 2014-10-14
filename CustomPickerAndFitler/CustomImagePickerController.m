@@ -148,7 +148,10 @@
         [self.view addSubview:sunMoonImageViewTop];
         
         
-        PLCameraView=[self findView:viewController.view withName:@"PLCameraView"];
+        PLCameraView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        [PLCameraView setBackgroundColor:[UIColor clearColor]];
+        [viewController.view addSubview:PLCameraView];
+        //PLCameraView=[self findView:viewController.view withName:@"PLCameraView"];
         
         //初始化指示器
         NSInteger indiW = 50;
@@ -717,7 +720,7 @@
         if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
             if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"阳光时间来过了，要每天认真说一次就好呢" AlertKey:@"reminderOnce"];
+                [self showCustomYesAlertSuperView:@"只需每天阳光时间\n美拍一次" AlertKey:@"reminderOnce"];
                 
                 [[GuidController sharedSingleUserInfo] updateGuidHaveTakePhoto:YES];
             }
@@ -725,7 +728,7 @@
         {
             if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"月光时间来过了，要每天认真说一次就好呢" AlertKey:@"reminderOnce"];
+                [self showCustomYesAlertSuperView:@"只需每天月光时间\n美拍一次" AlertKey:@"reminderOnce"];
 
                 [[GuidController sharedSingleUserInfo] updateGuidHaveTakePhoto:YES];
 
@@ -734,6 +737,8 @@
         }
     }
     
+    
+    [self HandleGuidProcess:guid_camera_start];
 
     
 }
@@ -939,7 +944,7 @@
         
     }else
     {
-        [self showCustomDelayAlertBottom:@"亲，多点自信，大点声哦"];
+        [self showCustomDelayAlertBottom:@"音量小于200\n大点声，多点自信"];
         
         return  1;
     }
@@ -1013,7 +1018,7 @@
         
     }else
     {
-        NSString* temp = [NSString stringWithFormat:@"说出你的%@光宣言，再拍照哦!", (iSunORMoon==IS_SUN_TIME)?@"阳":@"月"];
+        NSString* temp = [NSString stringWithFormat:@"需要%@光宣言\n才能拍照", (iSunORMoon==IS_SUN_TIME)?@"阳":@"月"];
         [self showCustomDelayAlertBottom:temp];
 
         
@@ -1051,6 +1056,50 @@
         //继续自拍
 
     }
+    
+}
+
+
+#pragma mark -  引导过程处理
+- (void) HandleGuidProcess:(GuidStepNum) guidNeedNum
+{
+    GuidController* guidInfo =[GuidController sharedSingleUserInfo];
+    NSLog(@"Guid Step input=%d, current = %d", guidNeedNum,guidInfo.guidStepNumber);
+    //指定步等于当前步时，触发处理过程, 此设计可以任意放置HandleGuidProcess的调用
+    if (guidNeedNum == guidInfo.guidStepNumber) {
+        //执行当前步
+        switch (guidInfo.guidStepNumber) {
+            case guid_camera_start:
+            {
+                [guidInfo updateGuidStepNumber:guid_oneByOne];
+                
+                [self showCustomYesAlertSuperView:@"可选择松开后2s\n自动拍照" AlertKey:nil];
+            }
+                
+                break;
+
+            case guid_camera_End:
+            {
+                [guidInfo updateGuidStepNumber:guid_oneByOne];
+                
+                [guidInfo RemoveTouchIndication];
+                
+                //主界面引导结束...
+                
+            }
+            default:
+                break;
+                
+        }
+        
+        if (guidInfo.guidStepNumber > guid_camera_End) {
+            //主界面引导结束,打开所有的
+            //[self EnableUserInteractionInView:self.view];
+        }
+        
+        
+    }
+    
     
 }
 

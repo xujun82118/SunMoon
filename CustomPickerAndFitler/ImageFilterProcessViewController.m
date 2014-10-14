@@ -46,7 +46,7 @@
 @end
 
 @implementation ImageFilterProcessViewController
-@synthesize currentImage = currentImage,currentSentence=currentSentence, delegate = delegate, imagePickerData=imagePickerData,iSunORMoon=iSunORMoon;
+@synthesize userInfo=userInfo,currentImage = currentImage,currentSentence=currentSentence, delegate = delegate, imagePickerData=imagePickerData,iSunORMoon=iSunORMoon;
 
 //暂删
 //- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -471,8 +471,10 @@
     {
         NSLog(@"保存到相册");
         //相片加水印
+        UIImage* waterTemp =[self ShareImageWitheWater:rootImageView.image];
         
-        UIImageWriteToSavedPhotosAlbum(rootImageView.image, nil, nil,nil);
+        
+        UIImageWriteToSavedPhotosAlbum(waterTemp, nil, nil,nil);
         isHaveSavePhoto = YES;
         [self showCustomDelayAlertBottom:@"成功保存到相册"];
 
@@ -481,6 +483,61 @@
     
     
 }
+
+
+//增加水印
+-(UIImage*) ShareImageWitheWater:(UIImage*) srcImage
+{
+    ShareByShareSDR* share = [ShareByShareSDR alloc];
+    share.shareImage =srcImage;
+    if (iSunORMoon ==  IS_SUN_TIME) {
+        share.waterImage = [UIImage imageNamed:@"water-sun.png"];
+        share.lightCount = self.userInfo.sun_value;
+
+    }else
+    {
+        share.waterImage = [UIImage imageNamed:@"water-moon.png"];
+        share.lightCount = self.userInfo.moon_value;
+
+    }
+    share.timeString = timeString;
+    share.senttence = currentSentence;
+    
+    //计算水印位置
+    CGFloat w = srcImage.size.width;
+    CGFloat h = srcImage.size.width*(share.waterImage.size.height/share.waterImage.size.width);
+    CGFloat x = 0;
+    CGFloat y = srcImage.size.height-h;
+    share.waterRect = CGRectMake(x,y,w,h);
+    [share addWater];
+    
+    //计算水印日期位置
+    CGFloat w1 = 30;
+    CGFloat h1 = 30;
+    CGFloat x1 = 40;
+    CGFloat y1 = share.shareImage.size.height -20 -h1/2;
+    share.textRect = CGRectMake(x1,y1,w1,h1);
+    [share addTimeText];
+    
+    //计算水印光个数的位置
+    CGFloat w2 = 30;
+    CGFloat h2 = 30;
+    CGFloat x2 = 25;
+    CGFloat y2 = y+30;
+    share.textRect = CGRectMake(x2,y2,w2,h2);
+    [share addLightCounText];
+    
+    //计算水印语录的位置
+    CGFloat w3 = (share.shareImage.size.width);
+    CGFloat h3 = 30;
+    CGFloat x3 = (share.shareImage.size.width)/2-w3/2;
+    CGFloat y3 = share.shareImage.size.height -25 -h3/2;
+    share.textRect = CGRectMake(x3,y3,w3,h3);
+    [share addSentenceText];
+    
+    return share.shareImage;
+}
+
 
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -567,14 +624,13 @@
     [addVauleAnimation setAminationImageViewframe:CGRectMake(sunMoonImageViewTop.frame.origin.x, sunMoonImageViewTop.frame.origin.y, 60, 60)];
     
     //判断是否增加阳光月光值
-    if (![GuidController sharedSingleUserInfo].guidHaveGiveLight) {
         
         if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
             if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"今天已经奖励过阳光了，不再重复奖励" AlertKey:@"reminderOnce"];
+                [self showCustomYesAlertSuperView:@"今天已经获得阳光\n不再重复奖励" AlertKey:@"reminderOnce"];
                 
-                [[GuidController sharedSingleUserInfo] updateGuidHaveGiveLight:YES];
+                //[[GuidController sharedSingleUserInfo] updateGuidHaveGiveLight:YES];
 
             }else
             {
@@ -587,9 +643,9 @@
         {
             if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"今天已经奖励过月光了，不再重复奖励" AlertKey:@"reminderOnce"];
+                [self showCustomYesAlertSuperView:@"今天已经获得月光\n不再重复奖励" AlertKey:@"reminderOnce"];
                 
-                [[GuidController sharedSingleUserInfo] updateGuidHaveGiveLight:YES];
+                //[[GuidController sharedSingleUserInfo] updateGuidHaveGiveLight:YES];
 
             }else
             {
@@ -602,7 +658,7 @@
             
         }
     
-    }
+ 
     
 }
 
@@ -636,10 +692,10 @@
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
         
         if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
-            [CommonObject showActionSheetOptiontitleMsg:@"Oh,放弃吗" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+            [CommonObject showActionSheetOptiontitleMsg:@"放弃吗？" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
         }else
         {
-            [CommonObject showActionSheetOptiontitleMsg:@"Oh,放弃将失去此次奖励的阳光" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+            [CommonObject showActionSheetOptiontitleMsg:@"放弃将失去此次奖励的阳光" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
         }
         
 
@@ -648,10 +704,10 @@
     }else if([CommonObject checkSunOrMoonTime] ==  IS_MOON_TIME)
     {
         if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
-            [CommonObject showActionSheetOptiontitleMsg:@"Oh,放弃吗" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+            [CommonObject showActionSheetOptiontitleMsg:@"放弃吗？" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
         }else
         {
-            [CommonObject showActionSheetOptiontitleMsg:@"Oh, 放弃将失去此次奖励的月光" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+            [CommonObject showActionSheetOptiontitleMsg:@"放弃将失去此次奖励的月光" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
         }
         
 
@@ -757,27 +813,21 @@
 {
     
     ShareByShareSDR* share = [ShareByShareSDR alloc];
-    share.shareTitle = @"天天更美丽";
-    share.shareImage =rootImageView.image;
+    share.shareTitle = NSLocalizedString(@"appName", @"");
+    share.shareImage =[self ShareImageWitheWater:rootImageView.image];
     share.shareMsg = [imagePickerData objectForKey:CAMERA_SENTENCE_KEY];
     share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
-    share.waterImage = [UIImage imageNamed:@"waterlogo.png"];
-    NSInteger x = share.shareImage.size.width/4;
-    NSInteger y = share.shareImage.size.width*3/4;
-    NSInteger w = share.shareImage.size.width/5;
-    NSInteger h = share.shareImage.size.width/5*(share.waterImage.size.height/share.waterImage.size.width);
-    share.waterRect = CGRectMake(x,y,w,h);
-    
-    if(iSunORMoon == IS_SUN_TIME) {
-        share.shareMsgPreFix = @"我的阳光宣言：";
+    NSString* tempShare;
+    if (iSunORMoon == IS_SUN_TIME) {
+        tempShare = [NSString stringWithFormat:@"养成了%d个阳光,", [self.userInfo.sun_value intValue]];
+        share.shareMsgPreFix = [tempShare stringByAppendingString:NSLocalizedString(@"MsgFrefixSun", @"")];
+        
 
-    }else if (iSunORMoon == IS_MOON_TIME)
+    }else
     {
-        share.shareMsgPreFix = @"我的月光宣言：";
-
+        tempShare = [NSString stringWithFormat:@"养成了%d个月光,", [self.userInfo.moon_value intValue]];
+        share.shareMsgPreFix = [tempShare stringByAppendingString:NSLocalizedString(@"MsgFrefixMoon", @"")];
     }
-    
-    [share addWater];
     
     [share shareImageNews];
     

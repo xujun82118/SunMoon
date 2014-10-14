@@ -44,7 +44,8 @@
 
 - (void)panGestureRecognized:(UIPanGestureRecognizer *)sender
 {
-    [self.frostedViewController panGestureRecognized:sender];
+    //暂时关闭
+    //[self.frostedViewController panGestureRecognized:sender];
 }
 
 /*

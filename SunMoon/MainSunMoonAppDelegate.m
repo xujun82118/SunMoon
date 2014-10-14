@@ -16,6 +16,12 @@
 #import "UserSetViewController.h"
 
 
+#import "YouMiConfig.h"
+#import "YouMiWall.h"
+#import "YouMiWallAppModel.h"
+#import "YouMiPointsManager.h"
+
+
 @interface MainSunMoonAppDelegate ()
 
 @property (nonatomic, strong) UIWindow * statusWindow;
@@ -43,7 +49,13 @@
     //test 解决相机起动黑屏问题
     self.window.backgroundColor = [UIColor whiteColor];
     
-
+    //有米广告设置
+    [YouMiConfig setUseInAppStore:YES];  // [可选]开启内置appStore，详细请看YouMiSDK常见问题解答
+    [YouMiConfig launchWithAppID:@"a61d4d3e4309ce00" appSecret:@"d138c3f7423a6a22"];
+    [self.window makeKeyAndVisible];
+    // 设置显示全屏广告的window
+    [YouMiConfig setFullScreenWindow:self.window];
+    [YouMiWall enable];
     
     //ShareSDK 设置
     [ShareSDK registerApp:@"fe35485ae4a"];
@@ -228,7 +240,7 @@
     if ([_userInfo checkIsBringUpinSunOrMoon] && (totalHoursIs>REMINDER_INTERVEL_TIME || totalHoursIs<0 || lastNotifyIs == nil)) {
         
         //告知会用在养育光了
-        temp = [NSString stringWithFormat:@"我在养育%@光了，等你回来哦!",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+        temp = [NSString stringWithFormat:@"正在养育%@光，等你回来啊",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
         
         alertNotification.alertBody = temp;
 
@@ -241,7 +253,7 @@
         
     }else if(totalHoursNeed>REMINDER_INTERVEL_TIME || totalHoursNeed<0 || lastNotifyNeed == nil)
     {
-        temp = [NSString stringWithFormat:@"哎呦，没有把%@光托付给我唉!",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+        temp = [NSString stringWithFormat:@"快回来呦，没有把%@光托付给%@",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"太阳":@"月亮"];
         
         alertNotification.alertBody = temp;
         
@@ -256,6 +268,7 @@
     
     //记录后台时的时间
     [userBaseData setObject:[CommonObject getCurrentDate] forKey:KEY_BACK_GROUND_TIME];
+    [userBaseData setInteger:[CommonObject checkSunOrMoonTime] forKey:KEY_BACK_GROUND_TIME_SUNMOON];
     [userBaseData synchronize];
 
     
@@ -310,9 +323,13 @@
         [userBaseData setObject:[CommonObject getCurrentDate] forKey:KEY_BACK_GROUND_TIME];
         [userBaseData synchronize];
     }
+    if (![userBaseData objectForKey:KEY_BACK_GROUND_TIME_SUNMOON]) {
+        [userBaseData setInteger:[CommonObject checkSunOrMoonTime] forKey:KEY_BACK_GROUND_TIME_SUNMOON];
+        [userBaseData synchronize];
+    }
 
-    //上次回到后台的时间不是今天
-    if (![[CommonObject getCurrentDate] isEqualToString:[userBaseData objectForKey:KEY_BACK_GROUND_TIME]] )
+    //上次回到后台的时间不是今天, 或早上晚上已变化
+    if (![[CommonObject getCurrentDate] isEqualToString:[userBaseData objectForKey:KEY_BACK_GROUND_TIME]] || [CommonObject checkSunOrMoonTime] != [userBaseData integerForKey:KEY_BACK_GROUND_TIME_SUNMOON])
         
     {
         [userBaseData setBool:YES forKey:KEY_BACK_GROUND_TIME_CHANGE];

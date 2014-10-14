@@ -10,6 +10,13 @@
 
 
 @implementation GuidController
+{
+    UIView* superView;
+    UIImageView* touchView;
+    
+}
+
+
 @synthesize fristlyOpenGuidCtl=_fristlyOpenGuidCtl,guidStepNumber=_guidStepNumber;
 @synthesize guidInfo=_guidInfo, guidIntoCamera=_guidIntoCamera,guidTapLight=_guidTapLight,guid2SDelay=_guid2SDelay,guidPanToBring=_guidPanToBring, guidHaveTakePhoto = _guidHaveTakePhoto, guidHaveGiveLight = _guidHaveGiveLight, guidFirstlyGiveLight=_guidFirstlyGiveLight;
 
@@ -60,6 +67,7 @@ static GuidController *sharedGuidCtl;
 
 
 - (NSInteger)guidStepNumber {
+    
     
     return [_guidInfo integerForKey:KEY_GUID_STEP_NUMBER];
     
@@ -208,6 +216,32 @@ static GuidController *sharedGuidCtl;
     
 }
 
+
+-(void) AddTouchIndication:(UIView*) intoSuperView  TouchImageName:(NSString*) touchImageName  TouchFrame:(CGRect) touchedFrame
+{
+    superView = intoSuperView;
+    
+    CGFloat bigger = 25;
+    
+    CGRect biggerFrame = CGRectMake(touchedFrame.origin.x-bigger, touchedFrame.origin.y-bigger, touchedFrame.size.width+bigger*2, touchedFrame.size.height+bigger*2);
+    if (!touchView) {
+        touchView = [[UIImageView alloc] initWithFrame:biggerFrame];
+    }else
+    {
+        touchView.frame =biggerFrame;
+    }
+    
+    touchView.image = [UIImage imageNamed:touchImageName];
+    touchView.alpha = 0.5;
+    [superView addSubview:touchView];
+    
+}
+
+-(void) RemoveTouchIndication
+{
+    
+    [touchView removeFromSuperview];
+}
 
 
 @end

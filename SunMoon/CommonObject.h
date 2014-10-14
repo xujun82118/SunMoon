@@ -17,6 +17,8 @@
 #import <Foundation/Foundation.h>
 #import "UserDB.h"
 
+
+
 //常用
 //[NSString stringWithFormat:(@"%@光养育了%d小时, 每3个小时奖励1个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
 
@@ -161,6 +163,7 @@ typedef enum
 
 //退出后台的时间
 #define KEY_BACK_GROUND_TIME @"backGroundTime"
+#define KEY_BACK_GROUND_TIME_SUNMOON @"backGroundTimeSunMoon"
 #define KEY_BACK_GROUND_TIME_CHANGE @"backGroundTimeChange"
 
 

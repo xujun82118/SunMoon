@@ -36,8 +36,8 @@
 
     msg = [shareMsgPreFix stringByAppendingString:msg];
 
-    shareTitle = @"天天更美丽";
-    shareUrl = @"https://itunes.apple.com/us/app/tian-tian-geng-mei-li/id782426992?ls=1&mt=8";
+    shareTitle = NSLocalizedString(@"appName", @"");
+    shareUrl = NSLocalizedString(@"appUrl", @"");
     
     //构造分享内容
     id<ISSContent> publishContent = [ShareSDK content:msg
@@ -119,8 +119,8 @@
     
     msg = [shareMsgPreFix stringByAppendingString:msg];
 
-    shareTitle = @"天天更美丽";
-    shareUrl = @"https://itunes.apple.com/us/app/tian-tian-geng-mei-li/id782426992?ls=1&mt=8";
+    shareTitle = NSLocalizedString(@"appName", @"");
+    shareUrl =NSLocalizedString(@"appUrl", @"");
     
     //构造分享内容
     id<ISSContent> publishContent = [ShareSDK content:msg
@@ -173,7 +173,7 @@
     id<ISSContent> publishContent = [ShareSDK content:shareMsg
                                        defaultContent:@"没有分享内容"
                                                 image:nil
-                                                title:@"天天更美丽"
+                                                title:NSLocalizedString(@"appName", @"")
                                                   url:@"null"
                                           description:nil
                                             mediaType:SSPublishContentMediaTypeText];
@@ -188,7 +188,7 @@
     
     //在授权页面中添加关注官方微博
     [authOptions setFollowAccounts:[NSDictionary dictionaryWithObjectsAndKeys:
-                                    [ShareSDK userFieldWithType:SSUserFieldTypeName value:@"星星汰1982"],
+                                    [ShareSDK userFieldWithType:SSUserFieldTypeName value:@"星星汰"],
                                     SHARE_TYPE_NUMBER(ShareTypeSinaWeibo),
                                     nil]];
     

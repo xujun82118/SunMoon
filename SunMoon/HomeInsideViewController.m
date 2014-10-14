@@ -509,6 +509,20 @@
     [self addScrollUserImageSunReFresh:YES];
     [self addScrollUserImageMoonReFresh:YES];
 
+    
+    if ([CommonObject CheckDeviceTypeVersion] == iphone6 ||[CommonObject CheckDeviceTypeVersion]== iphone6Pluse) {
+        sunWordShow.font = [UIFont fontWithName:@"Arial" size:20];
+
+    }else
+    {
+        sunWordShow.font = [UIFont fontWithName:@"Arial" size:12];
+
+    }
+    sunWordShow.textColor = [UIColor blackColor];
+    sunWordShow.backgroundColor = [UIColor clearColor];
+    sunWordShow.textAlignment = NSTextAlignmentCenter;
+    sunWordShow.adjustsFontSizeToFitWidth = YES;
+    sunWordShow.numberOfLines = 3;
 
     //重新布局MOON的位置
 //    UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
@@ -652,11 +666,14 @@
     NSString* imageSentence = [currentSelectDataMoon objectForKey:@"image_sentence"];
     
     ShareByShareSDR* share = [ShareByShareSDR alloc];
-    share.shareTitle = @"天天更美丽";
+    share.shareTitle = NSLocalizedString(@"appName", @"");
     share.shareImage =imageData.image;
     share.shareMsg = imageSentence;
     share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
-    share.shareMsgPreFix = @"晚安，送上我的月光语录：";
+    NSString* tempShare;
+    tempShare = [NSString stringWithFormat:@"养成了%@个月光,", moonValueStatic.text];
+    share.shareMsgPreFix = [tempShare stringByAppendingString:NSLocalizedString(@"MsgFrefixMoon", @"")];
+    
     share.waterImage = [UIImage imageNamed:@"water-moon.png"];
     share.timeString = moonTimeText.text;
     share.lightCount = moonValueStatic.text;
@@ -689,11 +706,13 @@
 
 
      ShareByShareSDR* share = [ShareByShareSDR alloc];
-     share.shareTitle = @"天天更美丽";
+     share.shareTitle = NSLocalizedString(@"appName", @"");
      share.shareImage =imageData.image;
      share.shareMsg = imageSentence;
      share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
-     share.shareMsgPreFix = @"早啊，送上我的阳光语录：";
+     NSString* tempShare;
+     tempShare = [NSString stringWithFormat:@"养成了%@个阳光,", sunValueStatic.text];
+     share.shareMsgPreFix = [tempShare stringByAppendingString:NSLocalizedString(@"MsgFrefixSun", @"")];
      share.waterImage = [UIImage imageNamed:@"water-sun.png"];
      share.timeString = sunTimeText.text;
      share.lightCount = sunValueStatic.text;
@@ -839,7 +858,7 @@
     //查看网络
     NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
     if (typeNet == netNon) {
-        [CommonObject showAlert:@"啊，网络不见了~" titleMsg:nil DelegateObject:self];
+        [CommonObject showAlert:@"请检查网络" titleMsg:nil DelegateObject:self];
         return;
     }
     
