@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ShareSDK/ShareSDK.h>
-
+#import <ShareSDK/ShareSDKDef.h>
 
 
 //@interface UserInfoDataBase : NSObject

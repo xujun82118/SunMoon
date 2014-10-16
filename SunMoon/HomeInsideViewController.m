@@ -73,7 +73,7 @@
     {
         NSNumber *typeNum = [shareTypes objectAtIndex:i];
         ShareType type = (ShareType)[typeNum integerValue];
-        id<ISSPlatformApp> app = [ShareSDK getClientWithType:type];
+        //id<ISSPlatformApp> app = [ShareSDK getClientWithType:type];
 
         if (type == ShareTypeSinaWeibo || type == ShareTypeTencentWeibo)
         {

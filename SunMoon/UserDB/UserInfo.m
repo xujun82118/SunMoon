@@ -9,6 +9,8 @@
 #import "UserInfo.h"
 #import "UserDB.h"
 
+
+
 @implementation UserInfo
 
 @synthesize name,sns_id,current_sun_sentence,current_moon_sentence,sunDataSourceArray,moonDataSourceArray,sunSentenceSelect,moonSentenceSelect, continueLogInSunCount,continueLogInMoonCount;
@@ -542,11 +544,7 @@ static UserInfo *sharedUserInfo;
 
     
     [userBaseData synchronize];
-    
 
-    
-    
-    
     
 }
 

@@ -61,12 +61,12 @@
     [ShareSDK registerApp:@"fe35485ae4a"];
     
     //添加新浪微博应用
-    [ShareSDK connectSinaWeiboWithAppKey:@"3318551146" appSecret:@"88fd372af9e86ae0c8fa25df1fd6b61d" redirectUri:@"http://com.weibo"];
+    [ShareSDK connectSinaWeiboWithAppKey:@"1023688665" appSecret:@"9ba79b87a472d800fc92db7f9511a624" redirectUri:@"http://com.weibo"];
     
     //添加腾讯微博应用 注册网址 http://dev.t.qq.com
-    [ShareSDK connectTencentWeiboWithAppKey:@"801517498"
-                                  appSecret:@"521685f57c6f8e365028e089c642d7fa"
-                                redirectUri:@"https://itunes.apple.com/cn/app/tian-tian-geng-mei-li/id782426992?mt=8"
+    [ShareSDK connectTencentWeiboWithAppKey:@"801546710"
+                                  appSecret:@"8f2308b6c3ff569b3d368a847dd6e081"
+                                redirectUri:@"https://itunes.apple.com/cn/app/ri-yue-mei-pai/id929494640"
                                    wbApiCls:[WeiboApi class]];
     
     //添加微信应用
@@ -76,16 +76,7 @@
     [ShareSDK connectQQWithQZoneAppKey:@"100586310"
                      qqApiInterfaceCls:[QQApiInterface class]
                        tencentOAuthCls:[TencentOAuth class]];
-    
-     //添加腾讯微博应用
-     [ShareSDK connectTencentWeiboWithAppKey:@"801307650"
-     appSecret:@"ae36f4ee3946e1cbb98d6965b0b2ff5c"
-     redirectUri:@"http://www.sharesdk.cn"];
-    
-    [ShareSDK connectTencentWeiboWithAppKey:@"801307650"
-                                  appSecret:@"ae36f4ee3946e1cbb98d6965b0b2ff5c"
-                                redirectUri:@"http://www.sharesdk.cn"
-                                   wbApiCls:[WeiboApi class]];
+
      
      //添加QQ空间应用
      [ShareSDK connectQZoneWithAppKey:@"100371282"

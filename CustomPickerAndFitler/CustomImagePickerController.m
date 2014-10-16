@@ -216,7 +216,7 @@
             voiceValueView.image = [UIImage imageNamed:@"voiceValueMoon.png"];
             
         }
-        voiceValueView.alpha = 0.3;
+        voiceValueView.alpha = 0.0;
         [PLCameraView addSubview:voiceValueView];
 
         
@@ -825,7 +825,7 @@
       
         //音量动画跟随,停在最高点
         [voiceValueView setFrame:CGRectMake(voiceValueView.frame.origin.x, SCREEN_HEIGHT-newPitchValue, voiceValueView.frame.size.width, voiceValueView.frame.size.height)];
-        voiceValueView.alpha = 0.4;
+        voiceValueView.alpha = 0.0;
         
         if (maxVoiceValue<newPitchValue) {
             maxVoiceValue = newPitchValue;
@@ -901,7 +901,7 @@
         
         //音量动画跟随
         [voiceValueView setFrame:CGRectMake(voiceValueView.frame.origin.x, SCREEN_HEIGHT - srcVoiceValueHeight, voiceValueView.frame.size.width, voiceValueView.frame.size.height)];
-        voiceValueView.alpha = 0.5;
+        voiceValueView.alpha = 0.0;
 
 
         [UIView commitAnimations];
