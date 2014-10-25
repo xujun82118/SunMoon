@@ -11,9 +11,19 @@
 #import "AddWaterMask.h"
 #import "SunMoonAlertTime.h"
 #import "ShareByShareSDR.h"
+#import "CustomIndicatorView.h"
 
 
 @interface HomeInsideViewController ()
+{
+    
+    CustomIndicatorView *indicator;
+    
+    CustomAlertView* customAlertAutoDis;
+    CustomAlertView* customAlertAutoDisYes;
+
+
+}
 /**
  *	@brief	用户信息更新
  *
@@ -679,6 +689,8 @@
     share.lightCount = moonValueStatic.text;
     share.senttence = moonWordShow.text;
     
+    share.customDelegate = self;
+    
     [self ShareImageWitheWater:share.shareImage WaterImage:share.waterImage shareObject:share];
     
     [share shareImageNews];
@@ -717,12 +729,49 @@
      share.timeString = sunTimeText.text;
      share.lightCount = sunValueStatic.text;
      share.senttence = sunWordShow.text;
+     share.customDelegate = self;
      
     [self ShareImageWitheWater:share.shareImage WaterImage:share.waterImage shareObject:share];
      
      [share shareImageNews];
      
 }
+
+
+//delegate
+-(void) ShareStart
+{
+    //初始化指示器
+    NSInteger indiW = 50;
+    NSInteger indiH = 50;
+    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
+    [indicator startAnimating];
+    [self.view addSubview:indicator];
+}
+
+-(void) ShareCancel
+{
+    
+}
+
+-(void) ShareReturnSucc
+{
+    
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
+    
+    [self showCustomYesAlertSuperView:@"分享成功" AlertKey:@"shareSucc"];
+
+}
+
+-(void) ShareReturnFailed
+{
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
+    
+    [self showCustomYesAlertSuperView:@"分享失败，请检查网络" AlertKey:@"shareFailed"];
+}
+
 
 
 //增加水印
@@ -848,6 +897,69 @@
     UIImage *protraitImg = [UIImage imageWithData:[NSData dataWithContentsOfURL:portraitUrl]];
     [self.user updateUserHeaderImage:protraitImg];
 
+}
+
+
+
+#pragma mark - Customer alert
+-(void) showCustomYesAlertSuperView:(NSString*) msg  AlertKey:(NSString*) alertKey
+{
+    
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
+    [customAlertAutoDisYes setStartCenterPoint:self.view.center];
+    [customAlertAutoDisYes setEndCenterPoint:self.view.center];
+    [customAlertAutoDisYes setStartAlpha:0.1];
+    [customAlertAutoDisYes setEndAlpha:1.0];
+    [customAlertAutoDisYes setStartHeight:0];
+    [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
+    [customAlertAutoDisYes setDelayDisappearTime:5.0];
+    [customAlertAutoDisYes setMsgFrontSize:45];
+    [customAlertAutoDisYes setAlertMsg:msg];
+    [customAlertAutoDisYes setCustomAlertDelegate:self];
+    [customAlertAutoDisYes RunCumstomAlert];
+    
+}
+
+- (void)yesButtonHandler:(id)sender
+{
+    [customAlertAutoDisYes yesButtonHandler:nil];
+    [customAlertAutoDis yesButtonHandler:nil];
+    
+    
+}
+
+-(void) showCustomDelayAlertBottom:(NSString*) msg
+{
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
+    [customAlertAutoDis setStartHeight:0];
+    [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
+    [customAlertAutoDis setEndHeight:50];
+    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
+    [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2, customAlertAutoDis.endHeight/2+60)];
+    [customAlertAutoDis setStartAlpha:0.1];
+    [customAlertAutoDis setEndAlpha:0.8];
+    [customAlertAutoDis setDelayDisappearTime:5.0];
+    [customAlertAutoDis setMsgFrontSize:30];
+    [customAlertAutoDis setAlertMsg:msg];
+    [customAlertAutoDis RunCumstomAlert];
+    
+}
+
+#pragma mark - CustomAlertDelegate
+- (void) CustomAlertOkAnimationFinish:(NSString*) alertKey
+{
+    NSLog(@"custom aler ok return");
+    //if ([alertKey isEqualToString:KEY_IS_GIVE_FIRST_LIGHT]) {
+
+        
+        
+    //}
+    
+ 
+    
 }
 
 
@@ -1103,7 +1215,7 @@
             alertNotification.fireDate = alertTime;
             alertNotification.repeatInterval = kCFCalendarUnitDay;
             alertNotification.timeZone=[NSTimeZone defaultTimeZone];
-            alertNotification.soundName = @"cute.mp3";
+            alertNotification.soundName = UILocalNotificationDefaultSoundName;
             
             NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_MOON_TIME forKey:ALERT_SUN_MOON_TIME];
             alertNotification.userInfo = info;
@@ -1139,6 +1251,10 @@
 }
 
 - (IBAction)sunAlertCtl:(id)sender {
+    //test
+    moonValueStatic.text = @"test";
+    
+    
     
     [self.user updateSunAlertTimeCtl:!self.user.sunAlertTimeCtl];
    
@@ -1157,7 +1273,7 @@
             alertNotification.fireDate = alertTime;
             alertNotification.repeatInterval = kCFCalendarUnitDay;
             alertNotification.timeZone=[NSTimeZone defaultTimeZone];
-            alertNotification.soundName = @"cute.mp3";
+            alertNotification.soundName = UILocalNotificationDefaultSoundName;
             
             NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_SUN_TIME forKey:ALERT_SUN_MOON_TIME];
             alertNotification.userInfo = info;

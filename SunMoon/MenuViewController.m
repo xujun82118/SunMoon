@@ -126,7 +126,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)sectionIndex
 {
-    return 3;
+    return 2;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -154,14 +154,14 @@
         tableView.separatorColor = [UIColor whiteColor];
 
         cell.imageView.image = [UIImage imageNamed:@"setting.png"];
-
-    }else if(indexPath.row == 2)
-    {
-        tableView.separatorColor = [UIColor whiteColor];
-
-        cell.imageView.image = [UIImage imageNamed:@"ning.png"];
-        
     }
+//    }else if(indexPath.row == 2)
+//    {
+//        tableView.separatorColor = [UIColor whiteColor];
+//
+//        cell.imageView.image = [UIImage imageNamed:@"ning.png"];
+//        
+//    }
     
     return cell;
 }

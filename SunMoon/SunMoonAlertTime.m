@@ -113,7 +113,7 @@
             alertNotification.fireDate = fireDate;
             alertNotification.repeatInterval = kCFCalendarUnitDay;
             alertNotification.timeZone=[NSTimeZone defaultTimeZone];
-            alertNotification.soundName = @"cute.mp3";
+            alertNotification.soundName = UILocalNotificationDefaultSoundName;
             
             NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_SUN_TIME forKey:ALERT_SUN_MOON_TIME];
             alertNotification.userInfo = info;
@@ -149,7 +149,7 @@
             alertNotification.fireDate = fireDate;
             alertNotification.repeatInterval = kCFCalendarUnitDay;
             alertNotification.timeZone=[NSTimeZone defaultTimeZone];
-            alertNotification.soundName = @"cute.mp3";
+            alertNotification.soundName = UILocalNotificationDefaultSoundName;
             
             NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_MOON_TIME forKey:ALERT_SUN_MOON_TIME];
             alertNotification.userInfo = info;

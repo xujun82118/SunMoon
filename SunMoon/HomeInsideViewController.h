@@ -12,10 +12,12 @@
 #import "VoicePressedHold.h"
 #import "UserInfoCloud.h"
 #import <ShareSDK/ShareSDK.h>
+#import "ShareByShareSDR.h"
+#import "CustomAlertView.h"
 
 
 
-@interface HomeInsideViewController : UIViewController<InfiniteScrollPickerDelegate,UserInfoCloudDelegate>
+@interface HomeInsideViewController : UIViewController<InfiniteScrollPickerDelegate,UserInfoCloudDelegate,ShareByShareSDRDelegate,CustomAlertDelegate>
 {
       InfiniteScrollPicker *imageScrollSun;
       InfiniteScrollPicker *imageScrollMoon;

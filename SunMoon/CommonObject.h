@@ -150,7 +150,7 @@ typedef enum
 //通知用户在育成光的时间
 #define KEY_NOTIFY_NEED_BRINGING_LAST_TIME @"notifyNeedBringLastTime"
 #define KEY_NOTIFY_IS_BRINGING_LAST_TIME @"notifyIsBringLastTime"
-#define REMINDER_INTERVEL_TIME 1 //提醒时间间隔
+#define REMINDER_INTERVEL_TIME 2 //提醒时间间隔
 
 //用户连续登录次数
 #define KEY_CONTINUE_LOGIN_SUN_COUNT @"continueLoginSunCount"
@@ -242,6 +242,7 @@ typedef enum
 #define  TAG_IMAGE_HIGH_LIGHT_SUN 104
 #define  TAG_AUTO_CLOUD_SWITCH 105
 #define  TAB_VOICE_VALUE   106
+#define  TAG_PLCAMERA   107
 
 #define  TAG_EDITE_PHOTO_SCROLL_VIEW 109
 #define  TAG_EDITE_PHOTO_SCROLL_LABEL 200 //200到215

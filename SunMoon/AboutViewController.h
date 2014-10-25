@@ -11,7 +11,7 @@
 
 
 @interface AboutViewController : UIViewController
-- (IBAction)showMenu;
-- (IBAction)addStars:(id)sender;
+
+-(void) back;
 
 @end

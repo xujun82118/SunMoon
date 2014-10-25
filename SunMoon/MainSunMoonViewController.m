@@ -577,6 +577,9 @@
 
 -(void)whenFirstlyOpenViewHandle
 {
+
+    
+    
     //第一次打开，奖励一个光值
     [self.userInfo  addSunOrMoonValue:1];
     [self.userInfo updateisBringUpSunOrMoon:YES];
@@ -1383,11 +1386,11 @@
 {
     
     [UIView beginAnimations:@"reFreshSunMoonUI_DisPre" context:(__bridge void *)(mainBgImage)];
-    [UIView setAnimationDuration:1.0f];
+    [UIView setAnimationDuration:0.5f];
     [UIView setAnimationDelegate:self];
     [UIView setAnimationDidStopSelector:@selector(reFreshSunMoonUIAnimationDidStop:finished:context:)];
     NSLog(@"Disapear old UI : %@", [mainBgImage.image description]);
-    mainBgImage.alpha = 0.2;
+    mainBgImage.alpha = 0.5;
     [UIView commitAnimations];
     
     
@@ -1924,6 +1927,10 @@
     if (totalHours>0 && totalHours<3) {
         //NSString* timeAlert = [NSString stringWithFormat:(@"%@光托管了%d小时\n每3个小时奖励1个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
         //[self showCustomYesAlertSuperView:timeAlert AlertKey:KEY_REMINDER_SUCC_GET_LIGHT];
+        
+        //清空光育成时间
+        [self.userInfo updateSunorMoonBringupTime:0];
+        
         return 0;
 
     }
@@ -1932,6 +1939,10 @@
         NSString* timeAlert = [NSString stringWithFormat:(@"%@光养育了%d小时\n养成%d个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours, giveCount,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
         [self showCustomYesAlertSuperView:timeAlert AlertKey:KEY_REMINDER_SUCC_GET_LIGHT];
 
+        
+        //清空光育成时间
+        [self.userInfo updateSunorMoonBringupTime:0];
+        
         return giveCount;
     }
     
@@ -2596,11 +2607,11 @@
             }else
             {
                 [self animationForShowBringLightBtnPop:NO];
-                isGetinToHome =  YES;
                 //待完成收回动画后，再进入小屋
 
             }
-            
+            isGetinToHome =  YES;
+
 
         }else
         {
@@ -2680,10 +2691,11 @@
                 }else
                 {
                     [self animationForShowBringLightBtnPop:NO];
-                    isGetinToHome =  YES;
                     //待完成收回动画后，再进入小屋
                     
                 }
+                isGetinToHome =  YES;
+
 
             }else
             {

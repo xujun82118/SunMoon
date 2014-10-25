@@ -8,7 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol ShareByShareSDRDelegate;
+
+
 @interface ShareByShareSDR : NSObject
+{
+    id<ShareByShareSDRDelegate> _customDelegate;
+
+}
+
+@property(nonatomic)id<ShareByShareSDRDelegate> customDelegate;
 
 
 @property (nonatomic, copy      ) UIImage * shareImage;
@@ -26,19 +35,12 @@
 @property (nonatomic, copy      ) NSString * senttence;
 
 
-
-
-
 @property (nonatomic, copy      ) UIImage * logImage;
 @property (nonatomic, copy      ) UIImage * waterImage;
 //相对于分享图片的frame
 @property (nonatomic      ) CGRect  logRect;
 @property (nonatomic      ) CGRect  waterRect;
 @property (nonatomic      ) CGRect  textRect;
-
-
-
-
 
 
 -(BOOL) shareImageNews;
@@ -52,5 +54,14 @@
 -(void) addLightCounText;
 -(void) addSentenceText;
 
+
+@end
+
+@protocol ShareByShareSDRDelegate <NSObject>
+
+-(void) ShareStart;
+-(void) ShareCancel;
+-(void) ShareReturnSucc;
+-(void) ShareReturnFailed;
 
 @end

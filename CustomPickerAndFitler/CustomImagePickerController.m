@@ -40,6 +40,7 @@
     UIButton *voiceReplayBtn;
     
     UIImageView* sayView;
+    UILabel *labelSentence;
 
     float maxVoiceValue;
     float newPitchValue;
@@ -150,6 +151,7 @@
         
         PLCameraView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
         [PLCameraView setBackgroundColor:[UIColor clearColor]];
+        PLCameraView.tag =TAG_PLCAMERA;
         [viewController.view addSubview:PLCameraView];
         //PLCameraView=[self findView:viewController.view withName:@"PLCameraView"];
         
@@ -263,33 +265,9 @@
         overlyViewBk.image = [UIImage imageNamed:@"拍照控件底图001.png"];
         //[overlyView addSubview:overlyViewBk];
       
-        //语录label
-        NSInteger sentenceLabelWidth = 280;
-        NSInteger sentenceLabelHeigth =80;
-        UILabel *labelSentence = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth/2-sentenceLabelWidth/2, overlyView.frame.origin.y-sentenceLabelHeigth, sentenceLabelWidth, sentenceLabelHeigth)];
-        labelSentence.tag = TAG_CAMERA_DECLEAR_LABEL;
-        //设置标签文本
-        //NSString *preString = @"Say:\n";
         
-        if(iSunORMoon == IS_SUN_TIME) {
-            labelSentence.text = self.userInfo.current_sun_sentence;
+        [self addlabelSentence];
 
-        }else if (iSunORMoon == IS_MOON_TIME)
-        {
-            labelSentence.text = self.userInfo.current_moon_sentence;
-
-        }
-        
-        //设置标签文本字体和字体大小
-        labelSentence.font = [UIFont fontWithName:@"Arial" size:20];
-        labelSentence.textColor = [UIColor whiteColor];
-        
-        //设置文本对其方式
-        labelSentence.textAlignment = NSTextAlignmentCenter;
-        //设置字体大小适应label宽度
-        labelSentence.adjustsFontSizeToFitWidth = YES;
-        labelSentence.numberOfLines = 4;
-        [PLCameraView addSubview:labelSentence];
         
         //语录三点
         UIImageView * sentenceView = [[UIImageView alloc] initWithImage:[UIImage  imageNamed:@"语录三点.png"]];
@@ -459,6 +437,39 @@
     }
 
     
+}
+
+
+-(void) addlabelSentence
+{
+    if (labelSentence) {
+        [labelSentence removeFromSuperview];
+    }
+    
+    //语录label
+    NSInteger sentenceLabelWidth = 280;
+    NSInteger sentenceLabelHeigth =80;
+    labelSentence = [[UILabel alloc] initWithFrame:CGRectMake(ScreenWidth/2-sentenceLabelWidth/2, overlyView.frame.origin.y-sentenceLabelHeigth, sentenceLabelWidth, sentenceLabelHeigth)];
+    labelSentence.tag = TAG_CAMERA_DECLEAR_LABEL;
+    if(iSunORMoon == IS_SUN_TIME) {
+        labelSentence.text = self.userInfo.current_sun_sentence;
+        
+    }else if (iSunORMoon == IS_MOON_TIME)
+    {
+        labelSentence.text = self.userInfo.current_moon_sentence;
+        
+    }
+    
+    //设置标签文本字体和字体大小
+    labelSentence.font = [UIFont fontWithName:@"Arial" size:20];
+    labelSentence.textColor = [UIColor whiteColor];
+    
+    //设置文本对其方式
+    labelSentence.textAlignment = NSTextAlignmentCenter;
+    //设置字体大小适应label宽度
+    labelSentence.adjustsFontSizeToFitWidth = YES;
+    labelSentence.numberOfLines = 4;
+    [PLCameraView addSubview:labelSentence];
 }
 
 
@@ -1018,7 +1029,7 @@
         
     }else
     {
-        NSString* temp = [NSString stringWithFormat:@"需要%@光宣言\n才能拍照", (iSunORMoon==IS_SUN_TIME)?@"阳":@"月"];
+        NSString* temp = [NSString stringWithFormat:@"请先大声说出%@光宣言\n才能拍照", (iSunORMoon==IS_SUN_TIME)?@"阳":@"月"];
         [self showCustomDelayAlertBottom:temp];
 
         
@@ -1115,13 +1126,13 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
 
     
-    NSString* labelSentence;
+    NSString* labelSentenceNow;
     if(iSunORMoon == IS_SUN_TIME) {
-        labelSentence = self.userInfo.current_sun_sentence;
+        labelSentenceNow = self.userInfo.current_sun_sentence;
         
     }else if (iSunORMoon == IS_MOON_TIME)
     {
-        labelSentence = self.userInfo.current_moon_sentence;
+        labelSentenceNow = self.userInfo.current_moon_sentence;
 
     }
     
@@ -1158,7 +1169,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
         NSDictionary *imageData = [NSDictionary dictionaryWithObjectsAndKeys:
                                    image,CAMERA_IMAGE_KEY,
                                    [CommonObject getCurrentDate], CAMERA_TIME_KEY,
-                                   labelSentence, CAMERA_SENTENCE_KEY,
+                                   labelSentenceNow, CAMERA_SENTENCE_KEY,
                                    _voiceName, CAMERA_VOICE_NAEM_KEY,
                                    @"1", CAMERA_LIGHT_COUNT,
                                    nil];
@@ -1244,25 +1255,30 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
 
 #pragma mark - AFPickerViewDelegate
 
-- (void)pickerView:(AFPickerView *)pickerView didSelectRow:(NSInteger)row {
-
-    UIView *PLCameraView=[self findView:self.view
-                               withName:@"PLCameraView"];
-    
-    UILabel *label = (UILabel*)[PLCameraView viewWithTag:TAG_CAMERA_DECLEAR_LABEL];
-    
+- (void)pickerView:(AFPickerView *)pickerView didSelectRow:(NSInteger)row
+{
     
     if(iSunORMoon == IS_SUN_TIME) {
         [self.userInfo updateSunSentenceSelected:row];
         
-        label.text = self.userInfo.current_sun_sentence;
+        //labelSentence.text = self.userInfo.current_sun_sentence;
+        //[labelSentence setText:self.userInfo.current_sun_sentence];
+        
+        [self addlabelSentence];
+
         
     }else if (iSunORMoon == IS_MOON_TIME)
     {
         [self.userInfo updateMoonSentenceSelected:row];
-        label.text = self.userInfo.current_moon_sentence;
 
         
+        //[labelSentence setNeedsDisplay];
+        //[PLCameraView setNeedsDisplay];
+        //[labelSentence setText:self.userInfo.current_moon_sentence];
+        
+        [self addlabelSentence];
+
+
     }
     
 }

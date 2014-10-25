@@ -27,12 +27,19 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    self.navigationController.navigationBarHidden = YES;
+    self.navigationController.navigationBar.opaque = YES;
+    //加返回按钮
+    NSInteger backBtnWidth = 18;
+    NSInteger backBtnHeight = 22;
+    UIButton *backBtn =[UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setImage:[UIImage imageNamed:@"返回-黄.png"] forState:UIControlStateNormal];
+    [backBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y-backBtnHeight/2+10, backBtnWidth, backBtnHeight)];
+    [backBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backBtn];
 }
 
-- (IBAction)showMenu
-{
-    [self.frostedViewController presentMenuViewController];
-}
 
 - (void)didReceiveMemoryWarning
 {
@@ -41,25 +48,11 @@
 }
 
 
-- (IBAction)addStars:(id)sender
+-(void) back
 {
+    [self.navigationController popViewControllerAnimated:YES];
     
-    //    NSString *str = [NSString stringWithFormat:
-    //                     @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%d",
-    //                     782426992 ];
-    //    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:str]];
-    
-    //    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"去给'%@'打分吧！",@"天天更美丽"]
-    //                                                        message:@"您的评价对我们很重要"
-    //                                                       delegate:self
-    //                                              cancelButtonTitle:nil
-    //                                              otherButtonTitles:@"稍后评价",@"去评价",nil];
-    //    [alertView show];
-    
-    NSURL *url = [NSURL URLWithString:@"https://itunes.apple.com/us/app/tian-tian-geng-mei-li/id782426992?ls=1&mt=8"];
-    [[UIApplication sharedApplication] openURL:url];
 }
-
 
 /*
 #pragma mark - Navigation

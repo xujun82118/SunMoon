@@ -20,7 +20,7 @@
 "Moon time is on" = "月光时间到了，和月亮说一句美丽宣言！";
 
 "appName" = "日月美拍";
-"appUrl"  = "https://itunes.apple.com/us/app/ri-yue-mei-pai/id929494640";
+"appUrl"  = "https://itunes.apple.com/cn/app/ri-yue-mei-pai/id929494640";
 "FromUri" = "(日月美拍)";
 "MsgFrefixSun" = "今天的阳光宣言：";
 "MsgFrefixMoon" = "今天的月光宣言：";
@@ -29,6 +29,12 @@
 "Change to sun time hi message" = "阳光时间到了，向着太阳说出你的美丽宣言！";
 "Change to moon time hi message" = "月光时间到了，和月亮说一句美丽宣言！";
 
+
+"iLinkAppMessage" = " \n需要尝鲜新功能吗？";
+"iLinkMessageTitle" = "发现新版本";
+"iLinkCancelButton" = "不，谢谢";
+"iLinkRemindButton" = "下次提醒我";
+"iLinkUpdateButton" = "现在升级";
 
 
 "TEXT_SINA_WEIBO" = "新浪微博";

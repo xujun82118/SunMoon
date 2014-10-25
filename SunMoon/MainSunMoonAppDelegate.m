@@ -21,6 +21,7 @@
 #import "YouMiWallAppModel.h"
 #import "YouMiPointsManager.h"
 
+#import "iLink.h"
 
 @interface MainSunMoonAppDelegate ()
 
@@ -41,13 +42,38 @@
 @synthesize userInfo =_userInfo,userCloud=_userCloud;
 //@synthesize viewDelegate = _viewDelegate;
 
++ (void)initialize
+{
+    //set the bundle ID. normally you wouldn't need to do this
+    //as it is picked up automatically from your Info.plist file
+    //but we want to test with an app that's actually on the store
+    //[iLink sharedInstance].applicationBundleID = @"com.clickgamer.AngryBirds";
+    //[iLink sharedInstance].onlyPromptIfLatestVersion = NO;
+    
+    //[iLink sharedInstance].applicationVersion = @"1.0";
+    
+    //[iLink sharedInstance].globalPromptForUpdate = NO;
+    // enable preview mode //  if YES would show prompt always //
+    //[iLink sharedInstance].previewMode = YES;
+}
+
+- (void)iLinkDidFindiTunesInfo{
+    NSLog(@"App local URL: %@", [iLink sharedInstance].iLinkGetAppURLforLocal );
+    NSLog(@"App sharing URL: %@", [iLink sharedInstance].iLinkGetAppURLforSharing );
+    NSLog(@"App rating URL: %@", [iLink sharedInstance].iLinkGetRatingURL );
+    NSLog(@"App Developer URL: %@", [iLink sharedInstance].iLinkGetDeveloperURLforSharing);
+    
+    //[[iLink sharedInstance] iLinkOpenDeveloperPage]; // Would open developer page on the App Store
+    //[[iLink sharedInstance] iLinkOpenAppPageInAppStoreWithAppleID:553834731]; // Would open a different app then the current, For example the paid version. Just put the Apple ID of that app.
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    
-    //test 解决相机起动黑屏问题
-    self.window.backgroundColor = [UIColor whiteColor];
+    if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)])
+    {
+        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
+    }
     
     //有米广告设置
     [YouMiConfig setUseInAppStore:YES];  // [可选]开启内置appStore，详细请看YouMiSDK常见问题解答
@@ -58,10 +84,10 @@
     [YouMiWall enable];
     
     //ShareSDK 设置
-    [ShareSDK registerApp:@"fe35485ae4a"];
+    [ShareSDK registerApp:@"3e623a1fc526"];
     
     //添加新浪微博应用
-    [ShareSDK connectSinaWeiboWithAppKey:@"1023688665" appSecret:@"9ba79b87a472d800fc92db7f9511a624" redirectUri:@"http://com.weibo"];
+    [ShareSDK connectSinaWeiboWithAppKey:@"1023688665" appSecret:@"9ba79b87a472d800fc92db7f9511a624" redirectUri:@"https://itunes.apple.com/cn/app/ri-yue-mei-pai/id929494640"];
     
     //添加腾讯微博应用 注册网址 http://dev.t.qq.com
     [ShareSDK connectTencentWeiboWithAppKey:@"801546710"
@@ -70,17 +96,17 @@
                                    wbApiCls:[WeiboApi class]];
     
     //添加微信应用
-    [ShareSDK connectWeChatWithAppId:@"wx4e89a3a1551f87e9" wechatCls:[WXApi class]];
+    [ShareSDK connectWeChatWithAppId:@"wx453af9a98e9bde70" wechatCls:[WXApi class]];
     
     //添加QQ应用
-    [ShareSDK connectQQWithQZoneAppKey:@"100586310"
+    [ShareSDK connectQQWithQZoneAppKey:@"801546710"
                      qqApiInterfaceCls:[QQApiInterface class]
                        tencentOAuthCls:[TencentOAuth class]];
 
      
      //添加QQ空间应用
-     [ShareSDK connectQZoneWithAppKey:@"100371282"
-     appSecret:@"aed9b0303e3ed1e27bae87c33761161d"];
+     [ShareSDK connectQZoneWithAppKey:@"801546710"
+     appSecret:@"8f2308b6c3ff569b3d368a847dd6e081"];
      
 
     
@@ -223,14 +249,14 @@
     //构造通知
     alertNotification=[[UILocalNotification alloc] init];
     alertNotification.fireDate = Nil;
-    alertNotification.repeatInterval = kCFCalendarUnitDay;
     alertNotification.timeZone=[NSTimeZone defaultTimeZone];
-    alertNotification.soundName = @"cute.mp3";
+    alertNotification.soundName = UILocalNotificationDefaultSoundName;
     
+
     NSString* temp;
     if ([_userInfo checkIsBringUpinSunOrMoon] && (totalHoursIs>REMINDER_INTERVEL_TIME || totalHoursIs<0 || lastNotifyIs == nil)) {
         
-        //告知会用在养育光了
+        //告知在养育光了
         temp = [NSString stringWithFormat:@"正在养育%@光，等你回来啊",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
         
         alertNotification.alertBody = temp;
@@ -242,18 +268,34 @@
         [userBaseData setObject:[NSDate date] forKey:KEY_NOTIFY_IS_BRINGING_LAST_TIME];
         [userBaseData synchronize];
         
-    }else if(totalHoursNeed>REMINDER_INTERVEL_TIME || totalHoursNeed<0 || lastNotifyNeed == nil)
+    }else if(![_userInfo checkIsBringUpinSunOrMoon] && (totalHoursNeed>REMINDER_INTERVEL_TIME || totalHoursNeed<0 || lastNotifyNeed == nil))
     {
-        temp = [NSString stringWithFormat:@"快回来呦，没有把%@光托付给%@",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"太阳":@"月亮"];
+        //有光时，才提示
+        BOOL alert;
+        if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME && [_userInfo.sun_value integerValue]>0) {
+            alert = YES;
+        }else if([CommonObject checkSunOrMoonTime]==IS_MOON_TIME && [_userInfo.moon_value integerValue]>0)
+        {
+            alert = YES;
+
+        }else
+        {
+            alert = FALSE;
+        }
         
-        alertNotification.alertBody = temp;
-        
-        
-        [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
-        
-        //更新本次时间
-        [userBaseData setObject:[NSDate date] forKey:KEY_NOTIFY_NEED_BRINGING_LAST_TIME];
-        [userBaseData synchronize];
+        if (alert) {
+            temp = [NSString stringWithFormat:@"快回来呦，没有把%@光托付给%@",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"太阳":@"月亮"];
+            
+            alertNotification.alertBody = temp;
+            
+            
+            [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
+            
+            //更新本次时间
+            [userBaseData setObject:[NSDate date] forKey:KEY_NOTIFY_NEED_BRINGING_LAST_TIME];
+            [userBaseData synchronize];
+        }
+
     }
     
     
@@ -276,9 +318,8 @@
     alertNotification=[[UILocalNotification alloc] init];
 
     alertNotification.fireDate = Nil;
-    alertNotification.repeatInterval = kCFCalendarUnitDay;
     alertNotification.timeZone=[NSTimeZone defaultTimeZone];
-    alertNotification.soundName = @"cute.mp3";
+    alertNotification.soundName = UILocalNotificationDefaultSoundName;
     
     //NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_SUN_TIME forKey:ALERT_SUN_MOON_TIME];
     //alertNotification.userInfo = info;

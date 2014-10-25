@@ -10,9 +10,13 @@
 #import "CustomImagePickerController.h"
 #import "CommonObject.h"
 #import "AminationCustom.h"
+#import "ShareByShareSDR.h"
+#import "CustomAlertView.h"
+
+
 
 @protocol ImageFitlerProcessDelegate;
-@interface ImageFilterProcessViewController : UIViewController<CustomImagePickerControllerDelegate,AminationCustomDelegate>
+@interface ImageFilterProcessViewController : UIViewController<CustomImagePickerControllerDelegate,AminationCustomDelegate,ShareByShareSDRDelegate,CustomAlertDelegate>
 {
     UIScrollView *scrollerView;
     UIImage *currentImage;

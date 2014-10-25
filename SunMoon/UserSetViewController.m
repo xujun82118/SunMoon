@@ -53,6 +53,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.navigationController.navigationBarHidden = NO;
+    self.navigationController.navigationBar.opaque = YES;
+
     
     //获取单例用户数据
     self.user= [UserInfo  sharedSingleUserInfo];
@@ -150,11 +152,20 @@
 {
     [super viewWillAppear:animated];
    
-    //self.navigationController.navigationBarHidden = NO;
+    self.navigationController.navigationBarHidden = NO;
     //self.title = @"1234";
     //[self.navigationController setNavigationBarHidden:YES animated:animated];
     //[self.navigationItem setNewTitle:@"用户设置"];
 
+
+    
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    //self.navigationController.navigationBarHidden = NO;
 
     
 }
@@ -166,8 +177,6 @@
     [ShareSDK removeAllNotificationWithTarget:self];
     
 }
-
-
 
 
 
@@ -393,7 +402,7 @@
             return;
         }
         
-        NSURL *url = [NSURL URLWithString:@"https://itunes.apple.com/us/app/tian-tian-geng-mei-li/id782426992?ls=1&mt=8"];
+        NSURL *url = [NSURL URLWithString:@"https://itunes.apple.com/cn/app/ri-yue-mei-pai/id929494640"];
         [[UIApplication sharedApplication] openURL:url];
     }
     
@@ -414,6 +423,16 @@
         
 
     }
+    
+    if (indexPath.section  == 2 && indexPath.row == 2)
+    {
+
+        [self performSegueWithIdentifier:@"aboutUs" sender:nil];
+        
+        
+    }
+    
+    
     
 }
 
@@ -451,7 +470,7 @@
         return 2;
     }
     
-    return 2;
+    return 3;
 
 }
 
@@ -579,7 +598,17 @@
         if (indexPath.row == 1) {
             
             
-            cell.textLabel.text = @"提个意见@我们";
+            cell.textLabel.text = @"有建议@我们";
+            
+            
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            
+        }
+        
+        if (indexPath.row == 2) {
+            
+            
+            cell.textLabel.text = @"关于我们";
             
             
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;

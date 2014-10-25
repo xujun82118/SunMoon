@@ -207,47 +207,89 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="版权所有：云石科技网络工作室" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L7N-RX-3mJ">
-                                <rect key="frame" x="47" y="419" width="238" height="41"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="云石科技网络工作室" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L7N-RX-3mJ">
+                                <rect key="frame" x="181" y="129" width="238" height="41"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="238" id="ipK-ot-y7z"/>
+                                    <constraint firstAttribute="height" constant="41" id="kac-ub-Vyj"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T8e-uR-FrJ">
-                                <rect key="frame" x="47" y="182" width="30" height="30"/>
-                                <state key="normal" title="评分">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="addStars:" destination="RGn-0h-PAW" eventType="touchUpInside" id="VHA-hJ-ynD"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="使用本软件，你可以。。。。" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ku8-zI-afe">
-                                <rect key="frame" x="47" y="289" width="221" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="12" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ku8-zI-afe">
+                                <rect key="frame" x="10" y="175" width="580" height="118"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="118" id="LYS-55-1Kp"/>
+                                </constraints>
+                                <string key="text">工作室创建于2013年6月，我们的目标是生产出乐益相适的移动端服务产品。
+工作室成员分布在北京和深圳两地, 由对无线端产品富有极大热情的朋友们自发组成。
+真城地欢迎兴趣相投的朋友加入我们。
+联系方式：78002145@qq.com</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="声明" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CZ4-aV-2Go">
+                                <rect key="frame" x="274" y="363" width="34" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="AUz-Hx-RdY"/>
+                                    <constraint firstAttribute="width" constant="34" id="q9W-hF-m2O"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" lineBreakMode="tailTruncation" numberOfLines="15" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vXa-Wf-fmv">
+                                <rect key="frame" x="10" y="388" width="580" height="87"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="323" id="a3j-eC-NeF"/>
+                                </constraints>
+                                <string key="text">共同维护文明道德的网络环境，有益于社会，有益于个人；
+禁止使用本产品发布或传播任何违反国家法律或社会道德的图片和信息，如有违反，本工作室概不负责；
+本软件所有展示与引用的图片均来自网上,如涉及版权问题，请及时联系我们删除；
+本产品不会在未经用户允许下获取用户私人数据，同时请用户及时保存个人数据； </string>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                                <string key="userLabel">共同维护文明道德的网络环境，有益于社会，有益有个人； 禁止使用本产品发布或传播任何违反国家法律或社会道德的图片和信息，如有违反，本工作室概不负责； 本软件所有展示与引用的图片均来自网上,如涉及版权问题，请及时联系我们删除； 本产品不会在未经用户允许下获取用户私人数据，同时请用户保存个人数据；</string>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="a3j-eC-NeF"/>
+                                    </mask>
+                                </variation>
                             </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="CZ4-aV-2Go" firstAttribute="top" secondItem="Ku8-zI-afe" secondAttribute="bottom" constant="30" id="5pp-p1-2Vi"/>
+                            <constraint firstItem="vXa-Wf-fmv" firstAttribute="top" secondItem="CZ4-aV-2Go" secondAttribute="bottom" constant="4" id="6Nf-hv-267"/>
+                            <constraint firstItem="Ku8-zI-afe" firstAttribute="top" secondItem="L7N-RX-3mJ" secondAttribute="bottom" constant="5" id="CzE-lo-gQX"/>
+                            <constraint firstItem="vXa-Wf-fmv" firstAttribute="leading" secondItem="poc-eN-4gy" secondAttribute="leading" constant="10" id="DvH-QT-cbg"/>
+                            <constraint firstAttribute="trailing" secondItem="vXa-Wf-fmv" secondAttribute="trailing" constant="10" id="Egr-r4-ziJ"/>
+                            <constraint firstAttribute="centerX" secondItem="CZ4-aV-2Go" secondAttribute="centerX" id="FRm-sp-FMY"/>
+                            <constraint firstAttribute="trailing" secondItem="Ku8-zI-afe" secondAttribute="trailing" constant="10" id="Hws-MI-bwB"/>
+                            <constraint firstAttribute="trailing" secondItem="Ku8-zI-afe" secondAttribute="trailing" constant="10" id="Kum-rl-9OR"/>
+                            <constraint firstItem="Ku8-zI-afe" firstAttribute="leading" secondItem="poc-eN-4gy" secondAttribute="leading" constant="10" id="QOc-5e-vIU"/>
+                            <constraint firstItem="L7N-RX-3mJ" firstAttribute="top" secondItem="cpI-52-4Zm" secondAttribute="bottom" constant="65" id="XCl-AO-WAa"/>
+                            <constraint firstItem="Ku8-zI-afe" firstAttribute="leading" secondItem="poc-eN-4gy" secondAttribute="leading" constant="10" id="enJ-Xb-zYE"/>
+                            <constraint firstAttribute="trailing" secondItem="vXa-Wf-fmv" secondAttribute="trailing" constant="5" id="epW-RB-HKH"/>
+                            <constraint firstAttribute="trailing" secondItem="vXa-Wf-fmv" secondAttribute="trailing" constant="10" id="iPz-8u-Qw3"/>
+                            <constraint firstItem="L7N-RX-3mJ" firstAttribute="centerX" secondItem="poc-eN-4gy" secondAttribute="centerX" id="m7E-NG-2hx"/>
+                            <constraint firstAttribute="centerX" secondItem="vXa-Wf-fmv" secondAttribute="centerX" id="vLM-Y4-xCs"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="Hws-MI-bwB"/>
+                                <exclude reference="QOc-5e-vIU"/>
+                                <exclude reference="epW-RB-HKH"/>
+                                <exclude reference="iPz-8u-Qw3"/>
+                            </mask>
+                        </variation>
                     </view>
-                    <navigationItem key="navigationItem" id="nsX-PI-cPr">
-                        <barButtonItem key="leftBarButtonItem" style="plain" id="78f-So-UXZ">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="8VU-wG-phW">
-                                <rect key="frame" x="16" y="5" width="71" height="33"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                <state key="normal" title="Menu">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="showMenu" destination="RGn-0h-PAW" eventType="touchUpInside" id="us5-dc-OZb"/>
-                                </connections>
-                            </button>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="nsX-PI-cPr"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U8u-ur-fLU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2484.375" y="1506.338028169014"/>
+            <point key="canvasLocation" x="2227" y="1765"/>
         </scene>
         <!--Home Inside View Controller-->
         <scene sceneID="WJh-ct-kJQ">
@@ -1011,7 +1053,6 @@
                     <connections>
                         <segue destination="vXZ-lx-hvc" kind="relationship" relationship="rootViewController" id="ejC-Eo-eMK"/>
                         <segue destination="cwe-V1-lBz" kind="show" id="fan-0A-ZS6"/>
-                        <segue destination="RGn-0h-PAW" kind="show" id="9go-Hz-5cE"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dTd-9H-OOT" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1075,6 +1116,9 @@
                             </button>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="RGn-0h-PAW" kind="show" identifier="aboutUs" id="pWo-9g-1fz"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kFp-3M-6BB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

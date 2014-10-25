@@ -828,10 +828,49 @@
         tempShare = [NSString stringWithFormat:@"养成了%d个月光,", [self.userInfo.moon_value intValue]];
         share.shareMsgPreFix = [tempShare stringByAppendingString:NSLocalizedString(@"MsgFrefixMoon", @"")];
     }
+    share.customDelegate = self;
+
     
     [share shareImageNews];
     
 }
+
+
+//delegate
+-(void) ShareStart
+{
+    //初始化指示器
+    NSInteger indiW = 50;
+    NSInteger indiH = 50;
+    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
+    [indicator startAnimating];
+    [self.view addSubview:indicator];
+}
+
+-(void) ShareCancel
+{
+    
+}
+
+-(void) ShareReturnSucc
+{
+    
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
+    
+    [self showCustomYesAlertSuperView:@"分享成功" AlertKey:@"shareSucc"];
+    
+}
+
+-(void) ShareReturnFailed
+{
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
+    
+    [self showCustomYesAlertSuperView:@"分享失败，请检查网络" AlertKey:@"shareFailed"];
+}
+
+
 
 //优化：更换图片后，刷新效果不好
 - (void)cameraPhoto:(NSDictionary *) imagePickerDataReturn

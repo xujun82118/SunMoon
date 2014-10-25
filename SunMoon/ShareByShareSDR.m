@@ -9,17 +9,23 @@
 #import "ShareByShareSDR.h"
 #import "AddWaterMask.h"
 #import <ShareSDK/ShareSDK.h>
-
+#import "CustomAlertView.h"
 
 
 @implementation ShareByShareSDR
+{
+    //CustomAlertView* customAlertAutoDis;
+    //CustomAlertView* customAlertAutoDisYes;
+
+}
 
 
-@synthesize shareImage, shareMsg,shareMsgSignature,shareMsgPreFix,shareTitle,shareUrl,logImage,waterImage,logRect,waterRect,textRect,timeString,lightCount,senttence;
+@synthesize customDelegate,shareImage, shareMsg,shareMsgSignature,shareMsgPreFix,shareTitle,shareUrl,logImage,waterImage,logRect,waterRect,textRect,timeString,lightCount,senttence;
 
 
 -(BOOL) shareImageNews
 {
+
     
     if (!shareImage||!shareMsg) {
         NSLog(@"ERROR: shareImageNews without image or text!");
@@ -48,6 +54,9 @@
                                                   url:shareUrl
                                           description:nil
                                             mediaType:SSPublishContentMediaTypeImage];
+
+    
+    
     NSArray *shareList = [ShareSDK getShareListWithType:
                           ShareTypeWeixiSession,
                           ShareTypeWeixiTimeline,
@@ -80,11 +89,29 @@
                                 if (state == SSResponseStateSuccess)
                                 {
                                     NSLog(@"分享成功");
+                                    [self.customDelegate ShareReturnSucc];
+
                                 }
                                 else if (state == SSResponseStateFail)
                                 {
                                     NSLog(@"分享失败,错误码:%d,错误描述:%@", [error errorCode], [error errorDescription]);
+                                    
+                                    [self.customDelegate ShareReturnFailed];
+
                                 }
+                                
+                                if (state == SSResponseStateBegan) {
+                                    NSLog(@"开始分享");
+                                    [self.customDelegate ShareStart];
+
+                                }
+                                
+                                if (state == SSResponseStateCancel) {
+                                    NSLog(@"取消分享");
+                                    [self.customDelegate ShareCancel];
+                                    
+                                }
+                                
                             }];
     
     
@@ -149,10 +176,17 @@
                                 if (state == SSResponseStateSuccess)
                                 {
                                     NSLog(@"分享成功");
+                                    
+                                    [self.customDelegate ShareReturnSucc];
+                                    
+                                    //[CommonObject showAlert:@"分享成功" titleMsg:nil DelegateObject:nil];
                                 }
                                 else if (state == SSResponseStateFail)
                                 {
                                     NSLog(@"分享失败,错误码:%d,错误描述:%@", [error errorCode], [error errorDescription]);
+                                    [self.customDelegate ShareReturnFailed];
+
+                                    //[CommonObject showAlert:@"分享失败" titleMsg:nil DelegateObject:nil];
                                 }
                             }];
     
@@ -285,5 +319,63 @@
     
 }
 
+
+/*
+
+#pragma mark - Customer alert
+-(void) showCustomYesAlertSuperView:(NSString*) msg  AlertKey:(NSString*) alertKey
+{
+    
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
+    [customAlertAutoDisYes setStartCenterPoint:self.view.center];
+    [customAlertAutoDisYes setEndCenterPoint:self.view.center];
+    [customAlertAutoDisYes setStartAlpha:0.1];
+    [customAlertAutoDisYes setEndAlpha:1.0];
+    [customAlertAutoDisYes setStartHeight:0];
+    [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
+    [customAlertAutoDisYes setDelayDisappearTime:5.0];
+    [customAlertAutoDisYes setMsgFrontSize:45];
+    [customAlertAutoDisYes setAlertMsg:msg];
+    [customAlertAutoDisYes setCustomAlertDelegate:self];
+    [customAlertAutoDisYes RunCumstomAlert];
+    
+}
+
+- (void)yesButtonHandler:(id)sender
+{
+    [customAlertAutoDisYes yesButtonHandler:nil];
+    [customAlertAutoDis yesButtonHandler:nil];
+    
+    
+}
+
+-(void) showCustomDelayAlertBottom:(NSString*) msg
+{
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
+    [customAlertAutoDis setStartHeight:0];
+    [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
+    [customAlertAutoDis setEndHeight:50];
+    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
+    [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2, customAlertAutoDis.endHeight/2+60)];
+    [customAlertAutoDis setStartAlpha:0.1];
+    [customAlertAutoDis setEndAlpha:0.8];
+    [customAlertAutoDis setDelayDisappearTime:5.0];
+    [customAlertAutoDis setMsgFrontSize:30];
+    [customAlertAutoDis setAlertMsg:msg];
+    [customAlertAutoDis RunCumstomAlert];
+    
+}
+
+#pragma mark - CustomAlertDelegate
+- (void) CustomAlertOkAnimationFinish:(NSString*) alertKey
+{
+    NSLog(@"custom aler ok return");
+
+    
+}
+*/
 
 @end
