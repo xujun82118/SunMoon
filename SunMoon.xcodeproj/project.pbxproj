@@ -49,8 +49,8 @@
 		5D3D4CAE1995FE6B0027DB28 /* 环-sun-空.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D3D4CAC1995FE6B0027DB28 /* 环-sun-空.png */; };
 		5D421B0319B35B1600061761 /* 下部底图-黄.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D421B0219B35B1600061761 /* 下部底图-黄.png */; };
 		5D421B0719B9472A00061761 /* 引导2-4.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D421B0519B9472A00061761 /* 引导2-4.png */; };
-		5D421B0B19B94A9400061761 /* 引导1@2X.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D421B0919B94A9400061761 /* 引导1@2X.png */; };
-		5D421B0C19B94A9400061761 /* 引导2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D421B0A19B94A9400061761 /* 引导2@2x.png */; };
+		5D421B0B19B94A9400061761 /* 引导1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D421B0919B94A9400061761 /* 引导1.png */; };
+		5D421B0C19B94A9400061761 /* 引导2.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D421B0A19B94A9400061761 /* 引导2.png */; };
 		5D45CE061919C670007900A7 /* 分享.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D45CE051919C670007900A7 /* 分享.png */; };
 		5D45CE081919CC1B007900A7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5D45CE071919CC1B007900A7 /* Localizable.strings */; };
 		5D5113F21935687900F41F8A /* RECommonFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D5113E71935687900F41F8A /* RECommonFunctions.m */; };
@@ -70,6 +70,7 @@
 		5D51140E19396E0C00F41F8A /* PickerShadow.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D51140819396E0C00F41F8A /* PickerShadow.png */; };
 		5D51140F19396E0C00F41F8A /* PickerShadow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D51140919396E0C00F41F8A /* PickerShadow@2x.png */; };
 		5D51141219397C5800F41F8A /* CommonObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D51141119397C5800F41F8A /* CommonObject.m */; };
+		5D51411D19FA696C003DD253 /* iLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D51411C19FA696C003DD253 /* iLink.m */; };
 		5D523DAD19EB63DA004FE84E /* icon v3-120-圆.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D523DAC19EB63DA004FE84E /* icon v3-120-圆.png */; };
 		5D523DB119EB65DE004FE84E /* home.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D523DAE19EB65DE004FE84E /* home.png */; };
 		5D523DB219EB65DE004FE84E /* ning.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D523DAF19EB65DE004FE84E /* ning.png */; };
@@ -224,7 +225,7 @@
 		5DE48CC319546E63007A8A17 /* sns_icon_2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE48CC119546E63007A8A17 /* sns_icon_2@2x.png */; };
 		5DE48CC61956479F007A8A17 /* WeatherLoc.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DE48CC51956479F007A8A17 /* WeatherLoc.m */; };
 		5DE6B4CD19D6921D00170A92 /* 引导3-4.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE6B4CB19D6921D00170A92 /* 引导3-4.png */; };
-		5DE6B4CE19D6921D00170A92 /* 引导3@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE6B4CC19D6921D00170A92 /* 引导3@2x.png */; };
+		5DE6B4CE19D6921D00170A92 /* 引导3.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DE6B4CC19D6921D00170A92 /* 引导3.png */; };
 		5DE6B4D019D69D9500170A92 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5DE6B4CF19D69D9500170A92 /* Launch Screen.xib */; };
 		5DF11E2018F58F8100684122 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF11E1F18F58F8100684122 /* SystemConfiguration.framework */; };
 		5DF11E2218F58F8E00684122 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF11E2118F58F8E00684122 /* QuartzCore.framework */; };
@@ -241,7 +242,6 @@
 		5DF2385D18E7B48A00538DA1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DF2385C18E7B48A00538DA1 /* main.m */; };
 		5DF2386118E7B48A00538DA1 /* MainSunMoonAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DF2386018E7B48A00538DA1 /* MainSunMoonAppDelegate.m */; };
 		5DF2386418E7B48A00538DA1 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF2386218E7B48A00538DA1 /* Main_iPhone.storyboard */; };
-		5DF2386718E7B48A00538DA1 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DF2386518E7B48A00538DA1 /* Main_iPad.storyboard */; };
 		5DF2386A18E7B48A00538DA1 /* MainSunMoonViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DF2386918E7B48A00538DA1 /* MainSunMoonViewController.m */; };
 		5DF2386C18E7B48A00538DA1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DF2386B18E7B48A00538DA1 /* Images.xcassets */; };
 		5DF2387318E7B48A00538DA1 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF2387218E7B48A00538DA1 /* XCTest.framework */; };
@@ -333,8 +333,8 @@
 		5D3D4CAC1995FE6B0027DB28 /* 环-sun-空.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "环-sun-空.png"; sourceTree = "<group>"; };
 		5D421B0219B35B1600061761 /* 下部底图-黄.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "下部底图-黄.png"; sourceTree = "<group>"; };
 		5D421B0519B9472A00061761 /* 引导2-4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "引导2-4.png"; sourceTree = "<group>"; };
-		5D421B0919B94A9400061761 /* 引导1@2X.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "引导1@2X.png"; sourceTree = "<group>"; };
-		5D421B0A19B94A9400061761 /* 引导2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "引导2@2x.png"; sourceTree = "<group>"; };
+		5D421B0919B94A9400061761 /* 引导1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "引导1.png"; sourceTree = "<group>"; };
+		5D421B0A19B94A9400061761 /* 引导2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "引导2.png"; sourceTree = "<group>"; };
 		5D45CE051919C670007900A7 /* 分享.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "分享.png"; sourceTree = "<group>"; };
 		5D45CE071919CC1B007900A7 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		5D5113E61935687900F41F8A /* RECommonFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RECommonFunctions.h; sourceTree = "<group>"; };
@@ -365,6 +365,8 @@
 		5D51140919396E0C00F41F8A /* PickerShadow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PickerShadow@2x.png"; sourceTree = "<group>"; };
 		5D51141019397C5800F41F8A /* CommonObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonObject.h; sourceTree = "<group>"; };
 		5D51141119397C5800F41F8A /* CommonObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonObject.m; sourceTree = "<group>"; };
+		5D51411B19FA696C003DD253 /* iLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iLink.h; sourceTree = "<group>"; };
+		5D51411C19FA696C003DD253 /* iLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iLink.m; sourceTree = "<group>"; };
 		5D523DAC19EB63DA004FE84E /* icon v3-120-圆.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon v3-120-圆.png"; sourceTree = "<group>"; };
 		5D523DAE19EB65DE004FE84E /* home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = home.png; sourceTree = "<group>"; };
 		5D523DAF19EB65DE004FE84E /* ning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ning.png; sourceTree = "<group>"; };
@@ -566,7 +568,7 @@
 		5DE48CC41956479F007A8A17 /* WeatherLoc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeatherLoc.h; sourceTree = "<group>"; };
 		5DE48CC51956479F007A8A17 /* WeatherLoc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeatherLoc.m; sourceTree = "<group>"; };
 		5DE6B4CB19D6921D00170A92 /* 引导3-4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "引导3-4.png"; sourceTree = "<group>"; };
-		5DE6B4CC19D6921D00170A92 /* 引导3@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "引导3@2x.png"; sourceTree = "<group>"; };
+		5DE6B4CC19D6921D00170A92 /* 引导3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "引导3.png"; sourceTree = "<group>"; };
 		5DE6B4CF19D69D9500170A92 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		5DF11D8B18F58EE100684122 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		5DF11E1F18F58F8100684122 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -589,7 +591,6 @@
 		5DF2385F18E7B48A00538DA1 /* MainSunMoonAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainSunMoonAppDelegate.h; sourceTree = "<group>"; };
 		5DF2386018E7B48A00538DA1 /* MainSunMoonAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainSunMoonAppDelegate.m; sourceTree = "<group>"; };
 		5DF2386318E7B48A00538DA1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
-		5DF2386618E7B48A00538DA1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
 		5DF2386818E7B48A00538DA1 /* MainSunMoonViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainSunMoonViewController.h; sourceTree = "<group>"; };
 		5DF2386918E7B48A00538DA1 /* MainSunMoonViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MainSunMoonViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5DF2386B18E7B48A00538DA1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -721,9 +722,9 @@
 			isa = PBXGroup;
 			children = (
 				5DE6B4CB19D6921D00170A92 /* 引导3-4.png */,
-				5DE6B4CC19D6921D00170A92 /* 引导3@2x.png */,
-				5D421B0A19B94A9400061761 /* 引导2@2x.png */,
-				5D421B0919B94A9400061761 /* 引导1@2X.png */,
+				5DE6B4CC19D6921D00170A92 /* 引导3.png */,
+				5D421B0A19B94A9400061761 /* 引导2.png */,
+				5D421B0919B94A9400061761 /* 引导1.png */,
 				5D7C3E8219BAB24F00F7BAF0 /* 引导1-4.png */,
 				5D421B0519B9472A00061761 /* 引导2-4.png */,
 			);
@@ -747,6 +748,15 @@
 				5D5113F11935687900F41F8A /* UIViewController+REFrostedViewController.m */,
 			);
 			path = REFrostedViewController;
+			sourceTree = "<group>";
+		};
+		5D51411A19FA696C003DD253 /* iLink */ = {
+			isa = PBXGroup;
+			children = (
+				5D51411B19FA696C003DD253 /* iLink.h */,
+				5D51411C19FA696C003DD253 /* iLink.m */,
+			);
+			path = iLink;
 			sourceTree = "<group>";
 		};
 		5D523DBA19EBBC50004FE84E /* YouMilib */ = {
@@ -1098,6 +1108,7 @@
 		5DF2384418E7B48A00538DA1 = {
 			isa = PBXGroup;
 			children = (
+				5D51411A19FA696C003DD253 /* iLink */,
 				5D70F62D19ED1A20003F867D /* ShareSDK */,
 				5D523DBA19EBBC50004FE84E /* YouMilib */,
 				5D77BA421997955100A9FC4D /* CustomAlerView */,
@@ -1163,7 +1174,6 @@
 				5DF2385F18E7B48A00538DA1 /* MainSunMoonAppDelegate.h */,
 				5DF2386018E7B48A00538DA1 /* MainSunMoonAppDelegate.m */,
 				5DF2386218E7B48A00538DA1 /* Main_iPhone.storyboard */,
-				5DF2386518E7B48A00538DA1 /* Main_iPad.storyboard */,
 				5DE6B4CF19D69D9500170A92 /* Launch Screen.xib */,
 				5DF2386818E7B48A00538DA1 /* MainSunMoonViewController.h */,
 				5DF2386918E7B48A00538DA1 /* MainSunMoonViewController.m */,
@@ -1418,13 +1428,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DF2386718E7B48A00538DA1 /* Main_iPad.storyboard in Resources */,
 				5DA6774919C67B1A007191CE /* camera.png in Resources */,
 				5DBE9B04190C918F008C547D /* 返回.png in Resources */,
 				5DBFACE7197B9A9E00EF8652 /* voiceValueSun.png in Resources */,
 				5DE48CBD195464EE007A8A17 /* 微信sns_icon_22@2x.png in Resources */,
 				5D8334A91978011D00EC5201 /* headerFrame_4.png in Resources */,
-				5D421B0B19B94A9400061761 /* 引导1@2X.png in Resources */,
+				5D421B0B19B94A9400061761 /* 引导1.png in Resources */,
 				5D51140E19396E0C00F41F8A /* PickerShadow.png in Resources */,
 				5DE48CC319546E63007A8A17 /* sns_icon_2@2x.png in Resources */,
 				5D983492195FB59300A80EEB /* abFrame_7@2x.png in Resources */,
@@ -1437,7 +1446,7 @@
 				5DF2CA1519754AE70078BF63 /* 小云.png in Resources */,
 				5DB6201519147072005000E8 /* scroll-6.png in Resources */,
 				5D983493195FB59300A80EEB /* abFrame_8@2x.png in Resources */,
-				5D421B0C19B94A9400061761 /* 引导2@2x.png in Resources */,
+				5D421B0C19B94A9400061761 /* 引导2.png in Resources */,
 				5DF238A418E7BB0400538DA1 /* Guid-start.png in Resources */,
 				5D3D4CA91995EDC90027DB28 /* 环-sun.png in Resources */,
 				5D983491195FB59300A80EEB /* abFrame_6@2x.png in Resources */,
@@ -1481,7 +1490,7 @@
 				5D6E633B19DF6D10008C106D /* icon v3-亮蓝.png in Resources */,
 				5D983479195C591100A80EEB /* Voice.png in Resources */,
 				5D15E5ED19B05E350089997B /* 放音-白.png in Resources */,
-				5DE6B4CE19D6921D00170A92 /* 引导3@2x.png in Resources */,
+				5DE6B4CE19D6921D00170A92 /* 引导3.png in Resources */,
 				5DD4212319C1EDF300CBB21E /* YES.png in Resources */,
 				5D70F65719ED1A20003F867D /* ShareSDKLocalizable.strings in Resources */,
 				5DE48CB6195464EE007A8A17 /* sns_icon_24.png in Resources */,
@@ -1638,6 +1647,7 @@
 				5DABFEBC195873290000D5B2 /* VoicePressedHold.m in Sources */,
 				5D8070E818F8E72D0022A09C /* UserInfo.m in Sources */,
 				5D618AAE191F3D0300150945 /* SunSentenceManagerViewController.m in Sources */,
+				5D51411D19FA696C003DD253 /* iLink.m in Sources */,
 				5D18092B18F127BA0039F50E /* ImageUtil.m in Sources */,
 				5D18ACEB18EB065400D4741A /* UserSetViewController.m in Sources */,
 				5D8AF88E18FADCD700CA23C1 /* AFURLConnectionOperation.m in Sources */,
@@ -1697,14 +1707,6 @@
 				5DF2386318E7B48A00538DA1 /* Base */,
 			);
 			name = Main_iPhone.storyboard;
-			sourceTree = "<group>";
-		};
-		5DF2386518E7B48A00538DA1 /* Main_iPad.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5DF2386618E7B48A00538DA1 /* Base */,
-			);
-			name = Main_iPad.storyboard;
 			sourceTree = "<group>";
 		};
 		5DF2387B18E7B48A00538DA1 /* InfoPlist.strings */ = {
@@ -1815,7 +1817,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SunMoon/SunMoon-Prefix.pch";
 				INFOPLIST_FILE = "SunMoon/SunMoon-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ShareSDK/Extend/SinaWeiboSDK",
@@ -1852,7 +1854,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SunMoon/SunMoon-Prefix.pch";
 				INFOPLIST_FILE = "SunMoon/SunMoon-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ShareSDK/Extend/SinaWeiboSDK",
