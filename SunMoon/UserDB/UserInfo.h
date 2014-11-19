@@ -205,6 +205,8 @@
 -(void)addSunOrMoonValue:(NSInteger) value;
 -(void)decreaseSunOrMoonValue:(NSInteger) value;
 
+-(void)checkAddCurrValueWithCloudSunVaule:(NSInteger) sunValue MoonValue:(NSInteger)moonValue;
+
 -(void)updateContinueLogInCount:(NSInteger) value;
 
 -(void) updateisBringUpSun:(BOOL) isBringup;
@@ -216,9 +218,11 @@
 
 -(void) updateIsHaveAddSunValueForTodayPhoto:(BOOL) isOrNo;
 -(void) updateIsHaveAddMoonValueForTodayPhoto:(BOOL) isOrNo;
+-(void) updateIsHaveAddSunOrMoonValueForTodayPhoto:(BOOL) isOrNo;
 
 -(BOOL) checkIsHaveAddSunValueForTodayPhoto;
 -(BOOL) checkIsHaveAddMoonValueForTodayPhoto;
+-(BOOL) checkIsHaveAddSunOrMoonValueForTodayPhoto;
 
 -(void)updateSunorMoonBringupTime:(NSDate*) bringupTime;
 

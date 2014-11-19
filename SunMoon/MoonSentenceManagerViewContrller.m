@@ -33,7 +33,7 @@
     self.navigationController.navigationBar.opaque = YES;
     
     //加返回按钮
-    NSInteger backBtnWidth = 18;
+    NSInteger backBtnWidth = 50;
     NSInteger backBtnHeight = 22;
     UIButton *backBtn =[UIButton buttonWithType:UIButtonTypeCustom];
     [backBtn setImage:[UIImage imageNamed:@"返回-黄.png"] forState:UIControlStateNormal];
@@ -160,7 +160,7 @@
         
         UIAlertView *alert = [[UIAlertView alloc]
                               initWithTitle:nil
-                              message:@"请留一条月光语录哦~"
+                              message:@"请留一条月光宣言哦~"
                               delegate:nil
                               cancelButtonTitle:@"Yes"
                               otherButtonTitles:nil];

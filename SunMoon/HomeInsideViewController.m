@@ -59,7 +59,7 @@
     self.navigationController.navigationBarHidden = YES;
     self.navigationController.navigationBar.opaque = YES;
     //加返回按钮
-    NSInteger backBtnWidth = 18;
+    NSInteger backBtnWidth = 50;
     NSInteger backBtnHeight = 22;
     UIButton *backBtn =[UIButton buttonWithType:UIButtonTypeCustom];
     [backBtn setImage:[UIImage imageNamed:@"返回-黄.png"] forState:UIControlStateNormal];
@@ -175,11 +175,6 @@
 
 }
 
--(void) loadView
-{
-    [super loadView];
-
-}
 
 -(void) addScrollUserImageSunReFresh:(BOOL) isFresh
 {
@@ -192,8 +187,8 @@
     DeviceTypeVersion tempType = [CommonObject CheckDeviceTypeVersion];
     switch (tempType) {
         case iphone4_4s:
-            nullCount = 4;
-            fullCount = 8;
+            nullCount = 2;
+            fullCount = 5;
             break;
         case iphone5_5s:
             nullCount = 2;
@@ -324,8 +319,8 @@
     DeviceTypeVersion tempType = [CommonObject CheckDeviceTypeVersion];
     switch (tempType) {
         case iphone4_4s:
-            nullCount = 3;
-            fullCount = 8;
+            nullCount = 2;
+            fullCount = 5;
             break;
         case iphone5_5s:
             nullCount = 2;
@@ -469,7 +464,14 @@
     
     [super viewWillAppear:animated];
 
+    //加载照片较耗时，增加等待，
+    NSInteger indiW = 50;
+    NSInteger indiH = 50;
+    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
+    [indicator startAnimating];
+    [self.view addSubview:indicator];
 
+    [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(StopIndicatorAni:) userInfo:nil repeats:NO];
     
     /*
     UIImage *backButtonBackgroundImage = [UIImage imageNamed:@"返回.png"];
@@ -500,13 +502,7 @@
                              @"%d:%d", hour1, miniute1];
     [moonTimeBtn setTitle:timeString1 forState:UIControlStateNormal];
     [moonTimeBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-    
-    //动态显示阳光，月光值
-    [NSTimer scheduledTimerWithTimeInterval:1.0
-                                     target:self
-                                   selector:@selector(animateIncreaseValue:)
-                                   userInfo:nil
-                                    repeats:NO];
+
    
 }
 
@@ -515,24 +511,40 @@
     [super viewDidAppear:animated];
     
     
+    //动态显示阳光，月光值
+    [self animateIncreaseValue];
+    
     //test,暂时成功，可能会有别的问题，时，需开启以下注释
+
     [self addScrollUserImageSunReFresh:YES];
     [self addScrollUserImageMoonReFresh:YES];
 
-    
-    if ([CommonObject CheckDeviceTypeVersion] == iphone6 ||[CommonObject CheckDeviceTypeVersion]== iphone6Pluse) {
-        sunWordShow.font = [UIFont fontWithName:@"Arial" size:20];
 
-    }else
-    {
-        sunWordShow.font = [UIFont fontWithName:@"Arial" size:12];
 
-    }
-    sunWordShow.textColor = [UIColor blackColor];
-    sunWordShow.backgroundColor = [UIColor clearColor];
-    sunWordShow.textAlignment = NSTextAlignmentCenter;
-    sunWordShow.adjustsFontSizeToFitWidth = YES;
-    sunWordShow.numberOfLines = 3;
+//    DeviceTypeVersion typeVersion =[CommonObject CheckDeviceTypeVersion];
+//    if (typeVersion == iphone6 ||typeVersion == iphone6Pluse || typeVersion == iphoneOther) {
+//        sunWordShow.font = [UIFont fontWithName:@"Arial" size:20];
+//        moonWordShow.font = [UIFont fontWithName:@"Arial" size:20];
+//
+//
+//    }else
+//    {
+//        sunWordShow.font = [UIFont fontWithName:@"Arial" size:12];
+//        moonWordShow.font = [UIFont fontWithName:@"Arial" size:12];
+//
+//
+//    }
+//    sunWordShow.textColor = [UIColor blackColor];
+//    sunWordShow.backgroundColor = [UIColor clearColor];
+//    sunWordShow.textAlignment = NSTextAlignmentCenter;
+//    sunWordShow.adjustsFontSizeToFitWidth = YES;
+//    sunWordShow.numberOfLines = 3;
+//    
+//    moonWordShow.textColor = [UIColor blackColor];
+//    moonWordShow.backgroundColor = [UIColor clearColor];
+//    moonWordShow.textAlignment = NSTextAlignmentCenter;
+//    moonWordShow.adjustsFontSizeToFitWidth = YES;
+//    moonWordShow.numberOfLines = 3;
 
     //重新布局MOON的位置
 //    UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
@@ -543,6 +555,13 @@
 }
 
 
+- (void)StopIndicatorAni:(NSTimer *)timer
+{
+    NSLog(@"StopIndicatorAni----");
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
+}
+
 - (void)viewDidLayoutSubviews
 {
     
@@ -550,19 +569,19 @@
 
 }
 
--(void) animateIncreaseValue:(NSTimer *)timer
+-(void) animateIncreaseValue
 {
     //显示阳光，月光值, 从1增加到最大
     int count = [[self.user getMaxUserSunValue] integerValue];
     for (int i = 0; i<=count; i++) {
         sunValueStatic.text = [NSString stringWithFormat:@"%d", i];
-        sleep(0.5);
+        //sleep(0.5);
     }
     
     count = [[self.user getMaxUserMoonValue] integerValue];
     for (int i = 0; i<=count; i++) {
         moonValueStatic.text = [NSString stringWithFormat:@"%d", i];
-        sleep(0.5);
+        //sleep(0.5);
     }
     
 }
@@ -672,8 +691,22 @@
  */
 - (IBAction)shareNight:(id)sender {
     
+    //查看网络
+    NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
+    if (typeNet == netNon) {
+        [CommonObject showAlert:@"请检查网络" titleMsg:nil DelegateObject:self];
+        return;
+    }
+    
+    
     UIImageView* imageData = [currentSelectDataMoon objectForKey:@"image_data"];
     NSString* imageSentence = [currentSelectDataMoon objectForKey:@"image_sentence"];
+    
+    
+    if ([imageSentence isEqual:@""]) {
+        return;
+    }
+
     
     ShareByShareSDR* share = [ShareByShareSDR alloc];
     share.shareTitle = NSLocalizedString(@"appName", @"");
@@ -704,9 +737,12 @@
  *
  */- (IBAction)shareMorning:(id)sender {
      
-     //test
-//     ShareByShareSDR* share = [ShareByShareSDR alloc];
-//     [share WeiBoMe];
+     //查看网络
+     NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
+     if (typeNet == netNon) {
+         [CommonObject showAlert:@"请检查网络" titleMsg:nil DelegateObject:self];
+         return;
+     }
      
      
      UIImageView* imageData = [currentSelectDataSun objectForKey:@"image_data"];
@@ -751,7 +787,10 @@
 
 -(void) ShareCancel
 {
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
     
+    [self showCustomYesAlertSuperView:@"取消分享" AlertKey:@"shareCancel"];
 }
 
 -(void) ShareReturnSucc
@@ -803,7 +842,7 @@
     [share addLightCounText];
     
     //计算水印语录的位置
-    CGFloat w3 = (share.shareImage.size.width);
+    CGFloat w3 = (share.shareImage.size.width)/3*2;
     CGFloat h3 = 30;
     CGFloat x3 = (share.shareImage.size.width)/2-w3/2;
     CGFloat y3 = share.shareImage.size.height -25 -h3/2;
@@ -974,11 +1013,18 @@
         return;
     }
     
+    //查看是否注册
+    if (!user.isRegisterUser) {
+        [CommonObject showAlert:@"请到设置中绑定注册" titleMsg:nil DelegateObject:self];
+        return;
+    }
+    
     if (self.user.cloudSynAutoCtl) {
         [CommonObject showAlert:@"已开启自动云同步，退出时自动同步" titleMsg:Nil DelegateObject:self];
     }else
     {
-        [_userCloud upateUserInfo:self.user];
+        //先获得现有用户云数据，对比后同步
+        [_userCloud GetCloudUserInfo:self.user];
         
     }
     
@@ -986,22 +1032,77 @@
     
 }
 
+
 - (void) getUserInfoFinishReturnDic:(NSDictionary*) userInfo
 {
 
-    NSLog(@"Syn UserInfo Succ!");
+    NSString* cloudSun = [userInfo objectForKey:@"sun_value"];
+    NSString* cloudMoon = [userInfo objectForKey:@"moon_value"];
+    if (![cloudSun  isEqualToString:self.user.sun_value] || ![cloudMoon isEqualToString: self.user.moon_value]) {
+        NSLog(@"cloudSun or moon != local value!  --->checkAddCurrValueWithCloudSunVaule, 待优化！");
+        [self.user checkAddCurrValueWithCloudSunVaule:cloudSun.integerValue MoonValue:cloudMoon.integerValue];
+        
+        //同步新数据
+        [_userCloud upateUserInfo:self.user];
+
+    }else
+    {
+        NSLog(@"cloudSun or moon == local value!");
+        [CommonObject showAlert:@"阳光或月光无增值, 无需同步" titleMsg:Nil DelegateObject:self];
+    }
     
-    [CommonObject showAlert:@"同步数据成功！" titleMsg:Nil DelegateObject:self];
-    
+
+
     
 }
 
 
 - (void) getUserInfoFinishFailed
 {
-    [CommonObject showAlert:@"同步数据失败, 请检查网络！" titleMsg:Nil DelegateObject:self];
+
+    NSLog(@"getUserInfoFinishFailed---check reason!");
     
+    //用户不存在， 同步新数据
+    [_userCloud upateUserInfo:self.user];
+    
+
 }
+
+- (void) getUserInfoFinishFailedByNetWork
+{
+    
+    [CommonObject showAlert:@"同步数据失败, 请检查网络！" titleMsg:Nil DelegateObject:self];
+
+}
+
+
+- (void) updateUserInfoSuccReturn
+{
+    
+    NSString* logValue = [NSString stringWithFormat:@"同步数据成功\n阳光%@个，月光%@个", self.user.sun_value, self.user.moon_value];
+    [CommonObject showAlert:logValue titleMsg:Nil DelegateObject:self];
+    
+    sunValueStatic.text =self.user.sun_value;
+    moonValueStatic.text =self.user.moon_value;
+    NSLog(@"sun change to %@",sunValueStatic.text);
+    NSLog(@"moon change to %@",moonValueStatic.text);
+
+}
+
+
+- (void) updateUserInfoFailedReturn
+{
+    NSLog(@"updateUserInfoFailedReturn---check reason!");
+
+}
+
+- (void) updateUserInfoFailedReturnByNetWork
+{
+    
+    [CommonObject showAlert:@"同步数据失败, 请检查网络！" titleMsg:Nil DelegateObject:self];
+
+}
+
 
 #pragma mark -
 - (IBAction)DeleteMoonImage:(id)sender
@@ -1252,7 +1353,7 @@
 
 - (IBAction)sunAlertCtl:(id)sender {
     //test
-    moonValueStatic.text = @"test";
+    //moonValueStatic.text = @"test";
     
     
     

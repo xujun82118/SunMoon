@@ -160,7 +160,6 @@
         
         NSLog(@"%@",stringFromFileAtURL);
         NSArray *strarray = [stringFromFileAtURL componentsSeparatedByString:@"\""];
-        
         for(int i=0;i<strarray.count;i++)
         {
             NSLog(@"%@",[strarray objectAtIndex:i]);

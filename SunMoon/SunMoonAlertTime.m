@@ -34,7 +34,7 @@
     self.navigationController.navigationBar.opaque = YES;
     
     //加返回按钮
-    NSInteger backBtnWidth = 18;
+    NSInteger backBtnWidth = 50;
     NSInteger backBtnHeight = 22;
     UIButton *backBtn =[UIButton buttonWithType:UIButtonTypeCustom];
     [backBtn setImage:[UIImage imageNamed:@"返回-黄.png"] forState:UIControlStateNormal];

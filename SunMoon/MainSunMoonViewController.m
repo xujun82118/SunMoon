@@ -153,10 +153,44 @@
     //起动时间监视
     [self startAlertTimerForSunMoonTime];
     
-    
     //加载头像
-    self.userHeaderImageView.image = self.userInfo.userHeaderImage;
+    NSInteger wHeader = SCREEN_WIDTH/3;
+    NSInteger hHeader = wHeader;
+    NSInteger xHeader = SCREEN_WIDTH/2 - wHeader/2;
+    NSInteger yHeadr  = SCREEN_HEIGHT - 50 - hHeader;
+    if (!_userHeaderImageView) {
+        _userHeaderImageView = [[UIImageView alloc] initWithFrame:CGRectMake(xHeader, yHeadr, wHeader, hHeader)];
+        [_userHeaderImageView.layer setCornerRadius:(_userHeaderImageView.frame.size.height/2)];
+        _userHeaderImageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+        [_userHeaderImageView.layer setMasksToBounds:YES];
+        [_userHeaderImageView setContentMode:UIViewContentModeScaleAspectFill];
+        [_userHeaderImageView setClipsToBounds:YES];
+        _userHeaderImageView.layer.shadowColor = [UIColor clearColor].CGColor;
+        _userHeaderImageView.layer.shadowOffset = CGSizeMake(4, 4);
+        _userHeaderImageView.layer.shadowOpacity = 0.5;
+        _userHeaderImageView.layer.shadowRadius = 2.0;
+        if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
+            _userHeaderImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
+            
+        }else
+        {
+            _userHeaderImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
+            
+        }
+        _userHeaderImageView.layer.borderWidth = 3.5f;
+        _userHeaderImageView.userInteractionEnabled = YES;
+        _userHeaderImageView.backgroundColor = [UIColor blackColor];
+        tapHeaderView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapUserHeader)];
+        [_userHeaderImageView addGestureRecognizer:tapHeaderView];
+        [self.view addSubview:_userHeaderImageView];
+        
+    }
     
+    self.userHeaderImageView.image = self.userInfo.userHeaderImage;
+
+    
+    
+    /*
     //创建拖动轨迹识别
     panSunOrMoonGusture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(HandlePanSunOrMoon:)];
     [self.view addGestureRecognizer:panSunOrMoonGusture];
@@ -189,13 +223,13 @@
     
     
     //初始化弹出按钮, 位置在太阳月亮中, 是否有光在育成
-    NSInteger inTocameraBtnWidth = 100;
-    NSInteger inTocameraBtnHeight = 100;
+    NSInteger inTocameraBtnWidth = SCREEN_WIDTH/4;
+    NSInteger inTocameraBtnHeight = inTocameraBtnWidth;
     srcIntoCameraBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
     destIntoCameraBtnFrame = CGRectMake(20,_skySunorMoonImage.center.y+inTocameraBtnHeight/5*1, inTocameraBtnWidth,inTocameraBtnHeight);
     
-    NSInteger bringLightBtnWidth = 100;
-    NSInteger bringLightBtnHeight = 100;
+    NSInteger bringLightBtnWidth = SCREEN_WIDTH/4;
+    NSInteger bringLightBtnHeight = bringLightBtnWidth;
     srcShowBringLightBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
     destShowBringLightBtnFrame = CGRectMake(SCREEN_WIDTH-bringLightBtnWidth-20,_skySunorMoonImage.center.y+bringLightBtnHeight/5*1, bringLightBtnWidth, bringLightBtnHeight);
     
@@ -256,7 +290,7 @@
     [self.view addSubview:_intoCameraBtn];
     [self.view addSubview:_showBringLightBtn];
     
-    
+    */
     
     /*
     //初始化育成光的爆闪动画，提示点击，5秒不点击则收回
@@ -297,6 +331,7 @@
     [userDB mergeWithUserByDateTime:userInfo];
     */
 
+
     
 }
 
@@ -331,28 +366,50 @@
     [super viewDidAppear:animated];
     NSLog(@"---->viewDidAppear");
     
-    //重取一次frame
-    NSInteger inTocameraBtnWidth = 100;
-    NSInteger inTocameraBtnHeight = 100;
-    srcIntoCameraBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
-    destIntoCameraBtnFrame = CGRectMake(20,_skySunorMoonImage.center.y+inTocameraBtnHeight/5*1, inTocameraBtnWidth,inTocameraBtnHeight);
+
     
-    NSInteger bringLightBtnWidth = 100;
-    NSInteger bringLightBtnHeight = 100;
-    srcShowBringLightBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
-    destShowBringLightBtnFrame = CGRectMake(SCREEN_WIDTH-bringLightBtnWidth-20,_skySunorMoonImage.center.y+bringLightBtnHeight/5*1, bringLightBtnWidth, bringLightBtnHeight);
-    //
+    //创建拖动轨迹识别
+    panSunOrMoonGusture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(HandlePanSunOrMoon:)];
+    [self.view addGestureRecognizer:panSunOrMoonGusture];
     
-    /*
-    //***
+    //拖动动画图层
+    panSunOrMoonlayer=[[CALayer alloc]init];
+    
+    
+    
+    //初始化头像闪烁动画图
+    for (int i=0 ; i<7; i++) {
+         lightUserHeader = (UIImageView*)[self.view viewWithTag:(TAG_LIGHT_USER_HEADER+i)];
+        
+        if (!lightUserHeader) {
+            lightUserHeader = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"空白图.png"]];
+            lightUserHeader.tag = TAG_LIGHT_USER_HEADER+i;
+            lightUserHeader.userInteractionEnabled=YES;
+            lightUserHeader.contentMode=UIViewContentModeScaleToFill;
+            lightUserHeader.hidden = YES;
+            [self.view addSubview:lightUserHeader];
+        }
+        
+    }
+    
+    
+    //增加点击识别，进入拍照，或回归光到头像, 拖动也可让光回到头像
+    tapSunOrMoonGusture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(TapSkySumOrMoonhandle:)];
+    tapSunOrMoonGusture.numberOfTouchesRequired = 1;
+    tapSunOrMoonGusture.numberOfTapsRequired = 1;
+    _skySunorMoonImage.userInteractionEnabled = YES;
+    [_skySunorMoonImage addGestureRecognizer:tapSunOrMoonGusture];
+    
+
+    
     //初始化弹出按钮, 位置在太阳月亮中, 是否有光在育成
-    NSInteger inTocameraBtnWidth = 100;
-    NSInteger inTocameraBtnHeight = 100;
+    NSInteger inTocameraBtnWidth = SCREEN_WIDTH/3;
+    NSInteger inTocameraBtnHeight = inTocameraBtnWidth;
     srcIntoCameraBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
     destIntoCameraBtnFrame = CGRectMake(20,_skySunorMoonImage.center.y+inTocameraBtnHeight/5*1, inTocameraBtnWidth,inTocameraBtnHeight);
     
-    NSInteger bringLightBtnWidth = 100;
-    NSInteger bringLightBtnHeight = 100;
+    NSInteger bringLightBtnWidth = SCREEN_WIDTH/3;
+    NSInteger bringLightBtnHeight = bringLightBtnWidth;
     srcShowBringLightBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
     destShowBringLightBtnFrame = CGRectMake(SCREEN_WIDTH-bringLightBtnWidth-20,_skySunorMoonImage.center.y+bringLightBtnHeight/5*1, bringLightBtnWidth, bringLightBtnHeight);
     
@@ -361,20 +418,24 @@
     jumpSmallShowBringLightBtnFrame = CGRectMake(destShowBringLightBtnFrame.origin.x+(bringLightBtnWidth-bringLightJumpWidth)/2,destShowBringLightBtnFrame.origin.y+(bringLightBtnHeight-bringLightJumpHeight)/2, bringLightJumpWidth, bringLightJumpHeight);
     
     
-    if (!_intoCameraBtn) {
+    if (!_intoCameraBtn ) {
         _intoCameraBtn = [[UIButton alloc] initWithFrame:srcIntoCameraBtnFrame];
-        //test
-        _intoCameraBtn.hidden = YES;
+        [_intoCameraBtn addTarget:self action:@selector(intoCamera:) forControlEvents:UIControlEventTouchUpInside];
+        [_intoCameraBtn setTag:TAG_INTO_CAMERA_BTN];
+        [self.view addSubview:_intoCameraBtn];
+
     }
-    [_intoCameraBtn addTarget:self action:@selector(intoCamera:) forControlEvents:UIControlEventTouchUpInside];
-    [_intoCameraBtn setTag:TAG_INTO_CAMERA_BTN];
     
     if (!_showBringLightBtn) {
         _showBringLightBtn = [[UIButton alloc] initWithFrame:srcShowBringLightBtnFrame];
+        [_showBringLightBtn addTarget:self action:@selector(getBringedUpLight:) forControlEvents:UIControlEventTouchUpInside];
+        [_showBringLightBtn setTag:TAG_BRING_LING_BTN];
+        [self.view addSubview:_showBringLightBtn];
+
     }
-    [_showBringLightBtn addTarget:self action:@selector(getBringedUpLight:) forControlEvents:UIControlEventTouchUpInside];
-    [_showBringLightBtn setTag:TAG_BRING_LING_BTN];
+
     
+
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
         
         if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
@@ -417,13 +478,11 @@
     
     isPopOutIntoCameraBtn = NO;
     isPopOutShowBringLightBtn = NO;
-    [self.view addSubview:_intoCameraBtn];
-    [self.view addSubview:_showBringLightBtn];
     
     
-    //***
     
-    */
+
+    
      
     //初始化日月动画图
     //不能放到veiwDidload 和viewWillapear中
@@ -487,9 +546,9 @@
     //退出了小屋
     isGetinToHome = NO;
     
-    //WeatherLoc* testWeather = [[WeatherLoc alloc] init];
-   //[testWeather startGetWeather];
-    //[testWeather startGetWeatherSimple];
+//    WeatherLoc* testWeather = [[WeatherLoc alloc] init];
+//    [testWeather startGetWeather];
+//    [testWeather startGetWeatherSimple];
     
     //test
     //self.userInfo.userType =USER_TYPE_NEW;
@@ -556,9 +615,6 @@
 -(void) viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:YES];
-
-    [self animationForIntoCameraBtnPop:NO];
-
     
 }
 
@@ -726,7 +782,7 @@
     
     
     if (isPop) {
-        [UIView beginAnimations:@"popOut_IntoCameraBtn" context:(__bridge void *)(_intoCameraBtn)];
+        [UIView beginAnimations:@"popOut_IntoCameraBtn" context:Nil];
         [UIView setAnimationDuration:0.7f];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(animationPopOut:finished:context:)];
@@ -740,7 +796,7 @@
         
     }else
     {
-        [UIView beginAnimations:@"popBack_IntoCameraBtn" context:(__bridge void *)(_intoCameraBtn)];
+        [UIView beginAnimations:@"popBack_IntoCameraBtn" context:Nil];
         [UIView setAnimationDuration:0.7f];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(animationPopOut:finished:context:)];
@@ -1473,36 +1529,38 @@
 
 
 #pragma mark -  getter
-- (UIImageView *)userHeaderImageView {
-    
-    [_userHeaderImageView setFrame:CGRectMake(_userHeaderImageView.frame.origin.x, _userHeaderImageView.frame.origin.y, _userHeaderImageView.frame.size.width, _userHeaderImageView.frame.size.height)];
-    [_userHeaderImageView.layer setCornerRadius:(_userHeaderImageView.frame.size.height/2)];
-    _userHeaderImageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-    [_userHeaderImageView.layer setMasksToBounds:YES];
-    [_userHeaderImageView setContentMode:UIViewContentModeScaleAspectFill];
-    [_userHeaderImageView setClipsToBounds:YES];
-    _userHeaderImageView.layer.shadowColor = [UIColor clearColor].CGColor;
-    _userHeaderImageView.layer.shadowOffset = CGSizeMake(4, 4);
-    _userHeaderImageView.layer.shadowOpacity = 0.5;
-    _userHeaderImageView.layer.shadowRadius = 2.0;
-    if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-        _userHeaderImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
-
-    }else
-    {
-        _userHeaderImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
-
-    }
-    _userHeaderImageView.layer.borderWidth = 3.5f;
-    _userHeaderImageView.layer.cornerRadius =50.0;
-    _userHeaderImageView.userInteractionEnabled = YES;
-    _userHeaderImageView.backgroundColor = [UIColor blackColor];
-    tapHeaderView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapUserHeader)];
-    [_userHeaderImageView addGestureRecognizer:tapHeaderView];
-    
-    
-    return _userHeaderImageView;
-}
+//- (UIImageView *)userHeaderImageView {
+//    
+//    NSInteger w = SCREEN_WIDTH/2;
+//    NSInteger Y = w;
+//    [_userHeaderImageView setFrame:CGRectMake(_userHeaderImageView.frame.origin.x, _userHeaderImageView.frame.origin.y, w, Y)];
+//    [_userHeaderImageView.layer setCornerRadius:(_userHeaderImageView.frame.size.height/2)];
+//    _userHeaderImageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+//    [_userHeaderImageView.layer setMasksToBounds:YES];
+//    [_userHeaderImageView setContentMode:UIViewContentModeScaleAspectFill];
+//    [_userHeaderImageView setClipsToBounds:YES];
+//    _userHeaderImageView.layer.shadowColor = [UIColor clearColor].CGColor;
+//    _userHeaderImageView.layer.shadowOffset = CGSizeMake(4, 4);
+//    _userHeaderImageView.layer.shadowOpacity = 0.5;
+//    _userHeaderImageView.layer.shadowRadius = 2.0;
+//    if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
+//        _userHeaderImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
+//
+//    }else
+//    {
+//        _userHeaderImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
+//
+//    }
+//    _userHeaderImageView.layer.borderWidth = 3.5f;
+//    _userHeaderImageView.layer.cornerRadius =_userHeaderImageView.frame.size.width/2;
+//    _userHeaderImageView.userInteractionEnabled = YES;
+//    _userHeaderImageView.backgroundColor = [UIColor blackColor];
+//    tapHeaderView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapUserHeader)];
+//    [_userHeaderImageView addGestureRecognizer:tapHeaderView];
+//    
+//    
+//    return _userHeaderImageView;
+//}
 
 
 #pragma mark -  handle Pan

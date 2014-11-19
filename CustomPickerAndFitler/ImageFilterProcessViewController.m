@@ -289,14 +289,25 @@
     //阳光值
     int valuelabelHeight = 20;
     int valuelabelWidth = 20;
+    if (!valuelabel) {
     valuelabel = [[UILabel alloc] initWithFrame:CGRectMake(sunMoonImageView.frame.origin.x+sunMoonImageView.frame.size.width/2-valuelabelWidth/2, sunMoonImageView.frame.origin.y+sunMoonImageView.frame.size.height/2-valuelabelHeight/2, valuelabelWidth,valuelabelHeight)];
+    }
+
     [valuelabel setBackgroundColor:[UIColor clearColor]];
-    [valuelabel setText:@"+1"];
     [valuelabel setTextAlignment:NSTextAlignmentCenter];
     [valuelabel setFont:[UIFont systemFontOfSize:10.0f]];
     [valuelabel setTextColor:[UIColor blackColor]];
-    valuelabel.hidden = YES;
+    //valuelabel.hidden = YES;
     [self.view addSubview:valuelabel];
+
+    if (![valuelabel.text isEqualToString:@"+1"]) {
+        [valuelabel setText:@""];
+    }else
+    {
+        //为“+1”时，是重拍返回的，保持原来状态
+        NSLog(@"是重拍返回的");
+    }
+
     
 
     //语录
@@ -605,8 +616,16 @@
     
     NSInteger count = [[imagePickerData objectForKey:CAMERA_LIGHT_COUNT] integerValue];
     if (count==0) {
-        NSLog(@" 获得的光的个数为0，返回");
+        NSLog(@" 获得的光的个数为0,从相册来，返回");
         return;
+    }
+    
+    if ([self.userInfo checkIsHaveAddSunOrMoonValueForTodayPhoto]) {
+        NSLog(@" 已奖励过光，返回");
+
+        [self showCustomDelayAlertBottom:[NSString stringWithFormat:(@"不再重复奖励%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"]];
+        return;
+
     }
 
     
@@ -626,35 +645,17 @@
     //判断是否增加阳光月光值
         
         if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
-            if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
-                
-                [self showCustomYesAlertSuperView:@"今天已经获得阳光\n不再重复奖励" AlertKey:@"reminderOnce"];
-                
-                //[[GuidController sharedSingleUserInfo] updateGuidHaveGiveLight:YES];
-
-            }else
-            {
-                [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
-                [self.userInfo addSunOrMoonValue:count];
-                [self.userInfo updateIsHaveAddSunValueForTodayPhoto:YES];
-                
-            }
+            
+            [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
+            [self.userInfo addSunOrMoonValue:count];
+            [self.userInfo updateIsHaveAddSunValueForTodayPhoto:YES];
+ 
         }else
         {
-            if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
-                
-                [self showCustomYesAlertSuperView:@"今天已经获得月光\n不再重复奖励" AlertKey:@"reminderOnce"];
-                
-                //[[GuidController sharedSingleUserInfo] updateGuidHaveGiveLight:YES];
-
-            }else
-            {
-                [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
-                [self.userInfo addSunOrMoonValue:count];
-                [self.userInfo updateIsHaveAddMoonValueForTodayPhoto:YES];
-                
-                
-            }
+            
+            [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
+            [self.userInfo addSunOrMoonValue:count];
+            [self.userInfo updateIsHaveAddMoonValueForTodayPhoto:YES];
             
         }
     
@@ -666,8 +667,8 @@
 
 - (void) animationFinishedRuturn
 {
-    
-    valuelabel.hidden = NO;
+    valuelabel.text = @"+1";
+    //valuelabel.hidden = NO;
     
 }
 #pragma mark -
@@ -688,28 +689,31 @@
 - (void)abandonAction
 {
 
-    
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
         
-        if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
-            [CommonObject showActionSheetOptiontitleMsg:@"放弃吗？" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
-        }else
+        if([valuelabel.text isEqualToString:@"+1"])
         {
             [CommonObject showActionSheetOptiontitleMsg:@"放弃将失去此次奖励的阳光" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+            
+        }else
+        {
+            //从相册而来
+            [CommonObject showActionSheetOptiontitleMsg:@"放弃吗？" ShowInView:self.view CancelMsg:@"不放弃" DelegateObject:self Option:@"放弃"];
         }
-        
 
         
         
     }else if([CommonObject checkSunOrMoonTime] ==  IS_MOON_TIME)
     {
-        if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
-            [CommonObject showActionSheetOptiontitleMsg:@"放弃吗？" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
-        }else
+        if([valuelabel.text isEqualToString:@"+1"])
         {
             [CommonObject showActionSheetOptiontitleMsg:@"放弃将失去此次奖励的月光" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+            
+        }else
+        {
+            //从相册而来
+            [CommonObject showActionSheetOptiontitleMsg:@"放弃吗？" ShowInView:self.view CancelMsg:@"不放弃" DelegateObject:self Option:@"放弃"];
         }
-        
 
     }
     
@@ -720,14 +724,20 @@
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
-        //取消放弃
         
-    }else if (buttonIndex == 1) {
-
         //放弃
         //减少阳光月光值
         //动画:...
-        [self.userInfo decreaseSunOrMoonValue:1];
+        if([valuelabel.text isEqualToString:@"+1"])
+        {
+            [self.userInfo decreaseSunOrMoonValue:1];
+            [valuelabel setText:@""];
+            [self.userInfo updateIsHaveAddSunOrMoonValueForTodayPhoto:NO];
+            
+        }else
+        {
+            //从相册而来，为0，不减少
+        }
         
         //删除语音
         VoicePressedHold* pressedVoiceFordelete = [[VoicePressedHold alloc] init];
@@ -736,9 +746,13 @@
         [pressedVoiceFordelete deleteVoiceFile];
         
         [self dismissViewControllerAnimated:YES completion:NULL];
+        
+    
+    }else if (buttonIndex == 1) {
+
+        //取消放弃
 
     }
-    
 }
 
 
@@ -849,7 +863,10 @@
 
 -(void) ShareCancel
 {
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
     
+    [self showCustomYesAlertSuperView:@"取消分享" AlertKey:@"shareCancel"];
 }
 
 -(void) ShareReturnSucc
@@ -872,17 +889,15 @@
 
 
 
-//优化：更换图片后，刷新效果不好
 - (void)cameraPhoto:(NSDictionary *) imagePickerDataReturn
 {
-    //currentImage = [imagePickerData objectForKey:CAMERA_IMAGE_KEY];
     imagePickerData = imagePickerDataReturn;
-    //[rootImageView setImage:currentImage];
     [self viewDidLoad];
 
 }
 
 
+//优化：更换图片后，刷新效果不好
 //替换为原来的相片
 -(void)chooseOldImage:(UITapGestureRecognizer*) sender
 {

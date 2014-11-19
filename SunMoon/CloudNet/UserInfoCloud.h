@@ -12,6 +12,38 @@
 #define CLOUD_USER_INFO  @"http://115.28.36.43/cgi-bin/app_userinfo"
 #define CLOUD_USER_IMAGE  @"http://115.28.36.43/cgi-bin/app_userphoto_upload"
 
+/*
+ 错误码：
+ -1：用户名或id未输入
+ 
+ 查询用户记录
+ -11：未连上数据库
+ -12：未查到对应记录
+ -13：查询数据库失败
+ 
+ 新增用户记录
+ -20：未连上数据库
+ -21：查询数据库失败
+ -22：插入数据库失败
+ -23：更新数据库失败
+ */
+typedef enum
+{
+    CLOUD_SUCC = 0,
+    CLOUD_ERR_NO_NAMEID  = 1,
+    CLOUD_ERR_QUERY_UNCONNECT        =   -11,
+    CLOUD_ERR_QUERY_NORECORD         =   -12,
+    CLOUD_ERR_QUERY_FAILED           =   -13,
+    CLOUD_ERR_INSERT_UNCONNECT       =   -20,
+    CLOUD_ERR_INSERT_QUERY_FAILED    =   -21,
+    CLOUD_ERR_INSERT_FAILED          =   -22,
+    CLOUD_ERR_UPDATE_FAILED          =   -23
+    
+}cloudSynchronizeCode;
+
+
+
+
 
 @protocol UserInfoCloudDelegate;
 
@@ -23,7 +55,14 @@
  *
  * @param user 需要同步的用户数据
  */
--(BOOL)upateUserInfo:(UserInfo *) user;
+-(void)upateUserInfo:(UserInfo *) user;
+
+
+/**
+ * @brief 获取用户信息用user_name和sns_id
+ *
+ */
+-(void) GetCloudUserInfo:(UserInfo *) user;
 
 
 /**
@@ -34,14 +73,6 @@
 -(BOOL)updateUserImage:(NSData *) image;
 
 
-
-/**
- * @brief 获取用户信息用user_name和sns_id
- *
- * @param snsID 用户名称
- * @param userName  用户社交ID
- */
--(void)getUserInfoBySnsId:(NSString *) snsID  userName:(NSString *) userName;
 
 
 
@@ -64,10 +95,16 @@
 //定义委托函数
 @protocol UserInfoCloudDelegate <NSObject >
 
-- (void) getUserInfoFinishReturn:(UserInfo*) userInfo;
+
+- (void) updateUserInfoSuccReturn;
+- (void) updateUserInfoFailedReturn;
+- (void) updateUserInfoFailedReturnByNetWork;
+
 
 - (void) getUserInfoFinishReturnDic:(NSDictionary*) userInfo;
 - (void) getUserInfoFinishFailed;
+- (void) getUserInfoFinishFailedByNetWork;
+
 
 
 @end

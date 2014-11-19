@@ -731,7 +731,7 @@
         if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
             if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"只需每天阳光时间\n美拍一次" AlertKey:@"reminderOnce"];
+                [self showCustomYesAlertSuperView:@"请每天阳光时间\n美拍一次" AlertKey:@"reminderOnce"];
                 
                 [[GuidController sharedSingleUserInfo] updateGuidHaveTakePhoto:YES];
             }
@@ -739,7 +739,7 @@
         {
             if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"只需每天月光时间\n美拍一次" AlertKey:@"reminderOnce"];
+                [self showCustomYesAlertSuperView:@"请每天月光时间\n美拍一次" AlertKey:@"reminderOnce"];
 
                 [[GuidController sharedSingleUserInfo] updateGuidHaveTakePhoto:YES];
 
@@ -928,8 +928,17 @@
 {
     
     if (isHaveAddValue) {
+        NSLog(@" 重复触发录音奖励，不增加光");
         return 0;
     }
+    
+//    if ([self.userInfo checkIsHaveAddSunOrMoonValueForTodayPhoto]) {
+//        NSLog(@" 同一天已增加过光，不增加");
+//        
+//        [self showCustomDelayAlertBottom:[NSString stringWithFormat:(@"今天已奖励过%@光\n每天只需一次"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"]] ;
+//        return 0;
+//
+//    }
     
     if (isOverMaxVoiceValue)
     {
@@ -955,7 +964,7 @@
         
     }else
     {
-        [self showCustomDelayAlertBottom:@"音量小于200\n大点声，多点自信"];
+        [self showCustomDelayAlertBottom:@"音量小于200\n请大点声，多点自信"];
         
         return  1;
     }
@@ -1043,12 +1052,12 @@
 {
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
         
-        [CommonObject showActionSheetOptiontitleMsg:@"大声地说出美丽宣言，自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"宣言&自拍" DelegateObject:self Option:@"使用相片"];
+        [CommonObject showActionSheetOptiontitleMsg:@"说出美丽宣言自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"宣言&自拍" DelegateObject:self Option:@"使用相片"];
         
         
     }else if([CommonObject checkSunOrMoonTime] ==  IS_MOON_TIME)
     {
-        [CommonObject showActionSheetOptiontitleMsg:@"大声地说出美丽宣言，自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"宣言&自拍" DelegateObject:self Option:@"使用相片"];
+        [CommonObject showActionSheetOptiontitleMsg:@"说出美丽宣言自拍后，才能获得月光" ShowInView:self.view CancelMsg:@"宣言&自拍" DelegateObject:self Option:@"使用相片"];
     }
     
 
@@ -1165,13 +1174,21 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
 
     [picker dismissViewControllerAnimated:NO completion:^{
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
+            
+        NSString *addValue;
+        if (self.sourceType == UIImagePickerControllerSourceTypePhotoLibrary) {
+            addValue = @"0";
+        }else
+        {
+            addValue = @"1";
+        }
         
         NSDictionary *imageData = [NSDictionary dictionaryWithObjectsAndKeys:
                                    image,CAMERA_IMAGE_KEY,
                                    [CommonObject getCurrentDate], CAMERA_TIME_KEY,
                                    labelSentenceNow, CAMERA_SENTENCE_KEY,
                                    _voiceName, CAMERA_VOICE_NAEM_KEY,
-                                   @"1", CAMERA_LIGHT_COUNT,
+                                   addValue, CAMERA_LIGHT_COUNT,
                                    nil];
         
         //test

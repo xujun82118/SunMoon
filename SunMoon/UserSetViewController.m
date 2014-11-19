@@ -9,9 +9,15 @@
 #import "UserSetViewController.h"
 #import "NavBar.h"
 #import "ShareByShareSDR.h"
+#import "CustomIndicatorView.h"
 
 
 @interface UserSetViewController ()
+{
+    
+    CustomIndicatorView *indicator;
+
+}
 
 
 /**
@@ -840,6 +846,15 @@
     [authList writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()] atomically:YES];
     
     
+    //下载照片较耗时
+    NSInteger indiW = 50;
+    NSInteger indiH = 50;
+    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
+    [indicator startAnimating];
+    [self.view addSubview:indicator];
+    
+    [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(StopIndicatorAni:) userInfo:nil repeats:NO];
+    
     //更新本地用户信息
     [self.user updateSns_ID:[userInfo uid] PlateType:[userInfo type]];
     [self.user updateuserName:[userInfo nickname]];
@@ -852,6 +867,13 @@
     
     [self.tableView reloadData];
 
+}
+
+- (void)StopIndicatorAni:(NSTimer *)timer
+{
+    NSLog(@"StopIndicatorAni----");
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
 }
 
 

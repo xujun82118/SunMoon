@@ -22,7 +22,7 @@
     return self;
 }
 
--(BOOL)upateUserInfo:(UserInfo *) user
+-(void)upateUserInfo:(UserInfo *) user
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     //设置content-type
@@ -31,9 +31,14 @@
     
     
     NSMutableDictionary *params=[[NSMutableDictionary alloc] init];
-    [params setValue:user.user_id forKey:@"user_id"];
+    //[params setValue:user.user_id forKey:@"user_id"];
+    
+    ShareType  type = [user.sns_id substringFromIndex:0].integerValue;
+    NSString* typeString = [NSString stringWithFormat:@"%d", type];
+    
     [params setValue:user.name forKey:@"name"];
     [params setValue:user.sns_id forKey:@"sns_id"];
+    [params setValue:typeString forKey:@"pf"];
     [params setValue:user.sun_value forKey:@"sun_value"];
     [params setValue:user.moon_value forKey:@"moon_value"];
     NSLog(@"upateUserInfo--params = %@", params.descriptionInStringsFileFormat);
@@ -41,30 +46,117 @@
     //NSDictionary *params1 = @{@"cmd":@"0", @"id":@"001"};
 
     [manager GET:@"http://115.28.36.43/app_userinfo.php" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"Succ JSON: %@", responseObject);
+        NSLog(@"upateUserInfo--Succ JSON: %@", responseObject);
   
         NSDictionary *responseDic =(NSDictionary *)responseObject;
 
-        NSLog(@"Syn Succ return msg:%@", [responseDic objectForKey:@"msg"]);
+        NSLog(@"upateUserInfo--Syn NetWork Succ return all NSDictionary:%@", responseDic);
 
-        NSDictionary *dataInfo = [responseDic objectForKey:@"data"];
+        NSNumber* codeReturn = [responseDic objectForKey:@"code"];
         
-        [_userInfoCloudDelegate getUserInfoFinishReturnDic:dataInfo];
+        if ([codeReturn isEqualToNumber:[NSNumber numberWithInteger:CLOUD_SUCC]]) {
+            NSLog(@"upateUserInfo--Syn data succ return");
+            [_userInfoCloudDelegate updateUserInfoSuccReturn];
+        }else
+        {
+            //失败
+            NSLog(@"upateUserInfo--Syn data failed return msg:%@", [responseDic objectForKey:@"msg"]);
+            [_userInfoCloudDelegate updateUserInfoFailedReturn];
 
+        }
         
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-
         
-        [_userInfoCloudDelegate getUserInfoFinishFailed];
+        NSLog(@"upateUserInfo--Syn NetWork Failed return: %@", error);
+
+        [_userInfoCloudDelegate updateUserInfoFailedReturnByNetWork];
 
     }];
 
-    return TRUE;
 
 }
 
+
+-(void) GetCloudUserInfo:(UserInfo *) user
+{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    //设置content-type
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+    NSMutableDictionary *params=[[NSMutableDictionary alloc] init];
+    //[params setValue:user.user_id forKey:@"user_id"];
+    
+    ShareType  type = [user.sns_id substringFromIndex:0].integerValue;
+    NSString* typeString = [NSString stringWithFormat:@"%d", type];
+    
+    [params setValue:user.name forKey:@"name"];
+    [params setValue:user.sns_id forKey:@"sns_id"];
+    [params setValue:typeString forKey:@"pf"];
+    NSLog(@"GetCloudUserInfo--params = %@", params.descriptionInStringsFileFormat);
+    
+    
+    [manager GET:@"http://115.28.36.43/app_userinfo.php" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"GetCloudUserInfo-- Succ JSON: %@", responseObject);
+        
+        NSDictionary *responseDic =(NSDictionary *)responseObject;
+        
+        NSLog(@"GetCloudUserInfo-- Syn NetWork Succ return all NSDictionary:%@", responseDic);
+        
+        NSNumber *codeReturn = [responseDic objectForKey:@"code"];
+
+        if ([codeReturn isEqualToNumber:[NSNumber numberWithInteger:CLOUD_SUCC]]) {
+            //成功
+            NSDictionary *dataInfo = (NSDictionary *)[responseDic objectForKey:@"data"];
+            if (!dataInfo) {
+                NSLog(@"GetCloudUserInfo--dataInfo == null");
+            }else
+            {
+                
+                NSArray *strarray = [[responseDic objectForKey:@"data"] componentsSeparatedByString:@"\""];
+                NSString *strTemp;
+                NSMutableDictionary *dataInfo=[[NSMutableDictionary alloc] init];
+                for(int i=0;i<strarray.count;i++)
+                {
+                    //NSLog(@"%@",[strarray objectAtIndex:i]);
+                    NSString *str = [strarray objectAtIndex:i];
+                    if([str isEqualToString:@"sun_value"])//最高温度
+                    {
+                        strTemp = [strarray objectAtIndex:i+2];
+                        [dataInfo setValue:strTemp forKey:@"sun_value"];
+
+                        
+                    }else if ([str isEqualToString:@"moon_value"])
+                    {
+                        strTemp = [strarray objectAtIndex:i+2];
+                        [dataInfo setValue:strTemp forKey:@"moon_value"];
+                    }
+                    
+                }
+
+                NSLog(@"GetCloudUserInfo--Syn data succ return data:%@", dataInfo);
+                [_userInfoCloudDelegate getUserInfoFinishReturnDic:dataInfo];
+            }
+
+            
+        }else if([codeReturn isEqualToNumber:[NSNumber numberWithInteger:CLOUD_ERR_QUERY_NORECORD]])
+        {
+            //失败
+            NSLog(@"GetCloudUserInfo--Syn data failed return msg:%@", [responseDic objectForKey:@"msg"]);
+            [_userInfoCloudDelegate getUserInfoFinishFailed];
+            
+        }
+        
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"GetCloudUserInfo--Syn NetWork Failed return: %@", error);
+        
+        [_userInfoCloudDelegate getUserInfoFinishFailedByNetWork];
+        
+    }];
+    
+}
 
 
 /**
@@ -101,33 +193,7 @@
 }
 
 
--(void)getUserInfoBySnsId:(NSString *) snsID  userName:(NSString *) userName
-{
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    //设置content-type
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
-    
-    NSMutableDictionary *params=[[NSMutableDictionary alloc] init];
-    [params setValue:snsID forKey:@"name"];
-    [params setValue:userName forKey:@"sns_id"];
-    NSLog(@"getUserInfoBySnsId--params = %@", params.descriptionInStringsFileFormat);
-    
-    
-    [manager GET:@"http://115.28.36.43/cgi-bin/app_userinfo" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"JSON: %@", responseObject);
-        NSArray *postsFromResponse = [responseObject valueForKeyPath:@"data"];
-        UserInfo* userPost = [[UserInfo alloc] initWithArray:postsFromResponse];
-        [_userInfoCloudDelegate getUserInfoFinishReturn:userPost];
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
-        [_userInfoCloudDelegate getUserInfoFinishReturn:nil];
 
-        
-    }];
-    
-    
-}
 
 -(void)getUserImageByUserID:(NSString *) userID
 {

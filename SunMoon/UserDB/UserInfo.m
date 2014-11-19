@@ -772,7 +772,7 @@ static UserInfo *sharedUserInfo;
     {
         self.moon_value = [NSString stringWithFormat:@"%d",[self.moon_value integerValue]+ value];
        
-        NSLog(@"Sun value + %d", value);
+        NSLog(@"Moon value + %d", value);
 
 
     }
@@ -811,11 +811,32 @@ static UserInfo *sharedUserInfo;
 
     }
     
-    
-
     [userBaseData synchronize];
 
+    
+}
 
+
+-(void)checkAddCurrValueWithCloudSunVaule:(NSInteger)cloudSunValue MoonValue:(NSInteger)cloudMoonValue
+{
+    //优化
+    //需改成标识第一个增值是否为注册状态的增值
+    
+    if (self.sun_value.integerValue > cloudSunValue) {
+        self.sun_value = [NSString stringWithFormat:@"%d",[self.sun_value integerValue]+ cloudSunValue];
+    }else
+    {
+        self.sun_value = [NSString stringWithFormat:@"%d", cloudSunValue];
+    }
+    
+    if (self.moon_value.integerValue > cloudMoonValue) {
+        self.moon_value = [NSString stringWithFormat:@"%d",[self.moon_value integerValue]+ cloudMoonValue];
+    }else
+    {
+        self.moon_value = [NSString stringWithFormat:@"%d", cloudMoonValue];
+    }
+    
+    [self updateTodayUserData:self];
     
 }
 
@@ -1004,19 +1025,59 @@ static UserInfo *sharedUserInfo;
     
 }
 
+-(void) updateIsHaveAddSunOrMoonValueForTodayPhoto:(BOOL) isOrNo
+{
+    
+    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
+    
+    if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
+        [userBaseData setBool:isOrNo forKey:KEY_IS_HAVE_ADD_SUN];
+        
+    }else
+    {
+        [userBaseData setBool:isOrNo forKey:KEY_IS_HAVE_ADD_MOON];
+        
+    }
+    
+    [userBaseData synchronize];
+    
+}
+
 -(BOOL) checkIsHaveAddSunValueForTodayPhoto
 {
     NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
     
-    return [userBaseData boolForKey:KEY_IS_HAVE_ADD_SUN];
+    BOOL tempBool = [userBaseData boolForKey:KEY_IS_HAVE_ADD_SUN];
+    return tempBool;
 
 }
 
 -(BOOL) checkIsHaveAddMoonValueForTodayPhoto
 {
     NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
+    BOOL tempBool = [userBaseData boolForKey:KEY_IS_HAVE_ADD_MOON];
+
+    return tempBool;
     
-    return [userBaseData boolForKey:KEY_IS_HAVE_ADD_MOON];
+}
+
+-(BOOL) checkIsHaveAddSunOrMoonValueForTodayPhoto
+{
+    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
+    
+    if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
+        
+        BOOL tempBool = [userBaseData boolForKey:KEY_IS_HAVE_ADD_SUN];
+
+        return tempBool;
+
+    }else
+    {
+        BOOL tempBool = [userBaseData boolForKey:KEY_IS_HAVE_ADD_MOON];
+
+        return tempBool;
+
+    }
     
 }
 

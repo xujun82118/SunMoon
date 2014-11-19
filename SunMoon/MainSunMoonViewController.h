@@ -45,7 +45,7 @@
 
 @property (nonatomic, strong) UserInfoCloud* userCloud;
 
-@property (nonatomic, strong) IBOutlet UIImageView *userHeaderImageView;
+@property (nonatomic, strong) UIImageView *userHeaderImageView;
 
 @property (weak, nonatomic) IBOutlet UIImageView *mainBgImage;
 
