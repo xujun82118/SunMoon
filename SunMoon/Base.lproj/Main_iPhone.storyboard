@@ -41,7 +41,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <gestureRecognizers/>
                             </imageView>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DE4-tu-MWo">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DE4-tu-MWo">
                                 <rect key="frame" x="55" y="195" width="75" height="30"/>
                                 <state key="normal" title="删除数据库">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -50,7 +50,7 @@
                                     <action selector="deleteDataBase:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="0xz-i7-AcC"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ytL-Ib-Tjj">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ytL-Ib-Tjj">
                                 <rect key="frame" x="211" y="195" width="48" height="30"/>
                                 <state key="normal" title="update">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -59,7 +59,7 @@
                                     <action selector="testNet:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="IN2-GG-QrK"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hyS-9o-4AU">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hyS-9o-4AU">
                                 <rect key="frame" x="213" y="238" width="91" height="30"/>
                                 <state key="normal" title="updateImage">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -139,28 +139,26 @@
                                     </mask>
                                 </variation>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FDI-9S-o8F" userLabel="bringLight">
-                                <rect key="frame" x="174" y="186" width="46" height="30"/>
+                            <button opaque="NO" tag="251" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FDI-9S-o8F" userLabel="bringLight">
+                                <rect key="frame" x="219" y="227" width="125" height="125"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="KcL-Sf-jbm"/>
-                                    <constraint firstAttribute="width" constant="46" id="WkF-aN-Y4x"/>
+                                    <constraint firstAttribute="width" secondItem="FDI-9S-o8F" secondAttribute="height" multiplier="1:1" id="MOI-77-cKE"/>
                                 </constraints>
-                                <state key="normal">
+                                <state key="normal" image="环-sun.png">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <action selector="getBringedUpLight:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="G1P-NL-aDc"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o0X-gd-VLI" userLabel="intoCamera">
-                                <rect key="frame" x="173" y="181" width="30" height="30"/>
+                            <button opaque="NO" tag="252" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o0X-gd-VLI" userLabel="intoCamera">
+                                <rect key="frame" x="30" y="227" width="125" height="125"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="2fp-rn-xP1"/>
                                     <constraint firstAttribute="width" constant="30" id="AXJ-SQ-5gd"/>
                                     <constraint firstAttribute="height" constant="30" id="EV5-fw-nDc"/>
-                                    <constraint firstAttribute="width" constant="30" id="Ejv-sL-fMw"/>
                                     <constraint firstAttribute="height" constant="30" id="NeF-8s-0Mr"/>
                                     <constraint firstAttribute="width" constant="46" id="XMz-Tz-209"/>
+                                    <constraint firstAttribute="width" secondItem="o0X-gd-VLI" secondAttribute="height" multiplier="1:1" id="a11-6p-gze"/>
                                 </constraints>
                                 <state key="normal" image="拍照环-sun.png">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -182,27 +180,37 @@
                         <constraints>
                             <constraint firstItem="EHF-7P-eHx" firstAttribute="leading" relation="lessThanOrEqual" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="100" id="116-1f-ZYp"/>
                             <constraint firstItem="r8n-Wy-dYi" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="1YS-cv-9qS"/>
+                            <constraint firstItem="ytL-Ib-Tjj" firstAttribute="leading" secondItem="DE4-tu-MWo" secondAttribute="trailing" constant="81" id="3HQ-yb-vwR"/>
+                            <constraint firstAttribute="trailing" secondItem="ytL-Ib-Tjj" secondAttribute="trailing" constant="116" id="4dw-O1-pS8"/>
+                            <constraint firstItem="hyS-9o-4AU" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="238" id="4gc-6q-epS"/>
                             <constraint firstItem="jvY-ws-I2y" firstAttribute="centerX" secondItem="W5S-w4-Jbf" secondAttribute="centerX" id="75p-G7-txc"/>
                             <constraint firstItem="EHF-7P-eHx" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="39" id="8Yh-Ni-QZA"/>
+                            <constraint firstItem="hyS-9o-4AU" firstAttribute="leading" secondItem="o0X-gd-VLI" secondAttribute="trailing" constant="58" id="AWv-8Y-6FI"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="jvY-ws-I2y" secondAttribute="bottom" constant="99" id="Bdf-3Z-5wd"/>
+                            <constraint firstItem="hyS-9o-4AU" firstAttribute="leading" secondItem="FDI-9S-o8F" secondAttribute="trailing" constant="30" id="DiR-Pf-Ogc"/>
                             <constraint firstItem="r8n-Wy-dYi" firstAttribute="width" secondItem="XlY-Z9-7SP" secondAttribute="width" multiplier="10:1" id="FW6-No-MBs"/>
+                            <constraint firstItem="EHF-7P-eHx" firstAttribute="width" secondItem="o0X-gd-VLI" secondAttribute="width" multiplier="2.5:1" id="Gdm-uo-RPc"/>
                             <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="EHF-7P-eHx" secondAttribute="trailing" constant="100" id="Hor-Bg-LUV"/>
                             <constraint firstAttribute="width" secondItem="jvY-ws-I2y" secondAttribute="width" multiplier="3:1" id="Kzh-lU-FXG"/>
-                            <constraint firstItem="EHF-7P-eHx" firstAttribute="centerX" secondItem="FDI-9S-o8F" secondAttribute="centerX" id="MwE-hY-cI1"/>
                             <constraint firstItem="jvY-ws-I2y" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="150" id="O6y-dK-uLz"/>
                             <constraint firstAttribute="width" secondItem="XlY-Z9-7SP" secondAttribute="width" multiplier="15:2" id="PWG-e0-siK"/>
                             <constraint firstItem="r8n-Wy-dYi" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="Pkl-I8-xT7"/>
                             <constraint firstAttribute="trailing" secondItem="r8n-Wy-dYi" secondAttribute="trailing" id="QaB-Kg-OMz"/>
-                            <constraint firstItem="EHF-7P-eHx" firstAttribute="centerY" secondItem="FDI-9S-o8F" secondAttribute="centerY" id="RrC-GV-Uhy"/>
+                            <constraint firstItem="EHF-7P-eHx" firstAttribute="width" secondItem="FDI-9S-o8F" secondAttribute="width" multiplier="2.5:1" id="S40-kW-xP3"/>
                             <constraint firstAttribute="centerX" secondItem="EHF-7P-eHx" secondAttribute="centerX" id="aNJ-gr-VhI"/>
                             <constraint firstItem="jvY-ws-I2y" firstAttribute="centerY" secondItem="W5S-w4-Jbf" secondAttribute="centerY" id="b2X-uP-fW7"/>
                             <constraint firstAttribute="trailing" secondItem="jvY-ws-I2y" secondAttribute="trailing" constant="200" id="bU9-R4-ELg"/>
-                            <constraint firstItem="EHF-7P-eHx" firstAttribute="centerY" secondItem="o0X-gd-VLI" secondAttribute="centerY" id="ldH-cy-KjG"/>
-                            <constraint firstItem="EHF-7P-eHx" firstAttribute="centerX" secondItem="o0X-gd-VLI" secondAttribute="centerX" id="mA2-Jm-09y"/>
+                            <constraint firstItem="ytL-Ib-Tjj" firstAttribute="baseline" secondItem="DE4-tu-MWo" secondAttribute="baseline" id="dkg-xR-8WU"/>
+                            <constraint firstItem="EHF-7P-eHx" firstAttribute="width" secondItem="FDI-9S-o8F" secondAttribute="width" multiplier="2.5:1" id="h0a-dk-kbc"/>
+                            <constraint firstItem="o0X-gd-VLI" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="30" id="n6i-bN-I51"/>
                             <constraint firstItem="XlY-Z9-7SP" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="12" id="oHL-hm-cst"/>
                             <constraint firstAttribute="centerX" secondItem="jvY-ws-I2y" secondAttribute="centerX" id="oOP-Mf-fS7"/>
                             <constraint firstItem="EHF-7P-eHx" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="39" id="q4q-NI-I3j"/>
                             <constraint firstAttribute="width" secondItem="EHF-7P-eHx" secondAttribute="width" multiplier="1.2:1" id="qVF-8j-ysd"/>
+                            <constraint firstItem="EHF-7P-eHx" firstAttribute="bottom" secondItem="FDI-9S-o8F" secondAttribute="bottom" id="qzR-OI-5vr"/>
+                            <constraint firstItem="hyS-9o-4AU" firstAttribute="top" secondItem="ytL-Ib-Tjj" secondAttribute="bottom" constant="13" id="riG-vZ-KwL"/>
+                            <constraint firstItem="EHF-7P-eHx" firstAttribute="trailing" secondItem="FDI-9S-o8F" secondAttribute="trailing" id="sOl-ti-zQR"/>
+                            <constraint firstItem="EHF-7P-eHx" firstAttribute="bottom" secondItem="o0X-gd-VLI" secondAttribute="bottom" id="tgZ-21-wIc"/>
                             <constraint firstItem="XlY-Z9-7SP" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="30" id="u5F-o1-eo1"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="r8n-Wy-dYi" secondAttribute="bottom" id="xQw-9s-MA6"/>
                         </constraints>
@@ -211,7 +219,9 @@
                                 <exclude reference="FW6-No-MBs"/>
                                 <exclude reference="116-1f-ZYp"/>
                                 <exclude reference="Hor-Bg-LUV"/>
+                                <exclude reference="S40-kW-xP3"/>
                                 <exclude reference="q4q-NI-I3j"/>
+                                <exclude reference="DiR-Pf-Ogc"/>
                                 <exclude reference="O6y-dK-uLz"/>
                                 <exclude reference="bU9-R4-ELg"/>
                             </mask>
@@ -313,7 +323,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="118" id="LYS-55-1Kp"/>
                                 </constraints>
-                                <string key="text">工作室创建于2013年6月，我们的目标是生产出乐益相适的移动端服务产品。
+                                <string key="text">工作室创建于2013年6月，我们的目标是为用户提供极速，舒适，高效的互联网产品，帮助用户随时随地的享受网络与生活。。
 工作室成员分布在北京和深圳两地, 由对无线端产品富有极大热情的朋友们自发组成。
 真城地欢迎兴趣相投的朋友加入我们。
 联系方式：78002145@qq.com</string>
@@ -1619,6 +1629,7 @@
         <image name="放音-白.png" width="233" height="233"/>
         <image name="时间框.png" width="247" height="81"/>
         <image name="时间轴背景.png" width="320" height="82"/>
+        <image name="环-sun.png" width="300" height="300"/>
         <image name="语录三点.png" width="69" height="18"/>
     </resources>
     <inferredMetricsTieBreakers>

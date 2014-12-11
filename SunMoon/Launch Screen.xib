@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
     <dependencies>
-        <deployment version="1792" identifier="iOS"/>
+        <deployment version="1792" defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -15,7 +17,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="云石网络科技工作室@2014" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nwg-tU-5ke">
-                    <rect key="frame" x="105" y="600" width="205" height="21"/>
+                    <rect key="frame" x="105" y="497" width="205" height="21"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
@@ -23,23 +25,70 @@
                         <fontDescription key="fontDescription" type="system" pointSize="30"/>
                     </variation>
                 </label>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="云 LOG.png" translatesAutoresizingMaskIntoConstraints="NO" id="z7p-ou-Ok7" userLabel="log">
+                    <rect key="frame" x="138" y="299" width="138" height="138"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="z7p-ou-Ok7" secondAttribute="height" multiplier="1:1" id="I76-pg-Als"/>
+                        <constraint firstAttribute="width" secondItem="z7p-ou-Ok7" secondAttribute="height" multiplier="1:1" id="rxS-Py-uiz"/>
+                    </constraints>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="I76-pg-Als"/>
+                        </mask>
+                    </variation>
+                    <variation key="widthClass=compact">
+                        <mask key="constraints">
+                            <include reference="I76-pg-Als"/>
+                        </mask>
+                    </variation>
+                </imageView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstItem="nwg-tU-5ke" firstAttribute="top" secondItem="z7p-ou-Ok7" secondAttribute="bottom" constant="60" id="0le-AL-3hZ"/>
+                <constraint firstAttribute="centerX" secondItem="z7p-ou-Ok7" secondAttribute="centerX" id="2w3-R9-vck"/>
+                <constraint firstItem="bbG-Ti-C3D" firstAttribute="width" secondItem="z7p-ou-Ok7" secondAttribute="width" multiplier="3:1" id="GBd-io-qWx"/>
                 <constraint firstAttribute="bottom" secondItem="bbG-Ti-C3D" secondAttribute="bottom" id="ICp-hH-4CW"/>
                 <constraint firstItem="bbG-Ti-C3D" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="KM4-5S-MRg"/>
+                <constraint firstItem="nwg-tU-5ke" firstAttribute="top" secondItem="z7p-ou-Ok7" secondAttribute="bottom" constant="60" id="a2g-IO-spj"/>
                 <constraint firstItem="bbG-Ti-C3D" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="hn3-JG-7Nz"/>
+                <constraint firstAttribute="centerX" secondItem="z7p-ou-Ok7" secondAttribute="centerX" id="kzf-mn-srv"/>
+                <constraint firstAttribute="centerY" secondItem="z7p-ou-Ok7" secondAttribute="centerY" id="lW9-2m-eYY"/>
                 <constraint firstAttribute="trailing" secondItem="bbG-Ti-C3D" secondAttribute="trailing" id="qSn-7q-Fxq"/>
                 <constraint firstAttribute="bottom" secondItem="nwg-tU-5ke" secondAttribute="bottom" constant="115" id="sTS-bs-FFQ"/>
+                <constraint firstAttribute="centerY" secondItem="z7p-ou-Ok7" secondAttribute="centerY" id="ttz-N5-h0X"/>
                 <constraint firstAttribute="centerX" secondItem="nwg-tU-5ke" secondAttribute="centerX" id="wGy-gd-0D6"/>
+                <constraint firstItem="bbG-Ti-C3D" firstAttribute="width" secondItem="z7p-ou-Ok7" secondAttribute="width" multiplier="3:1" id="wsY-9e-CWz"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="wsY-9e-CWz"/>
+                    <exclude reference="kzf-mn-srv"/>
+                    <exclude reference="ttz-N5-h0X"/>
+                    <exclude reference="a2g-IO-spj"/>
+                    <exclude reference="sTS-bs-FFQ"/>
+                </mask>
+            </variation>
+            <variation key="widthClass=compact">
+                <mask key="subviews">
+                    <include reference="z7p-ou-Ok7"/>
+                </mask>
+                <mask key="constraints">
+                    <include reference="wsY-9e-CWz"/>
+                    <include reference="kzf-mn-srv"/>
+                    <include reference="ttz-N5-h0X"/>
+                    <include reference="a2g-IO-spj"/>
+                    <exclude reference="sTS-bs-FFQ"/>
+                </mask>
+            </variation>
             <point key="canvasLocation" x="403" y="444"/>
         </view>
     </objects>
     <resources>
         <image name="Default-568h.png" width="320" height="568"/>
+        <image name="云 LOG.png" width="530" height="531"/>
     </resources>
 </document>

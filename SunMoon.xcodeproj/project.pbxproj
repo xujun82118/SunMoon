@@ -71,7 +71,6 @@
 		5D523DB119EB65DE004FE84E /* home.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D523DAE19EB65DE004FE84E /* home.png */; };
 		5D523DB219EB65DE004FE84E /* ning.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D523DAF19EB65DE004FE84E /* ning.png */; };
 		5D523DB319EB65DE004FE84E /* setting.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D523DB019EB65DE004FE84E /* setting.png */; };
-		5D523DB519EB7944004FE84E /* 云朵-石.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D523DB419EB7944004FE84E /* 云朵-石.png */; };
 		5D523DB719EB9739004FE84E /* 点击手势.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D523DB619EB9739004FE84E /* 点击手势.png */; };
 		5D523DB919EBAA91004FE84E /* 拖动手势.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D523DB819EBAA91004FE84E /* 拖动手势.png */; };
 		5D523DC919EBBD01004FE84E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D523DC819EBBD01004FE84E /* StoreKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -186,6 +185,7 @@
 		5DB6201619147072005000E8 /* scroll-7.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DB6200E19147072005000E8 /* scroll-7.png */; };
 		5DB6201719147072005000E8 /* scroll-8.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DB6200F19147072005000E8 /* scroll-8.png */; };
 		5DB6201B1914E64A005000E8 /* AddWaterMask.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB6201A1914E64A005000E8 /* AddWaterMask.m */; };
+		5DBE83591A395ACA00E2F4DD /* 云 LOG.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DBE83581A395ACA00E2F4DD /* 云 LOG.png */; };
 		5DBE9B03190C918F008C547D /* 设置.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DBE9B00190C918F008C547D /* 设置.png */; };
 		5DBE9B04190C918F008C547D /* 返回.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DBE9B01190C918F008C547D /* 返回.png */; };
 		5DBFACE0197B771600EF8652 /* 2秒开关底图.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DBFACDE197B771600EF8652 /* 2秒开关底图.png */; };
@@ -359,7 +359,6 @@
 		5D523DAE19EB65DE004FE84E /* home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = home.png; sourceTree = "<group>"; };
 		5D523DAF19EB65DE004FE84E /* ning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ning.png; sourceTree = "<group>"; };
 		5D523DB019EB65DE004FE84E /* setting.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = setting.png; sourceTree = "<group>"; };
-		5D523DB419EB7944004FE84E /* 云朵-石.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "云朵-石.png"; sourceTree = "<group>"; };
 		5D523DB619EB9739004FE84E /* 点击手势.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "点击手势.png"; sourceTree = "<group>"; };
 		5D523DB819EBAA91004FE84E /* 拖动手势.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "拖动手势.png"; sourceTree = "<group>"; };
 		5D523DC819EBBD01004FE84E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -507,6 +506,7 @@
 		5DB6200F19147072005000E8 /* scroll-8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "scroll-8.png"; sourceTree = "<group>"; };
 		5DB620191914E64A005000E8 /* AddWaterMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddWaterMask.h; sourceTree = "<group>"; };
 		5DB6201A1914E64A005000E8 /* AddWaterMask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddWaterMask.m; sourceTree = "<group>"; };
+		5DBE83581A395ACA00E2F4DD /* 云 LOG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "云 LOG.png"; sourceTree = "<group>"; };
 		5DBE9B00190C918F008C547D /* 设置.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "设置.png"; sourceTree = "<group>"; };
 		5DBE9B01190C918F008C547D /* 返回.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "返回.png"; sourceTree = "<group>"; };
 		5DBFACDE197B771600EF8652 /* 2秒开关底图.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "2秒开关底图.png"; sourceTree = "<group>"; };
@@ -1024,7 +1024,6 @@
 		5DE48CAB195464EE007A8A17 /* Icon */ = {
 			isa = PBXGroup;
 			children = (
-				5D523DB419EB7944004FE84E /* 云朵-石.png */,
 				5D523DAE19EB65DE004FE84E /* home.png */,
 				5D523DAF19EB65DE004FE84E /* ning.png */,
 				5D523DB019EB65DE004FE84E /* setting.png */,
@@ -1233,6 +1232,7 @@
 				5D3D4CA41995EDC90027DB28 /* 拍照环-moon.png */,
 				5D6E635219F24EB0008C106D /* 拍照环-moon-点.png */,
 				5D6E635319F24EB0008C106D /* 拍照环-sun-点.png */,
+				5DBE83581A395ACA00E2F4DD /* 云 LOG.png */,
 				5D3D4CA51995EDC90027DB28 /* 环-sun.png */,
 				5D3D4CA61995EDC90027DB28 /* 环-moon.png */,
 				5D64A91319838ED40032F848 /* menu.png */,
@@ -1367,6 +1367,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DBE83591A395ACA00E2F4DD /* 云 LOG.png in Resources */,
 				5DA6774919C67B1A007191CE /* camera.png in Resources */,
 				5DBE9B04190C918F008C547D /* 返回.png in Resources */,
 				5DBFACE7197B9A9E00EF8652 /* voiceValueSun.png in Resources */,
@@ -1475,7 +1476,6 @@
 				5DB6201019147072005000E8 /* scroll-1.png in Resources */,
 				5DE48CBB195464EE007A8A17 /* 开心网sns_icon_8@2x.png in Resources */,
 				5D8334B1197A128400EC5201 /* 小闹钟-打开.png in Resources */,
-				5D523DB519EB7944004FE84E /* 云朵-石.png in Resources */,
 				5D8334B6197A1B6B00EC5201 /* 加语录-关闭.png in Resources */,
 				5D8AC8D2190CBDB300E41FBA /* 语录三点.png in Resources */,
 				5D983495195FB59300A80EEB /* abFrame_10@2x.png in Resources */,
@@ -1749,7 +1749,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SunMoon/SunMoon-Prefix.pch";
 				INFOPLIST_FILE = "SunMoon/SunMoon-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ShareSDK/Extend/SinaWeiboSDK",
@@ -1786,7 +1786,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SunMoon/SunMoon-Prefix.pch";
 				INFOPLIST_FILE = "SunMoon/SunMoon-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ShareSDK/Extend/SinaWeiboSDK",

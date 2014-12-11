@@ -35,6 +35,10 @@
 @end
 
 @implementation HomeInsideViewController
+{
+    
+    NSDate* tmpStartData;
+}
 
 @synthesize user,userData,userDB,sunWordShow,moonWordShow,currentSelectDataSun,currentSelectDataMoon,sunScroll=_sunScroll,moonScroll = _moonScroll;
 @synthesize bkGroundImageView,sunScrollImageView,moonScrollImageView,sunTimeBtn,moonTimeBtn,moonTimeCtlBtn,sunTimeCtlBtn,sunValueStatic,moonValueStatic,sunTimeText,moonTimeText,lightSunSentence,lightMoonSentence;
@@ -55,7 +59,9 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
- 
+    tmpStartData = [NSDate date];
+
+    
     self.navigationController.navigationBarHidden = YES;
     self.navigationController.navigationBar.opaque = YES;
     //加返回按钮
@@ -165,7 +171,10 @@
     [_voiceReplaySunBtn setImage:[UIImage imageNamed:@"停止放音-白.png"] forState:UIControlStateSelected];
     [_voiceReplayMoonBtn setImage:[UIImage imageNamed:@"停止放音-白.png"] forState:UIControlStateSelected];
 
-    
+    //初始化数字
+    sunValueStatic.text = [NSString stringWithFormat:@"%d", 0];
+    moonValueStatic.text = [NSString stringWithFormat:@"%d", 0];
+
     
     //增加scroll图片,不能放在viewDidload中，会产生autolayout错误
     //临时解决方法，在viewDidAppear中重新布局MOON的位置
@@ -503,54 +512,24 @@
     [moonTimeBtn setTitle:timeString1 forState:UIControlStateNormal];
     [moonTimeBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
 
+    
+    double deltaTime = [[NSDate date] timeIntervalSinceDate:tmpStartData];
+    NSLog(@">>>>>>>>>>cost time = %f ms", deltaTime*1000);
    
 }
 
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
+
     
     //动态显示阳光，月光值
-    [self animateIncreaseValue];
+    [self animationIncreaseSunValue];
+    [self animationIncreaseMoonValue];
     
-    //test,暂时成功，可能会有别的问题，时，需开启以下注释
-
     [self addScrollUserImageSunReFresh:YES];
+
     [self addScrollUserImageMoonReFresh:YES];
-
-
-
-//    DeviceTypeVersion typeVersion =[CommonObject CheckDeviceTypeVersion];
-//    if (typeVersion == iphone6 ||typeVersion == iphone6Pluse || typeVersion == iphoneOther) {
-//        sunWordShow.font = [UIFont fontWithName:@"Arial" size:20];
-//        moonWordShow.font = [UIFont fontWithName:@"Arial" size:20];
-//
-//
-//    }else
-//    {
-//        sunWordShow.font = [UIFont fontWithName:@"Arial" size:12];
-//        moonWordShow.font = [UIFont fontWithName:@"Arial" size:12];
-//
-//
-//    }
-//    sunWordShow.textColor = [UIColor blackColor];
-//    sunWordShow.backgroundColor = [UIColor clearColor];
-//    sunWordShow.textAlignment = NSTextAlignmentCenter;
-//    sunWordShow.adjustsFontSizeToFitWidth = YES;
-//    sunWordShow.numberOfLines = 3;
-//    
-//    moonWordShow.textColor = [UIColor blackColor];
-//    moonWordShow.backgroundColor = [UIColor clearColor];
-//    moonWordShow.textAlignment = NSTextAlignmentCenter;
-//    moonWordShow.adjustsFontSizeToFitWidth = YES;
-//    moonWordShow.numberOfLines = 3;
-
-    //重新布局MOON的位置
-//    UIImageView* scrollPosition1 = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_MOON];
-//    imageScrollMoon.frame = CGRectMake(0, scrollPosition1.frame.origin.y-10, SCREEN_WIDTH, scrollPosition1.frame.size.height+20);
-//    imageScrollMoon.hidden = NO;
-
     
 }
 
@@ -567,23 +546,6 @@
     
     [super viewDidLayoutSubviews];
 
-}
-
--(void) animateIncreaseValue
-{
-    //显示阳光，月光值, 从1增加到最大
-    int count = [[self.user getMaxUserSunValue] integerValue];
-    for (int i = 0; i<=count; i++) {
-        sunValueStatic.text = [NSString stringWithFormat:@"%d", i];
-        //sleep(0.5);
-    }
-    
-    count = [[self.user getMaxUserMoonValue] integerValue];
-    for (int i = 0; i<=count; i++) {
-        moonValueStatic.text = [NSString stringWithFormat:@"%d", i];
-        //sleep(0.5);
-    }
-    
 }
 
 
@@ -644,6 +606,97 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+-(void) animationIncreaseSunValue
+{
+    
+    //显示阳光，月光值, 从1增加到最大
+    int count = [[self.user getMaxUserSunValue] integerValue];
+    
+    if (count==0) {
+        return;
+    }
+    
+    float delayTime;
+    if (count < 10) {
+        delayTime = 0.3;
+    }else
+    {
+        delayTime = 0.1;
+    }
+    
+    if ([sunValueStatic.text integerValue]==0) {
+        
+        sunValueStatic.text = [NSString stringWithFormat:@"%d", [sunValueStatic.text integerValue]+1];
+        //NSLog(@"加值到 阳光值 = %d", [sunValueStatic.text integerValue]);
+
+        [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(animationIncreaseSunValue) userInfo:nil repeats:NO];
+            
+    }else
+    {
+        
+        if ([sunValueStatic.text integerValue]!=count) {
+            
+            sunValueStatic.text = [NSString stringWithFormat:@"%d", [sunValueStatic.text integerValue]+1];
+            //NSLog(@"加值到 阳光值 = %d", [sunValueStatic.text integerValue]);
+
+            
+            [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(animationIncreaseSunValue) userInfo:nil repeats:NO];
+            
+        }else
+        {
+            NSLog(@"完成---加值到 阳光值 = %d", count);
+        }
+    }
+
+    
+}
+
+-(void) animationIncreaseMoonValue
+{
+    
+    //显示阳光，月光值, 从1增加到最大
+    int count = [[self.user getMaxUserMoonValue] integerValue];
+
+    if (count==0) {
+        return;
+    }
+    
+    float delayTime;
+    if (count < 10) {
+        delayTime = 0.3;
+    }else
+    {
+        delayTime = 0.1;
+    }
+    
+    if ([moonValueStatic.text integerValue]==0) {
+        
+        moonValueStatic.text = [NSString stringWithFormat:@"%d", [moonValueStatic.text integerValue]+1];
+        //NSLog(@"加值到 月光值 = %d", [moonValueStatic integerValue]);
+        
+        
+        [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(animationIncreaseMoonValue) userInfo:nil repeats:NO];
+        
+    }else
+    {
+        
+        if ([moonValueStatic.text integerValue]!=count) {
+            
+            moonValueStatic.text = [NSString stringWithFormat:@"%d", [moonValueStatic.text integerValue]+1];
+            //NSLog(@"加值到 月光值 = %d", [moonValueStatic integerValue]);
+            
+            
+            [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(animationIncreaseMoonValue) userInfo:nil repeats:NO];
+            
+        }else
+        {
+            NSLog(@"完成---加值到 月光值 = %d", count);
+        }
+    }
+    
+    
+}
 
 
 //暂时无用
