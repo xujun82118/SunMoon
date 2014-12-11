@@ -8,7 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "REFrostedViewController.h"
+#import "ShareByShareSDR.h"
+#import "CustomAlertView.h"
 
-@interface MenuViewController : UITableViewController
+
+
+@interface MenuViewController : UITableViewController<ShareByShareSDRDelegate>
 
 @end

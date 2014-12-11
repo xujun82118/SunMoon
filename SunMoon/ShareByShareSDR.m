@@ -255,11 +255,27 @@
                                  if (state == SSPublishContentStateSuccess)
                                  {
                                      NSLog(@"发表成功");
+                                    [self.customDelegate ShareReturnSucc];
                                  }
                                  else if (state == SSPublishContentStateFail)
                                  {
                                      NSLog(@"发布失败!error code == %d, error code == %@", [error errorCode], [error errorDescription]);
+                                    [self.customDelegate ShareReturnFailed];
                                  }
+                                 
+                                 
+                                 if (state == SSResponseStateBegan) {
+                                     NSLog(@"开始分享");
+                                     [self.customDelegate ShareStart];
+                                     
+                                 }
+                                 
+                                 if (state == SSResponseStateCancel) {
+                                     NSLog(@"取消分享");
+                                     [self.customDelegate ShareCancel];
+                                     
+                                 }
+                                 
                              }];
     
     

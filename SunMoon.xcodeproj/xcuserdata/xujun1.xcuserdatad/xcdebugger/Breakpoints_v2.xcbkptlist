@@ -134,22 +134,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SunMoon/MainSunMoonViewController.m"
-            timestampString = "436609612.120206"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "441"
-            endingLineNumber = "441"
-            landmarkName = "-viewDidAppear:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -161,36 +145,6 @@
             endingLineNumber = "750"
             landmarkName = "-actionSheet:clickedButtonAtIndex:"
             landmarkType = "5">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[ImageFilterProcessViewController actionSheet:clickedButtonAtIndex:]"
-                  moduleName = "SunMoon"
-                  urlString = "file:///Users/xujun1/Documents/SunMoon/CustomPickerAndFitler/ImageFilterProcessViewController.m"
-                  timestampString = "437380979.736978"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "751"
-                  endingLineNumber = "751"
-                  offsetFromSymbolStart = "710">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[ImageFilterProcessViewController actionSheet:clickedButtonAtIndex:]"
-                  moduleName = "SunMoon"
-                  urlString = "file:///Users/xujun1/Documents/SunMoon/CustomPickerAndFitler/ImageFilterProcessViewController.m"
-                  timestampString = "437380979.737441"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "751"
-                  endingLineNumber = "751"
-                  offsetFromSymbolStart = "732">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -200,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SunMoon/MainSunMoonViewController.m"
-            timestampString = "436609612.120206"
+            timestampString = "439902432.148091"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "904"
-            endingLineNumber = "904"
+            startingLineNumber = "989"
+            endingLineNumber = "989"
             landmarkName = "-animationPopOut:finished:context:"
             landmarkType = "5">
          </BreakpointContent>
@@ -232,11 +186,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SunMoon/MainSunMoonViewController.m"
-            timestampString = "436609612.120206"
+            timestampString = "439902432.148091"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2283"
-            endingLineNumber = "2283"
+            startingLineNumber = "2368"
+            endingLineNumber = "2368"
             landmarkName = "-animationBowLightFrameHeaderView:"
             landmarkType = "5">
          </BreakpointContent>
@@ -248,11 +202,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SunMoon/MainSunMoonViewController.m"
-            timestampString = "436609612.120206"
+            timestampString = "439902432.148091"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2291"
-            endingLineNumber = "2291"
+            startingLineNumber = "2376"
+            endingLineNumber = "2376"
             landmarkName = "-animationLightFrameHeaderViewSetRange:isUseSetRange:"
             landmarkType = "5">
          </BreakpointContent>
@@ -264,11 +218,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SunMoon/MainSunMoonViewController.m"
-            timestampString = "436609612.120206"
+            timestampString = "439902432.148091"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2236"
-            endingLineNumber = "2236"
+            startingLineNumber = "2321"
+            endingLineNumber = "2321"
             landmarkName = "-animationDidStop:finished:"
             landmarkType = "5">
          </BreakpointContent>
@@ -280,13 +234,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SunMoon/MainSunMoonViewController.m"
-            timestampString = "436609612.120206"
+            timestampString = "439902432.148091"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3016"
-            endingLineNumber = "3016"
-            landmarkName = "@implementation MainSunMoonViewController"
-            landmarkType = "3">
+            startingLineNumber = "3101"
+            endingLineNumber = "3101"
+            landmarkName = "-testNet:"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -296,28 +250,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SunMoon/MainSunMoonAppDelegate.m"
-            timestampString = "436610560.954631"
+            timestampString = "439879966.113472"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "364"
-            endingLineNumber = "364"
+            startingLineNumber = "354"
+            endingLineNumber = "354"
             landmarkName = "-applicationDidBecomeActive:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SunMoon/MainSunMoonAppDelegate.m"
-            timestampString = "436610571.803291"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "303"
-            endingLineNumber = "303"
-            landmarkName = "-applicationDidEnterBackground:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -328,11 +266,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SunMoon/MainSunMoonViewController.m"
-            timestampString = "436610629.192215"
+            timestampString = "439902432.148091"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1400"
-            endingLineNumber = "1400"
+            startingLineNumber = "1485"
+            endingLineNumber = "1485"
             landmarkName = "-checkSunMoonChangeTimeMethod:"
             landmarkType = "5">
          </BreakpointContent>
@@ -389,22 +327,6 @@
             timestampString = "436964629.567133"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "292"
-            endingLineNumber = "292"
-            landmarkName = "-viewDidLoad"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CustomPickerAndFitler/ImageFilterProcessViewController.m"
-            timestampString = "436964629.567133"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
             startingLineNumber = "894"
             endingLineNumber = "894"
             landmarkName = "-cameraPhoto:"
@@ -418,12 +340,108 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SunMoon/MainSunMoonViewController.m"
-            timestampString = "437379415.313739"
+            timestampString = "439902432.148091"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "715"
-            endingLineNumber = "715"
+            startingLineNumber = "776"
+            endingLineNumber = "776"
             landmarkName = "-whenCommonOpenViewHandle"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SunMoon/HomeInsideViewController.m"
+            timestampString = "438178296.207131"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "223"
+            endingLineNumber = "223"
+            landmarkName = "-addScrollUserImageSunReFresh:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SunMoon/UserDB/UserDB.m"
+            timestampString = "438179954.978916"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "164"
+            endingLineNumber = "164"
+            landmarkName = "-saveUser:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SunMoon/UserDB/UserDB.m"
+            timestampString = "438179967.690551"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
+            landmarkName = "-saveUser:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SunMoon/UserDB/UserDB.m"
+            timestampString = "438180077.89644"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "386"
+            endingLineNumber = "386"
+            landmarkName = "-getUserDataByDateTime:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SunMoon/MainSunMoonViewController.m"
+            timestampString = "439902432.148091"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2704"
+            endingLineNumber = "2704"
+            landmarkName = "-saveUserDataFromCamera:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SunMoon/MainSunMoonViewController.m"
+            timestampString = "439902432.148091"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "860"
+            endingLineNumber = "860"
+            landmarkName = "-animationForIntoCameraBtnPop:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

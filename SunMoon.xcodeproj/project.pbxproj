@@ -74,7 +74,6 @@
 		5D523DB519EB7944004FE84E /* 云朵-石.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D523DB419EB7944004FE84E /* 云朵-石.png */; };
 		5D523DB719EB9739004FE84E /* 点击手势.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D523DB619EB9739004FE84E /* 点击手势.png */; };
 		5D523DB919EBAA91004FE84E /* 拖动手势.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D523DB819EBAA91004FE84E /* 拖动手势.png */; };
-		5D523DC719EBBC50004FE84E /* libYouMi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D523DC619EBBC50004FE84E /* libYouMi.a */; };
 		5D523DC919EBBD01004FE84E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D523DC819EBBD01004FE84E /* StoreKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5D618AAE191F3D0300150945 /* SunSentenceManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D618AAD191F3D0300150945 /* SunSentenceManagerViewController.m */; };
 		5D618AB11923955400150945 /* MoonSentenceManagerViewContrller.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D618AB01923955400150945 /* MoonSentenceManagerViewContrller.m */; };
@@ -363,17 +362,6 @@
 		5D523DB419EB7944004FE84E /* 云朵-石.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "云朵-石.png"; sourceTree = "<group>"; };
 		5D523DB619EB9739004FE84E /* 点击手势.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "点击手势.png"; sourceTree = "<group>"; };
 		5D523DB819EBAA91004FE84E /* 拖动手势.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "拖动手势.png"; sourceTree = "<group>"; };
-		5D523DBC19EBBC50004FE84E /* YouMiConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiConfig.h; sourceTree = "<group>"; };
-		5D523DBD19EBBC50004FE84E /* YouMiDelegateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiDelegateProtocol.h; sourceTree = "<group>"; };
-		5D523DBE19EBBC50004FE84E /* YouMiPointsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiPointsManager.h; sourceTree = "<group>"; };
-		5D523DBF19EBBC50004FE84E /* YouMiSpots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiSpots.h; sourceTree = "<group>"; };
-		5D523DC019EBBC50004FE84E /* YouMiView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiView.h; sourceTree = "<group>"; };
-		5D523DC119EBBC50004FE84E /* YouMiWall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiWall.h; sourceTree = "<group>"; };
-		5D523DC219EBBC50004FE84E /* YouMiWallAppModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiWallAppModel.h; sourceTree = "<group>"; };
-		5D523DC319EBBC50004FE84E /* YouMiWallBanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiWallBanner.h; sourceTree = "<group>"; };
-		5D523DC419EBBC50004FE84E /* YouMiWallSpot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiWallSpot.h; sourceTree = "<group>"; };
-		5D523DC519EBBC50004FE84E /* YouMiWallSpotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiWallSpotView.h; sourceTree = "<group>"; };
-		5D523DC619EBBC50004FE84E /* libYouMi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libYouMi.a; sourceTree = "<group>"; };
 		5D523DC819EBBD01004FE84E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		5D618AAC191F3D0300150945 /* SunSentenceManagerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SunSentenceManagerViewController.h; sourceTree = "<group>"; };
 		5D618AAD191F3D0300150945 /* SunSentenceManagerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SunSentenceManagerViewController.m; sourceTree = "<group>"; };
@@ -614,7 +602,6 @@
 				5DF11E2A18F58FBE00684122 /* Security.framework in Frameworks */,
 				5D70F65219ED1A20003F867D /* QZoneConnection.framework in Frameworks */,
 				5D70F65C19ED1A20003F867D /* libSinaWeiboSDK.a in Frameworks */,
-				5D523DC719EBBC50004FE84E /* libYouMi.a in Frameworks */,
 				5DABFEC21958738D0000D5B2 /* AudioToolbox.framework in Frameworks */,
 				5D70F65A19ED1A20003F867D /* TencentOpenAPI.framework in Frameworks */,
 				5DABFEC0195873800000D5B2 /* CoreAudio.framework in Frameworks */,
@@ -743,32 +730,6 @@
 				5D51411C19FA696C003DD253 /* iLink.m */,
 			);
 			path = iLink;
-			sourceTree = "<group>";
-		};
-		5D523DBA19EBBC50004FE84E /* YouMilib */ = {
-			isa = PBXGroup;
-			children = (
-				5D523DBB19EBBC50004FE84E /* include */,
-				5D523DC619EBBC50004FE84E /* libYouMi.a */,
-			);
-			path = YouMilib;
-			sourceTree = "<group>";
-		};
-		5D523DBB19EBBC50004FE84E /* include */ = {
-			isa = PBXGroup;
-			children = (
-				5D523DBC19EBBC50004FE84E /* YouMiConfig.h */,
-				5D523DBD19EBBC50004FE84E /* YouMiDelegateProtocol.h */,
-				5D523DBE19EBBC50004FE84E /* YouMiPointsManager.h */,
-				5D523DBF19EBBC50004FE84E /* YouMiSpots.h */,
-				5D523DC019EBBC50004FE84E /* YouMiView.h */,
-				5D523DC119EBBC50004FE84E /* YouMiWall.h */,
-				5D523DC219EBBC50004FE84E /* YouMiWallAppModel.h */,
-				5D523DC319EBBC50004FE84E /* YouMiWallBanner.h */,
-				5D523DC419EBBC50004FE84E /* YouMiWallSpot.h */,
-				5D523DC519EBBC50004FE84E /* YouMiWallSpotView.h */,
-			);
-			path = include;
 			sourceTree = "<group>";
 		};
 		5D6E633C19F0E8F6008C106D /* waterImage */ = {
@@ -1089,7 +1050,6 @@
 			children = (
 				5D51411A19FA696C003DD253 /* iLink */,
 				5D70F62D19ED1A20003F867D /* ShareSDK */,
-				5D523DBA19EBBC50004FE84E /* YouMilib */,
 				5D77BA421997955100A9FC4D /* CustomAlerView */,
 				5D98347B195EAA5400A80EEB /* AminationCustom */,
 				5DABFEB6195872440000D5B2 /* PressedVoice */,
@@ -1726,7 +1686,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1761,7 +1721,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1789,7 +1749,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SunMoon/SunMoon-Prefix.pch";
 				INFOPLIST_FILE = "SunMoon/SunMoon-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ShareSDK/Extend/SinaWeiboSDK",
@@ -1826,7 +1786,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SunMoon/SunMoon-Prefix.pch";
 				INFOPLIST_FILE = "SunMoon/SunMoon-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ShareSDK/Extend/SinaWeiboSDK",

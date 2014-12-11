@@ -8,7 +8,6 @@
 
 #import "UserSetViewController.h"
 #import "NavBar.h"
-#import "ShareByShareSDR.h"
 #import "CustomIndicatorView.h"
 
 
@@ -16,6 +15,7 @@
 {
     
     CustomIndicatorView *indicator;
+    CustomAlertView* customAlertAutoDisYes;
 
 }
 
@@ -412,6 +412,7 @@
         [[UIApplication sharedApplication] openURL:url];
     }
     
+    
     if (indexPath.section  == 2 && indexPath.row == 1)
     {
         //查看网络
@@ -421,19 +422,15 @@
             return;
         }
         
-        [CommonObject showAlert:@"你的任何意见，我们都无比重视^" titleMsg:@"用户关怀" DelegateObject:self];
+        [CommonObject showAlert:@"你的任何意见，我们都无比重视" titleMsg:@"用户关怀" DelegateObject:self];
         
         
         ShareByShareSDR* share = [ShareByShareSDR alloc];
+        share.customDelegate = self;
         [share WeiBoMe];
         
-
-    }
-    
-    if (indexPath.section  == 2 && indexPath.row == 2)
-    {
-
-        [self performSegueWithIdentifier:@"aboutUs" sender:nil];
+        
+        //[self performSegueWithIdentifier:@"aboutUs" sender:nil];
         
         
     }
@@ -442,6 +439,73 @@
     
 }
 
+
+
+//shareSDK delegate
+-(void) ShareStart
+{
+    //初始化指示器
+    NSInteger indiW = 50;
+    NSInteger indiH = 50;
+    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
+    [indicator startAnimating];
+    [self.view addSubview:indicator];
+}
+
+-(void) ShareCancel
+{
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
+
+    [self showCustomYesAlertSuperView:@"取消联系" AlertKey:@"shareCancel"];
+}
+
+-(void) ShareReturnSucc
+{
+
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
+
+    [self showCustomYesAlertSuperView:@"联系成功" AlertKey:@"shareSucc"];
+
+}
+
+-(void) ShareReturnFailed
+{
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
+
+    [self showCustomYesAlertSuperView:@"联系失败，请检查网络" AlertKey:@"shareFailed"];
+}
+
+#pragma mark - Customer alert
+-(void) showCustomYesAlertSuperView:(NSString*) msg  AlertKey:(NSString*) alertKey
+{
+
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
+    [customAlertAutoDisYes setStartCenterPoint:self.view.center];
+    [customAlertAutoDisYes setEndCenterPoint:self.view.center];
+    [customAlertAutoDisYes setStartAlpha:0.1];
+    [customAlertAutoDisYes setEndAlpha:1.0];
+    [customAlertAutoDisYes setStartHeight:0];
+    [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
+    [customAlertAutoDisYes setDelayDisappearTime:5.0];
+    [customAlertAutoDisYes setMsgFrontSize:45];
+    [customAlertAutoDisYes setAlertMsg:msg];
+    [customAlertAutoDisYes setCustomAlertDelegate:self];
+    [customAlertAutoDisYes RunCumstomAlert];
+
+}
+
+
+- (void)yesButtonHandler:(id)sender
+{
+    [customAlertAutoDisYes yesButtonHandler:nil];
+    
+    
+}
 
 //- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 //{
@@ -473,7 +537,7 @@
         return [_shareTypeArray count];
     }else if(sectionIndex == 1)
     {
-        return 2;
+        return 1;
     }
     
     return 3;
@@ -594,7 +658,7 @@
         if (indexPath.row == 0) {
             
             
-            cell.textLabel.text = @"给个星评";
+            cell.textLabel.text = @"查看最新版本";
             
 
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -604,22 +668,22 @@
         if (indexPath.row == 1) {
             
             
-            cell.textLabel.text = @"有建议@我们";
+            cell.textLabel.text = @"@开发者";
             
             
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
         }
         
-        if (indexPath.row == 2) {
-            
-            
-            cell.textLabel.text = @"关于我们";
-            
-            
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            
-        }
+//        if (indexPath.row == 2) {
+//            
+//            
+//            cell.textLabel.text = @"关于我们";
+//            
+//            
+//            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//            
+//        }
         
     }
     return cell;

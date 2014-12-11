@@ -232,7 +232,7 @@ static GuidController *sharedGuidCtl;
     }
     
     touchView.image = [UIImage imageNamed:touchImageName];
-    touchView.alpha = 0.5;
+    touchView.alpha = 0.8;
     [superView addSubview:touchView];
     
 }

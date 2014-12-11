@@ -27,17 +27,9 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    self.navigationController.navigationBarHidden = YES;
+    self.navigationController.navigationBarHidden = NO;
     self.navigationController.navigationBar.opaque = YES;
-    //加返回按钮
-    NSInteger backBtnWidth = 50;
-    NSInteger backBtnHeight = 22;
-    UIButton *backBtn =[UIButton buttonWithType:UIButtonTypeCustom];
-    [backBtn setImage:[UIImage imageNamed:@"返回-黄.png"] forState:UIControlStateNormal];
-    [backBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y-backBtnHeight/2+10, backBtnWidth, backBtnHeight)];
-    [backBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:backBtn];
+
 }
 
 
@@ -48,10 +40,10 @@
 }
 
 
--(void) back
+
+- (IBAction)showMenu
 {
-    [self.navigationController popViewControllerAnimated:YES];
-    
+    [self.frostedViewController presentMenuViewController];
 }
 
 /*

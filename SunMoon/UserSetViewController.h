@@ -11,6 +11,9 @@
 #import "UserDB.h"
 #import "VPImageCropperViewController.h"
 #import <ShareSDK/ShareSDK.h>
+#import "ShareByShareSDR.h"
+#import "CustomAlertView.h"
+
 
 
 @interface UserSetViewController : UITableViewController<VPImageCropperDelegate>

@@ -395,7 +395,7 @@ static UserInfo *sharedUserInfo;
     //初始创建数据库, 已存在，则不创建
     UserDB* userDB = [[UserDB alloc] init];
     //[userDB createDataBase];
-    NSLog(@"in saveUserCheckByDataTime: userDB =%@", userDB);
+    //NSLog(@"in saveUserCheckByDataTime: userDB =%@", userDB);
     
     if ([userDB getUserDataByDateTime:user.date_time]) {
         NSLog(@"Datetime=%@， 重复，先删后插入一条!", user.date_time);

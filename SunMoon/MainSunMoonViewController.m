@@ -65,17 +65,22 @@
     BOOL isGetinToHome; //是进入小屋的点击
     
     CGRect srcIntoCameraBtnFrame ;
+    CGPoint srcIntoCameraBtnCenter;
     CGRect destIntoCameraBtnFrame ;
+    CGPoint destIntoCameraBtnCenter;
+
     
     CGRect srcShowBringLightBtnFrame;
     CGRect destShowBringLightBtnFrame;
+    
+    
     CGRect jumpSmallShowBringLightBtnFrame;
     BOOL  startJump;
     NSTimer*  JumpTimer;
 
     
-    UIButton* _intoCameraBtn;
-    UIButton* _showBringLightBtn;
+    //UIButton* _intoCameraBtn;
+    //UIButton* _showBringLightBtn;
     
     UIImageView* bowLightView; //日月闪爆闪
     UIImageView* bowLightBringView; //育成光爆闪
@@ -89,7 +94,7 @@
 
 @implementation MainSunMoonViewController
 
-@synthesize mainBgImage,menuBtn,userInfo,userDB,userHeaderImageView = _userHeaderImageView;
+@synthesize intoCameraBtn=_intoCameraBtn,showBringLightBtn=_showBringLightBtn,mainBgImage,menuBtn,userInfo,userDB,userHeaderImageView = _userHeaderImageView;
 @synthesize skySunorMoonImage =_skySunorMoonImage,panSunorMoonImageView =_panSunorMoonImageView;
 
 - (void)viewDidLoad
@@ -132,6 +137,7 @@
     //获取同一个数据库，注：userDB不能放到userInfo中，会发生错误，原因不明
     userDB = [[UserDB alloc] init];
     
+    NSLog(@"db path=%@", [userDB getDBPath]);
 
     self.userCloud = [[UserInfoCloud alloc] init];
     self.userCloud.userInfoCloudDelegate = self;
@@ -187,6 +193,18 @@
     }
     
     self.userHeaderImageView.image = self.userInfo.userHeaderImage;
+
+    
+    //定位太阳位置
+    float sunW =SCREEN_WIDTH/5*4;
+    float sunH = sunW;
+    CGRect sunMoonRect = CGRectMake(SCREEN_WIDTH/2-sunW/2,30,sunW, sunH);
+    [_skySunorMoonImage setFrame:sunMoonRect];
+    
+    
+
+    
+    
 
     
     
@@ -331,8 +349,13 @@
     [userDB mergeWithUserByDateTime:userInfo];
     */
 
-
-    
+    //test
+//    NSInteger inTocameraBtnWidth = SCREEN_WIDTH/3;
+//    NSInteger inTocameraBtnHeight = inTocameraBtnWidth;
+//    srcIntoCameraBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
+//    NSLog(@"viewDidLoad---%f, %f, %f, %f ",srcIntoCameraBtnFrame.origin.x, srcIntoCameraBtnFrame.origin.y, srcIntoCameraBtnFrame.size.width,srcIntoCameraBtnFrame.size.height);
+//    destIntoCameraBtnFrame = CGRectMake(20,_skySunorMoonImage.center.y+inTocameraBtnHeight/5*1, inTocameraBtnWidth,inTocameraBtnHeight);
+//    NSLog(@"viewDidLoad---%f, %f, %f, %f ",destIntoCameraBtnFrame.origin.x, destIntoCameraBtnFrame.origin.y, destIntoCameraBtnFrame.size.width,destIntoCameraBtnFrame.size.height);
 }
 
 
@@ -343,14 +366,15 @@
     NSLog(@"---->viewWillAppear");
     
     //[self HandleGuidProcess:guid_oneByOne];
+
     
-    //起动引导界面
-    //jjj
-//    if (!guidInfo.fristlyOpenGuidCtl) {
-//        
-//        [self showIntroWithCrossDissolve];
-//
-//    }
+    //test
+    NSInteger inTocameraBtnWidth = SCREEN_WIDTH/3;
+    NSInteger inTocameraBtnHeight = inTocameraBtnWidth;
+    srcIntoCameraBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
+    NSLog(@"viewWillAppear---%f, %f, %f, %f ",srcIntoCameraBtnFrame.origin.x, srcIntoCameraBtnFrame.origin.y, srcIntoCameraBtnFrame.size.width,srcIntoCameraBtnFrame.size.height);
+    destIntoCameraBtnFrame = CGRectMake(20,_skySunorMoonImage.center.y+inTocameraBtnHeight/5*1, inTocameraBtnWidth,inTocameraBtnHeight);
+    NSLog(@"viewWillAppear---%f, %f, %f, %f ",destIntoCameraBtnFrame.origin.x, destIntoCameraBtnFrame.origin.y, destIntoCameraBtnFrame.size.width,destIntoCameraBtnFrame.size.height);
     
 
 
@@ -365,8 +389,6 @@
 {
     [super viewDidAppear:animated];
     NSLog(@"---->viewDidAppear");
-    
-
     
     //创建拖动轨迹识别
     panSunOrMoonGusture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(HandlePanSunOrMoon:)];
@@ -400,42 +422,38 @@
     _skySunorMoonImage.userInteractionEnabled = YES;
     [_skySunorMoonImage addGestureRecognizer:tapSunOrMoonGusture];
     
-
+    NSLog(@"viewDidAppear--1111-%f, %f, %f, %f ",_intoCameraBtn.frame.origin.x, _intoCameraBtn.frame.origin.y, _intoCameraBtn.frame.size.width,_intoCameraBtn.frame.size.height);
     
-    //初始化弹出按钮, 位置在太阳月亮中, 是否有光在育成
+    //定位camera button
     NSInteger inTocameraBtnWidth = SCREEN_WIDTH/3;
     NSInteger inTocameraBtnHeight = inTocameraBtnWidth;
     srcIntoCameraBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
     destIntoCameraBtnFrame = CGRectMake(20,_skySunorMoonImage.center.y+inTocameraBtnHeight/5*1, inTocameraBtnWidth,inTocameraBtnHeight);
+    srcIntoCameraBtnCenter =  _skySunorMoonImage.center;
+    destIntoCameraBtnCenter = CGPointMake(destIntoCameraBtnFrame.origin.x+destIntoCameraBtnFrame.size.width/2, destIntoCameraBtnFrame.origin.y+destIntoCameraBtnFrame.size.height/2);
+    //[_intoCameraBtn setFrame:srcIntoCameraBtnFrame];
+    //[_intoCameraBtn setCenter:srcIntoCameraBtnCenter];
+    [_intoCameraBtn setTag:TAG_INTO_CAMERA_BTN];
     
+    
+    
+    NSLog(@"viewDidAppear--2222-%f, %f, %f, %f ",srcIntoCameraBtnFrame.origin.x, srcIntoCameraBtnFrame.origin.y, srcIntoCameraBtnFrame.size.width,srcIntoCameraBtnFrame.size.height);
+    
+    
+    //定位养育光环
     NSInteger bringLightBtnWidth = SCREEN_WIDTH/3;
     NSInteger bringLightBtnHeight = bringLightBtnWidth;
     srcShowBringLightBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
     destShowBringLightBtnFrame = CGRectMake(SCREEN_WIDTH-bringLightBtnWidth-20,_skySunorMoonImage.center.y+bringLightBtnHeight/5*1, bringLightBtnWidth, bringLightBtnHeight);
+    [_showBringLightBtn setFrame:srcShowBringLightBtnFrame];
+    [_showBringLightBtn setTag:TAG_BRING_LING_BTN];
+
     
     NSInteger bringLightJumpWidth = bringLightBtnWidth/3;
     NSInteger bringLightJumpHeight = bringLightBtnHeight/3;
     jumpSmallShowBringLightBtnFrame = CGRectMake(destShowBringLightBtnFrame.origin.x+(bringLightBtnWidth-bringLightJumpWidth)/2,destShowBringLightBtnFrame.origin.y+(bringLightBtnHeight-bringLightJumpHeight)/2, bringLightJumpWidth, bringLightJumpHeight);
     
     
-    if (!_intoCameraBtn ) {
-        _intoCameraBtn = [[UIButton alloc] initWithFrame:srcIntoCameraBtnFrame];
-        [_intoCameraBtn addTarget:self action:@selector(intoCamera:) forControlEvents:UIControlEventTouchUpInside];
-        [_intoCameraBtn setTag:TAG_INTO_CAMERA_BTN];
-        [self.view addSubview:_intoCameraBtn];
-
-    }
-    
-    if (!_showBringLightBtn) {
-        _showBringLightBtn = [[UIButton alloc] initWithFrame:srcShowBringLightBtnFrame];
-        [_showBringLightBtn addTarget:self action:@selector(getBringedUpLight:) forControlEvents:UIControlEventTouchUpInside];
-        [_showBringLightBtn setTag:TAG_BRING_LING_BTN];
-        [self.view addSubview:_showBringLightBtn];
-
-    }
-
-    
-
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
         
         if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
@@ -480,9 +498,48 @@
     isPopOutShowBringLightBtn = NO;
     
     
+    //初始化弹出按钮, 位置在太阳月亮中, 是否有光在育成
+//    NSInteger inTocameraBtnWidth = SCREEN_WIDTH/3;
+//    NSInteger inTocameraBtnHeight = inTocameraBtnWidth;
+//    srcIntoCameraBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
+////    NSLog(@"viewDidAppear---%f, %f, %f, %f ",srcIntoCameraBtnFrame.origin.x, srcIntoCameraBtnFrame.origin.y, srcIntoCameraBtnFrame.size.width,srcIntoCameraBtnFrame.size.height);
+//    destIntoCameraBtnFrame = CGRectMake(20,_skySunorMoonImage.center.y+inTocameraBtnHeight/5*1, inTocameraBtnWidth,inTocameraBtnHeight);
+////    NSLog(@"viewDidAppear---%f, %f, %f, %f ",destIntoCameraBtnFrame.origin.x, destIntoCameraBtnFrame.origin.y, destIntoCameraBtnFrame.size.width,destIntoCameraBtnFrame.size.height);
     
+//    NSInteger bringLightBtnWidth = SCREEN_WIDTH/3;
+//    NSInteger bringLightBtnHeight = bringLightBtnWidth;
+//    srcShowBringLightBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
+//    destShowBringLightBtnFrame = CGRectMake(SCREEN_WIDTH-bringLightBtnWidth-20,_skySunorMoonImage.center.y+bringLightBtnHeight/5*1, bringLightBtnWidth, bringLightBtnHeight);
+//    
+//    NSInteger bringLightJumpWidth = bringLightBtnWidth/3;
+//    NSInteger bringLightJumpHeight = bringLightBtnHeight/3;
+//    jumpSmallShowBringLightBtnFrame = CGRectMake(destShowBringLightBtnFrame.origin.x+(bringLightBtnWidth-bringLightJumpWidth)/2,destShowBringLightBtnFrame.origin.y+(bringLightBtnHeight-bringLightJumpHeight)/2, bringLightJumpWidth, bringLightJumpHeight);
+//    
+    
+//    if (!_intoCameraBtn ) {
+//        _intoCameraBtn = [[UIButton alloc] initWithFrame:srcIntoCameraBtnFrame];
+//        [_intoCameraBtn addTarget:self action:@selector(intoCamera:) forControlEvents:UIControlEventTouchUpInside];
+//        [_intoCameraBtn setTag:TAG_INTO_CAMERA_BTN];
+//        [self.view addSubview:_intoCameraBtn];
+//        
+//        NSLog(@"viewDidAppear--now-3-alloc-%f, %f, %f, %f ",_intoCameraBtn.frame.origin.x, _intoCameraBtn.frame.origin.y, _intoCameraBtn.frame.size.width,_intoCameraBtn.frame.size.height);
+//
+//    }
+
+
 
     
+//    if (!_showBringLightBtn) {
+//        _showBringLightBtn = [[UIButton alloc] initWithFrame:srcShowBringLightBtnFrame];
+//        [_showBringLightBtn addTarget:self action:@selector(getBringedUpLight:) forControlEvents:UIControlEventTouchUpInside];
+//        [_showBringLightBtn setTag:TAG_BRING_LING_BTN];
+//        [self.view addSubview:_showBringLightBtn];
+//
+//    }
+    
+
+
+
      
     //初始化日月动画图
     //不能放到veiwDidload 和viewWillapear中
@@ -560,13 +617,15 @@
     //[self showCustomYesAlertSuperView:@"拖动阳光回到太阳，3小时可以养成1个小阳光哦!" AlertKey:KEY_IS_GIVE_FIRST_LIGHT];
 
 
-    
+  NSLog(@"viewDidAppear--now-1--%f, %f, %f, %f ",_intoCameraBtn.frame.origin.x, _intoCameraBtn.frame.origin.y, _intoCameraBtn.frame.size.width,_intoCameraBtn.frame.size.height);
     
     //引导结束，执行一般打开状态
     if (guidInfo.guidStepNumber >guidStep_mainView_End)
     {
         [self whenCommonOpenViewHandle];
     }
+    
+// NSLog(@"viewDidAppear--now-2--%f, %f, %f, %f ",_intoCameraBtn.frame.origin.x, _intoCameraBtn.frame.origin.y, _intoCameraBtn.frame.size.width,_intoCameraBtn.frame.size.height);
     
     //始终保持两控件在最上面
     [self.view bringSubviewToFront:_intoCameraBtn];
@@ -782,14 +841,27 @@
     
     
     if (isPop) {
+        
         [UIView beginAnimations:@"popOut_IntoCameraBtn" context:Nil];
+
         [UIView setAnimationDuration:0.7f];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(animationPopOut:finished:context:)];
         NSLog(@"popOut IntoCameraBtn!");
+        [UIView setAnimationBeginsFromCurrentState:YES];
+
+       // NSLog(@"change---%f, %f, %f, %f ",_intoCameraBtn.frame.origin.x, _intoCameraBtn.frame.origin.y, _intoCameraBtn.frame.size.width,_intoCameraBtn.frame.size.height);
+
+        //NSLog(@"change---%f, %f, %f, %f ",destIntoCameraBtnFrame.origin.x, destIntoCameraBtnFrame.origin.y, destIntoCameraBtnFrame.size.width,destIntoCameraBtnFrame.size.height);
+        
         [_intoCameraBtn setFrame:destIntoCameraBtnFrame];
+        [_intoCameraBtn setCenter:destIntoCameraBtnCenter];
+        
+        //test
+        //[testBtn setFrame:destIntoCameraBtnFrame];
         
         [UIView commitAnimations];
+
         
         //[self.view bringSubviewToFront:_intoCameraBtn];
         isPopOutIntoCameraBtn = YES;
@@ -800,8 +872,19 @@
         [UIView setAnimationDuration:0.7f];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(animationPopOut:finished:context:)];
+        [UIView setAnimationBeginsFromCurrentState:YES];
+
+
+        
         NSLog(@"popBack IntoCameraBtn!");
+        
+        //NSLog(@"change-2--%f, %f, %f, %f ",_intoCameraBtn.frame.origin.x, _intoCameraBtn.frame.origin.y, _intoCameraBtn.frame.size.width,_intoCameraBtn.frame.size.height);
+        
+        //NSLog(@"change-2--%f, %f, %f, %f ",srcIntoCameraBtnFrame.origin.x, srcIntoCameraBtnFrame.origin.y, srcIntoCameraBtnFrame.size.width,srcIntoCameraBtnFrame.size.height);
+        
         [_intoCameraBtn setFrame:srcIntoCameraBtnFrame];
+        
+        
         
         [UIView commitAnimations];
         
@@ -1039,7 +1122,7 @@
 
 
 #pragma mark -  弹出按钮处理
-- (void)getBringedUpLight:(id)sender
+- (IBAction)getBringedUpLight:(id)sender
 {
     
     if ([self.userInfo checkIsBringUpinSunOrMoon]) {
@@ -1084,7 +1167,7 @@
     
 }
 
-- (void)intoCamera:(id)sender {
+- (IBAction)intoCamera:(id)sender {
     
     //先判断照片是否超限
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
@@ -2621,6 +2704,8 @@
         userInfo.sun_image = UIImagePNGRepresentation([imageData objectForKey:CAMERA_IMAGE_KEY]);
         userInfo.sun_image_sentence = [imageData objectForKey:CAMERA_SENTENCE_KEY];
         userInfo.sun_image_name = [imageData objectForKey:CAMERA_TIME_KEY];
+        
+        
     }else if ([CommonObject checkSunOrMoonTime] == IS_MOON_TIME)
     {
         userInfo.date_time = [imageData objectForKey:CAMERA_TIME_KEY];
@@ -2628,7 +2713,7 @@
         userInfo.moon_image = UIImagePNGRepresentation([imageData objectForKey:CAMERA_IMAGE_KEY]);
         userInfo.moon_image_sentence = [imageData objectForKey:CAMERA_SENTENCE_KEY];
         userInfo.moon_image_name = [imageData objectForKey:CAMERA_TIME_KEY];
-        
+
     }
 
     [self.userInfo saveUserCheckByDataTime:userInfo];

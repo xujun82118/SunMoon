@@ -39,6 +39,7 @@
 - (IBAction)getBringedUpLight:(id)sender;
 
 
+
 @property (nonatomic, copy) UserDB * userDB;
 
 @property (nonatomic, strong) UserInfo * userInfo;
@@ -54,6 +55,10 @@
 @property (weak, nonatomic) IBOutlet UIImageView *panSunorMoonImageView;
 
 @property (weak, nonatomic) IBOutlet UIButton* menuBtn;
+
+
+@property (weak, nonatomic) IBOutlet UIButton* intoCameraBtn;
+@property (weak, nonatomic) IBOutlet UIButton* showBringLightBtn;
 
 
 //@property (weak, nonatomic) IBOutlet UIButton * intoCameraBtn;
