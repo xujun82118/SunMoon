@@ -406,7 +406,7 @@
      
     //初始化日月动画图
     //不能放到veiwDidload 和viewWillapear中
-    NSInteger IntervalWidth = 45;// 光环向日月外扩的宽度,日月的光晕较大
+    NSInteger IntervalWidth = 5;// 光环向日月外扩的宽度,日月的光晕较大
     NSInteger lightSkySunOrMoonViewWidth = _skySunorMoonImage.frame.size.width+IntervalWidth*2;
     NSInteger lightSkySunOrMoonViewHeigth = _skySunorMoonImage.frame.size.height+IntervalWidth*2;
     if (!lightSkySunOrMoonView) {
