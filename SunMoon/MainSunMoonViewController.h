@@ -59,6 +59,8 @@
 
 @property (weak, nonatomic) IBOutlet UIButton* intoCameraBtn;
 @property (weak, nonatomic) IBOutlet UIButton* showBringLightBtn;
+@property (weak, nonatomic) IBOutlet UIImageView *lightLineImageView;
+
 
 
 //@property (weak, nonatomic) IBOutlet UIButton * intoCameraBtn;

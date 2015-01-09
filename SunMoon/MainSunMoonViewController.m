@@ -41,7 +41,6 @@
     
     BOOL  isFromHeaderBegin;
     BOOL  isFromSunMoonBegin;
-    UIImageView* bringupImageView;    //光育成中要用的动画View
     UIImageView*  lightSkySunOrMoonView; //太阳或月亮闪烁动画View
     UIImageView*  lightBowSkyUserHeaderView; //头像爆闪烁动画View
     UIImageView* lightUserHeader;//头像闪烁动画View, 7个闪烁光环
@@ -60,7 +59,7 @@
     BOOL isPopOutIntoCameraBtn;  //是否已弹出
     BOOL isPopOutShowBringLightBtn;
     
-    BOOL isContineGiveLight; //是连继登录奖励的光
+    BOOL isContineGiveLight; //是连继登录奖励的光,或此次照相奖励了光
     
     BOOL isGetinToHome; //是进入小屋的点击
     
@@ -88,13 +87,17 @@
     CustomAlertView* customAlertAutoDis;
     CustomAlertView* customAlertAutoDisYes;
     
+    UIImageView* userHeaderline; //头像的横线
+    
+
+    
 }
 
 @end
 
 @implementation MainSunMoonViewController
 
-@synthesize intoCameraBtn=_intoCameraBtn,showBringLightBtn=_showBringLightBtn,mainBgImage,menuBtn,userInfo,userDB,userHeaderImageView = _userHeaderImageView;
+@synthesize intoCameraBtn=_intoCameraBtn,showBringLightBtn=_showBringLightBtn,mainBgImage,menuBtn,userInfo,userDB,userHeaderImageView = _userHeaderImageView,lightLineImageView = _lightLineImageView;
 @synthesize skySunorMoonImage =_skySunorMoonImage,panSunorMoonImageView =_panSunorMoonImageView;
 
 - (void)viewDidLoad
@@ -144,7 +147,7 @@
     
     //选择背景时间与日月图片等
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-        [mainBgImage setImage:[UIImage imageNamed:@"主页底图003.png"]];
+        [mainBgImage setImage:[UIImage imageNamed:@"主页底图004.png"]];
         [_skySunorMoonImage setImage:[UIImage imageNamed:@"sun.png"]];
 
         
@@ -186,20 +189,16 @@
         _userHeaderImageView.layer.borderWidth = 3.5f;
         _userHeaderImageView.userInteractionEnabled = YES;
         _userHeaderImageView.backgroundColor = [UIColor blackColor];
-        tapHeaderView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapUserHeader)];
+        tapHeaderView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapUserHeader:)];
+        tapHeaderView.numberOfTouchesRequired = 1;
+        tapHeaderView.numberOfTapsRequired = 1;
+        _userHeaderImageView.userInteractionEnabled = YES;
         [_userHeaderImageView addGestureRecognizer:tapHeaderView];
         [self.view addSubview:_userHeaderImageView];
         
     }
     
     self.userHeaderImageView.image = self.userInfo.userHeaderImage;
-
-    
-    //定位太阳位置
-//    float sunW =SCREEN_WIDTH/5*4;
-//    float sunH = sunW;
-//    CGRect sunMoonRect = CGRectMake(SCREEN_WIDTH/2-sunW/2,30,sunW, sunH);
-//    [_skySunorMoonImage setFrame:sunMoonRect];
     
     
     
@@ -221,6 +220,8 @@
             [_showBringLightBtn setImage:[UIImage imageNamed:@"环-sun-空.png"] forState:UIControlStateNormal];
         }
         
+        [_lightLineImageView setImage:[UIImage imageNamed:@"连线-日.png"]];
+        
         
     }else
     {
@@ -240,7 +241,8 @@
             [_showBringLightBtn setImage:[UIImage imageNamed:@"环-moon-空.png"] forState:UIControlStateNormal];
         }
         
-        
+        [_lightLineImageView setImage:[UIImage imageNamed:@"连线-月.png"]];
+
     }
     
 
@@ -274,6 +276,23 @@
     //更新状态
     [self refreshIntoCameraBtnState];
     [self refreshShowBringLightBtnState];
+    
+    
+    //画头像横线
+//    if (!userHeaderline) {
+//        NSInteger lineX = 0;
+//        NSInteger lineW = self.view.frame.size.width;
+//        NSInteger lineH = 3;
+//        NSInteger lineY =_userHeaderImageView.frame.origin.y+_userHeaderImageView.frame.size.height/2-lineH/2;
+//        userHeaderline = [[UIImageView alloc] initWithFrame:CGRectMake(lineX, lineY, lineW, lineH)];
+//        [userHeaderline setBackgroundColor:[UIColor orangeColor]];
+//        
+//        [self.view insertSubview:userHeaderline belowSubview:_userHeaderImageView  ];
+//        
+//        
+//    }
+
+
     
     
     //创建拖动轨迹识别
@@ -387,7 +406,7 @@
      
     //初始化日月动画图
     //不能放到veiwDidload 和viewWillapear中
-    NSInteger IntervalWidth = 0;// 光环向日月外扩的宽度,日月的光晕较大
+    NSInteger IntervalWidth = 45;// 光环向日月外扩的宽度,日月的光晕较大
     NSInteger lightSkySunOrMoonViewWidth = _skySunorMoonImage.frame.size.width+IntervalWidth*2;
     NSInteger lightSkySunOrMoonViewHeigth = _skySunorMoonImage.frame.size.height+IntervalWidth*2;
     if (!lightSkySunOrMoonView) {
@@ -568,6 +587,7 @@
         NSLog(@"当天新登录,更新当天照片未加光值");
         [self.userInfo updateIsHaveAddSunValueForTodayPhoto:NO];
         [self.userInfo updateIsHaveAddMoonValueForTodayPhoto:NO];
+        [self refreshIntoCameraBtnState];
 
         NSLog(@"当天新登录，判断是否连续登录？");
         
@@ -590,8 +610,8 @@
                 [self showCustomDelayAlertBottom:@"月光时间连续登录，奖励一个月光"];
             }
             
-            //弹出育成图
-            //[self animationForShowBringLightBtnPop:YES];
+            //显示奖励一个光
+            [self refreshShowBringLightBtnState];
             
             
         }else
@@ -611,11 +631,6 @@
     
     //更新登录时间
     [self.userInfo setLoginToday];
-
-    
-    
-    //始终弹出相机按键,需放到updateIsHaveAddSunValueForTodayPhoto 之后
-    //[self animationForIntoCameraBtnPop:YES];
     
     //是否有光在育成
     if ([self.userInfo.sun_value intValue] !=0 || [self.userInfo.moon_value intValue]!=0)
@@ -626,9 +641,7 @@
             //有则，闪烁
             [self animationLightFrameSkySunOrMoon:7];
             NSLog(@"有光在育成， 闪烁。。");
-            
-            //弹出育成图
-            //[self animationForShowBringLightBtnPop:YES];
+
 
         }else
         {
@@ -657,35 +670,6 @@
 
 
 
--(void) refreshIntoCameraBtnState
-{
-    
-    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-        
-        if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
-            [_intoCameraBtn setImage:[UIImage imageNamed:@"拍照环-sun.png"] forState:UIControlStateNormal];
-        }else
-        {
-            
-            [_intoCameraBtn setImage:[UIImage imageNamed:@"拍照环-sun-点.png"] forState:UIControlStateNormal];
-        }
-        
-        
-    }else
-    {
-        
-        if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
-            [_intoCameraBtn setImage:[UIImage imageNamed:@"拍照环-moon.png"] forState:UIControlStateNormal];
-        }else
-        {
-            
-            [_intoCameraBtn setImage:[UIImage imageNamed:@"拍照环-moon-点.png"] forState:UIControlStateNormal];
-        }
-        
-    }
-    
-}
-
 #pragma mark -  弹出动画
 -(void) animationForIntoCameraBtnPop:(BOOL)isPop
 {
@@ -694,6 +678,8 @@
         
         if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
             [_intoCameraBtn setImage:[UIImage imageNamed:@"拍照环-sun.png"] forState:UIControlStateNormal];
+            
+            
         }else
         {
             
@@ -769,6 +755,39 @@
     
 }
 
+
+-(void) refreshIntoCameraBtnState
+{
+    
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        
+        if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
+            [_intoCameraBtn setImage:[UIImage imageNamed:@"拍照环-sun.png"] forState:UIControlStateNormal];
+        }else
+        {
+            
+            [_intoCameraBtn setImage:[UIImage imageNamed:@"拍照环-sun-点.png"] forState:UIControlStateNormal];
+        }
+        
+        [_lightLineImageView setImage:[UIImage imageNamed:@"连线-日.png"]];
+        
+        
+    }else
+    {
+        
+        if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
+            [_intoCameraBtn setImage:[UIImage imageNamed:@"拍照环-moon.png"] forState:UIControlStateNormal];
+        }else
+        {
+            
+            [_intoCameraBtn setImage:[UIImage imageNamed:@"拍照环-moon-点.png"] forState:UIControlStateNormal];
+        }
+        
+        [_lightLineImageView setImage:[UIImage imageNamed:@"连线-月.png"]];
+        
+    }
+    
+}
 
 -(void) refreshShowBringLightBtnState
 {
@@ -1002,8 +1021,7 @@
     if (isContineGiveLight&&![self.userInfo checkIsBringUpinSunOrMoon]) {
         //奖励时，只移动一个光
         [self moveLightWithRepeatCount:1 StartPoint:_skySunorMoonImage.center EndPoint:_userHeaderImageView.center IsUseRepeatCount:YES];
-        //更新育成光环状态
-        [self setShowBringLightBtnHaveLight:NO];
+
         
         isContineGiveLight = NO;
         isStartSunOrmoonImageMoveToHeaderAnimation = YES;
@@ -1022,10 +1040,10 @@
         isStartSunOrmoonImageMoveToHeaderAnimation = YES;
         
         [self.userInfo updateisBringUpSunOrMoon:NO];
-        //更新育成光环状态
-        [self setShowBringLightBtnHaveLight:NO];
+
         
-        
+        isContineGiveLight = NO;
+
         
         NSString* temp =[NSString stringWithFormat:@"停止养育%@光",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
         [self showCustomDelayAlertBottom:temp];
@@ -1037,6 +1055,11 @@
         NSLog(@"没有光在育成！");
         
     }
+    
+    //更新为没有光
+    [self refreshShowBringLightBtnState];
+    
+    
 }
 
 -(void)setShowBringLightBtnHaveLight:(BOOL) isLight
@@ -1138,6 +1161,7 @@
  
     NSLog(@"Guid Step input=%d, current = %d", guidNeedNum, guidInfo.guidStepNumber);
     //指定步等于当前步时，触发处理过程, 此设计可以任意放置HandleGuidProcess的调用
+    //如中途中断，从上一次断的步开始引导
     if (guidNeedNum == guidInfo.guidStepNumber) {
         //执行当前步
         switch (guidInfo.guidStepNumber) {
@@ -1205,12 +1229,12 @@
                 //禁止除拖动以外的所有动作(点OK时，会再次被打开,故需再一次)
                 [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
 
-                //打开self.view的拖动，点OK后打开
-                panSunOrMoonGusture.enabled = YES;
                 
                 //增加拖动指示
                 [guidInfo AddTouchIndication:self.view TouchImageName:@"拖动手势.png" TouchFrame:self.view.frame];
 
+                //打开self.view的拖动，点OK后打开
+                panSunOrMoonGusture.enabled = YES;
             }
                 break;
             case guidStep_guidIntoCamera:
@@ -1327,6 +1351,11 @@
     //NSString* imageTime = [CommonObject getCurrentDate];
     //NSLog(@"--image time =%@",  imageTime);
     
+    if ([[imageFilterData objectForKey:CAMERA_LIGHT_COUNT] integerValue]!=0) {
+        isContineGiveLight = YES;
+    }
+    
+    [self refreshShowBringLightBtnState];
     [self refreshIntoCameraBtnState];
 
     
@@ -1451,8 +1480,9 @@
         [UIView setAnimationDidStopSelector:@selector(reFreshSunMoonUIAnimationDidStop:finished:context:)];
         
         if ([CommonObject checkSunOrMoonTime]== IS_SUN_TIME) {
-            [mainBgImage setImage:[UIImage imageNamed:@"主页底图003.png"]];
+            [mainBgImage setImage:[UIImage imageNamed:@"主页底图004.png"]];
             [_skySunorMoonImage setImage:[UIImage imageNamed:@"sun.png"]];
+            
             if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
                 [_intoCameraBtn setImage:[UIImage imageNamed:@"拍照环-sun.png"] forState:UIControlStateNormal];
             }else
@@ -1466,10 +1496,11 @@
             }else
             {
                 [_showBringLightBtn setImage:[UIImage imageNamed:@"环-sun-空.png"] forState:UIControlStateNormal];
-                //没有光育成时，收回环
-                //[self animationForShowBringLightBtnPop:NO];
 
             }
+            
+            [_lightLineImageView setImage:[UIImage imageNamed:@"连线-日.png"]];
+
 
             
             
@@ -1477,6 +1508,7 @@
         {
             [mainBgImage setImage:[UIImage imageNamed:@"moon-home.png"]];
             [_skySunorMoonImage setImage:[UIImage imageNamed:@"moon.png"]];
+          
             if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
                 [_intoCameraBtn setImage:[UIImage imageNamed:@"拍照环-moon.png"] forState:UIControlStateNormal];
             }else
@@ -1489,9 +1521,11 @@
             }else
             {
                 [_showBringLightBtn setImage:[UIImage imageNamed:@"环-moon-空.png"] forState:UIControlStateNormal];
-                //没有光育成时，收回环
-                //[self animationForShowBringLightBtnPop:NO];
+
             }
+            
+            [_lightLineImageView setImage:[UIImage imageNamed:@"连线-月.png"]];
+
         }
         NSLog(@"Change new  UI to %@", [mainBgImage.image description]);
 
@@ -1607,7 +1641,7 @@
             return;
         }
         
-        _panSunorMoonImageView.image =[UIImage imageNamed:@"sun.png"];
+        _panSunorMoonImageView.image =[UIImage imageNamed:@"sun-小.png"];
         
     }else
     {
@@ -1615,7 +1649,7 @@
             NSLog(@"moon_value==0 handlePan return");
             return;
         }
-        _panSunorMoonImageView.image =[UIImage imageNamed:@"moon.png"];
+        _panSunorMoonImageView.image =[UIImage imageNamed:@"moon-小.png"];
 
         
     }
@@ -1658,7 +1692,7 @@
                 isFromHeaderBegin = YES;
                 _panSunorMoonImageView.center = _userHeaderImageView.center;
                 _panSunorMoonImageView.alpha = 1.0;
-                _panSunorMoonImageView.hidden =  NO;
+                _panSunorMoonImageView.hidden =  YES;
                 
             }else
             {
@@ -1673,16 +1707,16 @@
 
             
             if (isFromHeaderBegin) {
-                _panSunorMoonImageView.hidden =  NO;
+                _panSunorMoonImageView.hidden =  YES;
                 _panSunorMoonImageView.center = location;
                 _panSunorMoonImageView.alpha = 1.0;
                 
                 if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-                    panTracelight = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sun.png"]];
+                    panTracelight = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sun-小.png"]];
                     
                 }else
                 {
-                    panTracelight = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"moon.png"]];
+                    panTracelight = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"moon-小.png"]];
                     
                 }
                 [panTracelight setFrame:CGRectMake(location.x, location.y, 15, 15)];
@@ -1802,7 +1836,7 @@
                 isFromSunMoonBegin = YES;
                 _panSunorMoonImageView.center = _skySunorMoonImage.center;
                 _panSunorMoonImageView.alpha = 1.0;
-                _panSunorMoonImageView.hidden =  NO;
+                _panSunorMoonImageView.hidden =  YES;
                 
                 
             }else
@@ -1821,14 +1855,14 @@
                 
                 _panSunorMoonImageView.center = location;
                 _panSunorMoonImageView.alpha = 1.0;
-                _panSunorMoonImageView.hidden = NO;
+                _panSunorMoonImageView.hidden = YES;
                 
                 if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-                    panTracelight = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sun.png"]];
+                    panTracelight = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sun-小.png"]];
                     
                 }else
                 {
-                    panTracelight = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"moon.png"]];
+                    panTracelight = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"moon-小.png"]];
                     
                 }
                 [panTracelight setFrame:CGRectMake(location.x, location.y, 15, 15)];
@@ -2004,7 +2038,7 @@
 {
     NSString* imageName = NULL;
     if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
-        imageName = @"sun.png";
+        imageName = @"sun-小.png";
         
         if (!isUseRepeatCount) {
             repeatCount = [self.userInfo.sun_value intValue];
@@ -2014,7 +2048,7 @@
         
     }else
     {
-        imageName = @"moon.png";
+        imageName = @"moon-小.png";
         
         if (!isUseRepeatCount) {
             repeatCount = [self.userInfo.moon_value intValue];
@@ -2251,7 +2285,7 @@
     
     
     //test
-    realRange = 9;
+    //realRange = 9;
     
     NSInteger bigRang = realRange/7+1;
     NSInteger smallRang = realRange%7+1;
@@ -2410,7 +2444,7 @@
     [customAlertAutoDis setStartHeight:0];
     [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
     [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndHeight:50];
+    [customAlertAutoDis setEndHeight:60];
     [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
     [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2, customAlertAutoDis.endHeight/2+60)];
     [customAlertAutoDis setStartAlpha:0.1];
@@ -2590,8 +2624,18 @@
 
 
 #pragma mark - 编辑用户头像 或 进入小屋
--(void)handleTapUserHeader
+-(void)handleTapUserHeader:(UITapGestureRecognizer *)gestureRecognizer
 {
+//    if (gestureRecognizer.state == UIGestureRecognizerStateBegan ) {
+//        _userHeaderImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
+    //进不来，原因不明
+//    }
+//    if (gestureRecognizer.state == UIGestureRecognizerStateEnded ) {
+//        
+//        _userHeaderImageView.layer.borderColor = [[UIColor orangeColor] CGColor];
+//    }
+    
+    
     if (self.userInfo.userType == USER_TYPE_NEW || (self.userInfo.userType == USER_TYPE_NEED_CARE && [self.userHeaderImageView isEqual:[UIImage imageNamed:@"默认头像.png"]])) {
         [self.userInfo updateUserType:USER_TYPE_TYE];
         [self editUserHeader];

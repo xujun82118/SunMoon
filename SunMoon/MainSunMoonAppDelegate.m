@@ -14,6 +14,7 @@
 #import "WeiboApi.h"
 #import "MainSunMoonViewController.h"
 #import "UserSetViewController.h"
+#import "WeiboSDK.h"
 
 
 
@@ -77,7 +78,7 @@
     [ShareSDK registerApp:@"3e623a1fc526"];
     
     //添加新浪微博应用
-    [ShareSDK connectSinaWeiboWithAppKey:@"1023688665" appSecret:@"9ba79b87a472d800fc92db7f9511a624" redirectUri:@"https://itunes.apple.com/cn/app/ri-yue-mei-pai/id929494640"];
+    [ShareSDK connectSinaWeiboWithAppKey:@"1023688665" appSecret:@"9ba79b87a472d800fc92db7f9511a624" redirectUri:@"http://weibo.com/u/3915130879"];
     
     //添加腾讯微博应用 注册网址 http://dev.t.qq.com
     [ShareSDK connectTencentWeiboWithAppKey:@"801546710"

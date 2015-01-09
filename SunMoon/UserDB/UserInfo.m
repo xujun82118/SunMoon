@@ -763,6 +763,11 @@ static UserInfo *sharedUserInfo;
 
 -(void)addSunOrMoonValue:(NSInteger) value
 {
+    if (value == 0) {
+        NSLog(@"add sun or moon value == 0 ,return");
+        return;
+    }
+    
     if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
         self.sun_value = [NSString stringWithFormat:@"%d",[self.sun_value integerValue]+ value];
         
@@ -783,6 +788,11 @@ static UserInfo *sharedUserInfo;
 
 -(void)decreaseSunOrMoonValue:(NSInteger) value
 {
+    if (value == 0) {
+        NSLog(@"decrease sun or moon value == 0 ,return");
+        return;
+    }
+    
     if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
         self.sun_value = [NSString stringWithFormat:@"%d",[self.sun_value integerValue]- value];
     }else if([CommonObject checkSunOrMoonTime] == IS_MOON_TIME)

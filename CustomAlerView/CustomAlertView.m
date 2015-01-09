@@ -103,14 +103,15 @@
     //先构造结束态的底图
     [_viewBkImageView setFrame:CGRectMake(_endCenterPoint.x-_endWidth/2, _endCenterPoint.y-_endHeight/2, _endWidth, _endHeight)];
     //在结束态的底图上加上label水印
-    _msgLabel.frame = CGRectMake(0,0, _viewBkImageView.frame.size.width, _endHeight/4*3);
+    _msgLabel.frame = CGRectMake(0,0, _viewBkImageView.frame.size.width, _endHeight);
     _msgLabel.text =  _alertMsg;
     _msgLabel.font = [UIFont fontWithName:@"Arial" size:_MsgFrontSize];
 
     //构造水印图
     NSInteger x = 40;
     NSInteger w = _viewBkImageView.image.size.width-x*2;
-    NSInteger h = _viewBkImageView.image.size.height/5*4;
+    NSInteger h = _viewBkImageView.image.size.height/7*6;
+    //NSInteger h = _endHeight*5;
     NSInteger y = _viewBkImageView.image.size.height/2-h/2;
 
     UIGraphicsBeginImageContext(CGSizeMake(_viewBkImageView.image.size.width, _viewBkImageView.image.size.height));

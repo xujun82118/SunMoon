@@ -34,6 +34,8 @@
     UIImageView* sunMoonImageViewTop;
     UIImageView* bowLightView;
     
+    NSInteger finalGiveLightCout;
+    
     AminationCustom* addVauleAnimation;
     
     CustomAlertView* customAlertAutoDis;
@@ -257,16 +259,16 @@
     
     
     //日月
-    int sunMoonImageDiameter = 50;
+    int sunMoonImageDiameter = 60;
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-        sunMoonImage = [UIImage imageNamed:@"sun.png"];
+        sunMoonImage = [UIImage imageNamed:@"sun-小.png"];
 
     }else
     {
-        sunMoonImage = [UIImage imageNamed:@"moon.png"];
+        sunMoonImage = [UIImage imageNamed:@"moon-小.png"];
 
     }
-    sunMoonImageView = [[UIImageView alloc]initWithFrame:CGRectMake(timeImageView.frame.origin.x-10, timeImageView.frame.origin.y+timeImageHeight/2-sunMoonImageDiameter/2, sunMoonImageDiameter, sunMoonImageDiameter)];
+    sunMoonImageView = [[UIImageView alloc]initWithFrame:CGRectMake(timeImageView.frame.origin.x-30, timeImageView.frame.origin.y+timeImageHeight/2-sunMoonImageDiameter/2, sunMoonImageDiameter, sunMoonImageDiameter)];
     sunMoonImageView.image = sunMoonImage;
     [self.view addSubview:sunMoonImageView];
     
@@ -415,11 +417,11 @@
     //日月最上方的
     UIImage *sunMoonImageTop;
     if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-        sunMoonImageTop = [UIImage imageNamed:@"sun.png"];
+        sunMoonImageTop = [UIImage imageNamed:@"sun-小.png"];
         
     }else
     {
-        sunMoonImageTop = [UIImage imageNamed:@"moon.png"];
+        sunMoonImageTop = [UIImage imageNamed:@"moon-小.png"];
         
     }
     NSInteger sunMoonImageTopWidth = 200;
@@ -605,29 +607,29 @@
     [super viewWillAppear:animated];
     
 
-    [self checkWetherAndGiveLight];
+    finalGiveLightCout = [self checkFinalWetherAndGiveLight];
     
     
 }
 
 
--(void) checkWetherAndGiveLight
+// 最终确认是否增加光，返回光数
+-(NSInteger) checkFinalWetherAndGiveLight
 {
     
     NSInteger count = [[imagePickerData objectForKey:CAMERA_LIGHT_COUNT] integerValue];
     if (count==0) {
         NSLog(@" 获得的光的个数为0,从相册来，返回");
-        return;
+        return 0;
     }
     
     if ([self.userInfo checkIsHaveAddSunOrMoonValueForTodayPhoto]) {
         NSLog(@" 已奖励过光，返回");
 
         [self showCustomDelayAlertBottom:[NSString stringWithFormat:(@"不再重复奖励%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"]];
-        return;
+        return 0;
 
     }
-
     
     //增加光的动画准备
     [addVauleAnimation setStartPoint:sunMoonImageViewTop.center];
@@ -635,10 +637,10 @@
     [addVauleAnimation setUseRepeatCount:count];
     [addVauleAnimation setBkView:self.view];
     if (iSunORMoon == IS_SUN_TIME) {
-        [addVauleAnimation setImageName:@"sun.png"];
+        [addVauleAnimation setImageName:@"sun-小.png"];
     }else
     {
-        [addVauleAnimation setImageName:@"moon.png"];
+        [addVauleAnimation setImageName:@"moon-小.png"];
     }
     [addVauleAnimation setAminationImageViewframe:CGRectMake(sunMoonImageViewTop.frame.origin.x, sunMoonImageViewTop.frame.origin.y, 60, 60)];
     
@@ -660,7 +662,7 @@
         }
     
  
-    
+    return count;
 }
 
 #pragma mark - AminationCustomDelegate
@@ -765,6 +767,7 @@
         NSDictionary* imageFilterData = [NSDictionary dictionaryWithObjectsAndKeys:rootImageView.image,CAMERA_IMAGE_KEY,
                                          [imagePickerData objectForKey:CAMERA_TIME_KEY], CAMERA_TIME_KEY,
                                          [imagePickerData objectForKey:CAMERA_SENTENCE_KEY], CAMERA_SENTENCE_KEY,
+                                         [NSString stringWithFormat:@"%d", finalGiveLightCout],CAMERA_LIGHT_COUNT,
                                          nil];
         [delegate imageFitlerProcessDone:imageFilterData];
         

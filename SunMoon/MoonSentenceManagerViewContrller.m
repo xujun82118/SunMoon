@@ -127,7 +127,7 @@
     if(indexPath.row == user.moonSentenceSelect)
     {
         
-        cell.imageView.image = [UIImage imageNamed:@"moon.png"];
+        cell.imageView.image = [UIImage imageNamed:@"moon-小.png"];
     }
     
     else

@@ -139,7 +139,7 @@
     
     if(self.user.sunAlertTimeCtl)
     {
-        [sunTimeBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        [sunTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         sunTimeBtn.hidden = NO;
         [sunTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-打开.png"] forState:UIControlStateNormal ];
     }else
@@ -152,7 +152,7 @@
     
     if(self.user.moonAlertTimeCtl)
     {
-        [moonTimeBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        [moonTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         moonTimeBtn.hidden = NO;
         [moonTimeCtlBtn setImage:[UIImage imageNamed:@"小闹钟-打开.png"] forState:UIControlStateNormal ];
         
@@ -196,7 +196,7 @@
     DeviceTypeVersion tempType = [CommonObject CheckDeviceTypeVersion];
     switch (tempType) {
         case iphone4_4s:
-            nullCount = 2;
+            nullCount = 3;
             fullCount = 5;
             break;
         case iphone5_5s:
@@ -208,7 +208,7 @@
             fullCount = 5;
             break;
         case iphone6Pluse:
-            nullCount = 3;
+            nullCount = 2;
             fullCount = 6;
             break;
             
@@ -256,7 +256,7 @@
     }
    
     //第一次起动初始化时照片为空，前端4张固定为空
-    NSInteger realCount = [setSun count] + nullCount;
+    NSInteger realCount = count + nullCount;
 
     
     //全屏相示8张相片，小于8张的用默认图片填充
@@ -300,7 +300,7 @@
 
     imageScrollSun = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition.frame.origin.y-10, SCREEN_WIDTH, scrollPosition.frame.size.height+20)];
     [imageScrollSun setItemSize:size];
-    [imageScrollSun setHeightOffset:15];//30
+    [imageScrollSun setHeightOffset:20];//30
     [imageScrollSun setPositionRatio:2];
     [imageScrollSun setAlphaOfobjs:0.5];
     [imageScrollSun setMode:IS_SUN_TIME];
@@ -328,7 +328,7 @@
     DeviceTypeVersion tempType = [CommonObject CheckDeviceTypeVersion];
     switch (tempType) {
         case iphone4_4s:
-            nullCount = 2;
+            nullCount = 3;
             fullCount = 5;
             break;
         case iphone5_5s:
@@ -340,7 +340,7 @@
             fullCount = 5;
             break;
         case iphone6Pluse:
-            nullCount = 3;
+            nullCount = 2;
             fullCount = 6;
             break;
             
@@ -383,7 +383,7 @@
         
     }
     
-    NSInteger realCount = [setMoon count]+ nullCount;
+    NSInteger realCount = count + nullCount;
 
     
     //全屏相示fullCount张相片，小于fullCount张的用默认图片填充
@@ -419,7 +419,7 @@
     imageScrollMoon = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition.frame.origin.y-10, SCREEN_WIDTH, scrollPosition.frame.size.height+20)];
     [imageScrollMoon setImageAry:setMoon];
     [imageScrollMoon setItemSize:size];
-    [imageScrollMoon setHeightOffset:15];
+    [imageScrollMoon setHeightOffset:20];
     [imageScrollMoon setPositionRatio:2];
     [imageScrollMoon setAlphaOfobjs:0.5];
     [imageScrollMoon setMode:IS_MOON_TIME];
@@ -502,7 +502,7 @@
     NSString *timeString = [[NSString alloc] initWithFormat:
                             @"%d:%d", hour, miniute];
     [sunTimeBtn setTitle:timeString forState:UIControlStateNormal];
-    [sunTimeBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    [sunTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     
     comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:self.user.moonAlertTime];
     NSInteger hour1 = [comps hour];
@@ -510,11 +510,11 @@
     NSString *timeString1 = [[NSString alloc] initWithFormat:
                              @"%d:%d", hour1, miniute1];
     [moonTimeBtn setTitle:timeString1 forState:UIControlStateNormal];
-    [moonTimeBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    [moonTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
 
     
     double deltaTime = [[NSDate date] timeIntervalSinceDate:tmpStartData];
-    NSLog(@">>>>>>>>>>cost time = %f ms", deltaTime*1000);
+    //NSLog(@">>>>>>>>>>cost time = %f ms", deltaTime*1000);
    
 }
 

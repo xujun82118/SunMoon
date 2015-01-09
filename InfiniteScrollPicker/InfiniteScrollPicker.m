@@ -65,7 +65,7 @@
     
     if (_itemSize.height>self.frame.size.height) {
         CGFloat rate = _itemSize.width/_itemSize.height;
-        _itemSize.height = self.frame.size.height-30;
+        _itemSize.height = self.frame.size.height-45;
         _itemSize.width = _itemSize.height *rate
         ;
     }

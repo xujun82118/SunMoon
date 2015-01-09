@@ -130,11 +130,11 @@
         //日月最上方的
         UIImage *sunMoonImageTop;
         if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-            sunMoonImageTop = [UIImage imageNamed:@"sun.png"];
+            sunMoonImageTop = [UIImage imageNamed:@"sun-小.png"];
             
         }else
         {
-            sunMoonImageTop = [UIImage imageNamed:@"moon.png"];
+            sunMoonImageTop = [UIImage imageNamed:@"moon-小.png"];
             
         }
         NSInteger sunMoonImageTopWidth = 200;
@@ -950,10 +950,10 @@
         [addVauleAnimation setUseRepeatCount:1];
         [addVauleAnimation setBkView:self.view];
         if (iSunORMoon == IS_SUN_TIME) {
-            [addVauleAnimation setImageName:@"sun.png"];
+            [addVauleAnimation setImageName:@"sun-小.png"];
         }else
         {
-            [addVauleAnimation setImageName:@"moon.png"];
+            [addVauleAnimation setImageName:@"moon-小.png"];
         }
         [addVauleAnimation setAminationImageViewframe:CGRectMake(voiceValueView.frame.origin.x, voiceValueView.frame.origin.y, 60, 60)];
         
