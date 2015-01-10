@@ -166,10 +166,11 @@
 
 + (NetConnectType) CheckConnectedToNetwork
 {
+
     NSString *kindStr;
     int kind;
     //创建零地址，0.0.0.0的地址表示查询本机的网络连接状态
-    struct sockaddr_in zeroAddress;
+    struct sockaddr_in_my zeroAddress;
     bzero(&zeroAddress, sizeof(zeroAddress));
     zeroAddress.sin_len = sizeof(zeroAddress);
     zeroAddress.sin_family = AF_INET;
@@ -212,7 +213,10 @@
             //[CommonObject showAlert:kindStr titleMsg:nil DelegateObject:nil];
         }
     }
+     
+    
     return kind;
+     
 }
 
 + (DeviceTypeVersion) CheckDeviceTypeVersion

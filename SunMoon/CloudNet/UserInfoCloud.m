@@ -80,6 +80,7 @@
 
 -(void) GetCloudUserInfo:(UserInfo *) user
 {
+
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     //设置content-type
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
@@ -155,7 +156,7 @@
         [_userInfoCloudDelegate getUserInfoFinishFailedByNetWork];
         
     }];
-    
+
 }
 
 
@@ -165,24 +166,84 @@
  * @param image 需要同步的用户IMAGE
  */
 -(BOOL)updateUserImage:(NSData *) image
+
 {
-    UIImage *upImage = [UIImage imageNamed:@"082134130b4b7550a73542.jpg"];
-    NSData *imageData = UIImageJPEGRepresentation(upImage,0.5);
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    // AFHTTPResponseSerializer就是正常的HTTP请求响应结果:NSData
+    // 当请求的返回数据不是JSON,XML,PList,UIImage之外,使用AFHTTPResponseSerializer
+    // 例如返回一个html,text...
+    //
+    // 实际上就是AFN没有对响应数据做任何处理的情况
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     
+    NSMutableDictionary *params=[[NSMutableDictionary alloc] init];
+    [params setValue:@"徐军_2_86BC8853A38BF3E012960D48F12A7B5F" forKey:@"user_id"];
     
+   // NSDictionary *dict = @{@"user_id": @"徐军_2_86BC8853A38BF3E012960D48F12A7B5F"};
+    NSDictionary *dict = @{@"user_id": @"abc123"};
+
+
+    // formData是遵守了AFMultipartFormData的对象
+    [manager POST:@"http://115.28.36.43/app_userphoto_upload.php?user_id=abc123" parameters:nil constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        
+        
+        UIImage *upImage = [UIImage imageNamed:@"延时提示框.png"];
+        //NSData *imageData = UIImageJPEGRepresentation(upImage,0.5);
+        
+        NSData *imageData = UIImagePNGRepresentation(upImage);
+
+        //[formData appendPartWithFormData:imageData name:@"imagefile"];
+        [formData appendPartWithFileData:imageData name:@"userpic"
+                                fileName:@"img.png" mimeType:@"image/png"];
+        
+        
+    } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSString *result = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+        
+        NSLog(@"完成 %@", result);
+        
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"错误 %@", error.localizedDescription);
+        
+    }];
+
+    return true;
+
+}
+
+
+/*
+{
+    UIImage *upImage = [UIImage imageNamed:@"延时提示框.png"];
+    //NSData *imageData = UIImageJPEGRepresentation(upImage,0.5);
+    
+    NSData *imageData = UIImagePNGRepresentation(upImage);
+
+    NSLog(@"imageData.length = %d",imageData.length);
     //一般方法
-    NSURL *url=[NSURL URLWithString:@"http://115.28.36.43/cgi-bin/app_userphoto_upload"];//创建URL
-   url=[NSURL URLWithString:[[NSURL URLWithString:@"?user_id=123" relativeToURL:url]absoluteString]];
+    NSString *url = [NSString stringWithFormat:@"http://115.28.36.43/app_userphoto_upload.php?user_id=abc123"];
+    NSString* webStringURL = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSURL *weburl = [NSURL URLWithString:webStringURL];
+
     
-    NSLog(@"upimage url=%@\n", url.absoluteString);
+    //weburl=[NSURL URLWithString:[[NSURL URLWithString:[[NSString stringWithFormat:@"?user_id=徐军_2_86BC8853A38BF3E012960D48F12A7B5F"]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] relativeToURL:weburl]absoluteString]];
    
-    NSMutableURLRequest *request2 = [NSMutableURLRequest requestWithURL:url
+    //weburl=[NSURL URLWithString:[[NSURL URLWithString:[[NSString stringWithFormat:@"?user_id=960D48F12A7B5F"]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding] relativeToURL:weburl]absoluteString]];
+
+    
+    
+    NSLog(@"upimage url=%@\n", weburl.absoluteString);
+   
+    NSMutableURLRequest *request2 = [NSMutableURLRequest requestWithURL:weburl
                                                             cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                         timeoutInterval:5];//请求这个地址， timeoutInterval:10 设置为10s超时：请求时间超过10s会被认为连接不上，连接超时
     
     [request2 setHTTPMethod:@"POST"];//POST请求
     [request2 setHTTPBody:imageData];//body 数据
     [request2 setValue:@"application/octet-stream" forHTTPHeaderField:@"content-type"];//请求头
+    [request2 setValue:@"userpic" forHTTPHeaderField:@"content-type"];//请求头
     NSData *returnData = [NSURLConnection sendSynchronousRequest:request2 returningResponse:nil error:nil];
     NSString *str=[[NSString alloc]initWithData:returnData encoding:NSUTF8StringEncoding];
     
@@ -191,8 +252,7 @@
     return TRUE;
 
 }
-
-
+*/
 
 
 -(void)getUserImageByUserID:(NSString *) userID

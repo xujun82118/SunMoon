@@ -173,7 +173,6 @@
         if (_yesBtn) {
             //动画完成后，再回调
             if ([_customAlertDelegate respondsToSelector:@selector(CustomAlertOkAnimationFinish:)]) {
-                //test
                 [_customAlertDelegate CustomAlertOkAnimationFinish:_alertKey];
             }
         }

@@ -6,12 +6,6 @@
 //  Copyright (c) 2014年 xujun. All rights reserved.
 //
 
-// 设备触发时间，更换后天夜晚
-//点击进入多功能界面，未实现
-//动画, 判断动画的类型,
-// 捕捉手指的移动
-// 可爱提示框
-
 
 
 #import <Foundation/Foundation.h>
@@ -65,6 +59,20 @@
 #define USER_TYPE_NEED_CARE 3 //第n*x次使用，需要某些用户关怀
 #define USER_TYPE_VIP 10 //VIP用户
 
+
+//报了个奇怪的错误,先自定义规避
+//Definition of 'struct in_addr' must be imported from module 'Darwin.POSIX.netinet.in' before it is required
+struct in_addr_my {
+    in_addr_t s_addr;
+};
+
+struct sockaddr_in_my {
+    __uint8_t	sin_len;
+    sa_family_t	sin_family;
+    in_port_t	sin_port;
+    struct	in_addr_my sin_addr;
+    char		sin_zero[8];
+};
 
 //云同步等级
 //0:不支持同步

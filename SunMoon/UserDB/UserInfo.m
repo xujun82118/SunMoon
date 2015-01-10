@@ -249,30 +249,7 @@ static UserInfo *sharedUserInfo;
 }
 
 
-/*
--(instancetype) registerNewUserWithName:(NSString*) name regTime:(NSString*) time snsID:(NSString*) snsID headerImage:(UIImage*)image
-{
-  
-    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
-    [userBaseData setObject:name forKey:KEY_USER_NAME];
-    [userBaseData setObject:time forKey:KEY_REG_TIME];
-    [userBaseData setObject:snsID forKey:KEY_SNS_ID];
-    //NSData *imageData = UIImagePNGRepresentation([UIImage imageNamed:@"默认头像.png"]);
-    [userBaseData setObject:UIImagePNGRepresentation(image) forKey:KEY_USER_HEADER_IMAGE];
-    [userBaseData setBool:YES forKey:KEY_IS_REGISTER_USER];
-    [userBaseData synchronize];
-    
-    self.name = name;
-    self.reg_time = time;
-    self.sns_id = snsID;
-    self.userHeaderImage = image;
-    self.isRegisterUser = YES;
-    
-    [self getUserCommonData];
-    
-    return self;
-}
-*/
+
 
 //除用户身份信息外的信息
 -(void)getUserCommonData

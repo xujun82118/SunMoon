@@ -1405,10 +1405,7 @@
 }
 
 - (IBAction)sunAlertCtl:(id)sender {
-    //test
-    //moonValueStatic.text = @"test";
-    
-    
+
     
     [self.user updateSunAlertTimeCtl:!self.user.sunAlertTimeCtl];
    

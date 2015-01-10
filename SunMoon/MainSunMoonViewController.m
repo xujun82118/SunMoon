@@ -468,18 +468,7 @@
 //    [testWeather startGetWeather];
 //    [testWeather startGetWeatherSimple];
     
-    //test
-    //self.userInfo.userType =USER_TYPE_NEW;
-    
-    
-    //test
-    //[self showCustomYesAlertSuperView:@"测试。。。测试。。。。测试。。"];
-    //[self showCustomDelayAlertBottom:@"测试"];
-    //[self showCustomYesAlertSuperView:@"拖动阳光回到太阳，3小时可以养成1个小阳光哦!" AlertKey:KEY_IS_GIVE_FIRST_LIGHT];
 
-
-//  NSLog(@"viewDidAppear--now-1--%f, %f, %f, %f ",_intoCameraBtn.frame.origin.x, _intoCameraBtn.frame.origin.y, _intoCameraBtn.frame.size.width,_intoCameraBtn.frame.size.height);
-    
     //引导结束，执行一般打开状态
     if (guidInfo.guidStepNumber >guidStep_mainView_End)
     {
@@ -711,20 +700,12 @@
         NSLog(@"popOut IntoCameraBtn!");
         [UIView setAnimationBeginsFromCurrentState:YES];
 
-       // NSLog(@"change---%f, %f, %f, %f ",_intoCameraBtn.frame.origin.x, _intoCameraBtn.frame.origin.y, _intoCameraBtn.frame.size.width,_intoCameraBtn.frame.size.height);
-
-        //NSLog(@"change---%f, %f, %f, %f ",destIntoCameraBtnFrame.origin.x, destIntoCameraBtnFrame.origin.y, destIntoCameraBtnFrame.size.width,destIntoCameraBtnFrame.size.height);
-        
         [_intoCameraBtn setFrame:destIntoCameraBtnFrame];
         [_intoCameraBtn setCenter:destIntoCameraBtnCenter];
-        
-        //test
-        //[testBtn setFrame:destIntoCameraBtnFrame];
+
         
         [UIView commitAnimations];
 
-        
-        //[self.view bringSubviewToFront:_intoCameraBtn];
         isPopOutIntoCameraBtn = YES;
         
     }else
@@ -738,18 +719,12 @@
 
         
         NSLog(@"popBack IntoCameraBtn!");
-        
-        //NSLog(@"change-2--%f, %f, %f, %f ",_intoCameraBtn.frame.origin.x, _intoCameraBtn.frame.origin.y, _intoCameraBtn.frame.size.width,_intoCameraBtn.frame.size.height);
-        
-        //NSLog(@"change-2--%f, %f, %f, %f ",srcIntoCameraBtnFrame.origin.x, srcIntoCameraBtnFrame.origin.y, srcIntoCameraBtnFrame.size.width,srcIntoCameraBtnFrame.size.height);
-        
+
         [_intoCameraBtn setFrame:srcIntoCameraBtnFrame];
         
         
         
         [UIView commitAnimations];
-        
-        //[self.view bringSubviewToFront:_skySunorMoonImage];
         isPopOutIntoCameraBtn = NO;
     }
     
@@ -2281,11 +2256,6 @@
     }
 
     NSLog(@"开启头像闪烁动画, range=%d！", realRange);
-   
-    
-    
-    //test
-    //realRange = 9;
     
     NSInteger bigRang = realRange/7+1;
     NSInteger smallRang = realRange%7+1;
@@ -2957,7 +2927,7 @@
     
     [_userCloud updateUserImage:Nil];
     
-    [_userCloud upateUserInfo:userInfo];
+   //[_userCloud upateUserInfo:userInfo];
     
     
     /*

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="ybi-vt-qBa">
     <dependencies>
+        <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -51,7 +52,7 @@
                                 </connections>
                             </button>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ytL-Ib-Tjj">
-                                <rect key="frame" x="211" y="195" width="48" height="30"/>
+                                <rect key="frame" x="325" y="195" width="48" height="30"/>
                                 <state key="normal" title="update">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -72,8 +73,11 @@
                                     <constraint firstAttribute="width" constant="50" id="uOw-Pa-VNJ"/>
                                 </constraints>
                             </imageView>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a0X-KB-icf">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a0X-KB-icf">
                                 <rect key="frame" x="55" y="163" width="75" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="oqm-LS-tZu"/>
+                                </constraints>
                                 <state key="normal" title="重建数据库">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -194,27 +198,35 @@
                             <constraint firstItem="EHF-7P-eHx" firstAttribute="leading" relation="lessThanOrEqual" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="100" id="116-1f-ZYp"/>
                             <constraint firstItem="r8n-Wy-dYi" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="1YS-cv-9qS"/>
                             <constraint firstItem="ytL-Ib-Tjj" firstAttribute="leading" secondItem="DE4-tu-MWo" secondAttribute="trailing" constant="81" id="3HQ-yb-vwR"/>
+                            <constraint firstItem="DE4-tu-MWo" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" constant="39" id="3jt-O5-AJ4"/>
                             <constraint firstAttribute="trailing" secondItem="ytL-Ib-Tjj" secondAttribute="trailing" constant="116" id="4dw-O1-pS8"/>
                             <constraint firstItem="hyS-9o-4AU" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="238" id="4gc-6q-epS"/>
                             <constraint firstItem="FDI-9S-o8F" firstAttribute="bottom" secondItem="o0X-gd-VLI" secondAttribute="bottom" id="5OT-rs-O0t"/>
                             <constraint firstItem="jvY-ws-I2y" firstAttribute="centerX" secondItem="W5S-w4-Jbf" secondAttribute="centerX" id="75p-G7-txc"/>
                             <constraint firstItem="lqC-VV-d2K" firstAttribute="centerY" secondItem="o0X-gd-VLI" secondAttribute="centerY" id="7Gb-pj-aiU"/>
+                            <constraint firstItem="a0X-KB-icf" firstAttribute="leading" secondItem="DE4-tu-MWo" secondAttribute="leading" id="7K7-ea-fuK"/>
                             <constraint firstAttribute="trailing" secondItem="FDI-9S-o8F" secondAttribute="trailing" id="7hV-65-8lC"/>
                             <constraint firstItem="EHF-7P-eHx" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="39" id="8Yh-Ni-QZA"/>
                             <constraint firstItem="hyS-9o-4AU" firstAttribute="leading" secondItem="o0X-gd-VLI" secondAttribute="trailing" constant="58" id="AWv-8Y-6FI"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="jvY-ws-I2y" secondAttribute="bottom" constant="99" id="Bdf-3Z-5wd"/>
                             <constraint firstAttribute="width" secondItem="FDI-9S-o8F" secondAttribute="height" multiplier="3:1" id="CXo-Pg-szJ"/>
+                            <constraint firstItem="ytL-Ib-Tjj" firstAttribute="leading" secondItem="DE4-tu-MWo" secondAttribute="trailing" constant="195" id="Dhx-6Y-o3t"/>
                             <constraint firstItem="hyS-9o-4AU" firstAttribute="leading" secondItem="FDI-9S-o8F" secondAttribute="trailing" constant="30" id="DiR-Pf-Ogc"/>
                             <constraint firstItem="r8n-Wy-dYi" firstAttribute="width" secondItem="XlY-Z9-7SP" secondAttribute="width" multiplier="10:1" id="FW6-No-MBs"/>
                             <constraint firstItem="EHF-7P-eHx" firstAttribute="width" secondItem="o0X-gd-VLI" secondAttribute="width" multiplier="2:1" id="Gdm-uo-RPc"/>
                             <constraint firstItem="lqC-VV-d2K" firstAttribute="centerY" secondItem="FDI-9S-o8F" secondAttribute="centerY" id="GlM-Kn-dFP"/>
                             <constraint firstAttribute="trailing" relation="lessThanOrEqual" secondItem="EHF-7P-eHx" secondAttribute="trailing" constant="100" id="Hor-Bg-LUV"/>
+                            <constraint firstItem="a0X-KB-icf" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="99" id="Iwk-E1-zCC"/>
                             <constraint firstAttribute="width" secondItem="jvY-ws-I2y" secondAttribute="width" multiplier="3:1" id="Kzh-lU-FXG"/>
                             <constraint firstItem="lqC-VV-d2K" firstAttribute="bottom" secondItem="EHF-7P-eHx" secondAttribute="bottom" id="MFK-23-Bai"/>
                             <constraint firstItem="jvY-ws-I2y" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="150" id="O6y-dK-uLz"/>
+                            <constraint firstItem="FDI-9S-o8F" firstAttribute="top" secondItem="ytL-Ib-Tjj" secondAttribute="bottom" constant="25" id="OFs-V0-Qht"/>
                             <constraint firstAttribute="width" secondItem="XlY-Z9-7SP" secondAttribute="width" multiplier="15:2" id="PWG-e0-siK"/>
                             <constraint firstItem="r8n-Wy-dYi" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="Pkl-I8-xT7"/>
                             <constraint firstAttribute="trailing" secondItem="r8n-Wy-dYi" secondAttribute="trailing" id="QaB-Kg-OMz"/>
+                            <constraint firstItem="DE4-tu-MWo" firstAttribute="top" secondItem="a0X-KB-icf" secondAttribute="bottom" constant="2" id="R9j-bV-hPA"/>
+                            <constraint firstItem="ytL-Ib-Tjj" firstAttribute="leading" secondItem="DE4-tu-MWo" secondAttribute="trailing" constant="195" id="RBU-kU-J8u"/>
+                            <constraint firstItem="o0X-gd-VLI" firstAttribute="top" secondItem="DE4-tu-MWo" secondAttribute="bottom" constant="25" id="RPg-IB-JST"/>
                             <constraint firstItem="EHF-7P-eHx" firstAttribute="width" secondItem="FDI-9S-o8F" secondAttribute="width" multiplier="2.5:1" id="S40-kW-xP3"/>
                             <constraint firstAttribute="centerX" secondItem="EHF-7P-eHx" secondAttribute="centerX" id="aNJ-gr-VhI"/>
                             <constraint firstItem="jvY-ws-I2y" firstAttribute="centerY" secondItem="W5S-w4-Jbf" secondAttribute="centerY" id="b2X-uP-fW7"/>
@@ -222,6 +234,7 @@
                             <constraint firstItem="ytL-Ib-Tjj" firstAttribute="baseline" secondItem="DE4-tu-MWo" secondAttribute="baseline" id="dkg-xR-8WU"/>
                             <constraint firstItem="o0X-gd-VLI" firstAttribute="top" secondItem="EHF-7P-eHx" secondAttribute="bottom" id="ekU-2P-yBg"/>
                             <constraint firstItem="EHF-7P-eHx" firstAttribute="width" secondItem="FDI-9S-o8F" secondAttribute="width" multiplier="2:1" id="h0a-dk-kbc"/>
+                            <constraint firstAttribute="trailing" secondItem="ytL-Ib-Tjj" secondAttribute="trailing" constant="2" id="jnl-1J-Yt5"/>
                             <constraint firstItem="o0X-gd-VLI" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="n6i-bN-I51"/>
                             <constraint firstItem="XlY-Z9-7SP" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="12" id="oHL-hm-cst"/>
                             <constraint firstAttribute="centerX" secondItem="jvY-ws-I2y" secondAttribute="centerX" id="oOP-Mf-fS7"/>
@@ -235,6 +248,7 @@
                             <constraint firstItem="EHF-7P-eHx" firstAttribute="trailing" secondItem="FDI-9S-o8F" secondAttribute="trailing" id="sOl-ti-zQR"/>
                             <constraint firstItem="EHF-7P-eHx" firstAttribute="bottom" secondItem="o0X-gd-VLI" secondAttribute="bottom" id="tgZ-21-wIc"/>
                             <constraint firstItem="XlY-Z9-7SP" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="30" id="u5F-o1-eo1"/>
+                            <constraint firstItem="ytL-Ib-Tjj" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="131" id="w1I-zW-nbG"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="r8n-Wy-dYi" secondAttribute="bottom" id="xQw-9s-MA6"/>
                         </constraints>
                         <variation key="default">
@@ -251,7 +265,12 @@
                                 <exclude reference="tgZ-21-wIc"/>
                                 <exclude reference="ekU-2P-yBg"/>
                                 <exclude reference="DiR-Pf-Ogc"/>
+                                <exclude reference="riG-vZ-KwL"/>
                                 <exclude reference="GlM-Kn-dFP"/>
+                                <exclude reference="3HQ-yb-vwR"/>
+                                <exclude reference="4dw-O1-pS8"/>
+                                <exclude reference="Dhx-6Y-o3t"/>
+                                <exclude reference="dkg-xR-8WU"/>
                                 <exclude reference="O6y-dK-uLz"/>
                                 <exclude reference="bU9-R4-ELg"/>
                             </mask>
