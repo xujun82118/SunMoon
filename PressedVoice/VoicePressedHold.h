@@ -14,7 +14,7 @@
 @protocol pitchDelegate;
 
 
-@interface VoicePressedHold : NSObject <UIGestureRecognizerDelegate>
+@interface VoicePressedHold : NSObject <UIGestureRecognizerDelegate,AVAudioPlayerDelegate>
 {
     AVAudioPlayer *audioPlayer;
     AVAudioRecorder *audioRecorder;
@@ -69,6 +69,7 @@
 @protocol pitchDelegate <NSObject>
 
 - (void)setNewPith:(float)pitchValue;
+- (void)pitchAudioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag;
 
 @end
 

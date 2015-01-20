@@ -106,6 +106,11 @@
     NSLog(@"---->viewDidLoad");
 
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    //注册本地通知
+    NSNotificationCenter  * notificationCenter = [ NSNotificationCenter  defaultCenter];
+    [notificationCenter removeObserver:self name:NOTIFY_LOCAL_NEED_CHANGE_UI object:nil];
+    [notificationCenter addObserver: self  selector:@selector (reFreshSunOrMoonUI:) name:NOTIFY_LOCAL_NEED_CHANGE_UI  object:nil];
 
     NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
     //isHaveOpenUI = [userBaseData boolForKey:@"isHaveOpenUI"];
@@ -271,28 +276,30 @@
 {
     [super viewDidAppear:animated];
     NSLog(@"---->viewDidAppear");
+   
+    //检查日月时间是否变化
+    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
+    if (![userBaseData objectForKey:KEY_BACK_GROUND_TIME]) {
+        [userBaseData setObject:[CommonObject getCurrentDate] forKey:KEY_BACK_GROUND_TIME];
+        [userBaseData synchronize];
+    }
+    if (![userBaseData objectForKey:KEY_BACK_GROUND_TIME_SUNMOON]) {
+        [userBaseData setInteger:[CommonObject checkSunOrMoonTime] forKey:KEY_BACK_GROUND_TIME_SUNMOON];
+        [userBaseData synchronize];
+    }
+    
+    //上次回到后台的时间不是今天, 或早上晚上已变化
+    if (![[CommonObject getCurrentDate] isEqualToString:[userBaseData objectForKey:KEY_BACK_GROUND_TIME]] || [CommonObject checkSunOrMoonTime] != [userBaseData integerForKey:KEY_BACK_GROUND_TIME_SUNMOON])
+        
+    {
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFY_LOCAL_NEED_CHANGE_UI object:self];
+    }
+
     
     
     //更新状态
     [self refreshIntoCameraBtnState];
     [self refreshShowBringLightBtnState];
-    
-    
-    //画头像横线
-//    if (!userHeaderline) {
-//        NSInteger lineX = 0;
-//        NSInteger lineW = self.view.frame.size.width;
-//        NSInteger lineH = 3;
-//        NSInteger lineY =_userHeaderImageView.frame.origin.y+_userHeaderImageView.frame.size.height/2-lineH/2;
-//        userHeaderline = [[UIImageView alloc] initWithFrame:CGRectMake(lineX, lineY, lineW, lineH)];
-//        [userHeaderline setBackgroundColor:[UIColor orangeColor]];
-//        
-//        [self.view insertSubview:userHeaderline belowSubview:_userHeaderImageView  ];
-//        
-//        
-//    }
-
-
     
     
     //创建拖动轨迹识别
@@ -533,10 +540,12 @@
     
     
     
+    //记录离开主界面时间，防止回来时，日月时间变化
+    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
+    [userBaseData setObject:[CommonObject getCurrentDate] forKey:KEY_BACK_GROUND_TIME];
+    [userBaseData setInteger:[CommonObject checkSunOrMoonTime] forKey:KEY_BACK_GROUND_TIME_SUNMOON];
+    [userBaseData synchronize];
     
-//    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
-//    [userBaseData setBool:YES forKey:@"isHaveOpenUI"];
-//    [userBaseData synchronize];
 }
 
 
@@ -1376,68 +1385,29 @@
         //0分0秒时，刷新UI
         if (minute == 0 &&second ==0) {
             NSLog(@"Is time to change UI");
-            [self reFreshSunOrMoonUI];
-
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFY_LOCAL_NEED_CHANGE_UI object:self];
         }
         
     }
     
-    
-    //判断并更新时间,用于从后台进入前台时变换时间
-    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
-    if ([userBaseData boolForKey:KEY_BACK_GROUND_TIME_CHANGE])
-        
-    {
-        [self reFreshSunOrMoonUI];
-        [userBaseData setBool:NO forKey:KEY_BACK_GROUND_TIME_CHANGE];
-        [userBaseData synchronize];
-
-    }
-    
-    
-    //test
-//    if (hour==15) {
-//        
-//        //0分0秒时，刷新UI
-//        if (minute == 16 && second ==0) {
-//            NSLog(@"Is time to change UI");
-//            [self reFreshSunOrMoonUI];
-//            
-//        }
-//        
-//    }
-    
 }
 
-//-(void)startTimerForPopBackBringlight
-//{
-//
-//    
-//    JumpTimer = [NSTimer scheduledTimerWithTimeInterval:5.0 target:self selector:@selector(checkIsTimeForBackBringLightMethod:) userInfo:nil repeats:NO];
-//    
-//    
-//}
-//
-//- (void)checkIsTimeForBackBringLightMethod:(NSTimer *)timer
-//{
-//    //收回光环, 后续处理都在收回动画结束后
-//    [self animationForShowBringLightBtnPop:NO];
-//    
-//}
 
 #pragma mark -  change sun or moon UI
--(void) reFreshSunOrMoonUI
+-(void) reFreshSunOrMoonUI:(NSNotification *) notification
 {
     
-    [UIView beginAnimations:@"reFreshSunMoonUI_DisPre" context:(__bridge void *)(mainBgImage)];
-    [UIView setAnimationDuration:0.5f];
-    [UIView setAnimationDelegate:self];
-    [UIView setAnimationDidStopSelector:@selector(reFreshSunMoonUIAnimationDidStop:finished:context:)];
-    NSLog(@"Disapear old UI : %@", [mainBgImage.image description]);
-    mainBgImage.alpha = 0.5;
-    [UIView commitAnimations];
-    
-    
+    if ([[notification name] isEqualToString:NOTIFY_LOCAL_NEED_CHANGE_UI])
+    {
+        
+        [UIView beginAnimations:@"reFreshSunMoonUI_DisPre" context:(__bridge void *)(mainBgImage)];
+        [UIView setAnimationDuration:0.5f];
+        [UIView setAnimationDelegate:self];
+        [UIView setAnimationDidStopSelector:@selector(reFreshSunMoonUIAnimationDidStop:finished:context:)];
+        NSLog(@"Disapear old UI : %@", [mainBgImage.image description]);
+        mainBgImage.alpha = 0.5;
+        [UIView commitAnimations];
+    }
     
 }
 

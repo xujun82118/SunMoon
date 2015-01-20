@@ -15,9 +15,10 @@
 #import "ShareByShareSDR.h"
 #import "CustomAlertView.h"
 
+#import <iAd/iAd.h>
 
 
-@interface HomeInsideViewController : UIViewController<InfiniteScrollPickerDelegate,UserInfoCloudDelegate,ShareByShareSDRDelegate,CustomAlertDelegate>
+@interface HomeInsideViewController : UIViewController<InfiniteScrollPickerDelegate,UserInfoCloudDelegate,ShareByShareSDRDelegate,CustomAlertDelegate,ADBannerViewDelegate,pitchDelegate>
 {
       InfiniteScrollPicker *imageScrollSun;
       InfiniteScrollPicker *imageScrollMoon;

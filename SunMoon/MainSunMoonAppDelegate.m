@@ -16,6 +16,11 @@
 #import "UserSetViewController.h"
 #import "WeiboSDK.h"
 
+#import "YouMiConfig.h"
+#import "YouMiWall.h"
+#import "YouMiWallAppModel.h"
+#import "YouMiPointsManager.h"
+
 
 
 #import "iLink.h"
@@ -72,6 +77,16 @@
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
     }
     
+
+    
+    //有米广告设置
+    [YouMiConfig setUseInAppStore:YES];  // [可选]开启内置appStore，详细请看YouMiSDK常见问题解答
+    [YouMiConfig setShouldGetLocation:NO];
+    [YouMiConfig launchWithAppID:@"a61d4d3e4309ce00" appSecret:@"d138c3f7423a6a22"];
+    [self.window makeKeyAndVisible];
+    // 设置显示全屏广告的window
+    [YouMiConfig setFullScreenWindow:self.window];
+    [YouMiWall enable];
 
     
     //ShareSDK 设置
@@ -340,6 +355,7 @@
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     
+    
     //初始化判断并更新时间,用于从后台进入前台时变换时间
     NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
     if (![userBaseData objectForKey:KEY_BACK_GROUND_TIME]) {
@@ -355,8 +371,8 @@
     if (![[CommonObject getCurrentDate] isEqualToString:[userBaseData objectForKey:KEY_BACK_GROUND_TIME]] || [CommonObject checkSunOrMoonTime] != [userBaseData integerForKey:KEY_BACK_GROUND_TIME_SUNMOON])
         
     {
-        [userBaseData setBool:YES forKey:KEY_BACK_GROUND_TIME_CHANGE];
-        [userBaseData synchronize];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFY_LOCAL_NEED_CHANGE_UI object:self];
         
     }
 

@@ -240,6 +240,7 @@
     NSError *error;
     audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
     audioPlayer.numberOfLoops = 0;
+    audioPlayer.delegate = self;
     [audioPlayer play];
     NSLog(@"playing");
 }
@@ -249,6 +250,23 @@
     NSLog(@"stopPlaying");
     [audioPlayer stop];
     NSLog(@"stopped");
+    
+}
+
+
+
+#pragma mark - AVAudioPlayerDelegate
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
+{
+    
+    [_getPitchDelegate pitchAudioPlayerDidFinishPlaying:player successfully:flag];
+
+    
+}
+
+- (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error
+{
+    
     
 }
 

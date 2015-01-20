@@ -79,7 +79,6 @@
 		5D64A9121982678E0032F848 /* 2秒开关底图-关.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D64A9111982678E0032F848 /* 2秒开关底图-关.png */; };
 		5D64A91419838ED40032F848 /* menu.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D64A91319838ED40032F848 /* menu.png */; };
 		5D6E633B19DF6D10008C106D /* icon v3-亮蓝.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D6E633819DF6D10008C106D /* icon v3-亮蓝.png */; };
-		5D6E633F19F0E8F6008C106D /* water-moon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D6E633D19F0E8F6008C106D /* water-moon.png */; };
 		5D6E634019F0E8F6008C106D /* water-sun.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D6E633E19F0E8F6008C106D /* water-sun.png */; };
 		5D6E634219F0F2B6008C106D /* timeImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D6E634119F0F2B6008C106D /* timeImage.png */; };
 		5D6E634619F18641008C106D /* 说话-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D6E634319F18641008C106D /* 说话-1.png */; };
@@ -227,6 +226,14 @@
 		6B3256A81A615A9100612A71 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B32569D1A615A9100612A71 /* AFURLRequestSerialization.m */; };
 		6B3256A91A615A9100612A71 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B32569F1A615A9100612A71 /* AFURLResponseSerialization.m */; };
 		6B3256AA1A615A9100612A71 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3256A11A615A9100612A71 /* AFURLSessionManager.m */; };
+		6B3258581A6CAD2200612A71 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B3258571A6CAD2200612A71 /* iAd.framework */; };
+		6B32585F1A6CD0DE00612A71 /* youmispot.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B32585E1A6CD0DE00612A71 /* youmispot.a */; };
+		6B32586E1A6CD2EB00612A71 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B32586D1A6CD2EB00612A71 /* CFNetwork.framework */; };
+		6B3258701A6CD2F600612A71 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B32586F1A6CD2F600612A71 /* MediaPlayer.framework */; };
+		6B3258721A6CD30200612A71 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B3258711A6CD30200612A71 /* libz.dylib */; };
+		6B3258801A6CD43300612A71 /* libYouMi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B32587F1A6CD43300612A71 /* libYouMi.a */; };
+		6B3258821A6CDA8500612A71 /* 应用推荐.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B3258811A6CDA8500612A71 /* 应用推荐.png */; };
+		6B3258841A6CE44800612A71 /* water-moon.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B3258831A6CE44800612A71 /* water-moon.png */; };
 		6B86C3971A47DA4900F450E1 /* QQConnection.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B86C3761A47DA4900F450E1 /* QQConnection.framework */; };
 		6B86C3981A47DA4900F450E1 /* QZoneConnection.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B86C3771A47DA4900F450E1 /* QZoneConnection.framework */; };
 		6B86C3991A47DA4900F450E1 /* SinaWeiboConnection.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B86C3781A47DA4900F450E1 /* SinaWeiboConnection.framework */; };
@@ -374,7 +381,6 @@
 		5D64A9111982678E0032F848 /* 2秒开关底图-关.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "2秒开关底图-关.png"; sourceTree = "<group>"; };
 		5D64A91319838ED40032F848 /* menu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = menu.png; sourceTree = "<group>"; };
 		5D6E633819DF6D10008C106D /* icon v3-亮蓝.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon v3-亮蓝.png"; sourceTree = "<group>"; };
-		5D6E633D19F0E8F6008C106D /* water-moon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "water-moon.png"; sourceTree = "<group>"; };
 		5D6E633E19F0E8F6008C106D /* water-sun.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "water-sun.png"; sourceTree = "<group>"; };
 		5D6E634119F0F2B6008C106D /* timeImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = timeImage.png; sourceTree = "<group>"; };
 		5D6E634319F18641008C106D /* 说话-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "说话-1.png"; sourceTree = "<group>"; };
@@ -561,6 +567,27 @@
 		6B32569F1A615A9100612A71 /* AFURLResponseSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLResponseSerialization.m; sourceTree = "<group>"; };
 		6B3256A01A615A9100612A71 /* AFURLSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLSessionManager.h; sourceTree = "<group>"; };
 		6B3256A11A615A9100612A71 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLSessionManager.m; sourceTree = "<group>"; };
+		6B3258571A6CAD2200612A71 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		6B32585B1A6CD0DE00612A71 /* ConfigHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigHeader.h; sourceTree = "<group>"; };
+		6B32585C1A6CD0DE00612A71 /* symbols_spotconfuse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = symbols_spotconfuse.h; sourceTree = "<group>"; };
+		6B32585D1A6CD0DE00612A71 /* YouMiNewSpot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiNewSpot.h; sourceTree = "<group>"; };
+		6B32585E1A6CD0DE00612A71 /* youmispot.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = youmispot.a; sourceTree = "<group>"; };
+		6B32586D1A6CD2EB00612A71 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		6B32586F1A6CD2F600612A71 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		6B3258711A6CD30200612A71 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		6B3258751A6CD43300612A71 /* YouMiConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiConfig.h; sourceTree = "<group>"; };
+		6B3258761A6CD43300612A71 /* YouMiDelegateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiDelegateProtocol.h; sourceTree = "<group>"; };
+		6B3258771A6CD43300612A71 /* YouMiPointsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiPointsManager.h; sourceTree = "<group>"; };
+		6B3258781A6CD43300612A71 /* YouMiSpots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiSpots.h; sourceTree = "<group>"; };
+		6B3258791A6CD43300612A71 /* YouMiView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiView.h; sourceTree = "<group>"; };
+		6B32587A1A6CD43300612A71 /* YouMiWall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiWall.h; sourceTree = "<group>"; };
+		6B32587B1A6CD43300612A71 /* YouMiWallAppModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiWallAppModel.h; sourceTree = "<group>"; };
+		6B32587C1A6CD43300612A71 /* YouMiWallBanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiWallBanner.h; sourceTree = "<group>"; };
+		6B32587D1A6CD43300612A71 /* YouMiWallSpot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiWallSpot.h; sourceTree = "<group>"; };
+		6B32587E1A6CD43300612A71 /* YouMiWallSpotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YouMiWallSpotView.h; sourceTree = "<group>"; };
+		6B32587F1A6CD43300612A71 /* libYouMi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libYouMi.a; sourceTree = "<group>"; };
+		6B3258811A6CDA8500612A71 /* 应用推荐.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "应用推荐.png"; sourceTree = "<group>"; };
+		6B3258831A6CE44800612A71 /* water-moon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "water-moon.png"; sourceTree = "<group>"; };
 		6B86C3761A47DA4900F450E1 /* QQConnection.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QQConnection.framework; sourceTree = "<group>"; };
 		6B86C3771A47DA4900F450E1 /* QZoneConnection.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = QZoneConnection.framework; sourceTree = "<group>"; };
 		6B86C3781A47DA4900F450E1 /* SinaWeiboConnection.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SinaWeiboConnection.framework; sourceTree = "<group>"; };
@@ -602,16 +629,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D523DC919EBBD01004FE84E /* StoreKit.framework in Frameworks */,
+				6B3258721A6CD30200612A71 /* libz.dylib in Frameworks */,
+				6B3258701A6CD2F600612A71 /* MediaPlayer.framework in Frameworks */,
+				6B32586E1A6CD2EB00612A71 /* CFNetwork.framework in Frameworks */,
+				5DF11E2018F58F8100684122 /* SystemConfiguration.framework in Frameworks */,
+				6B3258581A6CAD2200612A71 /* iAd.framework in Frameworks */,
 				5DF11E2A18F58FBE00684122 /* Security.framework in Frameworks */,
 				6B32568D1A61596F00612A71 /* MobileCoreServices.framework in Frameworks */,
 				6B32568B1A61596000612A71 /* CoreLocation.framework in Frameworks */,
+				6B3258801A6CD43300612A71 /* libYouMi.a in Frameworks */,
 				6B86C3AD1A47DB3B00F450E1 /* Accounts.framework in Frameworks */,
 				6B86C3AB1A47DB2C00F450E1 /* Social.framework in Frameworks */,
-				5D523DC919EBBD01004FE84E /* StoreKit.framework in Frameworks */,
 				5DF11E2E18F58FEA00684122 /* libsqlite3.dylib in Frameworks */,
 				5DF11E2218F58F8E00684122 /* QuartzCore.framework in Frameworks */,
-				5DF11E2018F58F8100684122 /* SystemConfiguration.framework in Frameworks */,
 				6B86C3A51A47DA4900F450E1 /* libWeChatSDK.a in Frameworks */,
+				6B32585F1A6CD0DE00612A71 /* youmispot.a in Frameworks */,
 				6B86C39F1A47DA4900F450E1 /* ShareSDKCoreService.framework in Frameworks */,
 				6B86C3991A47DA4900F450E1 /* SinaWeiboConnection.framework in Frameworks */,
 				6B86C3981A47DA4900F450E1 /* QZoneConnection.framework in Frameworks */,
@@ -747,8 +780,8 @@
 		5D6E633C19F0E8F6008C106D /* waterImage */ = {
 			isa = PBXGroup;
 			children = (
+				6B3258831A6CE44800612A71 /* water-moon.png */,
 				5D6E634119F0F2B6008C106D /* timeImage.png */,
-				5D6E633D19F0E8F6008C106D /* water-moon.png */,
 				5D6E633E19F0E8F6008C106D /* water-sun.png */,
 			);
 			path = waterImage;
@@ -937,6 +970,8 @@
 		5DF2384418E7B48A00538DA1 = {
 			isa = PBXGroup;
 			children = (
+				6B3258731A6CD43300612A71 /* lib */,
+				6B3258591A6CD0DE00612A71 /* spotlib */,
 				6B32568E1A615A9100612A71 /* AFNetworking */,
 				6B86C3741A47DA4900F450E1 /* ShareSDK */,
 				5D51411A19FA696C003DD253 /* iLink */,
@@ -968,6 +1003,10 @@
 		5DF2384F18E7B48A00538DA1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6B3258711A6CD30200612A71 /* libz.dylib */,
+				6B32586F1A6CD2F600612A71 /* MediaPlayer.framework */,
+				6B32586D1A6CD2EB00612A71 /* CFNetwork.framework */,
+				6B3258571A6CAD2200612A71 /* iAd.framework */,
 				6B32568C1A61596F00612A71 /* MobileCoreServices.framework */,
 				6B32568A1A61596000612A71 /* CoreLocation.framework */,
 				6B86C3AC1A47DB3B00F450E1 /* Accounts.framework */,
@@ -1095,6 +1134,7 @@
 		5DF238A718E7BF7500538DA1 /* Image */ = {
 			isa = PBXGroup;
 			children = (
+				6B3258811A6CDA8500612A71 /* 应用推荐.png */,
 				6B86C3B81A49B2C700F450E1 /* sun-小.png */,
 				6B86C3B91A49B2C700F450E1 /* moon-小.png */,
 				6B86C3B21A49B2C700F450E1 /* 横线.png */,
@@ -1206,6 +1246,51 @@
 				6B3256A11A615A9100612A71 /* AFURLSessionManager.m */,
 			);
 			path = AFNetworking;
+			sourceTree = "<group>";
+		};
+		6B3258591A6CD0DE00612A71 /* spotlib */ = {
+			isa = PBXGroup;
+			children = (
+				6B32585A1A6CD0DE00612A71 /* include */,
+				6B32585E1A6CD0DE00612A71 /* youmispot.a */,
+			);
+			path = spotlib;
+			sourceTree = "<group>";
+		};
+		6B32585A1A6CD0DE00612A71 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				6B32585B1A6CD0DE00612A71 /* ConfigHeader.h */,
+				6B32585C1A6CD0DE00612A71 /* symbols_spotconfuse.h */,
+				6B32585D1A6CD0DE00612A71 /* YouMiNewSpot.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		6B3258731A6CD43300612A71 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				6B3258741A6CD43300612A71 /* include */,
+				6B32587F1A6CD43300612A71 /* libYouMi.a */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		6B3258741A6CD43300612A71 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				6B3258751A6CD43300612A71 /* YouMiConfig.h */,
+				6B3258761A6CD43300612A71 /* YouMiDelegateProtocol.h */,
+				6B3258771A6CD43300612A71 /* YouMiPointsManager.h */,
+				6B3258781A6CD43300612A71 /* YouMiSpots.h */,
+				6B3258791A6CD43300612A71 /* YouMiView.h */,
+				6B32587A1A6CD43300612A71 /* YouMiWall.h */,
+				6B32587B1A6CD43300612A71 /* YouMiWallAppModel.h */,
+				6B32587C1A6CD43300612A71 /* YouMiWallBanner.h */,
+				6B32587D1A6CD43300612A71 /* YouMiWallSpot.h */,
+				6B32587E1A6CD43300612A71 /* YouMiWallSpotView.h */,
+			);
+			path = include;
 			sourceTree = "<group>";
 		};
 		6B86C3741A47DA4900F450E1 /* ShareSDK */ = {
@@ -1435,7 +1520,6 @@
 				5D6E634F19F24EB0008C106D /* 主页底图005@2x.png in Resources */,
 				5D8334BD197A73C600EC5201 /* headerFrameBow_1.png in Resources */,
 				5D15E5EF19B05EDC0089997B /* 停止放音-白.png in Resources */,
-				5D6E633F19F0E8F6008C106D /* water-moon.png in Resources */,
 				5D98348F195FB59300A80EEB /* abFrame_4@2x.png in Resources */,
 				5D51140F19396E0C00F41F8A /* PickerShadow@2x.png in Resources */,
 				5D8334AE197A063400EC5201 /* headerFrame_8.png in Resources */,
@@ -1476,6 +1560,7 @@
 				6B86C3BA1A49B2C700F450E1 /* sun-小.png in Resources */,
 				5D3D4CAA1995EDC90027DB28 /* 环-moon.png in Resources */,
 				5DF2CA1719754BBA0078BF63 /* 小云-touch.png in Resources */,
+				6B3258841A6CE44800612A71 /* water-moon.png in Resources */,
 				5D8334A61978011D00EC5201 /* headerFrame_1.png in Resources */,
 				6B86C3A11A47DA4900F450E1 /* TencentOpenApi_IOS_Bundle.bundle in Resources */,
 				5DE6B4D019D69D9500170A92 /* Launch Screen.xib in Resources */,
@@ -1528,6 +1613,7 @@
 				5D523DB919EBAA91004FE84E /* 拖动手势.png in Resources */,
 				5D64A9121982678E0032F848 /* 2秒开关底图-关.png in Resources */,
 				5DE48CBA195464EE007A8A17 /* 开心网sns_icon_8.png in Resources */,
+				6B3258821A6CDA8500612A71 /* 应用推荐.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1776,6 +1862,8 @@
 					"$(PROJECT_DIR)/ShareSDK/Extend/WeChatSDK",
 					"$(PROJECT_DIR)/ShareSDK/Extend/YiXinSDK",
 					"$(PROJECT_DIR)/YouMilib",
+					"$(PROJECT_DIR)/spotlib",
+					"$(PROJECT_DIR)/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1813,6 +1901,8 @@
 					"$(PROJECT_DIR)/ShareSDK/Extend/WeChatSDK",
 					"$(PROJECT_DIR)/ShareSDK/Extend/YiXinSDK",
 					"$(PROJECT_DIR)/YouMilib",
+					"$(PROJECT_DIR)/spotlib",
+					"$(PROJECT_DIR)/lib",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

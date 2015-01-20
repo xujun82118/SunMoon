@@ -13,6 +13,9 @@
 #import "ShareByShareSDR.h"
 #import "CustomIndicatorView.h"
 
+#import "ConfigHeader.h"
+#import "YouMiConfig.h"
+#import "YouMiWall.h"
 
 @interface HomeInsideViewController ()
 {
@@ -21,6 +24,9 @@
     
     CustomAlertView* customAlertAutoDis;
     CustomAlertView* customAlertAutoDisYes;
+    
+    ADBannerView *bannerView;
+
 
 
 }
@@ -59,8 +65,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    tmpStartData = [NSDate date];
-
+    tmpStartData = [NSDate date];    
     
     self.navigationController.navigationBarHidden = YES;
     self.navigationController.navigationBar.opaque = YES;
@@ -73,7 +78,17 @@
     [backBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:backBtn];
 
-      //  sunScrollImageView.frame = CGRectMake(sunScrollImageView.frame.origin.x, sunScrollImageView.frame.origin.y, sunScrollImageView.frame.size.width, 20);
+    
+    //加广告按钮
+    NSInteger backBtnWidthAd = 40;
+    NSInteger backBtnHeightAd = 40;
+    UIButton *backBtnAd =[UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtnAd setImage:[UIImage imageNamed:@"应用推荐.png"] forState:UIControlStateNormal];
+    [backBtnAd setFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X-25, NAVI_BAR_BTN_Y-backBtnHeightAd/2+10, backBtnWidthAd, backBtnHeightAd)];
+    [backBtnAd addTarget:self action:@selector(youMiAd:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backBtnAd];
+    
+    
     
     //shareSdk**********
     //监听用户信息变更
@@ -167,9 +182,11 @@
     
     //语音回放控制
     pressedVoiceForPlay = [[VoicePressedHold alloc] init];
+    pressedVoiceForPlay.getPitchDelegate = self;
     //回放音按钮
     [_voiceReplaySunBtn setImage:[UIImage imageNamed:@"停止放音-白.png"] forState:UIControlStateSelected];
     [_voiceReplayMoonBtn setImage:[UIImage imageNamed:@"停止放音-白.png"] forState:UIControlStateSelected];
+    
 
     //初始化数字
     sunValueStatic.text = [NSString stringWithFormat:@"%d", 0];
@@ -183,6 +200,24 @@
 
 
 }
+
+//iAD
+//-(void)bannerView:(ADBannerView *)banner
+//didFailToReceiveAdWithError:(NSError *)error{
+//    NSLog(@"Error loading");
+//}
+//
+//-(void)bannerViewDidLoadAd:(ADBannerView *)banner{
+//    NSLog(@"Ad loaded");
+//}
+//-(void)bannerViewWillLoadAd:(ADBannerView *)banner{
+//    NSLog(@"Ad will load");
+//}
+//-(void)bannerViewActionDidFinish:(ADBannerView *)banner{
+//    NSLog(@"Ad did finish");
+//    
+//}
+//
 
 
 -(void) addScrollUserImageSunReFresh:(BOOL) isFresh
@@ -699,6 +734,19 @@
 }
 
 
+#pragma mark - 有米广告
+- (void)youMiAd:(id)sender
+{
+    [YouMiWall showOffers:NO didShowBlock:^{
+        NSLog(@"有米墙已显示");
+    } didDismissBlock:^{
+        NSLog(@"有米墙已退出");
+    }];
+    
+}
+
+
+
 //暂时无用
 - (IBAction)infoTextChanged:(id)sender
 {
@@ -879,10 +927,10 @@
     [share addWater];
     
     //计算水印日期位置
-    CGFloat w1 = 30;
-    CGFloat h1 = 30;
-    CGFloat x1 = 40;
-    CGFloat y1 = share.shareImage.size.height -20 -h1/2;
+    CGFloat w1 = 40;
+    CGFloat h1 = 40;
+    CGFloat x1 = shareImage.size.width/2-w1/2;
+    CGFloat y1 = shareImage.size.height -70 -h1/2;
     share.textRect = CGRectMake(x1,y1,w1,h1);
     [share addTimeText];
     
@@ -898,7 +946,7 @@
     CGFloat w3 = (share.shareImage.size.width)/3*2;
     CGFloat h3 = 30;
     CGFloat x3 = (share.shareImage.size.width)/2-w3/2;
-    CGFloat y3 = share.shareImage.size.height -25 -h3/2;
+    CGFloat y3 = share.shareImage.size.height -30 -h3/2;
     share.textRect = CGRectMake(x3,y3,w3,h3);
     [share addSentenceText];
     
@@ -1296,6 +1344,7 @@
     }
     
     [_voiceReplaySunBtn setSelected:!_voiceReplaySunBtn.selected];
+    [_voiceReplayMoonBtn setSelected:NO];
 
     
     
@@ -1324,8 +1373,19 @@
     }
 
     [_voiceReplayMoonBtn setSelected:!_voiceReplayMoonBtn.selected];
+    [_voiceReplaySunBtn setSelected:NO];
 
 }
+
+#pragma mark - picthDelegate
+- (void)pitchAudioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
+{
+    
+    [_voiceReplaySunBtn setSelected:NO];
+    [_voiceReplayMoonBtn setSelected:NO];
+
+}
+
 
 #pragma mark - Seques
 

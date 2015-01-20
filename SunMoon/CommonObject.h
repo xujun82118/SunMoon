@@ -60,6 +60,10 @@
 #define USER_TYPE_VIP 10 //VIP用户
 
 
+//本地通知定义
+#define NOTIFY_LOCAL_NEED_CHANGE_UI   @"NeedChangeUI"
+
+
 //报了个奇怪的错误,先自定义规避
 //Definition of 'struct in_addr' must be imported from module 'Darwin.POSIX.netinet.in' before it is required
 struct in_addr_my {
@@ -130,7 +134,6 @@ typedef enum
 //#define SUN_TIME_MAX  6
 
 
-
 //阳光，月光标识
 #define IS_SUN_TIME 1
 #define IS_MOON_TIME 2
@@ -172,7 +175,6 @@ typedef enum
 //退出后台的时间
 #define KEY_BACK_GROUND_TIME @"backGroundTime"
 #define KEY_BACK_GROUND_TIME_SUNMOON @"backGroundTimeSunMoon"
-#define KEY_BACK_GROUND_TIME_CHANGE @"backGroundTimeChange"
 
 
 //当天照片是否加过光值

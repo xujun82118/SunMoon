@@ -39,6 +39,8 @@
     
     UIButton *voiceReplayBtn;
     
+    UILabel *twodelayTime;
+    
     UIImageView* sayView;
     UILabel *labelSentence;
 
@@ -281,6 +283,20 @@
         [sentenceView addGestureRecognizer:recognizerSentence];
         [PLCameraView addSubview:sentenceView];
 
+        //动态计时2秒字
+        twodelayTime = [[UILabel alloc] init];
+        NSInteger twoW = SCREEN_WIDTH/5*2;
+        NSInteger twoH = twoW;
+        twodelayTime.frame = CGRectMake(SCREEN_WIDTH/2-twoW/2, SCREEN_HEIGHT/2-twoH/2, twoW, twoH);
+        twodelayTime.text = @"3s";
+        twodelayTime.font = [UIFont fontWithName:@"Arial" size:40];
+        twodelayTime.textColor = [UIColor whiteColor];
+        twodelayTime.textAlignment = NSTextAlignmentCenter;
+        twodelayTime.adjustsFontSizeToFitWidth = YES;
+        twodelayTime.numberOfLines = 1;
+        twodelayTime.hidden = YES;
+        [PLCameraView addSubview:twodelayTime];
+        
         //说话提示
         NSInteger sayViewWidth = 150;
         NSInteger sayViewHeigth =150;
@@ -353,6 +369,9 @@
         //[PLCameraView addSubview:delayTime];
         [overlyView addSubview:delayTime];
 
+
+
+        
 
         //按住说语录按钮
         NSInteger voicePressedWidth = everyW;
@@ -626,17 +645,65 @@
         //判断是否奖励光
         if ([self checkwetherAndGiveLight]!=1) {
             
-            [NSTimer scheduledTimerWithTimeInterval:3.0
-                                             target:self
-                                           selector:@selector(takePicture)
-                                           userInfo:[self userInfo]
-                                            repeats:NO];
+            
+            [self delay2SandTakePicture];
+            
+
         }
         
     }
     
     
 }
+
+-(void) delay2SandTakePicture
+{
+    
+    twodelayTime.hidden = NO;
+    
+    if ([twodelayTime.text isEqualToString:@"3s"]) {
+        twodelayTime.text = @"2s";
+        [NSTimer scheduledTimerWithTimeInterval:1.0
+                                         target:self
+                                       selector:@selector(delay2SandTakePicture)
+                                       userInfo:[self userInfo]
+                                        repeats:NO];
+        return;
+    }
+    
+    if ([twodelayTime.text isEqualToString:@"2s"]) {
+        twodelayTime.text = @"1s";
+        [NSTimer scheduledTimerWithTimeInterval:1.0
+                                         target:self
+                                       selector:@selector(delay2SandTakePicture)
+                                       userInfo:[self userInfo]
+                                        repeats:NO];
+        return;
+    }
+    
+    if ([twodelayTime.text isEqualToString:@"1s"]) {
+        twodelayTime.text = @"Action";
+        [NSTimer scheduledTimerWithTimeInterval:1.0
+                                         target:self
+                                       selector:@selector(delay2SandTakePicture)
+                                       userInfo:[self userInfo]
+                                        repeats:NO];
+        return;
+    }
+    
+    if ([twodelayTime.text isEqualToString:@"Action"]) {
+        twodelayTime.hidden = YES;
+        
+        [NSTimer scheduledTimerWithTimeInterval:1.0
+                                         target:self
+                                       selector:@selector(takePicture)
+                                       userInfo:[self userInfo]
+                                        repeats:NO];
+        return;
+    }
+
+}
+
 
 - (void) VoiceBtnLongPressed:(UILongPressGestureRecognizer *)gesture
 {
@@ -776,7 +843,6 @@
 }
 
 #pragma mark - 音量动画设置，pitchDelegate
-
 - (void)setNewPith:(float)pitchValue
 {
     
@@ -870,10 +936,13 @@
     }
     
 
- 
+}
 
-    
-    
+- (void)pitchAudioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
+{
+
+    [voiceReplayBtn setSelected:NO];
+
 }
 
 - (void)VoiceValueAnimationDidStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *) contextBtn
