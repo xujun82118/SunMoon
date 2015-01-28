@@ -10,7 +10,6 @@
 
 @protocol AminationCustomDelegate;
 @interface AminationCustom : CAKeyframeAnimation
-
 {
     id <AminationCustomDelegate> aminationCustomDelegate;
 
@@ -36,7 +35,7 @@
 
 
 -(instancetype)initWithKey:(NSString*) key;
-
+-(instancetype)initWithKey:(NSString*) key withAnimationView:(UIImageView*) aniView;
 
 -(CALayer*)layerWithImageView:(UIImageView*) aminaView;
 -(void)startBezierAmination:(NSString*) key;
@@ -52,6 +51,7 @@
 @protocol AminationCustomDelegate <NSObject >
 
 - (void) animationFinishedRuturn;
+- (void) animationFinishedRuturn:(NSString*) aniKey  aniView:(UIImageView*) aniView;
 
 
 @end

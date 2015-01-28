@@ -90,6 +90,17 @@ typedef enum
     
 }cloudSynchronizeClass;
 
+/**
+光的类型
+ */
+typedef enum
+{
+    lightTypeBlue = 0,
+    lightTypeRed  = 1,
+    lightTypeYellow = 2
+    
+}LightType;
+
 //云同步同容等级
 //0：同步阳光月光值
 //1: 同步值与语录
@@ -162,6 +173,13 @@ typedef enum
 #define KEY_NOTIFY_NEED_BRINGING_LAST_TIME @"notifyNeedBringLastTime"
 #define KEY_NOTIFY_IS_BRINGING_LAST_TIME @"notifyIsBringLastTime"
 #define REMINDER_INTERVEL_TIME 2 //提醒时间间隔
+
+//光类型的计数
+#define KEY_LIGHT_TYPE_SUM_COUNT  @"LightType_SumLight_Count"
+#define KEY_LIGHT_TYPE_RED_COUNT  @"LightType_RedLight_Count"
+#define KEY_LIGHT_TYPE_RED_COUNT_LEFT  @"LightType_RedLight_Count_Left"
+#define KEY_LIGHT_TYPE_BLUE_COUNT  @"LightType_BlueLight_Count"
+
 
 //用户连续登录次数
 #define KEY_CONTINUE_LOGIN_SUN_COUNT @"continueLoginSunCount"
@@ -262,6 +280,8 @@ typedef enum
 
 #define  TAG_LIGHT_USER_HEADER 300 //300到307
 #define  TAG_LIGHT_TRACE 1000 //1000以后
+#define  TAG_SWIM_LIGHT_TRACE 10000 //10000以后
+
 
 
 
@@ -283,9 +303,16 @@ typedef enum
 
 + (NSString *)getCurrentDate;
 
+
 +(NSDate*) returnChooseTimeUnit:(NSDate*) dateTime Year:(BOOL) needYear Month:(BOOL) needMonth Day:(BOOL) needDay Hour:(BOOL) needHour Minute:(BOOL) needMinute Second:(BOOL) needSecond;
 
 + (NSInteger) checkSunOrMoonTime;
+
++(NSString*) getUsedSunMoonImageNameByTime;
++(NSString*) getUsedSamllLightImageNameByTime;
++(UIImage*) getLightImageByLightType:(LightType) lightType;
+
+
 
 +(void)showAlert:(NSString *)msg titleMsg:(NSString *)title DelegateObject:(id) delegateObject;
 
@@ -300,5 +327,7 @@ typedef enum
 + (void)DisableUserInteractionInView:(UIView *)superView exceptViewWithTag:(NSInteger)enableViewTag;
 + (void)EnableUserInteractionInView:(UIView *)superView;
 
+
++ (int)getRandomNumber:(int)from to:(int)to;
 
 @end

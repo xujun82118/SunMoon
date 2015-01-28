@@ -215,6 +215,7 @@
 		5DF2CA1919754E740078BF63 /* 分享-黄.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DF2CA1819754E740078BF63 /* 分享-黄.png */; };
 		5DFB37F1197BF5DD00037445 /* 相册.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DFB37F0197BF5DD00037445 /* 相册.png */; };
 		5DFFEDF2194D3DC900688032 /* 丢弃.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DFFEDF1194D3DC900688032 /* 丢弃.png */; };
+		6B16C84A1A70FCAF00F1EE99 /* CustomAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B16C8491A70FCAF00F1EE99 /* CustomAnimation.m */; };
 		6B32568B1A61596000612A71 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B32568A1A61596000612A71 /* CoreLocation.framework */; };
 		6B32568D1A61596F00612A71 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B32568C1A61596F00612A71 /* MobileCoreServices.framework */; };
 		6B3256A21A615A9100612A71 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3256901A615A9100612A71 /* AFHTTPRequestOperation.m */; };
@@ -546,6 +547,8 @@
 		5DF2CA1819754E740078BF63 /* 分享-黄.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "分享-黄.png"; sourceTree = "<group>"; };
 		5DFB37F0197BF5DD00037445 /* 相册.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "相册.png"; sourceTree = "<group>"; };
 		5DFFEDF1194D3DC900688032 /* 丢弃.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "丢弃.png"; sourceTree = "<group>"; };
+		6B16C8481A70FCAF00F1EE99 /* CustomAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomAnimation.h; sourceTree = "<group>"; };
+		6B16C8491A70FCAF00F1EE99 /* CustomAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomAnimation.m; sourceTree = "<group>"; };
 		6B32568A1A61596000612A71 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		6B32568C1A61596F00612A71 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		6B32568F1A615A9100612A71 /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
@@ -854,6 +857,8 @@
 			children = (
 				5D98347C195EAA7B00A80EEB /* AminationCustom.h */,
 				5D98347D195EAA7B00A80EEB /* AminationCustom.m */,
+				6B16C8481A70FCAF00F1EE99 /* CustomAnimation.h */,
+				6B16C8491A70FCAF00F1EE99 /* CustomAnimation.m */,
 			);
 			path = AminationCustom;
 			sourceTree = "<group>";
@@ -1683,6 +1688,7 @@
 				5D2609A6197234E000741953 /* TapShowImageViewController.m in Sources */,
 				5D5113F31935687900F41F8A /* REFrostedContainerViewController.m in Sources */,
 				5DABFEBC195873290000D5B2 /* VoicePressedHold.m in Sources */,
+				6B16C84A1A70FCAF00F1EE99 /* CustomAnimation.m in Sources */,
 				6B3256A71A615A9100612A71 /* AFURLConnectionOperation.m in Sources */,
 				5D8070E818F8E72D0022A09C /* UserInfo.m in Sources */,
 				5D618AAE191F3D0300150945 /* SunSentenceManagerViewController.m in Sources */,

@@ -15,10 +15,12 @@
 #import "VPImageCropperViewController.h"
 #import "CommonObject.h"
 #import "CustomAlertView.h"
+#import "CustomAnimation.h"
 
 
 
-@interface MainSunMoonViewController : UIViewController<CustomImagePickerControllerDelegate,ImageFitlerProcessDelegate, UserInfoCloudDelegate,VPImageCropperDelegate,CustomAlertDelegate>
+
+@interface MainSunMoonViewController : UIViewController<CustomImagePickerControllerDelegate,ImageFitlerProcessDelegate, UserInfoCloudDelegate,VPImageCropperDelegate,CustomAlertDelegate,CustomAnimationDelegate>
 {
 
 }
@@ -58,8 +60,6 @@
 
 
 @property (weak, nonatomic) IBOutlet UIButton* intoCameraBtn;
-@property (weak, nonatomic) IBOutlet UIButton* showBringLightBtn;
-@property (weak, nonatomic) IBOutlet UIImageView *lightLineImageView;
 
 
 

@@ -1043,7 +1043,7 @@
 
 #pragma mark - AminationCustomDelegate
 
-- (void) animationFinishedRuturn
+- (void) animationFinishedRuturn:(NSString*) aniKey aniView:(UIImageView*) aniView
 {
     
     

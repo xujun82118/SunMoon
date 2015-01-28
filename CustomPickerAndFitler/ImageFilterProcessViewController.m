@@ -646,20 +646,20 @@
     
     //判断是否增加阳光月光值
         
-        if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
-            
-            [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
-            [self.userInfo addSunOrMoonValue:count];
-            [self.userInfo updateIsHaveAddSunValueForTodayPhoto:YES];
- 
-        }else
-        {
-            
-            [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
-            [self.userInfo addSunOrMoonValue:count];
-            [self.userInfo updateIsHaveAddMoonValueForTodayPhoto:YES];
-            
-        }
+    if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
+        
+        [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
+        [self.userInfo addSunOrMoonValue:count];
+        [self.userInfo updateIsHaveAddSunValueForTodayPhoto:YES];
+
+    }else
+    {
+        
+        [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
+        [self.userInfo addSunOrMoonValue:count];
+        [self.userInfo updateIsHaveAddMoonValueForTodayPhoto:YES];
+        
+    }
     
  
     return count;
@@ -667,10 +667,9 @@
 
 #pragma mark - AminationCustomDelegate
 
-- (void) animationFinishedRuturn
+- (void) animationFinishedRuturn:(NSString*) aniKey
 {
     valuelabel.text = @"+1";
-    //valuelabel.hidden = NO;
     
 }
 #pragma mark -

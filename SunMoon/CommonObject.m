@@ -139,6 +139,42 @@
     return  0;
 }
 
++(NSString*) getUsedSamllLightImageNameByTime
+{
+    if ([self checkSunOrMoonTime] == IS_SUN_TIME) {
+        return @"sun-小.png";
+    }else
+    {
+        return @"moon-小.png";
+    }
+}
+
++(NSString*) getUsedSunMoonImageNameByTime
+{
+    if ([self checkSunOrMoonTime] == IS_SUN_TIME) {
+        return @"sun.png";
+    }else
+    {
+        return @"moon.png";
+    }
+}
+
+
++(UIImage*) getLightImageByLightType:(LightType) lightType
+{
+    
+    if (lightType == lightTypeBlue) {
+        return [UIImage imageNamed:@"sun-小.png"];
+    }else if(lightType == lightTypeRed)
+    {
+        return [UIImage imageNamed:@"sun-小.png"];
+    }else
+    {
+        return [UIImage imageNamed:@"sun-小.png"];
+
+    }
+    
+}
 
 +(void)showAlert:(NSString *)msg titleMsg:(NSString *)title DelegateObject:(id) delegateObject{
     UIAlertView *alert = [[UIAlertView alloc]
@@ -284,5 +320,16 @@
     }
 
 }
+
+//获取一个随机整数，范围在[from,to），包括from，不包括to
++ (int)getRandomNumber:(int)from to:(int)to
+
+{
+    
+    return (int)(from + (arc4random() % (to-from + 1)));
+    
+}
+
+
 
 @end
