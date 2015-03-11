@@ -1148,7 +1148,7 @@
 -(void) showCustomYesAlertSuperView:(NSString*) msg AlertKey:alertKey
 {
     
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"YES.png" posionShowMode:userSet AlertKey:alertKey];
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
     [customAlertAutoDisYes setStartCenterPoint:self.view.center];
     [customAlertAutoDisYes setEndCenterPoint:self.view.center];
     [customAlertAutoDisYes setStartAlpha:0.1];

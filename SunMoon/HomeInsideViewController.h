@@ -15,51 +15,51 @@
 #import "ShareByShareSDR.h"
 #import "CustomAlertView.h"
 #import "PulsingHaloLayer.h"
+#import "SunSentenceManagerViewController.h"
+#import "MoonSentenceManagerViewContrller.h"
+
 
 
 
 @interface HomeInsideViewController : UIViewController<InfiniteScrollPickerDelegate,UserInfoCloudDelegate,ShareByShareSDRDelegate,CustomAlertDelegate,pitchDelegate>
 {
       InfiniteScrollPicker *imageScrollSun;
-      InfiniteScrollPicker *imageScrollMoon;
       VoicePressedHold* pressedVoiceForPlay;
 
       NSMutableArray *_shareTypeArray;
 
 
 }
-@property (weak, nonatomic) IBOutlet InfiniteScrollPicker *sunScroll;
-@property (weak, nonatomic) IBOutlet InfiniteScrollPicker *moonScroll;
+@property (weak, nonatomic) IBOutlet UIButton *changeDayType;
+
+
 @property (weak, nonatomic) IBOutlet UIImageView * bkGroundImageView;
-@property (weak, nonatomic) IBOutlet UIImageView * sunScrollImageView;
-@property (weak, nonatomic) IBOutlet UIImageView * moonScrollImageView;
-@property (nonatomic, assign) IBOutlet UIButton *sunCenter;
-@property (nonatomic, assign) IBOutlet UIButton *moonCenter;
+@property (weak, nonatomic) IBOutlet UIImageView * sunMoonScrollImageView;
+@property (nonatomic, assign) IBOutlet UIButton *sunMoonCenter;
 
 
 
-@property (weak, nonatomic) IBOutlet UITextField *sunTimeText;
-@property (weak, nonatomic) IBOutlet UITextField *moonTimeText;
-@property (weak, nonatomic) IBOutlet UILabel *moonValueStatic;
-@property (weak, nonatomic) IBOutlet UILabel *sunValueStatic;
-@property (weak, nonatomic) IBOutlet UIButton *moonTimeCtlBtn;
-@property (weak, nonatomic) IBOutlet UIButton *sunTimeCtlBtn;
-@property (weak, nonatomic) IBOutlet UIButton *cloudCtlBtn;
-@property (weak, nonatomic) IBOutlet UIButton *shareSunCtlBtn;
-@property (weak, nonatomic) IBOutlet UIButton *shareMoonCtlBtn;
-@property (weak, nonatomic) IBOutlet UIImageView *lightSunSentence;
-@property (weak, nonatomic) IBOutlet UIImageView *lightMoonSentence;
-@property (weak, nonatomic) IBOutlet UIButton *voiceReplaySunBtn;
-@property (weak, nonatomic) IBOutlet UIButton *voiceReplayMoonBtn;
-
-
-@property (weak, nonatomic) IBOutlet UILabel *sunWordShow;
-@property (weak, nonatomic) IBOutlet UILabel *moonWordShow;
-@property (weak, nonatomic) IBOutlet UIButton *moonTimeBtn;
+@property (weak, nonatomic) IBOutlet UILabel *sunMoonValueStatic;
+@property (weak, nonatomic) IBOutlet UIButton *sunMoonTimeCtlBtn;
 @property (weak, nonatomic) IBOutlet UIButton *sunTimeBtn;
+@property (weak, nonatomic) IBOutlet UIButton *moonTimeBtn;
+@property (weak, nonatomic) IBOutlet UITextField *sunMoonTimeText;
 
-@property(nonatomic, copy) NSDictionary* currentSelectDataSun;
-@property(nonatomic, copy) NSDictionary* currentSelectDataMoon;
+
+@property (weak, nonatomic) IBOutlet UIButton *cloudCtlBtn;
+@property (weak, nonatomic) IBOutlet UIButton *shareCtlBtn;
+@property (weak, nonatomic) IBOutlet UIImageView *lightSentence;
+@property (weak, nonatomic) IBOutlet UIButton *voiceReplayBtn;
+
+@property (weak, nonatomic) IBOutlet UIButton *editeSunWordBtn;
+@property (weak, nonatomic) IBOutlet UIButton *editeMoonWordBtn;
+
+
+
+
+@property (weak, nonatomic) IBOutlet UILabel *sunMoonWordShow;
+
+@property(nonatomic, copy) NSDictionary* currentSelectData;
 
 
 @property(nonatomic,copy) NSArray* userData;
@@ -70,24 +70,27 @@
 
 @property (nonatomic, assign) PulsingHaloLayer *haloAdd;
 
-- (IBAction)moonAlertCtl:(id)sender;
-- (IBAction)sunAlertCtl:(id)sender;
+@property(nonatomic, assign) NSInteger  DayType;
 
-- (IBAction)shareNight:(id)sender;
-- (IBAction)shareMorning:(id)sender;
 
-- (IBAction)DeleteMoonImage:(id)sender;
-- (IBAction)DeleteSunImage:(id)sender;
+- (IBAction)changeDayTime:(id)sender;
 
-- (IBAction)replaySunVoice:(id)sender;
-- (IBAction)replayMoonVoice:(id)sender;
+- (IBAction)sunMoonAlertCtl:(id)sender;
+
+- (IBAction)shareSunMoon:(id)sender;
+
+- (IBAction)DeleteSunMoonImage:(id)sender;
+
+- (IBAction)replaySunMoonVoice:(id)sender;
 
 - (IBAction)infoTextChanged:(id)sender;
 
 -(IBAction)synClouderUserInfo:(id)sender;
 
+- (IBAction)backSegueFromViewController:(UIStoryboardSegue *)segue;
 
--(void) back;
+
+-(IBAction) back;
 
 
 @end

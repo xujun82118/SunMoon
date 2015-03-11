@@ -116,6 +116,10 @@
     NSInteger spiriteAutoFlyPointCurrentIndex;//精灵自动飞行当前的位置
     BOOL  spiriteFlyIsAuto; //精灵是否在自动飞行状态
     NSTimer* spiriteFlyAutoReapaterTimer;
+    
+    CustomAnimation* guidPanToSkyAni;
+    CustomAnimation* guidTouchIntoCameraAni;
+
 
     NSTimer* swimAroundTimer; //随进四处游荡timer
 
@@ -265,7 +269,7 @@
         float y = userHeaderSpiritBk.frame.origin.y + userHeaderSpiritBk.frame.size.height/2 - labelHeight/2;
         spiritCountlabel = [[UILabel alloc] initWithFrame:CGRectMake(x, y, labelWidth,labelHeight)];
         [spiritCountlabel setBackgroundColor:[UIColor clearColor]];
-        [spiritCountlabel setText:@""];
+        [spiritCountlabel setText:@"0"];
         [spiritCountlabel setTextAlignment:NSTextAlignmentCenter];
         [spiritCountlabel setFont:[UIFont systemFontOfSize:24.0f]];
         [spiritCountlabel setTextColor:[UIColor whiteColor]];
@@ -570,8 +574,7 @@
     
     //更新状态,必须在处理登录判定后
     [self refreshIntoCameraBtnState];
-    
-    
+
 }
 
 
@@ -670,8 +673,11 @@
 
         NSLog(@"今天未得到过光的奖励,  相机提醒！");
         _intoCameraBtn.alpha = 1.0;
-        [self endAnimationStartIntoCamera];
-        [self animationStartIntoCamera];
+        if (guidInfo.guidIntoCamera_waitForTouch) {
+            //引导完成之前，不启动提示
+            [self endIndicationTouch];
+            [self startIndicationTouch:_intoCameraBtn.center];
+        }
         [_intoCameraBtn setImage:[CommonObject getUsedCameraImageNameByTime:YES] forState:UIControlStateNormal];
         
 
@@ -690,7 +696,7 @@
         
         NSLog(@"今天已得到过光的奖励！");
         _intoCameraBtn.alpha = 0.6;
-        [self endAnimationStartIntoCamera];
+        [self endIndicationTouch];
         [_intoCameraBtn setImage:[CommonObject getUsedCameraImageNameByTime:NO] forState:UIControlStateNormal];
 
 //
@@ -708,17 +714,7 @@
 
     
 }
-- (void)moveIntoCameraBtnAnimationDisStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *) contextImage
-{
-    if ([animationID isEqualToString:@"MoveCameraToSunMoon"]) {
-        [self animationStartIntoCamera];
-    }
-    
-    if ([animationID isEqualToString:@"MoveCameraToSide"]) {
-        [self endAnimationStartIntoCamera];
-    }
-    
-}
+
 
 #pragma mark - 更新精灵个数显示状态
 /**
@@ -749,9 +745,9 @@
         if (currentSpiriteCount > spiritCountlabel.text.integerValue) {
             //闪烁提示数字变化
             [self animationSpiriteCountInHeaderChanged];
-            spiritCountlabel.text = [NSString stringWithFormat:@"%lu", currentSpiriteCount];
-            //[self showCustomDelayAlertBottom:[NSString stringWithFormat:NSLocalizedString(@"newCallSpiriteAlert", @""), currentSpiriteCount, [CommonObject getLightCharactorByTime]]];
             [self showCustomYesAlertSuperView:[NSString stringWithFormat:NSLocalizedString(@"newCallSpiriteAlert", @""), currentSpiriteCount, [CommonObject getLightCharactorByTime]] AlertKey:@"newCallSpiriteAlert"];
+            spiritCountlabel.text = [NSString stringWithFormat:@"%lu", currentSpiriteCount];
+
         }
     }
     
@@ -947,11 +943,11 @@
 
 
 #pragma mark - 相机按钮动画
--(void) animationStartIntoCamera
+-(void) startIndicationTouch:(CGPoint) aniPoint
 {
   
     self.halo = [PulsingHaloLayer layer];
-    self.halo.position = _intoCameraBtn.center;
+    self.halo.position = aniPoint;
     self.halo.radius = 0.7 * kMaxRadius;
     self.halo.eerepeatCount = HUGE_VAL;
     self.halo.backgroundColor = [CommonObject getIndicationColorByTime].CGColor;
@@ -960,7 +956,7 @@
     
 }
 
--(void)endAnimationStartIntoCamera
+-(void)endIndicationTouch
 {    
     [self.halo removeFromSuperlayer];
  
@@ -1089,8 +1085,11 @@
  */
 - (IBAction)screenShare:(id)sender
 {
-
- 
+    //test
+//[self showCustomYesAlertSuperView:@"今天连续登录\n奖励一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN];
+    [self addGuidTouchAnimationAtPoint:_intoCameraBtn.center withAniKey:KEY_ANIMATION_GUID_TOUCH_CAMEREA];
+    //[self addPanLightToSkyGuidAnimationFrom:_userHeaderImageView.center toEnd:_skySunorMoonImage.center withAniKey:KEY_ANIMATION_GUID_PAN_LIGHT_TO_SKY duration:1.0];
+ /*
     ShareByShareSDR* share = [ShareByShareSDR alloc];
     share.shareTitle = NSLocalizedString(@"appName", @"");
     share.shareImage =[CommonObject screenShot:self.view];
@@ -1102,7 +1101,7 @@
     
     [share shareImageNews];
 
-    
+    */
 }
 
 //delegate
@@ -1121,7 +1120,7 @@
     [indicator stopAnimating];
     [indicator removeFromSuperview];
     
-    [self showCustomYesAlertSuperView:@"取消分享" AlertKey:@"shareCancel"];
+    [self showCustomDelayAlertBottom:@"取消分享"];
 }
 
 -(void) ShareReturnSucc
@@ -1130,7 +1129,8 @@
     [indicator stopAnimating];
     [indicator removeFromSuperview];
     
-    [self showCustomYesAlertSuperView:@"分享成功" AlertKey:@"shareSucc"];
+    [self showCustomDelayAlertBottom:@"分享成功"];
+
     
 }
 
@@ -1139,10 +1139,15 @@
     [indicator stopAnimating];
     [indicator removeFromSuperview];
     
-    [self showCustomYesAlertSuperView:@"分享失败，请检查网络" AlertKey:@"shareFailed"];
+    [self showCustomDelayAlertBottom:@"分享失败，请检查网络"];
+
 }
 
 - (IBAction)intoCamera:(id)sender {
+    
+    //如有引导提示，删除
+    [self.haloToReminber removeFromSuperlayer];
+    [guidTouchIntoCameraAni removeAniLayer];
     
     
     //先判断照片是否超限
@@ -1238,6 +1243,10 @@
             if(guidInfo.guidPanToBring_waitForPan && guidInfo.guidStepNumber > guidStep_mainView_End)return;
             break;
             
+        case guidGet_spirite_count:
+            if(guidInfo.guidGet_spirite_count && guidInfo.guidStepNumber > guidStep_mainView_End)return;
+            break;
+            
         case guidStep_guidIntoCamera:
             if(guidInfo.guidIntoCamera && guidInfo.guidStepNumber > guidStep_mainView_End)return;
             break;
@@ -1320,7 +1329,8 @@
          
          
          //增加拖动指示
-         [guidInfo AddTouchIndication:self.view TouchImageName:@"拖动手势.png" TouchFrame:self.view.frame];
+         guidPanToSkyAni = [self addPanLightToSkyGuidAnimationFrom:_userHeaderImageView.center toEnd:_skySunorMoonImage.center withAniKey:KEY_ANIMATION_GUID_PAN_LIGHT_TO_SKY duration:1.5];
+             
          
          //打开self.view的拖动，点OK后打开
          //panSunOrMoonGusture.enabled = YES;
@@ -1329,18 +1339,41 @@
          [guidInfo setGuidPanToBring_waitForPan:YES];
          }
          break;
+         case guidGet_spirite_count:
+         {
+             [guidInfo setGuidStepNumber:guid_oneByOne];
+             [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
+             [guidPanToSkyAni removeAniLayer];
+
+             //增加精灵数提示
+             self.haloToReminber = [PulsingHaloLayer layer];
+             self.haloToReminber.position = spiritCountlabel.center;
+             self.haloToReminber.radius = 0.6 * kMaxRadius;
+             self.haloToReminber.animationDuration = 0.8;
+             self.haloToReminber.pulseInterval = 0.8;
+             self.haloToReminber.eerepeatCount = HUGE_VAL;
+             self.haloToReminber.backgroundColor = [CommonObject getIndicationColorByTime].CGColor;
+             [self.view.layer addSublayer:self.haloToReminber];
+             
+             NSString* temp = [NSString stringWithFormat:NSLocalizedString(@"reminderHowToGetSpirite", @""),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+             [self showCustomYesAlertSuperView:temp AlertKey:KEY_REMINDER_HOW_TO_GET_SPIRITE];
+             
+             [guidInfo setGuidGet_spirite_count:YES];
+             
+         }
+             break;
          case guidStep_guidIntoCamera:
          {
          [guidInfo setGuidStepNumber:guid_oneByOne];
          
          //禁止所有动作
          [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
+             
+          guidTouchIntoCameraAni = [self addGuidTouchAnimationAtPoint:_intoCameraBtn.center withAniKey:KEY_ANIMATION_GUID_TOUCH_CAMEREA];
          
          NSString* temp = [NSString stringWithFormat:@"进入相机\n大声说出你的%@光宣言",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
          [self showCustomYesAlertSuperView:temp AlertKey:KEY_REMINDER_GETINTO_CAMERA];
-         
-         [guidInfo RemoveTouchIndication];
-         
+             
          [guidInfo setGuidIntoCamera:YES];
          
          }
@@ -1350,8 +1383,15 @@
          [guidInfo setGuidStepNumber:guid_oneByOne];
          
          [self DisableUserInteractionInView:self.view exceptViewWithTag:TAG_INTO_CAMERA_BTN];
-         
-         [guidInfo AddTouchIndication:self.view TouchImageName:@"点击手势.png" TouchFrame:_intoCameraBtn.frame];
+
+         self.haloToReminber = [PulsingHaloLayer layer];
+         self.haloToReminber.position = _intoCameraBtn.center;
+         self.haloToReminber.radius = 0.8 * kMaxRadius;
+         self.haloToReminber.animationDuration = 0.8;
+         self.haloToReminber.pulseInterval = 0.8;
+         self.haloToReminber.eerepeatCount = HUGE_VAL;
+         self.haloToReminber.backgroundColor = [CommonObject getIndicationColorByTime].CGColor;
+         [self.view.layer addSublayer:self.haloToReminber];
          
          [guidInfo setGuidIntoCamera_waitForTouch:YES];
          
@@ -1361,7 +1401,6 @@
          {
          [guidInfo setGuidStepNumber:guid_oneByOne];
          
-         [guidInfo RemoveTouchIndication];
          
          //主界面引导结束,打开所有的
          [self EnableUserInteractionInView:self.view];
@@ -1383,169 +1422,100 @@
      }
      
 
-    /*
     
-    //找到未执行的一步开始执行
-    if (!guidInfo.guidStart)
-    {
-        guidNeedNum = guid_Start;
-        
-    }else if (!guidInfo.guidFinishIntroStartFirstOpen)
-    {
-        guidNeedNum = guid_finishIntro_Start_firstOpen;
+}
 
-    }else if (!guidInfo.guidFirstlyGiveLight)
-    {
-        guidNeedNum = giudStep_guidFirstlyGiveLight;
-        
-    }else if (!guidInfo.guidPanToBring)
-    {
-        guidNeedNum = giudStep_guidPanToBring;
-        
-    }else if (!guidInfo.guidPanToBring_waitForPan)
-    {
-        guidNeedNum = giudStep_guidPanToBring_waitForPan;
-        
-    }else if (!guidInfo.guidIntoCamera)
-    {
-        guidNeedNum = guidStep_guidIntoCamera;
-        
-    }else if (!guidInfo.guidIntoCamera_waitForTouch)
-    {
-        guidNeedNum = guidStep_guidIntoCamera_waitForTouch;
-        
-    }else if (!guidInfo.mainView_End)
-    {
-        guidNeedNum = guidStep_mainView_End;
-        
-    }
+-(CustomAnimation*) addPanLightToSkyGuidAnimationFrom:(CGPoint) start toEnd:(CGPoint)end withAniKey:(NSString*)aniKey duration:(CGFloat) duration
+{
+    
+    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimation];
+    
+    //计算此精灵的最终位置
+    CGPoint startPoint =start;
+    CGPoint endPoint =end;
+    //计算此精灵的最终大小
+    CGSize  startSize = CGSizeMake(SCREEN_WIDTH/3, SCREEN_WIDTH/3);
+    CGSize endSize = startSize;
+    
+    [customAnimation setAniBazierCenterPoint1:CGPointMake(self.view.center.x+30, self.view.center.y)];
+    
+    UIImageView* srcView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"touch.png"]];
+    srcView.frame = CGRectMake(0, 0, 0, 0);
+    [self.view addSubview:srcView];
+    
+    NSDictionary* srcViewDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                srcView, KEY_ANIMATION_VIEW,
+                                [NSNumber numberWithInteger:(LightType)guidImageTouch], KEY_ANIMATION_LIGHT_TYPE,nil];
     
     
-    //执行当前步
-    switch (guidNeedNum) {
-        case guid_Start:
-        {
-            [guidInfo setGuidStepNumber:guid_oneByOne];
-            //起动滑动引导
-            [self showIntroWithCrossDissolve];
-            
-            [guidInfo setGuidStart:YES];
-        }
-            
-            break;
-        case guid_finishIntro_Start_firstOpen:
-        {
-            [guidInfo setGuidStepNumber:guid_oneByOne];
-            
-            //第一打开界面
-            [self whenFirstlyOpenViewHandle];
-            
-            [guidInfo setGuidFinishIntroStartFirstOpen:YES];
-            
-        }
-            break;
-        case giudStep_guidFirstlyGiveLight:
-        {
-            [guidInfo setGuidStepNumber:guid_oneByOne];
-            
-            [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
-            
-            NSString* temp = [NSString stringWithFormat:@"首次登录\n奖励一个%@光\n",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-            [self showCustomYesAlertSuperView:temp AlertKey:KEY_IS_GIVE_FIRST_LIGHT];
-            
-            [guidInfo setGuidFirstlyGiveLight:YES];
-            
-        }
-            break;
-            
-        case giudStep_guidPanToBring:
-        {
-            [guidInfo setGuidStepNumber:guid_oneByOne];
-            
-            //禁止所有动作
-            [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
-            
-            NSString* alTemp = [NSString stringWithFormat:(@"拖回%@光\n%d小时养成1个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月",BRING_UP_LIGHT_HOUR,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-            [self showCustomYesAlertSuperView:alTemp AlertKey:KEY_REMINDER_PAN_FOR_LIGHT];
-            
-            [guidInfo setGuidPanToBring:YES];
-            
-            
-        }
-            break;
-        case giudStep_guidPanToBring_waitForPan:
-        {
-            [guidInfo setGuidStepNumber:guid_oneByOne];
-            
-            //禁止除拖动以外的所有动作(点OK时，会再次被打开,故需再一次)
-            [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
-            
-            
-            //增加拖动指示
-            [guidInfo AddTouchIndication:self.view TouchImageName:@"拖动手势.png" TouchFrame:self.view.frame];
-            
-            //打开self.view的拖动，点OK后打开
-            //panSunOrMoonGusture.enabled = YES;
-            [self.view addGestureRecognizer:panSunOrMoonGusture];
-            
-            [guidInfo setGuidPanToBring_waitForPan:YES];
-        }
-            break;
-        case guidStep_guidIntoCamera:
-        {
-            [guidInfo setGuidStepNumber:guid_oneByOne];
-            
-            //禁止所有动作
-            [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
-            
-            NSString* temp = [NSString stringWithFormat:@"进入相机\n大声说出你的%@光宣言",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-            [self showCustomYesAlertSuperView:temp AlertKey:KEY_REMINDER_GETINTO_CAMERA];
-            
-            [guidInfo RemoveTouchIndication];
-            
-            [guidInfo setGuidIntoCamera:YES];
-            
-        }
-            break;
-        case guidStep_guidIntoCamera_waitForTouch:
-        {
-            [guidInfo setGuidStepNumber:guid_oneByOne];
-            
-            [self DisableUserInteractionInView:self.view exceptViewWithTag:TAG_INTO_CAMERA_BTN];
-            
-            [guidInfo AddTouchIndication:self.view TouchImageName:@"点击手势.png" TouchFrame:_intoCameraBtn.frame];
-            
-            [guidInfo setGuidIntoCamera_waitForTouch:YES];
-            
-        }
-            break;
-        case guidStep_mainView_End:
-        {
-            [guidInfo setGuidStepNumber:guid_oneByOne];
-            
-            [guidInfo RemoveTouchIndication];
-            
-            //主界面引导结束,打开所有的
-            [self EnableUserInteractionInView:self.view];
-            
-            [guidInfo setMainView_End:YES];
-            
-        }
-        default:
-            break;
-            
-    }
+    [customAnimation setAniType:BEZIER_ANI_TYPE];
+    [customAnimation setAniImageViewDic:srcViewDic];
+    [customAnimation setBkLayer:self.view.layer];
+    [customAnimation setAniStartPoint:startPoint];
+    [customAnimation setAniEndpoint:endPoint];
+    [customAnimation setAniStartSize:startSize];
+    [customAnimation setAniEndSize:endSize];
+    [customAnimation setCustomAniDelegate:self];
+    [customAnimation setAnikey:aniKey];
+    [customAnimation setAniRepeatCount:HUGE_VAL];
+    [customAnimation setAniDuration:duration];
     
-    if (guidInfo.guidStepNumber > guidStep_mainView_End) {
-        //主界面引导结束,打开所有的
-        [self EnableUserInteractionInView:self.view];
-    }
-
-  */
+    [customAnimation startCustomAnimation];
+    
+    return customAnimation;
     
 }
 
 
+-(CustomAnimation*) addGuidTouchAnimationAtPoint:(CGPoint)touchPoint  withAniKey:(NSString*)aniKey
+{
+    
+    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimation];
+    
+    //计算此精灵的最终位置
+    CGPoint startPoint =touchPoint;
+    CGPoint endPoint =touchPoint;
+    CGSize  startSize = CGSizeMake(SCREEN_WIDTH/3, SCREEN_WIDTH/3);
+    CGSize endSize = startSize;
+    
+    [customAnimation setAniBazierCenterPoint1:touchPoint];
+    
+    UIImageView* srcView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"touch.png"]];
+    srcView.frame = CGRectMake(0, 0, 0, 0);
+    [self.view addSubview:srcView];
+    
+    NSDictionary* srcViewDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                srcView, KEY_ANIMATION_VIEW,
+                                [NSNumber numberWithInteger:(GuidImageType)guidImageTouch], KEY_ANIMATION_LIGHT_TYPE,nil];
+    
+    
+    [customAnimation setAniType:BEZIER_ANI_TYPE];
+    [customAnimation setAniImageViewDic:srcViewDic];
+    [customAnimation setBkLayer:self.view.layer];
+    [customAnimation setAniStartPoint:startPoint];
+    [customAnimation setAniEndpoint:endPoint];
+    [customAnimation setAniStartSize:startSize];
+    [customAnimation setAniEndSize:endSize];
+    [customAnimation setCustomAniDelegate:self];
+    [customAnimation setAnikey:aniKey];
+    [customAnimation setAniRepeatCount:HUGE_VAL];
+    [customAnimation setAniDuration:1];
+    
+    [customAnimation setAniImageFrameCount:2];
+    [customAnimation setAniImageArrayType:guidImageTouch];
+    [customAnimation displayLinkAnimationEnable];
+    
+    [customAnimation startCustomAnimation];
+    
+    return customAnimation;
+    
+}
+
+-(void)removePanLightToSkyGuidAnimation
+{
+    
+    
+}
 
 #pragma mark - userInterFace Disable, Enable
 -(void)DisableUserInteractionInView:(UIView *)superView exceptViewWithTag:(NSInteger)enableViewTag
@@ -1642,10 +1612,10 @@
         giveLingtCout = [[imageFilterData objectForKey:CAMERA_LIGHT_COUNT] integerValue];
         
         if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-            [self showCustomYesAlertSuperView:@"完成阳光自拍，奖励一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA];
+            [self showCustomYesAlertSuperView:@"完成阳光自拍\n奖励一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA];
         }else
         {
-            [self showCustomYesAlertSuperView:@"完成月光自拍，奖励一个月光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA];
+            [self showCustomYesAlertSuperView:@"完成月光自拍\n奖励一个月光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA];
         }
 
 
@@ -2241,8 +2211,6 @@
     [customAnimation displayLinkAnimationEnable];
     
     [customAnimation startCustomAnimation];
-    
-    NSLog(@"Animation out, key =%@",aniKey);
 
     
 }
@@ -2853,14 +2821,16 @@
         if (srcView == ((UIImageView*)swimOutBaselightImageViewArray.lastObject)) {
             //最后一个动画完成
             [self EnableUserInteractionInView:self.view];
+
+            //判断是否要起动：guidGet_spirite_count
+            [self HandleGuidProcess:guidGet_spirite_count];
         }
         
         [self animationLightSwimAround:srcViewDic];
         
         [self arraiveToSkyIndication:srcView.center upView:srcView];
         
-        //判断是否要起动：guidStep_guidIntoCamera
-        [self HandleGuidProcess:guidStep_guidIntoCamera];
+
         
     }
     
@@ -3177,9 +3147,9 @@
 -(void)caculateLightTypeAndCountByCount:(NSInteger) count
 {
     //test
-    count = 245;
-    self.userInfo.sun_value = @"245";
-    self.userInfo.moon_value = @"245";
+    count = 25*5+23;
+    self.userInfo.sun_value = @"243";
+    self.userInfo.moon_value = @"243";
     
     //计算精灵个数,25个光生成1个精灵
     NSInteger spiCount = count/25;
@@ -4742,8 +4712,8 @@
     [customAlertAutoDisYes setStartAlpha:0.1];
     [customAlertAutoDisYes setEndAlpha:1.0];
     [customAlertAutoDisYes setStartHeight:0];
-    [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*4];
-    [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*4];
+    [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
     [customAlertAutoDisYes setDelayDisappearTime:5.0];
     [customAlertAutoDisYes setMsgFrontSize:35];
@@ -4814,6 +4784,21 @@
         
         
     }
+    
+    if ([alertKey isEqualToString:KEY_REMINDER_HOW_TO_GET_SPIRITE]) {
+        
+        [self EnableUserInteractionInView:self.view];
+        
+        //判断是否要起动：guidStep_guidIntoCamera
+        //[guidInfo RemoveTouchIndication];
+        [self.haloToReminber removeFromSuperlayer];
+
+        [self HandleGuidProcess:guidStep_guidIntoCamera];
+        
+        
+    }
+    
+    
     //从相机奖励，或， 连续登录奖励，刷新光状态
     if ([alertKey isEqualToString:KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA] ||
         [alertKey isEqualToString:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN]) {
@@ -5366,5 +5351,7 @@
      
      */
 }
+
+
 
 @end

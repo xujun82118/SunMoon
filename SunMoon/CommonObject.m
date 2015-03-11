@@ -321,6 +321,27 @@
 
 }
 
++(NSString*) getImageNameByAniArrayImageType:(NSInteger) aniType
+{
+    
+    switch (aniType) {
+        case guidImageTouch:
+            return @"touch";
+            break;
+            
+        case guidImageMove:
+            return @"touch";
+            break;
+            
+        default:
+            break;
+    }
+    
+    
+    return @"guid-touch";
+    
+}
+
 
 +(UIImage*)getSkyBkImageByTime
 {

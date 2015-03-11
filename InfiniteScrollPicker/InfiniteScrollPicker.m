@@ -117,7 +117,8 @@
         
         dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         dispatch_async(queue, ^ {
-            [self reloadView:viewMiddle-10];
+            [self reloadView:viewMiddle-10];//test
+            //[self reloadView:viewMiddle-100];
             dispatch_async(dispatch_get_main_queue(), ^ {
                 [self snapToAnEmotion];
             });
@@ -401,7 +402,8 @@
     
     float biggestViewX = biggestView.frame.origin.x + biggestView.frame.size.width/2 - self.frame.size.width/2;
     float dX = self.contentOffset.x - biggestViewX;
-    float newX = self.contentOffset.x - dX/1.4;
+    //float newX = self.contentOffset.x - dX/1.4;//test
+    float newX = self.contentOffset.x - dX/0.9;//xj:调此参数移动中间
     
     // Disable scrolling when snapping to new location
     dispatch_queue_t queue = dispatch_get_main_queue();

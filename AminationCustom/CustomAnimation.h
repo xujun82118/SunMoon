@@ -93,14 +93,18 @@ typedef enum
 
 
 /**
- *  动画资源加载
+ *  精灵动画资源加载
  */
 @property (nonatomic, strong) NSMutableArray *sipiriteArray; //精灵动画组
 @property (nonatomic, ) LightType sipiriteAnimationType; //精灵类型
+
+
 /**
- *  动画资源加载后，开始动画始终
+ 通用动画资源加载
  */
--(void) contentAnimationEnable;
+@property (nonatomic, strong) NSMutableArray *aniImageArray;
+@property (nonatomic, assign) NSInteger aniImageArrayType;
+@property (nonatomic, assign) NSInteger aniImageFrameCount;
 
 
 
@@ -110,6 +114,8 @@ typedef enum
 -(void) startCustomAnimation;
 
 -(void) lineCustomAnimation;
+
+-(void) removeAniLayer;
 
 
 @end

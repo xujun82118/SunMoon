@@ -24,6 +24,7 @@
 @synthesize guidFirstlyGiveLight=_guidFirstlyGiveLight;
 @synthesize guidPanToBring=_guidPanToBring;
 @synthesize guidPanToBring_waitForPan=_guidPanToBring_waitForPan;
+@synthesize guidGet_spirite_count=_guidGet_spirite_count;
 @synthesize guidIntoCamera=_guidIntoCamera;
 @synthesize guidIntoCamera_waitForTouch=_guidIntoCamera_waitForTouch;
 @synthesize mainView_End=_mainView_End;
@@ -179,6 +180,22 @@ static GuidController *sharedGuidCtl;
     
 }
 
+- (BOOL)guidGet_spirite_count {
+    
+    return [_guidInfo boolForKey:KEY_GUID_guidGet_spirite_count];
+    
+}
+
+-(void) setGuidGet_spirite_count:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_guidGet_spirite_count];
+    [_guidInfo synchronize];
+    
+    _guidGet_spirite_count = isGuid;
+    
+    
+}
+
 
 - (BOOL)guidIntoCamera {
     
@@ -285,7 +302,7 @@ static GuidController *sharedGuidCtl;
 {
     superView = intoSuperView;
     
-    CGFloat bigger = 25;
+    CGFloat bigger = 60;
     
     CGRect biggerFrame = CGRectMake(touchedFrame.origin.x-bigger, touchedFrame.origin.y-bigger, touchedFrame.size.width+bigger*2, touchedFrame.size.height+bigger*2);
     if (!touchView) {

@@ -73,6 +73,7 @@
 @property (nonatomic, strong) PulsingHaloLayer *haloTouch;
 @property (nonatomic, assign) PulsingHaloLayer *haloToHeader;
 @property (nonatomic, assign) PulsingHaloLayer *haloToSky;
+@property (nonatomic, assign) PulsingHaloLayer *haloToReminber;
 
 
 

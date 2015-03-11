@@ -1392,7 +1392,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
 -(void) showCustomYesAlertSuperView:(NSString*) msg AlertKey:alertKey
 {
     
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet AlertKey:alertKey];
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
     [customAlertAutoDisYes setStartCenterPoint:self.view.center];
     [customAlertAutoDisYes setEndCenterPoint:self.view.center];
     [customAlertAutoDisYes setStartAlpha:0.1];
@@ -1402,7 +1402,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
     [customAlertAutoDisYes setDelayDisappearTime:5.0];
-    [customAlertAutoDisYes setMsgFrontSize:45];
+    [customAlertAutoDisYes setMsgFrontSize:35];
     [customAlertAutoDisYes setAlertMsg:msg];
     [customAlertAutoDisYes setCustomAlertDelegate:self];
     [customAlertAutoDisYes RunCumstomAlert];

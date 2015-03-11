@@ -12,8 +12,10 @@
 #define KEY_GUID_START  @"guidStart" //引导用户点击拍照
 #define KEY_GUID_finishIntro_Start_firstOpen @"GUID_finishIntro_Start_firstOpen"
 #define KEY_GUID_giudStep_guidFirstlyGiveLight @"GUID_giudStep_guidFirstlyGiveLight"
+#define KEY_GUID_guidGet_spirite_count  @"GUID_guidGet_spirite_count"
 #define KEY_GUID_giudStep_guidPanToBring @"GUID_giudStep_guidPanToBring"
 #define KEY_GUID_guidPanToBring_waitForPan @"GUID_guidPanToBring_waitForPan"
+#define KEY_GUID_guidGet_spirite_count  @"GUID_guidGet_spirite_count"
 #define KEY_GUID_guidIntoCamera @"GUID_guidIntoCamera"
 #define KEY_GUID_guidIntoCamera_waitForTouch @"GUID_guidIntoCamera_waitForTouch"
 #define KEY_GUID_mainView_End @"GUID_mainView_End"
@@ -35,6 +37,7 @@ typedef enum
     giudStep_guidFirstlyGiveLight,
     giudStep_guidPanToBring,
     giudStep_guidPanToBring_waitForPan,
+    guidGet_spirite_count,
     guidStep_guidIntoCamera,
     guidStep_guidIntoCamera_waitForTouch,
     guidStep_mainView_End,
@@ -59,6 +62,7 @@ typedef enum
 @property(nonatomic) BOOL  guidFirstlyGiveLight;
 @property(nonatomic) BOOL  guidPanToBring;
 @property(nonatomic) BOOL  guidPanToBring_waitForPan;
+@property(nonatomic) BOOL  guidGet_spirite_count;
 @property(nonatomic) BOOL  guidIntoCamera;
 @property(nonatomic) BOOL  guidIntoCamera_waitForTouch;
 @property(nonatomic) BOOL  mainView_End;

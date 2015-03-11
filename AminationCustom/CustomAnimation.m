@@ -37,6 +37,7 @@
 
 @synthesize sipiriteArray=_sipiriteArray;
 @synthesize sipiriteAnimationType=_sipiriteAnimationType;
+@synthesize aniImageArray=_aniImageArray;
 
 @synthesize displayLink=_displayLink;
 @synthesize displayLinkEnable=_displayLinkEnable;
@@ -384,6 +385,24 @@
     
 }
 
+-(void) setAniImageArrayType:(NSInteger) aniType
+{
+    _aniImageArrayType = aniType;
+    _aniImageArray=[NSMutableArray arrayWithCapacity:0];
+    //默认为2个动画片段
+    for (int i=0; i<_aniImageFrameCount; i++) {
+        
+        NSString* typeName = [CommonObject getImageNameByAniArrayImageType:_aniImageArrayType];
+        NSString *name=[NSString stringWithFormat:@"%@-%d",typeName,i];
+        UIImage *image=[UIImage imageNamed:name];
+        
+        NSAssert(image, @"GET image failed!, image name = %@", name);
+        
+        [_aniImageArray addObject:image];
+    }
+    
+}
+
 -(void) displayLinkAnimationEnable
 {
     //添加时钟对象到主运行循环
@@ -397,13 +416,27 @@
 -(void)step{
     //定义一个变量记录执行次数
     static int s=0;
-    NSInteger imageCount = _sipiriteArray.count;
-    //每秒执行6次
-    if (++s%4==0) {
-        UIImage *image=_sipiriteArray[_index];
-        _aniLayer.contents=(id)image.CGImage;//更新图片
-        _index=(_index+1)%imageCount;
+    if (_sipiriteArray &&_sipiriteArray.count != 0) {
+        NSInteger imageCount = _sipiriteArray.count;
+        //每秒执行6次
+        if (++s%4==0) {
+            UIImage *image=_sipiriteArray[_index];
+            _aniLayer.contents=(id)image.CGImage;//更新图片
+            _index=(_index+1)%imageCount;
+        }
     }
+    
+    if (_aniImageArray &&_aniImageArray.count != 0) {
+        NSInteger imageCount = _aniImageArray.count;
+        //每秒执行6次
+        if (++s%60==0) {
+            UIImage *image=_aniImageArray[_index];
+            _aniLayer.contents=(id)image.CGImage;//更新图片
+            _index=(_index+1)%imageCount;
+        }
+    }
+    
+
 }
 
 #pragma mark - 动画层，及原动画图片设置
@@ -411,6 +444,8 @@
 -(void) removeAniLayer
 {
     [_aniLayer removeFromSuperlayer];
+    _aniImageView.hidden = YES;
+
 }
 
 -(void) addAniLayer

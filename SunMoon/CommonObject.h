@@ -105,6 +105,16 @@ typedef enum
     
 }LightType;
 
+/**
+ 引导所用图片的类型
+ */
+typedef enum
+{
+    guidImageTouch,
+    guidImageMove,
+    
+}GuidImageType;
+
 //云同步同容等级
 //0：同步阳光月光值
 //1: 同步值与语录
@@ -308,7 +318,7 @@ typedef enum
 #define KEY_REMINDER_GIVE_LIGHT_FROM_PAN_TO_USERHEADER        @"reminderGiveLight_from_Pan_to_userheader"//拖动回头像，触发光的奖励(未用到，走的其它召回流程)
 #define KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN        @"reminderGiveLight_from_Continue_login"//连续登录，触发光的奖励
 #define KEY_REMINDER_GIVE_LIGHT_BUT_TIME_ERROR        @"reminderGiveLight_but_error_time"//时间倒序，什么也不做
-
+#define KEY_REMINDER_HOW_TO_GET_SPIRITE        @"reminderHowToGiveSpirite"//提示如何召唤精灵
 
 
 
@@ -342,6 +352,11 @@ typedef enum
 //精灵touch飞行动画
 #define KEY_ANIMATION_SPIRITE_FLY_TRACE_TOUCH  @"animation_spirte_fly_trace_touch"
 #define KEY_ANIMATION_SPIRITE_FLY_AUTO  @"animation_spirte_fly_AUTO"
+
+
+//引导动画KEY
+#define KEY_ANIMATION_GUID_PAN_LIGHT_TO_SKY  @"animation_guid_pan_to_sky"
+#define KEY_ANIMATION_GUID_TOUCH_CAMEREA  @"animation_guid_touch_camera"
 
 
 #define FULL_SKY_LIGHT_COUNT  25
@@ -414,6 +429,7 @@ typedef enum
 +(UIImage*) getBaseLightImageByTime;
 +(LightType) getSpiriteTypeByTime;
 +(UIImage*) getSunOrMooonImageByTime;
++(NSString*) getImageNameByAniArrayImageType:(NSInteger) aniType;
 
 +(UIImage*)getSkyBkImageByTime;
 +(UIImage*)getSunMoonImageByTime;
