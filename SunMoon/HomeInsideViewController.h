@@ -35,7 +35,7 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView * bkGroundImageView;
 @property (weak, nonatomic) IBOutlet UIImageView * sunMoonScrollImageView;
-@property (nonatomic, assign) IBOutlet UIButton *sunMoonCenter;
+@property (weak, nonatomic) IBOutlet UIButton *sunMoonCenter;
 
 
 
@@ -55,6 +55,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *editeMoonWordBtn;
 
 
+@property (weak, nonatomic) IBOutlet UIButton *deleteImageBtn;
 
 
 @property (weak, nonatomic) IBOutlet UILabel *sunMoonWordShow;

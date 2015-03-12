@@ -8,14 +8,18 @@
 
 #import "UserSetViewController.h"
 #import "NavBar.h"
-#import "CustomIndicatorView.h"
 
 
 @interface UserSetViewController ()
 {
     
-    CustomIndicatorView *indicator;
     CustomAlertView* customAlertAutoDisYes;
+    CustomAlertView* customAlertAutoDis;
+    
+    MONActivityIndicatorView *indicatorView;
+    
+    NSString* userDir;
+
 
 }
 
@@ -93,10 +97,13 @@
         }
     }
     
-    NSArray *authList = [NSArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()]];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    userDir= [paths objectAtIndex:0];
+    
+    NSArray *authList = [NSArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir]];
     if (authList == nil)
     {
-        [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()] atomically:YES];
+        [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir] atomically:YES];
     }
     else
     {
@@ -114,9 +121,30 @@
         }
     }
 
+    
+    //初始化指示器
+    indicatorView = [[MONActivityIndicatorView alloc] init];
+    indicatorView.delegate = self;
+    indicatorView.numberOfCircles = 4;
+    indicatorView.radius = SCREEN_WIDTH/50;
+    indicatorView.internalSpacing = 4;
+    indicatorView.center = CGPointMake(self.view.center.x, self.view.center.y - CUSTOM_ALERT_HEIGHT/2 - indicatorView.radius/2 - 10);
+    [self.view addSubview:indicatorView];
 
 }
 
+#pragma mark - MONActivityIndicatorViewDelegate Methods
+
+- (UIColor *)activityIndicatorView:(MONActivityIndicatorView *)activityIndicatorView
+      circleBackgroundColorAtIndex:(NSUInteger)index {
+    
+    
+    CGFloat red   = (arc4random() % 256)/255.0;
+    CGFloat green = (arc4random() % 256)/255.0;
+    CGFloat blue  = (arc4random() % 256)/255.0;
+    CGFloat alpha = 1.0f;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+}
 
 -(void) setTableHeaderView
 {
@@ -404,7 +432,7 @@
         //查看网络
         NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
         if (typeNet == netNon) {
-            [CommonObject showAlert:@"请检查网络" titleMsg:nil DelegateObject:self];
+            [self showCustomYesAlertSuperView:@"请检查网络" AlertKey:@"netFailed"];
             return;
         }
         
@@ -418,11 +446,12 @@
         //查看网络
         NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
         if (typeNet == netNon) {
-            [CommonObject showAlert:@"请检查网络" titleMsg:nil DelegateObject:self];
+            [self showCustomYesAlertSuperView:@"请检查网络" AlertKey:@"netFailed"];
             return;
         }
         
-        [CommonObject showAlert:@"你的任何意见，我们都无比重视" titleMsg:@"用户关怀" DelegateObject:self];
+        [CommonObject showAlert:@"你的任何意见\n我们都无比重视" titleMsg:@"用户关怀" DelegateObject:self];
+        //[self showCustomYesAlertSuperView:@"你的任何意见\n我们都无比重视" AlertKey:@"customeCare"];
         
         
         ShareByShareSDR* share = [ShareByShareSDR alloc];
@@ -444,45 +473,42 @@
 //shareSDK delegate
 -(void) ShareStart
 {
-    //初始化指示器
-    NSInteger indiW = 50;
-    NSInteger indiH = 50;
-    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
-    [indicator startAnimating];
-    [self.view addSubview:indicator];
+    [indicatorView startAnimating];
 }
 
 -(void) ShareCancel
 {
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
+    [indicatorView stopAnimating];
 
-    [self showCustomYesAlertSuperView:@"取消联系" AlertKey:@"shareCancel"];
+    [self showCustomDelayAlertBottom:@"取消联系"];
+
 }
 
 -(void) ShareReturnSucc
 {
 
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
+    [indicatorView stopAnimating];
 
-    [self showCustomYesAlertSuperView:@"联系成功" AlertKey:@"shareSucc"];
+
+    [self showCustomDelayAlertBottom:@"联系成功"];
+
 
 }
 
 -(void) ShareReturnFailed
 {
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
+    [indicatorView stopAnimating];
 
-    [self showCustomYesAlertSuperView:@"联系失败，请检查网络" AlertKey:@"shareFailed"];
+
+    [self showCustomYesAlertSuperView:@"联系失败\n请检查网络" AlertKey:@"shareFailed"];
 }
 
 #pragma mark - Customer alert
 -(void) showCustomYesAlertSuperView:(NSString*) msg  AlertKey:(NSString*) alertKey
 {
 
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
+    
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"OK.png" posionShowMode:userSet  AlertKey:alertKey];
     [customAlertAutoDisYes setStartCenterPoint:self.view.center];
     [customAlertAutoDisYes setEndCenterPoint:self.view.center];
     [customAlertAutoDisYes setStartAlpha:0.1];
@@ -491,7 +517,7 @@
     [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
-    [customAlertAutoDisYes setDelayDisappearTime:5.0];
+    [customAlertAutoDisYes setDelayDisappearTime:4.0];
     [customAlertAutoDisYes setMsgFrontSize:35];
     [customAlertAutoDisYes setAlertMsg:msg];
     [customAlertAutoDisYes setCustomAlertDelegate:self];
@@ -499,11 +525,29 @@
 
 }
 
+-(void) showCustomDelayAlertBottom:(NSString*) msg
+{
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getDelayBkByTime]  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
+    [customAlertAutoDis setStartHeight:0];
+    [customAlertAutoDis setStartWidth:SCREEN_WIDTH/5*4];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*4];
+    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth*216/547];
+    [customAlertAutoDis setStartCenterPoint:self.view.center];
+    [customAlertAutoDis setEndCenterPoint:self.view.center];
+    [customAlertAutoDis setStartAlpha:0.1];
+    [customAlertAutoDis setEndAlpha:0.8];
+    [customAlertAutoDis setDelayDisappearTime:4.0];
+    [customAlertAutoDis setMsgFrontSize:35];
+    [customAlertAutoDis setAlertMsg:msg];
+    [customAlertAutoDis RunCumstomAlert];
+    
+}
 
 - (void)yesButtonHandler:(id)sender
 {
     [customAlertAutoDisYes yesButtonHandler:nil];
-    
+    [customAlertAutoDis yesButtonHandler:nil];
+
     
 }
 
@@ -698,7 +742,7 @@
         //查看网络
         NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
         if (typeNet == netNon) {
-            [CommonObject showAlert:@"请检查网络" titleMsg:nil DelegateObject:self];
+            [self showCustomYesAlertSuperView:@"请检查网络" AlertKey:@"netFailed"];
             sender.on = FALSE;
             return;
         }
@@ -707,8 +751,8 @@
         if (!self.user.isRegisterUser) {
             //没注册过，则关闭
             sender.on = NO;
-            
-            [CommonObject showAlert:@"请选绑定账户进行登录~" titleMsg:Nil DelegateObject:self];
+            [self showCustomYesAlertSuperView:@"请选择绑定账户" AlertKey:@"pleaseChoose"];
+ 
         }
     }
     
@@ -745,10 +789,12 @@
             //查看网络
             NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
             if (typeNet == netNon) {
-                [CommonObject showAlert:@"请检查网络" titleMsg:nil DelegateObject:self];
+                [self showCustomYesAlertSuperView:@"请检查网络" AlertKey:@"netFailed"];
                 sender.on = FALSE;
                 return;
             }
+            
+            [indicatorView startAnimating];
             
             //用户用户信息
             ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
@@ -776,7 +822,9 @@
                                            [item setObject:[userInfo nickname] forKey:@"username"];
                                            NSString* temp =[userInfo uid];
                                            NSLog(@"uid = %@", temp);
-                                           [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()] atomically:YES];
+
+                                           
+                                           [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir] atomically:YES];
                                            
                                            //取消另一个登录
                                            NSArray *shareTypes = [ShareSDK connectedPlatformTypes];
@@ -837,6 +885,8 @@
 //增加用户信息时，才会调用，删除鉴权时不会
 - (void)userInfoUpdateHandler:(NSNotification *)notif
 {
+
+    
     NSInteger plat = [[[notif userInfo] objectForKey:SSK_PLAT] integerValue];
     id<ISSPlatformUser> userInfo = [[notif userInfo] objectForKey:SSK_USER_INFO];
     
@@ -859,7 +909,7 @@
     
     
     //存用户授权信息
-    NSMutableArray *authList = [NSMutableArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()]];
+    NSMutableArray *authList = [NSMutableArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir]];
     if (authList == nil)
     {
         authList = [NSMutableArray array];
@@ -907,38 +957,47 @@
         [authList addObject:newItem];
     }
     
-    [authList writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()] atomically:YES];
+    [authList writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir] atomically:YES];
     
-    
-    //下载照片较耗时
-    NSInteger indiW = 50;
-    NSInteger indiH = 50;
-    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
-    [indicator startAnimating];
-    [self.view addSubview:indicator];
-    
-    [NSTimer scheduledTimerWithTimeInterval:3.0 target:self selector:@selector(StopIndicatorAni:) userInfo:nil repeats:NO];
+
+
     
     //更新本地用户信息
     [self.user updateSns_ID:[userInfo uid] PlateType:[userInfo type]];
     [self.user updateuserName:[userInfo nickname]];
     
-    NSURL *portraitUrl = [NSURL URLWithString:[userInfo profileImage]];
-    UIImage *protraitImg = [UIImage imageWithData:[NSData dataWithContentsOfURL:portraitUrl]];
-    [self.user updateUserHeaderImage:protraitImg];
-    //刷新头像
-    [self setTableHeaderView];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+       
+        NSURL *portraitUrl = [NSURL URLWithString:[userInfo profileImage]];
+        
+        if (portraitUrl != Nil)
+        {
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                UIImage *protraitImg = [UIImage imageWithData:[NSData dataWithContentsOfURL:portraitUrl]];
+                [self.user updateUserHeaderImage:protraitImg];
+                //刷新头像
+                [self setTableHeaderView];
+                [indicatorView stopAnimating];
+
+                
+            });
+
+        }else
+        {
+            
+            [self showCustomDelayAlertBottom:@"下载头像失败"];
+        }
+
+        [indicatorView stopAnimating];
+
+    });
     
     [self.tableView reloadData];
 
 }
 
-- (void)StopIndicatorAni:(NSTimer *)timer
-{
-    NSLog(@"StopIndicatorAni----");
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
-}
 
 
 #pragma mark - image scale utility

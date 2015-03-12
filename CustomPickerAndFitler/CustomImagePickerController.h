@@ -14,10 +14,6 @@
 #import "CustomAnimation.h"
 #import "PulsingHaloLayer.h"
 
-//#import "ImageFilterProcessViewController.h"
-
-
-
 
 @protocol CustomImagePickerControllerDelegate;
 

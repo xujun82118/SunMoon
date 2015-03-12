@@ -10,6 +10,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UserDB.h"
+#import "MONActivityIndicatorView.h"
 
 
 
@@ -65,6 +66,8 @@
 
 //本地通知定义
 #define NOTIFY_LOCAL_NEED_CHANGE_UI   @"NeedChangeUI"
+
+
 
 
 //报了个奇怪的错误,先自定义规避
@@ -157,6 +160,9 @@ typedef enum
 #define IS_SUN_TIME 1
 #define IS_MOON_TIME 2
 
+//指示器
+#define CUSTOM_ALERT_WIDTH  SCREEN_WIDTH/5*4
+#define CUSTOM_ALERT_HEIGHT  CUSTOM_ALERT_WIDTH*216/547
 
 //无穷大的数
 #define BIGGEST_NUMBER 1
@@ -439,7 +445,8 @@ typedef enum
 
 +(NSString*)getLightCharactorByTime;
 +(NSString*)getAlertBkByTime;
-
++(NSString*)getDelayBkByTime;
++(NSString*)getDelayBkByTimeType:(NSInteger) type;
 
 
 +(void)showAlert:(NSString *)msg titleMsg:(NSString *)title DelegateObject:(id) delegateObject;

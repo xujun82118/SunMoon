@@ -8,7 +8,7 @@
 
 
 
-"Sun_sentenc_1" = "Hi，今天一天好心情！";  //初始默认
+"Sun_sentenc_1" = "Hi，今天一天好心情别国加加圆圆另加国另加加加！";  //初始默认
 "Sun_sentenc_2" = "阳光自信每一天，这就是我！";
 "Sun_sentenc_3" = "努力，我最棒！";
 
@@ -18,6 +18,9 @@
 
 "Sun time is on" = "早上美拍时间到了，和太阳说出你的美丽宣言！";
 "Moon time is on" = "晚上美拍时间到了，和月亮说一句美丽宣言！";
+
+"ChangeToSun" = "变换成阳光天空了~";
+"ChangeToMoon" = "变换成月光天空了~";
 
 "appName" = "日月美拍";
 "appUrl"  = "https://itunes.apple.com/cn/app/ri-yue-mei-pai/id929494640";

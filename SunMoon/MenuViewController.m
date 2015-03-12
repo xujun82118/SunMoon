@@ -11,7 +11,6 @@
 #import "UIViewController+REFrostedViewController.h"
 #import "UserSetViewController.h"
 #import "AboutViewController.h"
-#import "CustomIndicatorView.h"
 
 
 

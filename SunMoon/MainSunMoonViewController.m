@@ -23,7 +23,6 @@
 #import "GuidController.h"
 #import "AminationCustom.h"
 #import "ShareByShareSDR.h"
-#import "CustomIndicatorView.h"
 
 
 
@@ -39,6 +38,9 @@
     
     //BOOL  isGiveFirstLight;
     
+    BOOL isFromLowView; //从下一层view来，不更新视图
+
+    
     EAIntroView *intro ;
     
     UIImageView* userHeaderSpiritBk; //标识现有精灵的个数
@@ -50,6 +52,8 @@
 
     
     BOOL alreadyDisable;//标识是否已禁止了触摸
+    
+    BOOL ToreFreshSky;//是否正在刷新天空
     
     BOOL  isFromHeaderBegin;
     BOOL  isFromSunMoonBegin;
@@ -103,12 +107,12 @@
     NSMutableArray* swimOutAnimationSpiriteArray;//精灵的动画组
 
     NSMutableArray*  swimOutBaselightImageViewArray; //小光的view组,全量的,有新增的则补充
-    NSMutableArray*  swimOutBaselightImageViewArrayFrame; //小光组全量位置，全量的，开始就是全量的
+    NSMutableArray*  swimOutBaselightImageViewArrayFrame; //小光的view组全量位置，全量的，开始就是全量的
 
 
-    NSMutableArray*  swimOutSpiriteImageViewArray; //精灵组，全量,有新增的则补充
+    NSMutableArray*  swimOutSpiriteImageViewArray; //精灵的view组，全量,有新增的则补充
 
-    NSMutableArray* swimOutSpiriteImageViewArrayFrame;//精灵组的位置，全量
+    NSMutableArray* swimOutSpiriteImageViewArrayFrame;//精灵的view组的位置，全量
 
     NSMutableArray* swimOutSpiriteImageViewArrayaphale;
     
@@ -142,7 +146,7 @@
 
     NSDictionary * lightTypeCountInfo;
     
-    CustomIndicatorView *indicator;
+    MONActivityIndicatorView *indicatorView;
 
     
 }
@@ -164,6 +168,14 @@
     NSLog(@"---->viewDidLoad");
 
 	// Do any additional setup after loading the view, typically from a nib.
+    
+    indicatorView = [[MONActivityIndicatorView alloc] init];
+    indicatorView.delegate = self;
+    indicatorView.numberOfCircles = 4;
+    indicatorView.radius = SCREEN_WIDTH/50;
+    indicatorView.internalSpacing = 4;
+    indicatorView.center = self.view.center;
+    [self.view addSubview:indicatorView];
     
     //注册本地通知
     NSNotificationCenter  * notificationCenter = [ NSNotificationCenter  defaultCenter];
@@ -317,20 +329,7 @@
 {
     [super viewDidAppear:animated];
 
-    CGFloat cameraBtnHeight = _skySunorMoonImage.frame.size.width/4*2;
-    CGFloat cameraBtnwidth = cameraBtnHeight;
-    if (!_intoCameraBtn) {
-        _intoCameraBtn =[UIButton buttonWithType:UIButtonTypeCustom];
-        [_intoCameraBtn setImage:[CommonObject getUsedCameraImageNameByTime:YES] forState:UIControlStateNormal];
-        [_intoCameraBtn setFrame:CGRectMake(_skySunorMoonImage.center.x - cameraBtnwidth/2, _skySunorMoonImage.center.y - cameraBtnHeight/2, cameraBtnwidth, cameraBtnHeight)];
-        [_intoCameraBtn addTarget:self action:@selector(intoCamera:) forControlEvents:UIControlEventTouchUpInside];
-        [_intoCameraBtn setTag:TAG_INTO_CAMERA_BTN];
-        [self.view addSubview:_intoCameraBtn];
-        
-    }
     
-    
-
     //检查日月时间是否变化
     NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
     if (![userBaseData objectForKey:KEY_BACK_GROUND_TIME]) {
@@ -346,8 +345,29 @@
     if (![[CommonObject getCurrentDate] isEqualToString:[userBaseData objectForKey:KEY_BACK_GROUND_TIME]] || [CommonObject checkSunOrMoonTime] != [userBaseData integerForKey:KEY_BACK_GROUND_TIME_SUNMOON])
         
     {
+
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFY_LOCAL_NEED_CHANGE_UI object:self];
     }
+
+    
+    if (isFromLowView) {
+        isFromLowView = FALSE;
+        return;
+    }
+    
+    CGFloat cameraBtnHeight = _skySunorMoonImage.frame.size.width/4*2;
+    CGFloat cameraBtnwidth = cameraBtnHeight;
+    if (!_intoCameraBtn) {
+        _intoCameraBtn =[UIButton buttonWithType:UIButtonTypeCustom];
+        [_intoCameraBtn setImage:[CommonObject getUsedCameraImageNameByTime:YES] forState:UIControlStateNormal];
+        [_intoCameraBtn setFrame:CGRectMake(_skySunorMoonImage.center.x - cameraBtnwidth/2, _skySunorMoonImage.center.y - cameraBtnHeight/2, cameraBtnwidth, cameraBtnHeight)];
+        [_intoCameraBtn addTarget:self action:@selector(intoCamera:) forControlEvents:UIControlEventTouchUpInside];
+        [_intoCameraBtn setTag:TAG_INTO_CAMERA_BTN];
+        [self.view addSubview:_intoCameraBtn];
+        
+    }
+    
+    
 
 
     
@@ -394,9 +414,8 @@
         lightSkySunOrMoonView.contentMode=UIViewContentModeScaleToFill;
 
         [lightSkySunOrMoonView setFrame:CGRectMake(_skySunorMoonImage.center.x-lightSkySunOrMoonViewWidth/2, _skySunorMoonImage.center.y-lightSkySunOrMoonViewHeigth/2, lightSkySunOrMoonViewWidth, lightSkySunOrMoonViewHeigth)];
-        
-        //test
-        //[self.view addSubview:lightSkySunOrMoonView];
+
+        [self.view addSubview:lightSkySunOrMoonView];
     }
 
     [self.view bringSubviewToFront:_skySunorMoonImage];
@@ -511,17 +530,24 @@
 
 -(void)whenCommonOpenViewHandle
 {
+    //更新天空流程完成
+    if (ToreFreshSky)ToreFreshSky = FALSE;
+    
+    
     //更新光环状态,和天空状态，需在计算奖励之间更新
     if ([self.userInfo checkIsBringUpinSunOrMoon]) {
         //如果是养育状态，且光没有在天空中，说明是新登录，则释放出光
-        if (!swimOutAnimationArray || swimOutAnimationArray.count ==0) {
+        if (!swimOutAnimationLightArray || swimOutAnimationLightArray.count ==0||!swimOutAnimationSpiriteArray || swimOutAnimationSpiriteArray.count ==0)
+        {
             [self refreshLightStateForCallBackOrPopout:1];
         }else
         {
-            //光在天空中，从后台进入的，不做什么。。。
+            //光在天空中，从后台进入的，天空不变,不做什么。。
+            
         }
         
     }
+
     [self refreshLightCircleStatForUserHeaderOrSunMoon];
     [self refreshSpiritCountInHeaderView];
     
@@ -548,10 +574,10 @@
             
 
             if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-                [self showCustomYesAlertSuperView:@"今天连续登录\n奖励一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN];
+                [self showCustomYesAlertSuperView:@"阳光天空连续登录\n奖励一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN];
             }else
             {
-                [self showCustomYesAlertSuperView:@"今夜连续登录\n奖励一个月光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN];
+                [self showCustomYesAlertSuperView:@"月光天空连续登录\n奖励一个月光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN];
             }
             
         }else
@@ -578,7 +604,20 @@
 }
 
 
+-(void) checkIsTimeToFinishRefreshUI
+{
+    if (swimOutAnimationLightArray.count ==0 && swimOutAnimationSpiriteArray.count == 0) {
+        
+        //都飞回来了，开始其它新天空的更新更新
+        [self whenCommonOpenViewHandle];
+        
+    }else
+    {
 
+    }
+    
+    
+}
 
 
 //#pragma mark - AminationCustomDelegate
@@ -750,6 +789,9 @@
 
         }
     }
+    
+    //更新精灵图片
+    spiriteViewInUserHeader.image = [CommonObject getStaticImageByLightType:[CommonObject getSpiriteTypeByTime]];
     
     
 }
@@ -1085,11 +1127,8 @@
  */
 - (IBAction)screenShare:(id)sender
 {
-    //test
-//[self showCustomYesAlertSuperView:@"今天连续登录\n奖励一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN];
-    [self addGuidTouchAnimationAtPoint:_intoCameraBtn.center withAniKey:KEY_ANIMATION_GUID_TOUCH_CAMEREA];
-    //[self addPanLightToSkyGuidAnimationFrom:_userHeaderImageView.center toEnd:_skySunorMoonImage.center withAniKey:KEY_ANIMATION_GUID_PAN_LIGHT_TO_SKY duration:1.0];
- /*
+
+ 
     ShareByShareSDR* share = [ShareByShareSDR alloc];
     share.shareTitle = NSLocalizedString(@"appName", @"");
     share.shareImage =[CommonObject screenShot:self.view];
@@ -1101,24 +1140,17 @@
     
     [share shareImageNews];
 
-    */
 }
 
 //delegate
 -(void) ShareStart
 {
-    //初始化指示器
-    NSInteger indiW = 50;
-    NSInteger indiH = 50;
-    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
-    [indicator startAnimating];
-    [self.view addSubview:indicator];
+    [indicatorView startAnimating];
 }
 
 -(void) ShareCancel
 {
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
+    [indicatorView stopAnimating];
     
     [self showCustomDelayAlertBottom:@"取消分享"];
 }
@@ -1126,8 +1158,8 @@
 -(void) ShareReturnSucc
 {
     
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
+    [indicatorView stopAnimating];
+
     
     [self showCustomDelayAlertBottom:@"分享成功"];
 
@@ -1136,8 +1168,7 @@
 
 -(void) ShareReturnFailed
 {
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
+    [indicatorView stopAnimating];
     
     [self showCustomDelayAlertBottom:@"分享失败，请检查网络"];
 
@@ -1677,17 +1708,42 @@
 #pragma mark -  change sun or moon UI
 -(void) reFreshSunOrMoonUI:(NSNotification *) notification
 {
-    
+    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
+
     if ([[notification name] isEqualToString:NOTIFY_LOCAL_NEED_CHANGE_UI])
     {
         
         [UIView beginAnimations:@"reFreshSunMoonUI_DisPre" context:(__bridge void *)(mainBgImage)];
-        [UIView setAnimationDuration:0.5f];
+        [UIView setAnimationDuration:1.5f];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(reFreshSunMoonUIAnimationDidStop:finished:context:)];
         NSLog(@"Disapear old UI : %@", [mainBgImage.image description]);
-        mainBgImage.alpha = 0.5;
+        if ([CommonObject checkSunOrMoonTime] != [userBaseData integerForKey:KEY_BACK_GROUND_TIME_SUNMOON]) {
+            //如果日月有变化，才变天背景
+            mainBgImage.alpha = 0.8;
+
+        }
         [UIView commitAnimations];
+        
+        
+        //如果有光在天空,先召回
+        ToreFreshSky =  TRUE;
+        if (([CommonObject checkSunOrMoonTime] != [userBaseData integerForKey:KEY_BACK_GROUND_TIME_SUNMOON]) &&((swimOutAnimationLightArray&&swimOutAnimationLightArray.count !=0) || (swimOutAnimationSpiriteArray&&swimOutAnimationSpiriteArray.count !=0))) {
+            //如果日月变化，且原天空有光，则召回光
+            //完成飞回光到太阳动画后，再更新其它界面元素
+            [self refreshLightStateForCallBackOrPopout:0];
+
+        }else
+        {
+            //如日月无变化，则不需要召回现有的天空光，但需更新计算其它的
+            [self whenCommonOpenViewHandle];
+        }
+        
+        //更新记录后台时的时间
+        [userBaseData setObject:[CommonObject getCurrentDate] forKey:KEY_BACK_GROUND_TIME];
+        [userBaseData setInteger:[CommonObject checkSunOrMoonTime] forKey:KEY_BACK_GROUND_TIME_SUNMOON];
+        [userBaseData synchronize];
+
     }
     
 }
@@ -1723,8 +1779,7 @@
     
     if ([animationID isEqualToString:@"reFreshSunMoonUI_ShowNew"]) {
         
-        //切换相当于新的时间新登录，处理一下登录打开的流程
-        [self whenCommonOpenViewHandle];
+
         
     }
     
@@ -2322,48 +2377,7 @@
     
     [customAnimation startCustomAnimation];
     
-    /*
-    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimation];
-    
-    LightType type = (LightType)[(NSNumber*)[srcAni.aniImageViewDic objectForKey:KEY_ANIMATION_LIGHT_TYPE] integerValue];
-    
-    UIImageView* aniView = (UIImageView*)[srcAni.aniImageViewDic objectForKey:KEY_ANIMATION_VIEW];
-    [self.view addSubview:aniView];//test
-    
-    CGPoint startPoint = aniView.center;
-    CGPoint endPoint = _skySunorMoonImage.center;
-    
-    CGPoint bazierPoint_1;
-    CGPoint bazierPoint_2;
-    //取得两点之间的中间点
-    CGPoint mid1 = [CommonObject getMidPointBetween:startPoint andPoint:endPoint];
-    bazierPoint_1 = CGPointMake(mid1.x/3 -[CommonObject getRandomNumber:0 to:10], mid1.y/3 -[CommonObject getRandomNumber:0 to:10]);
-    [customAnimation setAniBazierCenterPoint1:bazierPoint_1];
-    CGPoint mid2 = [CommonObject getMidPointBetween:mid1 andPoint:endPoint];
-    bazierPoint_2 = CGPointMake(mid2.x -[CommonObject getRandomNumber:20 to:40], mid2.y -[CommonObject getRandomNumber:20 to:40]);
-    [customAnimation setAniBazierCenterPoint2:bazierPoint_2];
-    
-    [customAnimation setAniType:BEZIER_ANI_TYPE];
-    [customAnimation setAniImageViewDic:srcAni.aniImageViewDic];
-    [customAnimation setAniStartSize:CGSizeMake(SPIRITE_W_H, SPIRITE_W_H)];
-    [customAnimation setAniEndSize:CGSizeMake(SPIRITE_W_H, SPIRITE_W_H)];
-    [customAnimation setAniStartPoint:startPoint];
-    [customAnimation setAniEndpoint:endPoint];
-    [customAnimation setCustomAniDelegate:self];
-    [customAnimation setAnikey:aniKey];
-    [customAnimation setAniRepeatCount:1];
-    float duration = POP_BACK_ONE_ANIMATION_TIME * ((float)num+1)/(num+2);
-    [customAnimation setAniDuration:duration];
-    
-    [customAnimation setSipiriteAnimationType:type];
-    [customAnimation displayLinkAnimationEnable];
-    
-    //直线过渡
-    //[customAnimation setAniKeyframePointCount:0];
-    
-    [customAnimation startCustomAnimation];
- 
-    */
+
 }
 
 
@@ -2741,7 +2755,7 @@
         
         if (lastRepeatCountMoveSimpleLightView && srcView == lastRepeatCountMoveSimpleLightView) {
             NSLog(@"KEY_ANIMATION_FLY_SIMPLE_LIGHT_TO_SKY_FOR_NEWSKY finished!");
-            [self EnableUserInteractionInView:self.view];
+            [self EnableUserInteractionAllView:self.view];
             
             //切换闪烁动画，和养育状态
             [self.userInfo updateisBringUpMoon:YES];
@@ -2959,8 +2973,15 @@
             [swimOutAnimationLightArray removeAllObjects];
             [swimOutBaselightImageViewArray removeAllObjects];
             
-            //等精灵回来
-            [self isTimeToCallBackAllLightToUserHeader];
+            //刷新天空时，只是将光和精灵召回太阳，不回到头像
+            if (!ToreFreshSky) {
+                //等精灵回来
+                [self isTimeToCallBackAllLightToUserHeader];
+            }else
+            {
+                [self checkIsTimeToFinishRefreshUI];
+            }
+
         }
         
         //删除精灵原图
@@ -2977,8 +2998,14 @@
             [swimOutAnimationSpiriteArray removeAllObjects];
             [swimOutSpiriteImageViewArray removeAllObjects];
 
-            //等光回来
-            [self isTimeToCallBackAllLightToUserHeader];
+            //刷新天空时，只是将光和精灵召回太阳，不回到头像
+            if (!ToreFreshSky) {
+                //等精灵回来
+                [self isTimeToCallBackAllLightToUserHeader];
+            }else
+            {
+                [self checkIsTimeToFinishRefreshUI];
+            }
 
         }
         
@@ -2994,7 +3021,8 @@
         if (lastRepeatCountMoveSimpleLightView && srcView == lastRepeatCountMoveSimpleLightView)
         {
             //所有的动画都回来了，都被释放
-  
+            [self EnableUserInteractionAllView:self.view];
+
             //切换闪烁动画
             [self.userInfo updateisBringUpMoon:NO];
             [self refreshLightCircleStatForUserHeaderOrSunMoon];
@@ -3003,7 +3031,7 @@
             if (isGetinToHome) {
                 [self performSegueWithIdentifier:@"getintoHome" sender:nil];
             }
-            
+
             
         }
         
@@ -3017,6 +3045,8 @@
     if ([aniKey isEqualToString:KEY_ANIMATION_PAN_TO_SKY_FAILED_TO_USERHEADER]) {
 
         [self arraiveToHeaderIndication];
+        
+        [self EnableUserInteractionAllView:self.view];
 
         //删除精灵原图
         [srcView removeFromSuperview];
@@ -3026,6 +3056,9 @@
     if ([aniKey isEqualToString:KEY_ANIMATION_PAN_TO_USERHEADER_FAILED_TO_SKY]) {
         
         [self arraiveToSkyIndication:srcView.center upView:srcView];
+        
+        [self EnableUserInteractionAllView:self.view];
+
 
         //删除精灵原图
         [srcView removeFromSuperview];
@@ -3147,9 +3180,9 @@
 -(void)caculateLightTypeAndCountByCount:(NSInteger) count
 {
     //test
-    count = 25*5+23;
-    self.userInfo.sun_value = @"243";
-    self.userInfo.moon_value = @"243";
+//    count = 25*5+23;
+//    self.userInfo.sun_value = @"243";
+//    self.userInfo.moon_value = @"243";
     
     //计算精灵个数,25个光生成1个精灵
     NSInteger spiCount = count/25;
@@ -3196,8 +3229,7 @@
  */
 -(void) reFreshCaculateAndPopOutLightSpirite
 {
-    
-    
+
     //计算当前光和精灵的个数
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
 
@@ -3441,34 +3473,7 @@
     
 }
 
-/**
- *  召唤并释放精灵
- */
-//-(void) getAndPopOutSpirite
-//{
-//    //动画中，禁止所有操作
-//    [self DisableUserInteractionInView:self.view exceptViewWithTag:HUGE_VAL];
-//    
-//    needStopAnimationToCallBack = FALSE;
-//    
-//    NSInteger count;
-//    if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-//        count = self.userInfo.sun_value.integerValue;
-//    }else
-//    {
-//        count = self.userInfo.moon_value.integerValue;
-//    }
-//    
-//    //test
-//    count = 30;
-//    
-//    [self caculateLightTypeAndCountByCount:count];
-//    
-//    //精灵召唤动画结束后，再放出小光
-//    [self firstGetOutSpirite];
-//    
-//    
-//}
+
 
 
 /**
@@ -3509,7 +3514,7 @@
         UIImageView* spiView = [[UIImageView alloc]initWithImage:[CommonObject getAniStartImageByLightType:type]];
         spiView.frame = CGRectMake(0, 0, 0, 0);
         [swimOutSpiriteImageViewArray addObject:spiView];
-        [self.view addSubview:spiView];
+        //[self.view addSubview:spiView];//全程动画，不用显示
         
     }
   
@@ -3643,7 +3648,7 @@
         UIImageView* baseView = [[UIImageView alloc]initWithImage:[CommonObject getAniStartImageByLightType:type]];
         baseView.frame = CGRectMake(0, 0, 0, 0);
         [swimOutBaselightImageViewArray addObject:baseView];
-        [self.view addSubview:baseView];
+        //[self.view addSubview:baseView];//全程动画，不用显示
         
     }
     
@@ -3677,8 +3682,6 @@
  */
 -(void)stopBringUpAndFinalCallBackLight
 {
-
-    NSAssert([userInfo checkIsBringUpinSunOrMoon], @"stopBringUpAndFinalCallBackLight: no light is in bringup state, this fun can not be called!");
     
     [self callBackLightToSunMoonForFinal];
     [self callBackSpiriteToSunMoon];
@@ -4158,6 +4161,18 @@
         return;
     }
     
+    if(CGRectContainsPoint(menuBtn.frame, location))
+    {
+        NSLog(@"Touch point can not be in menuBtn Rect");
+        return;
+    }
+    
+    if(CGRectContainsPoint(_screenShareBtn.frame, location))
+    {
+        NSLog(@"Touch point can not be in screenShareBtn Rect");
+        return;
+    }
+    
     //点击闪烁提示
     [self StartTouchIndication:location];
     
@@ -4373,6 +4388,7 @@
 -(void) moveSimpleLightWithRepeatCount:(NSInteger)count  StartPoint:(CGPoint) start  EndPoint:(CGPoint) end  totalTime:(float)totalTime aniKey:(NSString*) aniKey  withBazierP1:(CGPoint) bazierP1  bazierP2:(CGPoint) bazierP2
 {
     
+    [self DisableUserInteractionAllView:self.view];
     
     //计算此精灵的最终位置
     CGPoint startPoint =start;
@@ -4496,6 +4512,7 @@
     [customAnimation setAniType:BEZIER_ANI_TYPE];
     [customAnimation setAniImageViewDic:srcViewDic];
     [customAnimation setBkLayer:self.view.layer];
+    [customAnimation setBkLayerBelow:_lightPostionFrame.layer];
     [customAnimation setAniStartPoint:startPoint];
     [customAnimation setAniEndpoint:endPoint];
     [customAnimation setAniStartSize:startSize];
@@ -4706,7 +4723,8 @@
 -(void) showCustomYesAlertSuperView:(NSString*) msg  AlertKey:(NSString*) alertKey
 {
     
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
+    
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"OK.png" posionShowMode:userSet  AlertKey:alertKey];
     [customAlertAutoDisYes setStartCenterPoint:self.view.center];
     [customAlertAutoDisYes setEndCenterPoint:self.view.center];
     [customAlertAutoDisYes setStartAlpha:0.1];
@@ -4715,12 +4733,11 @@
     [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
-    [customAlertAutoDisYes setDelayDisappearTime:5.0];
+    [customAlertAutoDisYes setDelayDisappearTime:4.0];
     [customAlertAutoDisYes setMsgFrontSize:35];
     [customAlertAutoDisYes setAlertMsg:msg];
     [customAlertAutoDisYes setCustomAlertDelegate:self];
     [customAlertAutoDisYes RunCumstomAlert];
-    
 }
 
 - (void)yesButtonHandler:(id)sender
@@ -4733,17 +4750,17 @@
 
 -(void) showCustomDelayAlertBottom:(NSString*) msg
 {
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getDelayBkByTime]  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
     [customAlertAutoDis setStartHeight:0];
-    [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndHeight:60];
-    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
-    [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2,customAlertAutoDis.endHeight/2+10)];
+    [customAlertAutoDis setStartWidth:SCREEN_WIDTH/5*4];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*4];
+    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth*216/547];
+    [customAlertAutoDis setStartCenterPoint:self.view.center];
+    [customAlertAutoDis setEndCenterPoint:self.view.center];
     [customAlertAutoDis setStartAlpha:0.1];
-    [customAlertAutoDis setEndAlpha:1.0];
-    [customAlertAutoDis setDelayDisappearTime:5.0];
-    [customAlertAutoDis setMsgFrontSize:30];
+    [customAlertAutoDis setEndAlpha:0.8];
+    [customAlertAutoDis setDelayDisappearTime:4.0];
+    [customAlertAutoDis setMsgFrontSize:35];
     [customAlertAutoDis setAlertMsg:msg];
     [customAlertAutoDis RunCumstomAlert];
     
@@ -4852,6 +4869,19 @@
     
 
 }
+
+- (IBAction)backSegueFromViewController:(UIStoryboardSegue *)segue
+{
+    UIViewController *sourceViewController = segue.sourceViewController;
+    
+    if ([sourceViewController isKindOfClass:[HomeInsideViewController class]]) {
+        
+        isFromLowView = TRUE;
+    }
+    
+    
+}
+
 
 
 #pragma mark - 引导滑屏
@@ -4967,6 +4997,7 @@
 //        _userHeaderImageView.layer.borderColor = [[UIColor orangeColor] CGColor];
 //    }
     
+    [self animationBowLightFrameHeaderView:1];
     
     if (self.userInfo.userType == USER_TYPE_NEW || (self.userInfo.userType == USER_TYPE_NEED_CARE && [self.userHeaderImageView isEqual:[UIImage imageNamed:@"默认头像.png"]])) {
         [self.userInfo updateUserType:USER_TYPE_TYE];
@@ -5114,6 +5145,19 @@
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     [picker dismissViewControllerAnimated:YES completion:^(){
     }];
+}
+
+#pragma mark - MONActivityIndicatorViewDelegate Methods
+
+- (UIColor *)activityIndicatorView:(MONActivityIndicatorView *)activityIndicatorView
+      circleBackgroundColorAtIndex:(NSUInteger)index {
+    
+    
+    CGFloat red   = (arc4random() % 256)/255.0;
+    CGFloat green = (arc4random() % 256)/255.0;
+    CGFloat blue  = (arc4random() % 256)/255.0;
+    CGFloat alpha = 1.0f;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 #pragma mark - VPImageCropperDelegate

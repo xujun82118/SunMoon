@@ -11,18 +11,20 @@
 #import "AddWaterMask.h"
 #import "SunMoonAlertTime.h"
 #import "ShareByShareSDR.h"
-#import "CustomIndicatorView.h"
+
 
 
 @interface HomeInsideViewController ()
 {
     
-    CustomIndicatorView *indicator;
     
     CustomAlertView* customAlertAutoDis;
     CustomAlertView* customAlertAutoDisYes;
     
     BOOL isFromLowView; //从下一层view来，不更新视图
+    
+    MONActivityIndicatorView *indicatorView;
+    NSString* userDir;
 
 
 }
@@ -50,7 +52,7 @@
 @synthesize bkGroundImageView,sunMoonScrollImageView,sunTimeBtn,moonTimeBtn,sunMoonTimeCtlBtn,sunMoonValueStatic,sunMoonTimeText,lightSentence;
 @synthesize cloudCtlBtn = _cloudCtlBtn,shareCtlBtn = _shareCtlBtn, voiceReplayBtn = _voiceReplayBtn;
 @synthesize userCloud=_userCloud;
-@synthesize editeSunWordBtn=_editeSunWordBtn,editeMoonWordBtn=_editeMoonWordBtn;
+@synthesize editeSunWordBtn=_editeSunWordBtn,editeMoonWordBtn=_editeMoonWordBtn,deleteImageBtn=_deleteImageBtn;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -82,7 +84,8 @@
     //初始化时间
     _DayType = [CommonObject checkSunOrMoonTime];
     
-
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    userDir= [paths objectAtIndex:0];
 
     
     //shareSdk**********
@@ -108,10 +111,10 @@
         }
     }
     
-    NSArray *authList = [NSArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()]];
+    NSArray *authList = [NSArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir]];
     if (authList == nil)
     {
-        [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()] atomically:YES];
+        [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir] atomically:YES];
     }
     else
     {
@@ -173,16 +176,11 @@
 {
     
     [super viewWillAppear:animated];
-    
-    
-    //加载照片较耗时，增加等待，
-    NSInteger indiW = 50;
-    NSInteger indiH = 50;
-    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
-    [indicator startAnimating];
-    [self.view addSubview:indicator];
 
-    [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(StopIndicatorAni:) userInfo:nil repeats:NO];
+    if (!isFromLowView) {
+        [self refreshUIForDayTypeViewWillAppear];
+        
+    }
     
     
     double deltaTime = [[NSDate date] timeIntervalSinceDate:tmpStartData];
@@ -196,27 +194,43 @@
     [super viewDidAppear:animated];
 
     if (!isFromLowView) {
-        [self refreshUIForDayType];
+        [self refreshUIForDayTypeViewDidAppear];
 
     }
 
     
 }
 
--(void) refreshUIForDayType
+-(void) refreshUIForDayTypeViewWillAppear
 {
+    
+    //初始化指示器
+    indicatorView = [[MONActivityIndicatorView alloc] init];
+    indicatorView.delegate = self;
+    indicatorView.numberOfCircles = 4;
+    indicatorView.radius = SCREEN_WIDTH/50;
+    indicatorView.internalSpacing = 4;
+    indicatorView.center = CGPointMake(self.view.center.x, self.view.center.y - CUSTOM_ALERT_HEIGHT/2 - indicatorView.radius/2 - 10);
+    [indicatorView startAnimating];
+    [self.view addSubview:indicatorView];
+
+    
+    
     //更新太阳月亮
     if (_DayType == IS_SUN_TIME) {
-        _sunMoonCenter.imageView.image = [UIImage imageNamed:@"light-yellow-0.png"];
-        //_changeDayType.imageView.image =[UIImage imageNamed:@"light-white-0.png"];
-
+        //_sunMoonCenter.imageView.image = [UIImage imageNamed:@"light-yellow-0.png"];
+        [_sunMoonCenter setImage:[UIImage imageNamed:@"light-yellow-0.png"] forState:UIControlStateNormal];
+        
+        
     }else
     {
-        _sunMoonCenter.imageView.image = [UIImage imageNamed:@"light-white-0.png"];
-        //_changeDayType.imageView.image =[UIImage imageNamed:@"light-yellow-0.png"];
+        //_sunMoonCenter.imageView.image = [UIImage imageNamed:@"light-white-0.png"];
+        [_sunMoonCenter setImage:[UIImage imageNamed:@"light-white-0.png"] forState:UIControlStateNormal];
+
+        
     }
-
-
+    
+    
     //更新闹钟控制
     if (_DayType==IS_SUN_TIME) {
         if(self.user.sunAlertTimeCtl)
@@ -248,10 +262,10 @@
             
         }
         sunTimeBtn.hidden = YES;
-
+        
     }
     
-
+    
     //更新语录控制
     if (_DayType==IS_SUN_TIME) {
         
@@ -264,8 +278,16 @@
         _editeMoonWordBtn.hidden = NO;
     }
     
+    
 
+}
 
+-(void) refreshUIForDayTypeViewDidAppear
+{
+    
+
+    
+  
     //显示定时时间
     NSCalendar* calendar = [NSCalendar currentCalendar];
     NSDateComponents* comps;
@@ -341,13 +363,21 @@
     }
     
     //前4个为空，第5个为最新日期的照片
+    NSString* nullImage;
+    if (_DayType == IS_SUN_TIME) {
+        nullImage = @"null-相片-黄.png";
+    }else
+    {
+        nullImage = @"null-相片-白.png";
+        
+    }
     for (int i = 0; i<nullCount; i++) {
+
         [setSun addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                           [UIImage imageNamed:@"null-相片.png"],@"image_data",
+                           [UIImage imageNamed:nullImage],@"image_data",
                            @"",@"image_name_time",
                            @"",@"image_sentence",
                            nil]];
-        
     }
     
     //从第5张开始插入相片
@@ -399,7 +429,7 @@
     if (realCount<fullCount) {
         for (int i = realCount; i<fullCount; i++) {
             [setSun addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                               [UIImage imageNamed:@"null-相片.png"],@"image_data",
+                               [UIImage imageNamed:nullImage],@"image_data",
                                @"",@"image_name_time",
                                @"",@"image_sentence",
                                nil]];
@@ -465,12 +495,6 @@
 
 
 
-- (void)StopIndicatorAni:(NSTimer *)timer
-{
-    NSLog(@"StopIndicatorAni----");
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
-}
 
 - (void)viewDidLayoutSubviews
 {
@@ -585,14 +609,14 @@
         sunMoonRepeatCount = 0;
     }
     
-    reapaterSunMoon =  [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(processIncreaseSunLightValue:) userInfo:nil repeats:YES];
+    reapaterSunMoon =  [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(processIncreaseSunMoonLightValue:) userInfo:nil repeats:YES];
     //立刻收回第一个
     [reapaterSunMoon fire];
     
 }
 
 
--(void) processIncreaseSunLightValue:(NSTimer *)timer
+-(void) processIncreaseSunMoonLightValue:(NSTimer *)timer
 {
     
     NSInteger count;
@@ -612,7 +636,14 @@
         self.haloAdd.radius = 0.5 * kMaxRadius;
         self.haloAdd.animationDuration = 0.5;
         self.haloAdd.eerepeatCount = 1;
-        self.haloAdd.backgroundColor = [UIColor yellowColor].CGColor;
+        if (_DayType == IS_SUN_TIME) {
+            self.haloAdd.backgroundColor = [UIColor yellowColor].CGColor;
+            
+        }else
+        {
+            self.haloAdd.backgroundColor = [UIColor whiteColor].CGColor;
+            
+        }
         [self.view.layer insertSublayer:self.haloAdd below:sunMoonValueStatic.layer];
         
         sunMoonRepeatCount ++;
@@ -647,6 +678,19 @@
      
     }
 
+}
+
+#pragma mark - MONActivityIndicatorViewDelegate Methods
+
+- (UIColor *)activityIndicatorView:(MONActivityIndicatorView *)activityIndicatorView
+      circleBackgroundColorAtIndex:(NSUInteger)index {
+    
+    
+    CGFloat red   = (arc4random() % 256)/255.0;
+    CGFloat green = (arc4random() % 256)/255.0;
+    CGFloat blue  = (arc4random() % 256)/255.0;
+    CGFloat alpha = 1.0f;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 #pragma mark - 用户分享
@@ -686,12 +730,12 @@
      tempShare = [NSString stringWithFormat:@"养成了%@个%@光,", sunMoonValueStatic.text,(_DayType==IS_SUN_TIME)?@"阳":@"月"];
      if (_DayType == IS_SUN_TIME) {
         share.shareMsgPreFix = [tempShare stringByAppendingString:NSLocalizedString(@"MsgFrefixSun", @"")];
-        share.waterImage = [UIImage imageNamed:@"water-sun.png"];
+        share.waterImage = [UIImage imageNamed:@"水印V1.png"];
 
      }else
      {
          share.shareMsgPreFix = [tempShare stringByAppendingString:NSLocalizedString(@"MsgFrefixMoon", @"")];
-         share.waterImage = [UIImage imageNamed:@"water-moon.png"];
+         share.waterImage = [UIImage imageNamed:@"水印V1.png"];
      }
 
      share.timeString = sunMoonTimeText.text;
@@ -700,7 +744,7 @@
      share.customDelegate = self;
      
     [self ShareImageWitheWater:share.shareImage WaterImage:share.waterImage shareObject:share];
-     
+
      [share shareImageNews];
      
 }
@@ -709,38 +753,33 @@
 //delegate
 -(void) ShareStart
 {
-    //初始化指示器
-    NSInteger indiW = 50;
-    NSInteger indiH = 50;
-    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
-    [indicator startAnimating];
-    [self.view addSubview:indicator];
+
+    [indicatorView startAnimating];
 }
 
 -(void) ShareCancel
 {
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
+
+    [indicatorView stopAnimating];
     
-    [self showCustomYesAlertSuperView:@"取消分享" AlertKey:@"shareCancel"];
+    [self showCustomDelayAlertBottom:@"取消分享"];
 }
 
 -(void) ShareReturnSucc
 {
     
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
+    [indicatorView stopAnimating];
+
     
-    [self showCustomYesAlertSuperView:@"分享成功" AlertKey:@"shareSucc"];
+    [self showCustomDelayAlertBottom:@"分享成功"];
 
 }
 
 -(void) ShareReturnFailed
 {
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
+    [indicatorView stopAnimating];
     
-    [self showCustomYesAlertSuperView:@"分享失败，请检查网络" AlertKey:@"shareFailed"];
+    [self showCustomYesAlertSuperView:@"分享失败\n请检查网络" AlertKey:@"shareFailed"];
 }
 
 
@@ -758,17 +797,17 @@
     [share addWater];
     
     //计算水印日期位置
-    CGFloat w1 = 40;
-    CGFloat h1 = 40;
+    CGFloat w1 = 70;
+    CGFloat h1 = 70*45/172;
     CGFloat x1 = shareImage.size.width/2-w1/2;
-    CGFloat y1 = shareImage.size.height -70 -h1/2;
+    CGFloat y1 = shareImage.size.height-15-h1/2;
     share.textRect = CGRectMake(x1,y1,w1,h1);
-    [share addTimeText];
+    [share addTimeText:@"timeImage-长.png"];
     
     //计算水印光个数的位置
     CGFloat w2 = 30;
     CGFloat h2 = 30;
-    CGFloat x2 = 25;
+    CGFloat x2 = shareImage.size.width/2-w2/2;
     CGFloat y2 = y+30;
     share.textRect = CGRectMake(x2,y2,w2,h2);
     [share addLightCounText];
@@ -777,7 +816,7 @@
     CGFloat w3 = (share.shareImage.size.width)/3*2;
     CGFloat h3 = 30;
     CGFloat x3 = (share.shareImage.size.width)/2-w3/2;
-    CGFloat y3 = share.shareImage.size.height -30 -h3/2;
+    CGFloat y3 = share.shareImage.size.height -40 -h3/2;
     share.textRect = CGRectMake(x3,y3,w3,h3);
     [share addSentenceText];
     
@@ -808,7 +847,7 @@
     
     
     //存用户授权信息
-    NSMutableArray *authList = [NSMutableArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()]];
+    NSMutableArray *authList = [NSMutableArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir]];
     if (authList == nil)
     {
         authList = [NSMutableArray array];
@@ -857,7 +896,7 @@
         [authList addObject:newItem];
     }
     
-    [authList writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",NSTemporaryDirectory()] atomically:YES];
+    [authList writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir] atomically:YES];
     
     
     //更新本地用户信息
@@ -876,7 +915,7 @@
 -(void) showCustomYesAlertSuperView:(NSString*) msg  AlertKey:(NSString*) alertKey
 {
     
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"OK.png" posionShowMode:userSet  AlertKey:alertKey];
     [customAlertAutoDisYes setStartCenterPoint:self.view.center];
     [customAlertAutoDisYes setEndCenterPoint:self.view.center];
     [customAlertAutoDisYes setStartAlpha:0.1];
@@ -885,7 +924,7 @@
     [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
-    [customAlertAutoDisYes setDelayDisappearTime:5.0];
+    [customAlertAutoDisYes setDelayDisappearTime:4.0];
     [customAlertAutoDisYes setMsgFrontSize:35];
     [customAlertAutoDisYes setAlertMsg:msg];
     [customAlertAutoDisYes setCustomAlertDelegate:self];
@@ -903,17 +942,17 @@
 
 -(void) showCustomDelayAlertBottom:(NSString*) msg
 {
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getDelayBkByTimeType:_DayType]  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
     [customAlertAutoDis setStartHeight:0];
-    [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndHeight:70];
-    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
-    [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2, customAlertAutoDis.endHeight/2+20)];
+    [customAlertAutoDis setStartWidth:CUSTOM_ALERT_WIDTH];
+    [customAlertAutoDis setEndWidth:CUSTOM_ALERT_WIDTH];
+    [customAlertAutoDis setEndHeight:CUSTOM_ALERT_HEIGHT];
+    [customAlertAutoDis setStartCenterPoint:self.view.center];
+    [customAlertAutoDis setEndCenterPoint:self.view.center];
     [customAlertAutoDis setStartAlpha:0.1];
     [customAlertAutoDis setEndAlpha:0.8];
-    [customAlertAutoDis setDelayDisappearTime:5.0];
-    [customAlertAutoDis setMsgFrontSize:30];
+    [customAlertAutoDis setDelayDisappearTime:4.0];
+    [customAlertAutoDis setMsgFrontSize:35];
     [customAlertAutoDis setAlertMsg:msg];
     [customAlertAutoDis RunCumstomAlert];
     
@@ -947,12 +986,12 @@
     
     //查看是否注册
     if (!user.isRegisterUser) {
-        [CommonObject showAlert:@"请到设置中绑定注册" titleMsg:nil DelegateObject:self];
+        [self showCustomYesAlertSuperView:@"请到设置中绑定注册" AlertKey:@"needRegister"];
         return;
     }
     
     if (self.user.cloudSynAutoCtl) {
-        [CommonObject showAlert:@"已开启自动云同步，退出时自动同步" titleMsg:Nil DelegateObject:self];
+        [self showCustomYesAlertSuperView:@"已开启自动云同步\n退出时自动同步" AlertKey:@"needRegister"];
     }else
     {
         //先获得现有用户云数据，对比后同步
@@ -1003,7 +1042,7 @@
 - (void) getUserInfoFinishFailedByNetWork
 {
     
-    [CommonObject showAlert:@"同步数据失败, 请检查网络！" titleMsg:Nil DelegateObject:self];
+    [CommonObject showAlert:@"同步数据失败\n请检查网络！" titleMsg:Nil DelegateObject:self];
 
 }
 
@@ -1029,7 +1068,7 @@
 - (void) updateUserInfoFailedReturnByNetWork
 {
     
-    [CommonObject showAlert:@"同步数据失败, 请检查网络！" titleMsg:Nil DelegateObject:self];
+    [CommonObject showAlert:@"同步数据失败\n请检查网络！" titleMsg:Nil DelegateObject:self];
 
 }
 
@@ -1175,6 +1214,12 @@
 
     }
     
+    if ([sourceViewController isKindOfClass:[SunMoonAlertTime class]]) {
+        
+        isFromLowView = TRUE;
+        
+    }
+    
 }
 
 
@@ -1199,7 +1244,10 @@
     [self showCustomDelayAlertBottom:[NSString stringWithFormat:NSLocalizedString(@"changeDay", @""), day] ];
 
     
-    [self refreshUIForDayType];
+    [self refreshUIForDayTypeViewWillAppear];
+    [self refreshUIForDayTypeViewDidAppear];
+
+    
     
 }
 
@@ -1379,6 +1427,8 @@
     lightSentence.alpha = 0.1;
     
     _voiceReplayBtn.alpha = 0.1;
+    
+    _deleteImageBtn.alpha = 0.1;
    
     
     if (picker.mode == IS_SUN_TIME)
@@ -1398,6 +1448,9 @@
 
 - (void) InfiniteScrollViewDidEndScrollingAnimation:(InfiniteScrollPicker*)picker
 {
+    
+    [indicatorView stopAnimating];
+    
     [UIView beginAnimations:@"TimeShowAnimationEndDragging" context:(__bridge void *)(sunMoonTimeText)];
     [UIView setAnimationDuration:0.3f];
     sunMoonTimeText.alpha = 1;
@@ -1408,6 +1461,7 @@
     
     _voiceReplayBtn.alpha = 1;
     
+    _deleteImageBtn.alpha = 1;
     if (picker.mode == IS_SUN_TIME)
     {
 

@@ -12,7 +12,7 @@
 #import "CustomAlertView.h"
 #import "ImageFilterProcessViewController.h"
 #import "GuidController.h"
-#import "CustomIndicatorView.h"
+
 
 
 @interface CustomImagePickerController ()
@@ -58,8 +58,8 @@
 
     CustomAlertView* customAlertAutoDis;
     CustomAlertView* customAlertAutoDisYes;
-    
-    CustomIndicatorView *indicator;
+   
+    MONActivityIndicatorView *indicatorView;
 
 }
 @end
@@ -149,11 +149,6 @@
         PLCameraView.tag =TAG_PLCAMERA;
         [viewController.view addSubview:PLCameraView];
         //PLCameraView=[self findView:viewController.view withName:@"PLCameraView"];
-        
-        //初始化指示器
-        NSInteger indiW = 50;
-        NSInteger indiH = 50;
-        indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
         
         //PLCameraView.frame = CGRectMake(0, 50, SCREEN_WIDTH, SCREEN_HEIGHT);
         
@@ -398,17 +393,17 @@
         UIImage *voiceReplayImage;
         if (![pressedVoice checkVoiceFile])
         {
-            voiceReplayImage = [UIImage imageNamed:@"放音-白.png"];
+            voiceReplayImage = [UIImage imageNamed:@"放音-白-forCamera.png"];
             
         }else
         {
-            voiceReplayImage = [UIImage imageNamed:@"放音-白-点.png"];
+            voiceReplayImage = [UIImage imageNamed:@"放音-白-点-forCamera.png"];
             
         }
         voiceReplayBtn = [[UIButton alloc] initWithFrame:
                           CGRectMake(cameraBtn.frame.origin.x+camerImageWidth+everyDis*2,overlyViewBk.center.y-voiceReplayHeigth/2,voiceReplayWidth, voiceReplayHeigth)];
         [voiceReplayBtn setImage:voiceReplayImage forState:UIControlStateNormal];
-        [voiceReplayBtn setImage:[UIImage imageNamed:@"停止放音-白.png"] forState:UIControlStateSelected];
+        [voiceReplayBtn setImage:[UIImage imageNamed:@"停止放音-白-forCamera.png"] forState:UIControlStateSelected];
         [voiceReplayBtn addTarget:self action:@selector(rePlayMyVoice) forControlEvents:UIControlEventTouchUpInside];
         //[PLCameraView addSubview:voiceReplayBtn];
         [overlyView addSubview:voiceReplayBtn];
@@ -768,11 +763,11 @@
         if ([self checkwetherAndGiveLight]!=1) {
             if (![pressedVoice checkVoiceFile])
             {
-                [voiceReplayBtn setImage:[UIImage imageNamed:@"放音-白.png"] forState:UIControlStateNormal];
+                [voiceReplayBtn setImage:[UIImage imageNamed:@"放音-白-forCamera.png"] forState:UIControlStateNormal];
                 
             }else
             {
-                [voiceReplayBtn setImage:[UIImage imageNamed:@"放音-白-点.png"] forState:UIControlStateNormal];
+                [voiceReplayBtn setImage:[UIImage imageNamed:@"放音-白-点-forCamera.png"] forState:UIControlStateNormal];
             }
         }else
         {
@@ -1151,8 +1146,15 @@
 {
     if ([pressedVoice checkVoiceFile]) {
        
-        [indicator startAnimating];
-        [PLCameraView addSubview:indicator];
+        indicatorView = [[MONActivityIndicatorView alloc] init];
+        indicatorView.delegate = self;
+        indicatorView.numberOfCircles = 4;
+        indicatorView.radius = SCREEN_WIDTH/50;
+        indicatorView.internalSpacing = 4;
+        indicatorView.center = self.view.center;
+        [indicatorView startAnimating];
+        [PLCameraView addSubview:indicatorView];
+        
         [PLCameraView setUserInteractionEnabled:NO];
        
         [super takePicture];
@@ -1166,6 +1168,19 @@
     }
 
 
+}
+
+#pragma mark - MONActivityIndicatorViewDelegate Methods
+
+- (UIColor *)activityIndicatorView:(MONActivityIndicatorView *)activityIndicatorView
+      circleBackgroundColorAtIndex:(NSUInteger)index {
+    
+    
+    CGFloat red   = (arc4random() % 256)/255.0;
+    CGFloat green = (arc4random() % 256)/255.0;
+    CGFloat blue  = (arc4random() % 256)/255.0;
+    CGFloat alpha = 1.0f;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
 }
 
 
@@ -1250,8 +1265,7 @@
 didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
 
-    [indicator stopAnimating];
-
+    [indicatorView stopAnimating];
     
     UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
 
@@ -1392,7 +1406,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
 -(void) showCustomYesAlertSuperView:(NSString*) msg AlertKey:alertKey
 {
     
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"OK.png" posionShowMode:userSet  AlertKey:alertKey];
     [customAlertAutoDisYes setStartCenterPoint:self.view.center];
     [customAlertAutoDisYes setEndCenterPoint:self.view.center];
     [customAlertAutoDisYes setStartAlpha:0.1];
@@ -1401,7 +1415,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
-    [customAlertAutoDisYes setDelayDisappearTime:5.0];
+    [customAlertAutoDisYes setDelayDisappearTime:4.0];
     [customAlertAutoDisYes setMsgFrontSize:35];
     [customAlertAutoDisYes setAlertMsg:msg];
     [customAlertAutoDisYes setCustomAlertDelegate:self];
@@ -1420,17 +1434,17 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
 
 -(void) showCustomDelayAlertBottom:(NSString*) msg
 {
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getDelayBkByTime]  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
     [customAlertAutoDis setStartHeight:0];
-    [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndHeight:60];
-    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
-    [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2, customAlertAutoDis.endHeight/2+60)];
+    [customAlertAutoDis setStartWidth:SCREEN_WIDTH/5*4];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*4];
+    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth*216/547];
+    [customAlertAutoDis setStartCenterPoint:self.view.center];
+    [customAlertAutoDis setEndCenterPoint:self.view.center];
     [customAlertAutoDis setStartAlpha:0.1];
     [customAlertAutoDis setEndAlpha:0.8];
-    [customAlertAutoDis setDelayDisappearTime:5.0];
-    [customAlertAutoDis setMsgFrontSize:30];
+    [customAlertAutoDis setDelayDisappearTime:4.0];
+    [customAlertAutoDis setMsgFrontSize:35];
     [customAlertAutoDis setAlertMsg:msg];
     [customAlertAutoDis RunCumstomAlert];
     

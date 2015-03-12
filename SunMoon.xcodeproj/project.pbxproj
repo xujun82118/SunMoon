@@ -121,7 +121,6 @@
 		5D983494195FB59300A80EEB /* abFrame_9@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D98348A195FB59300A80EEB /* abFrame_9@2x.png */; };
 		5D983495195FB59300A80EEB /* abFrame_10@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D98348B195FB59300A80EEB /* abFrame_10@2x.png */; };
 		5DA43693197422C600668FEE /* 空白图.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DA43692197422C600668FEE /* 空白图.png */; };
-		5DA436951974AFC100668FEE /* null-相片.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DA436941974AFC100668FEE /* null-相片.png */; };
 		5DA6774919C67B1A007191CE /* camera.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DA6774819C67B1A007191CE /* camera.png */; };
 		5DABFEB9195872870000D5B2 /* F3BarGauge.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DABFEB8195872870000D5B2 /* F3BarGauge.m */; };
 		5DABFEBC195873290000D5B2 /* VoicePressedHold.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DABFEBB195873290000D5B2 /* VoicePressedHold.m */; };
@@ -129,7 +128,6 @@
 		5DABFEC0195873800000D5B2 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DABFEBF195873800000D5B2 /* CoreAudio.framework */; };
 		5DABFEC21958738D0000D5B2 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DABFEC11958738D0000D5B2 /* AudioToolbox.framework */; };
 		5DAF431819CC4DE000DB4A80 /* 提示框v1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DAF431719CC4DE000DB4A80 /* 提示框v1.png */; };
-		5DB151E219C6614B002EEF25 /* CustomIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB151E119C6614B002EEF25 /* CustomIndicatorView.m */; };
 		5DB6201019147072005000E8 /* scroll-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DB6200819147072005000E8 /* scroll-1.png */; };
 		5DB6201119147072005000E8 /* scroll-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DB6200919147072005000E8 /* scroll-2.png */; };
 		5DB6201219147072005000E8 /* scroll-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DB6200A19147072005000E8 /* scroll-3.png */; };
@@ -216,8 +214,21 @@
 		6B3258721A6CD30200612A71 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B3258711A6CD30200612A71 /* libz.dylib */; };
 		6B3258821A6CDA8500612A71 /* 应用推荐.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B3258811A6CDA8500612A71 /* 应用推荐.png */; };
 		6B3258841A6CE44800612A71 /* water-moon.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B3258831A6CE44800612A71 /* water-moon.png */; };
+		6B3A04A51AB30D0600F45BF9 /* MONActivityIndicatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B3A04A41AB30D0600F45BF9 /* MONActivityIndicatorView.m */; };
 		6B468C2F1AAEC5E00054C4E4 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C2E1AAEC5E00054C4E4 /* Main_iPhone.storyboard */; };
 		6B468C311AAEC5E00054C4E4 /* changeDay.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C301AAEC5E00054C4E4 /* changeDay.png */; };
+		6B468C331AB0BB3A0054C4E4 /* 延时提示框V1.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C321AB0BB3A0054C4E4 /* 延时提示框V1.png */; };
+		6B468C351AB0BEEB0054C4E4 /* 提示框V2.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C341AB0BEEB0054C4E4 /* 提示框V2.png */; };
+		6B468C371AB0C12C0054C4E4 /* OK.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C361AB0C12C0054C4E4 /* OK.png */; };
+		6B468C3A1AB0C5870054C4E4 /* 延时提示框-白.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C381AB0C5870054C4E4 /* 延时提示框-白.png */; };
+		6B468C3B1AB0C5870054C4E4 /* 延时提示框-黄.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C391AB0C5870054C4E4 /* 延时提示框-黄.png */; };
+		6B468C3E1AB0FC0C0054C4E4 /* 放音-白-点-forCamera.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C3C1AB0FC0C0054C4E4 /* 放音-白-点-forCamera.png */; };
+		6B468C3F1AB0FC0C0054C4E4 /* 放音-白-forCamera.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C3D1AB0FC0C0054C4E4 /* 放音-白-forCamera.png */; };
+		6B468C411AB0FC820054C4E4 /* 停止放音-白-forCamera.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C401AB0FC820054C4E4 /* 停止放音-白-forCamera.png */; };
+		6B468C451AB0FF9A0054C4E4 /* 水印V1.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C441AB0FF9A0054C4E4 /* 水印V1.png */; };
+		6B4880081AB103F400DB78B5 /* timeImage-长.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B4880071AB103F400DB78B5 /* timeImage-长.png */; };
+		6B48800B1AB1AB5A00DB78B5 /* null-相片-白.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B4880091AB1AB5A00DB78B5 /* null-相片-白.png */; };
+		6B48800C1AB1AB5A00DB78B5 /* null-相片-黄.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B48800A1AB1AB5A00DB78B5 /* null-相片-黄.png */; };
 		6B4D97FB1AB3E12B00739B05 /* 提示框V2-黄.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B4D97FA1AB3E12B00739B05 /* 提示框V2-黄.png */; };
 		6B4D97FD1AB539ED00739B05 /* 提示框V2-白.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B4D97FC1AB539ED00739B05 /* 提示框V2-白.png */; };
 		6B4D98011AB8480D00739B05 /* 编辑背景图V1.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B4D98001AB8480D00739B05 /* 编辑背景图V1.png */; };
@@ -443,7 +454,6 @@
 		5D98348A195FB59300A80EEB /* abFrame_9@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "abFrame_9@2x.png"; sourceTree = "<group>"; };
 		5D98348B195FB59300A80EEB /* abFrame_10@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "abFrame_10@2x.png"; sourceTree = "<group>"; };
 		5DA43692197422C600668FEE /* 空白图.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "空白图.png"; sourceTree = "<group>"; };
-		5DA436941974AFC100668FEE /* null-相片.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "null-相片.png"; sourceTree = "<group>"; };
 		5DA6774819C67B1A007191CE /* camera.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camera.png; sourceTree = "<group>"; };
 		5DABFEB7195872870000D5B2 /* F3BarGauge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = F3BarGauge.h; sourceTree = "<group>"; };
 		5DABFEB8195872870000D5B2 /* F3BarGauge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = F3BarGauge.m; sourceTree = "<group>"; };
@@ -453,8 +463,6 @@
 		5DABFEBF195873800000D5B2 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		5DABFEC11958738D0000D5B2 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		5DAF431719CC4DE000DB4A80 /* 提示框v1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "提示框v1.png"; sourceTree = "<group>"; };
-		5DB151E019C6614B002EEF25 /* CustomIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomIndicatorView.h; sourceTree = "<group>"; };
-		5DB151E119C6614B002EEF25 /* CustomIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomIndicatorView.m; sourceTree = "<group>"; };
 		5DB6200819147072005000E8 /* scroll-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "scroll-1.png"; sourceTree = "<group>"; };
 		5DB6200919147072005000E8 /* scroll-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "scroll-2.png"; sourceTree = "<group>"; };
 		5DB6200A19147072005000E8 /* scroll-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "scroll-3.png"; sourceTree = "<group>"; };
@@ -567,8 +575,22 @@
 		6B3258711A6CD30200612A71 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		6B3258811A6CDA8500612A71 /* 应用推荐.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "应用推荐.png"; sourceTree = "<group>"; };
 		6B3258831A6CE44800612A71 /* water-moon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "water-moon.png"; sourceTree = "<group>"; };
+		6B3A04A31AB30D0600F45BF9 /* MONActivityIndicatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MONActivityIndicatorView.h; sourceTree = "<group>"; };
+		6B3A04A41AB30D0600F45BF9 /* MONActivityIndicatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MONActivityIndicatorView.m; sourceTree = "<group>"; };
 		6B468C2E1AAEC5E00054C4E4 /* Main_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPhone.storyboard; sourceTree = "<group>"; };
 		6B468C301AAEC5E00054C4E4 /* changeDay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = changeDay.png; sourceTree = "<group>"; };
+		6B468C321AB0BB3A0054C4E4 /* 延时提示框V1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "延时提示框V1.png"; sourceTree = "<group>"; };
+		6B468C341AB0BEEB0054C4E4 /* 提示框V2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "提示框V2.png"; sourceTree = "<group>"; };
+		6B468C361AB0C12C0054C4E4 /* OK.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OK.png; sourceTree = "<group>"; };
+		6B468C381AB0C5870054C4E4 /* 延时提示框-白.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "延时提示框-白.png"; sourceTree = "<group>"; };
+		6B468C391AB0C5870054C4E4 /* 延时提示框-黄.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "延时提示框-黄.png"; sourceTree = "<group>"; };
+		6B468C3C1AB0FC0C0054C4E4 /* 放音-白-点-forCamera.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "放音-白-点-forCamera.png"; sourceTree = "<group>"; };
+		6B468C3D1AB0FC0C0054C4E4 /* 放音-白-forCamera.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "放音-白-forCamera.png"; sourceTree = "<group>"; };
+		6B468C401AB0FC820054C4E4 /* 停止放音-白-forCamera.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "停止放音-白-forCamera.png"; sourceTree = "<group>"; };
+		6B468C441AB0FF9A0054C4E4 /* 水印V1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "水印V1.png"; sourceTree = "<group>"; };
+		6B4880071AB103F400DB78B5 /* timeImage-长.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "timeImage-长.png"; sourceTree = "<group>"; };
+		6B4880091AB1AB5A00DB78B5 /* null-相片-白.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "null-相片-白.png"; sourceTree = "<group>"; };
+		6B48800A1AB1AB5A00DB78B5 /* null-相片-黄.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "null-相片-黄.png"; sourceTree = "<group>"; };
 		6B4D97FA1AB3E12B00739B05 /* 提示框V2-黄.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "提示框V2-黄.png"; sourceTree = "<group>"; };
 		6B4D97FC1AB539ED00739B05 /* 提示框V2-白.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "提示框V2-白.png"; sourceTree = "<group>"; };
 		6B4D98001AB8480D00739B05 /* 编辑背景图V1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "编辑背景图V1.png"; sourceTree = "<group>"; };
@@ -784,6 +806,8 @@
 		5D6E633C19F0E8F6008C106D /* waterImage */ = {
 			isa = PBXGroup;
 			children = (
+				6B4880071AB103F400DB78B5 /* timeImage-长.png */,
+				6B468C441AB0FF9A0054C4E4 /* 水印V1.png */,
 				6B3258831A6CE44800612A71 /* water-moon.png */,
 				5D6E634119F0F2B6008C106D /* timeImage.png */,
 				5D6E633E19F0E8F6008C106D /* water-sun.png */,
@@ -908,7 +932,8 @@
 		5DB6200719147072005000E8 /* null-image */ = {
 			isa = PBXGroup;
 			children = (
-				5DA436941974AFC100668FEE /* null-相片.png */,
+				6B4880091AB1AB5A00DB78B5 /* null-相片-白.png */,
+				6B48800A1AB1AB5A00DB78B5 /* null-相片-黄.png */,
 				5DB6200819147072005000E8 /* scroll-1.png */,
 				5DB6200919147072005000E8 /* scroll-2.png */,
 				5DB6200A19147072005000E8 /* scroll-3.png */,
@@ -976,6 +1001,7 @@
 		5DF2384418E7B48A00538DA1 = {
 			isa = PBXGroup;
 			children = (
+				6B3A04A21AB30D0600F45BF9 /* CustomIndicator */,
 				6BA8A8961A7F483D004BC38D /* PulsingHalo */,
 				6B32568E1A615A9100612A71 /* AFNetworking */,
 				6B86C3741A47DA4900F450E1 /* ShareSDK */,
@@ -1080,8 +1106,6 @@
 				5D2609A819723DB800741953 /* tapToImage.m */,
 				5D2609A919723DB800741953 /* tapToImage.xib */,
 				5DF2386B18E7B48A00538DA1 /* Images.xcassets */,
-				5DB151E019C6614B002EEF25 /* CustomIndicatorView.h */,
-				5DB151E119C6614B002EEF25 /* CustomIndicatorView.m */,
 				5DDA25E619A03748001D4D76 /* GiudController */,
 				5D8070D218F8E65E0022A09C /* UserDB */,
 				5D5113E51935687900F41F8A /* REFrostedViewController */,
@@ -1138,6 +1162,8 @@
 		5DF238A718E7BF7500538DA1 /* Image */ = {
 			isa = PBXGroup;
 			children = (
+				6B468C321AB0BB3A0054C4E4 /* 延时提示框V1.png */,
+				6B468C341AB0BEEB0054C4E4 /* 提示框V2.png */,
 				6B468C301AAEC5E00054C4E4 /* changeDay.png */,
 				6B70C08D1AA952B600F25F43 /* guidImage */,
 				6B70C08B1AA9462E00F25F43 /* 拖动手势v1.png */,
@@ -1157,19 +1183,25 @@
 				5D6E634519F18641008C106D /* 说话-3.png */,
 				5D3B2E6B19CD1AF40069E84E /* 延时提示框.png */,
 				5DAF431719CC4DE000DB4A80 /* 提示框v1.png */,
+				6B468C381AB0C5870054C4E4 /* 延时提示框-白.png */,
+				6B468C391AB0C5870054C4E4 /* 延时提示框-黄.png */,
 				5DA6774819C67B1A007191CE /* camera.png */,
 				6BCA94071A989EEA0070FA59 /* camera-white.png */,
 				6B6FBC581B1215FD00E612B7 /* camera-white-indi.png */,
 				6BCA94081A989EEA0070FA59 /* camera-yellow.png */,
 				6B6FBC561B12159900E612B7 /* camera-yellow-indi.png */,
 				5DD4212219C1EDF300CBB21E /* YES.png */,
+				6B468C361AB0C12C0054C4E4 /* OK.png */,
 				5DD4211E19C1DFC500CBB21E /* menu-黑.png */,
 				5DD4211819BEF46100CBB21E /* 2s.png */,
 				5DD4211419BEE66200CBB21E /* 换镜头.png */,
 				5D421B0219B35B1600061761 /* 下部底图-黄.png */,
 				5D15E5EE19B05EDC0089997B /* 停止放音-白.png */,
+				6B468C401AB0FC820054C4E4 /* 停止放音-白-forCamera.png */,
 				5D15E5EC19B05E350089997B /* 放音-白.png */,
 				5DD4211619BEEB3600CBB21E /* 放音-白-点.png */,
+				6B468C3C1AB0FC0C0054C4E4 /* 放音-白-点-forCamera.png */,
+				6B468C3D1AB0FC0C0054C4E4 /* 放音-白-forCamera.png */,
 				5DDA25DC199E05DD001D4D76 /* save.png */,
 				5DBE83581A395ACA00E2F4DD /* 云 LOG.png */,
 				5D64A91319838ED40032F848 /* menu.png */,
@@ -1245,6 +1277,15 @@
 				6B3256A11A615A9100612A71 /* AFURLSessionManager.m */,
 			);
 			path = AFNetworking;
+			sourceTree = "<group>";
+		};
+		6B3A04A21AB30D0600F45BF9 /* CustomIndicator */ = {
+			isa = PBXGroup;
+			children = (
+				6B3A04A31AB30D0600F45BF9 /* MONActivityIndicatorView.h */,
+				6B3A04A41AB30D0600F45BF9 /* MONActivityIndicatorView.m */,
+			);
+			path = CustomIndicator;
 			sourceTree = "<group>";
 		};
 		6B70C08D1AA952B600F25F43 /* guidImage */ = {
@@ -1469,6 +1510,7 @@
 				6BCA94051A9889A70070FA59 /* light-yellow-1.png in Resources */,
 				5DBE9B04190C918F008C547D /* 返回.png in Resources */,
 				5DE48CBD195464EE007A8A17 /* 微信sns_icon_22@2x.png in Resources */,
+				6B468C3E1AB0FC0C0054C4E4 /* 放音-白-点-forCamera.png in Resources */,
 				5D8334A91978011D00EC5201 /* headerFrame_4.png in Resources */,
 				6BC980021AA03C180079ACC3 /* spirit-yellow-0.png in Resources */,
 				5D421B0B19B94A9400061761 /* 引导1.png in Resources */,
@@ -1507,7 +1549,6 @@
 				5D8334BE197A73C600EC5201 /* headerFrameBow_2.png in Resources */,
 				5D18ACE718E9B1E600D4741A /* 默认头像.png in Resources */,
 				5DBFACE9197BF2D300EF8652 /* 返回-黄.png in Resources */,
-				5DA436951974AFC100668FEE /* null-相片.png in Resources */,
 				5D3339E41967B1FD00AD8C54 /* lightCircleBlured.png in Resources */,
 				5DF2386C18E7B48A00538DA1 /* Images.xcassets in Resources */,
 				5D523DB119EB65DE004FE84E /* home.png in Resources */,
@@ -1538,6 +1579,8 @@
 				5DE48CB8195464EE007A8A17 /* QQ空间sns_icon_6.png in Resources */,
 				6B6FBC5D1B144A3C00E612B7 /* spirit-white-static.png in Resources */,
 				5D421B0719B9472A00061761 /* 引导2-4.png in Resources */,
+				6B468C411AB0FC820054C4E4 /* 停止放音-白-forCamera.png in Resources */,
+				6B468C3B1AB0C5870054C4E4 /* 延时提示框-黄.png in Resources */,
 				6B6FBC591B1215FD00E612B7 /* camera-white-indi.png in Resources */,
 				6BCA93F61A9886860070FA59 /* sky_window_moon_0@2x.png in Resources */,
 				5D6E634819F18641008C106D /* 说话-3.png in Resources */,
@@ -1556,6 +1599,7 @@
 				5D8AC8CB190CBA8C00E41FBA /* sun.png in Resources */,
 				5D98348C195FB59300A80EEB /* abFrame_1@2x.png in Resources */,
 				5DE48CB7195464EE007A8A17 /* sns_icon_24@2x.png in Resources */,
+				6B468C3A1AB0C5870054C4E4 /* 延时提示框-白.png in Resources */,
 				6BCA94011A9889A70070FA59 /* spirit-white-0.png in Resources */,
 				6BA8A8A11A7F597D004BC38D /* spirit-white-2.png in Resources */,
 				6B70C0931AA9548600F25F43 /* touch-1.png in Resources */,
@@ -1564,16 +1608,20 @@
 				5D8334A61978011D00EC5201 /* headerFrame_1.png in Resources */,
 				6B86C3A11A47DA4900F450E1 /* TencentOpenApi_IOS_Bundle.bundle in Resources */,
 				5DE6B4D019D69D9500170A92 /* Launch Screen.xib in Resources */,
+				6B468C351AB0BEEB0054C4E4 /* 提示框V2.png in Resources */,
+				6B468C371AB0C12C0054C4E4 /* OK.png in Resources */,
 				6BCA93F51A9886860070FA59 /* sky_bk_moon_0@2x.png in Resources */,
 				5D523DB319EB65DE004FE84E /* setting.png in Resources */,
 				5DF2385B18E7B48A00538DA1 /* InfoPlist.strings in Resources */,
 				6B86C39D1A47DA4900F450E1 /* ShareSDKLocalizable.strings in Resources */,
 				5D421B0319B35B1600061761 /* 下部底图-黄.png in Resources */,
 				6BCA94061A9889A70070FA59 /* light-yellow-2.png in Resources */,
+				6B48800C1AB1AB5A00DB78B5 /* null-相片-黄.png in Resources */,
 				5D64A91419838ED40032F848 /* menu.png in Resources */,
 				5D8334A71978011D00EC5201 /* headerFrame_2.png in Resources */,
 				5D8334B2197A128400EC5201 /* 小闹钟-关闭.png in Resources */,
 				5DB6201119147072005000E8 /* scroll-2.png in Resources */,
+				6B4880081AB103F400DB78B5 /* timeImage-长.png in Resources */,
 				5DD4211519BEE66200CBB21E /* 换镜头.png in Resources */,
 				5DD4211919BEF46100CBB21E /* 2s.png in Resources */,
 				5D8334A51978011D00EC5201 /* headerFrame_0.png in Resources */,
@@ -1582,6 +1630,7 @@
 				5DE48CBB195464EE007A8A17 /* 开心网sns_icon_8@2x.png in Resources */,
 				5D8334B1197A128400EC5201 /* 小闹钟-打开.png in Resources */,
 				5D8334B6197A1B6B00EC5201 /* 加语录-关闭.png in Resources */,
+				6B468C331AB0BB3A0054C4E4 /* 延时提示框V1.png in Resources */,
 				5D8AC8D2190CBDB300E41FBA /* 语录三点.png in Resources */,
 				6BCA940A1A989EEA0070FA59 /* camera-yellow.png in Resources */,
 				5D983495195FB59300A80EEB /* abFrame_10@2x.png in Resources */,
@@ -1593,6 +1642,7 @@
 				6BCA93FF1A9889A70070FA59 /* light-white-0.png in Resources */,
 				5D6E634619F18641008C106D /* 说话-1.png in Resources */,
 				5D7C3E8319BAB24F00F7BAF0 /* 引导1-4.png in Resources */,
+				6B468C451AB0FF9A0054C4E4 /* 水印V1.png in Resources */,
 				5DE48CC219546E63007A8A17 /* sns_icon_2.png in Resources */,
 				5D8334B5197A1B6B00EC5201 /* 加语录-打开.png in Resources */,
 				5D523DB219EB65DE004FE84E /* ning.png in Resources */,
@@ -1608,6 +1658,8 @@
 				5DBFACE0197B771600EF8652 /* 2秒开关底图.png in Resources */,
 				6BCA94001A9889A70070FA59 /* light-yellow-0.png in Resources */,
 				6B4D98011AB8480D00739B05 /* 编辑背景图V1.png in Resources */,
+				6B468C3F1AB0FC0C0054C4E4 /* 放音-白-forCamera.png in Resources */,
+				6B48800B1AB1AB5A00DB78B5 /* null-相片-白.png in Resources */,
 				6B70C0921AA9548600F25F43 /* touch-0.png in Resources */,
 				5DB6201419147072005000E8 /* scroll-5.png in Resources */,
 				6B51DD1C1A9DADE700678215 /* 头像横标.png in Resources */,
@@ -1692,6 +1744,7 @@
 				6B3256A71A615A9100612A71 /* AFURLConnectionOperation.m in Sources */,
 				5D8070E818F8E72D0022A09C /* UserInfo.m in Sources */,
 				5D618AAE191F3D0300150945 /* SunSentenceManagerViewController.m in Sources */,
+				6B3A04A51AB30D0600F45BF9 /* MONActivityIndicatorView.m in Sources */,
 				5D51411D19FA696C003DD253 /* iLink.m in Sources */,
 				5D18092B18F127BA0039F50E /* ImageUtil.m in Sources */,
 				5D18ACEB18EB065400D4741A /* UserSetViewController.m in Sources */,
@@ -1699,7 +1752,6 @@
 				5DF2389A18E7B5A100538DA1 /* EAIntroPage.m in Sources */,
 				5D18091C18F124AC0039F50E /* TakePhotoViewController.m in Sources */,
 				5DDC6752191200BB000B6A61 /* UIView+viewController.m in Sources */,
-				5DB151E219C6614B002EEF25 /* CustomIndicatorView.m in Sources */,
 				5D18094018F128BC0039F50E /* AFPickerView.m in Sources */,
 				5DF2389B18E7B5A100538DA1 /* EAIntroView.m in Sources */,
 				5D8AF89518FEC8F800CA23C1 /* UserInfoCloud.m in Sources */,
@@ -1852,7 +1904,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SunMoon/SunMoon-Prefix.pch";
 				INFOPLIST_FILE = "SunMoon/SunMoon-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ShareSDK/Extend/SinaWeiboSDK",
@@ -1888,7 +1940,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SunMoon/SunMoon-Prefix.pch";
 				INFOPLIST_FILE = "SunMoon/SunMoon-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ShareSDK/Extend/SinaWeiboSDK",

@@ -50,7 +50,7 @@
 
 -(void) addWater;
 -(void) addLog;
--(void) addTimeText;
+-(void) addTimeText:(NSString*) imageName;
 -(void) addLightCounText;
 -(void) addSentenceText;
 

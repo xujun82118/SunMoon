@@ -291,13 +291,13 @@
     
 }
 
--(void) addTimeText
+-(void) addTimeText:(NSString*) imageName
 {
     AddWaterMask* addWaterMask = [AddWaterMask alloc];
     //构造日期Text图,相对于底图的位置
-    UIImage* textImageBk = [UIImage imageNamed:@"timeImage.png"];
+    UIImage* textImageBk = [UIImage imageNamed:imageName];
     CGFloat w = textImageBk.size.width;
-    CGFloat h = textImageBk.size.height/2;
+    CGFloat h = textImageBk.size.height;
     CGFloat x = textImageBk.size.width/2-w/2;
     CGFloat y = textImageBk.size.height/2-h/2;
     [addWaterMask setTextRect:CGRectMake(x,y, w, h)];
@@ -316,7 +316,7 @@
 {
     AddWaterMask* addWaterMask = [AddWaterMask alloc];
     [addWaterMask setTextRect:textRect];
-    [addWaterMask setTextFrontSize:30];
+    [addWaterMask setTextFrontSize:12];
     shareImage =[addWaterMask addText:shareImage text:lightCount];
     
 }
@@ -338,62 +338,6 @@
 }
 
 
-/*
 
-#pragma mark - Customer alert
--(void) showCustomYesAlertSuperView:(NSString*) msg  AlertKey:(NSString*) alertKey
-{
-    
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
-    [customAlertAutoDisYes setStartCenterPoint:self.view.center];
-    [customAlertAutoDisYes setEndCenterPoint:self.view.center];
-    [customAlertAutoDisYes setStartAlpha:0.1];
-    [customAlertAutoDisYes setEndAlpha:1.0];
-    [customAlertAutoDisYes setStartHeight:0];
-    [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
-    [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
-    [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
-    [customAlertAutoDisYes setDelayDisappearTime:5.0];
-    [customAlertAutoDisYes setMsgFrontSize:45];
-    [customAlertAutoDisYes setAlertMsg:msg];
-    [customAlertAutoDisYes setCustomAlertDelegate:self];
-    [customAlertAutoDisYes RunCumstomAlert];
-    
-}
-
-- (void)yesButtonHandler:(id)sender
-{
-    [customAlertAutoDisYes yesButtonHandler:nil];
-    [customAlertAutoDis yesButtonHandler:nil];
-    
-    
-}
-
--(void) showCustomDelayAlertBottom:(NSString*) msg
-{
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
-    [customAlertAutoDis setStartHeight:0];
-    [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndHeight:50];
-    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
-    [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2, customAlertAutoDis.endHeight/2+60)];
-    [customAlertAutoDis setStartAlpha:0.1];
-    [customAlertAutoDis setEndAlpha:0.8];
-    [customAlertAutoDis setDelayDisappearTime:5.0];
-    [customAlertAutoDis setMsgFrontSize:30];
-    [customAlertAutoDis setAlertMsg:msg];
-    [customAlertAutoDis RunCumstomAlert];
-    
-}
-
-#pragma mark - CustomAlertDelegate
-- (void) CustomAlertOkAnimationFinish:(NSString*) alertKey
-{
-    NSLog(@"custom aler ok return");
-
-    
-}
-*/
 
 @end

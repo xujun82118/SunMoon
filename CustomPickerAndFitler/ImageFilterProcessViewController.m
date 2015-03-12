@@ -13,7 +13,6 @@
 #import "ShareByShareSDR.h"
 #import "CustomAlertView.h"
 #import "GuidController.h"
-#import "CustomIndicatorView.h"
 
 
 @interface ImageFilterProcessViewController ()
@@ -41,8 +40,8 @@
     
     CustomAlertView* customAlertAutoDis;
     CustomAlertView* customAlertAutoDisYes;
-    
-    CustomIndicatorView *indicator;
+    MONActivityIndicatorView *indicatorView;
+
 
 }
 
@@ -73,9 +72,13 @@
     //self.userInfo= [UserInfo  sharedSingleUserInfo];
     
     //初始化指示器
-    NSInteger indiW = 50;
-    NSInteger indiH = 50;
-    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
+    indicatorView = [[MONActivityIndicatorView alloc] init];
+    indicatorView.delegate = self;
+    indicatorView.numberOfCircles = 4;
+    indicatorView.radius = SCREEN_WIDTH/50;
+    indicatorView.internalSpacing = 4;
+    indicatorView.center = self.view.center;
+    [self.view addSubview:indicatorView];
     
 
     
@@ -488,12 +491,12 @@
     ShareByShareSDR* share = [ShareByShareSDR alloc];
     share.shareImage =srcImage;
     if (iSunORMoon ==  IS_SUN_TIME) {
-        share.waterImage = [UIImage imageNamed:@"water-sun.png"];
+        share.waterImage = [UIImage imageNamed:@"水印V1.png"];
         share.lightCount = self.userInfo.sun_value;
 
     }else
     {
-        share.waterImage = [UIImage imageNamed:@"water-moon.png"];
+        share.waterImage = [UIImage imageNamed:@"水印V1.png"];
         share.lightCount = self.userInfo.moon_value;
 
     }
@@ -508,27 +511,52 @@
     share.waterRect = CGRectMake(x,y,w,h);
     [share addWater];
     
+//    //计算水印日期位置
+//    CGFloat w1 = 30;
+//    CGFloat h1 = 30;
+//    CGFloat x1 = 40;
+//    CGFloat y1 = share.shareImage.size.height -20 -h1/2;
+//    share.textRect = CGRectMake(x1,y1,w1,h1);
+//    [share addTimeText:@"timeImage-长.png"];
+//    
+//    //计算水印光个数的位置
+//    CGFloat w2 = 30;
+//    CGFloat h2 = 30;
+//    CGFloat x2 = 25;
+//    CGFloat y2 = y+30;
+//    share.textRect = CGRectMake(x2,y2,w2,h2);
+//    [share addLightCounText];
+//    
+//    //计算水印语录的位置
+//    CGFloat w3 = (share.shareImage.size.width);
+//    CGFloat h3 = 30;
+//    CGFloat x3 = (share.shareImage.size.width)/2-w3/2;
+//    CGFloat y3 = share.shareImage.size.height -25 -h3/2;
+//    share.textRect = CGRectMake(x3,y3,w3,h3);
+//    [share addSentenceText];
+    
+    
     //计算水印日期位置
-    CGFloat w1 = 30;
-    CGFloat h1 = 30;
-    CGFloat x1 = 40;
-    CGFloat y1 = share.shareImage.size.height -20 -h1/2;
+    CGFloat w1 = 70;
+    CGFloat h1 = 70*45/172;
+    CGFloat x1 = share.shareImage.size.width/2-w1/2;
+    CGFloat y1 = share.shareImage.size.height-15-h1/2;
     share.textRect = CGRectMake(x1,y1,w1,h1);
-    [share addTimeText];
+    [share addTimeText:@"timeImage-长.png"];
     
     //计算水印光个数的位置
     CGFloat w2 = 30;
     CGFloat h2 = 30;
-    CGFloat x2 = 25;
+    CGFloat x2 = share.shareImage.size.width/2-w2/2;
     CGFloat y2 = y+30;
     share.textRect = CGRectMake(x2,y2,w2,h2);
     [share addLightCounText];
     
     //计算水印语录的位置
-    CGFloat w3 = (share.shareImage.size.width);
+    CGFloat w3 = (share.shareImage.size.width)/3*2;
     CGFloat h3 = 30;
     CGFloat x3 = (share.shareImage.size.width)/2-w3/2;
-    CGFloat y3 = share.shareImage.size.height -25 -h3/2;
+    CGFloat y3 = share.shareImage.size.height -40 -h3/2;
     share.textRect = CGRectMake(x3,y3,w3,h3);
     [share addSentenceText];
     
@@ -657,6 +685,20 @@
  
     return count;
 }
+
+#pragma mark - MONActivityIndicatorViewDelegate Methods
+
+- (UIColor *)activityIndicatorView:(MONActivityIndicatorView *)activityIndicatorView
+      circleBackgroundColorAtIndex:(NSUInteger)index {
+    
+    
+    CGFloat red   = (arc4random() % 256)/255.0;
+    CGFloat green = (arc4random() % 256)/255.0;
+    CGFloat blue  = (arc4random() % 256)/255.0;
+    CGFloat alpha = 1.0f;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+}
+
 
 #pragma mark - AminationCustomDelegate
 - (void) customAnimationFinishedRuturn:(NSString*) aniKey  srcViewDic:(NSDictionary*) srcViewDic
@@ -855,18 +897,12 @@
 //delegate
 -(void) ShareStart
 {
-    //初始化指示器
-    NSInteger indiW = 50;
-    NSInteger indiH = 50;
-    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
-    [indicator startAnimating];
-    [self.view addSubview:indicator];
+    [indicatorView startAnimating];
 }
 
 -(void) ShareCancel
 {
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
+    [indicatorView stopAnimating];
     
     [self showCustomYesAlertSuperView:@"取消分享" AlertKey:@"shareCancel"];
 }
@@ -874,8 +910,8 @@
 -(void) ShareReturnSucc
 {
     
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
+    [indicatorView stopAnimating];
+
     
     [self showCustomYesAlertSuperView:@"分享成功" AlertKey:@"shareSucc"];
     
@@ -883,8 +919,8 @@
 
 -(void) ShareReturnFailed
 {
-    [indicator stopAnimating];
-    [indicator removeFromSuperview];
+    [indicatorView stopAnimating];
+
     
     [self showCustomYesAlertSuperView:@"分享失败，请检查网络" AlertKey:@"shareFailed"];
 }
@@ -903,24 +939,11 @@
 //替换为原来的相片
 -(void)chooseOldImage:(UITapGestureRecognizer*) sender
 {
-    [self RunIndicator:YES];
+    [indicatorView startAnimating];
     
     //存旧的相片
     UIImage* tempImage = editImageOld;
     NSString* tempString = editOldSentence;
-//    if(iSunORMoon == IS_SUN_TIME) {
-//        tempImage = [UIImage imageWithData:self.userInfo.sun_image];
-//        tempString = self.userInfo.sun_image_sentence;
-//    }else if (iSunORMoon == IS_MOON_TIME)
-//    {
-//        tempImage = [UIImage imageWithData:self.userInfo.moon_image];
-//        tempString = self.userInfo.moon_image_sentence;
-//    }
-//    
-//    if (!tempImage || !tempString) {
-//        [self RunIndicator:NO];
-//        return;
-//    }
     
 
     //交换位置
@@ -934,58 +957,9 @@
     rootImageView.image = tempImage;
     currentSentence =tempString;
 
+    [indicatorView stopAnimating];
 
 
-    /*
-    //时间值
-    NSString* tempTime =[imagePickerData objectForKey:CAMERA_TIME_KEY];
-    tempTime = [tempTime stringByReplacingOccurrencesOfString:@"." withString:@"月"];
-    timeString = [tempTime stringByAppendingString:@"日"];
-    [timelabel setText:timeString];
-    
-    
-    //语录
-    currentSentence = [imagePickerData objectForKey:CAMERA_SENTENCE_KEY];
-    [sentencelabel setText:currentSentence];
-    
-    //调色盘
-    for(int i=0;i<14;i++)
-    {
-        //UIImageView * scrollView = (UIImageView*)[self.view viewWithTag:(TAG_EDITE_PHOTO_SCROLL_VIEW)];
-        UIImageView *scrollImageView= (UIImageView*)[scrollerView viewWithTag:(i)];
-        bgImageScroll = [self changeImage:i imageView:nil];
-        scrollImageView.image = bgImageScroll;
-        
-    }
-    
-    
-    
-    //交换新旧图片
-    //旧相片放到imagePickerData中
-    imagePickerData = [NSDictionary dictionaryWithObjectsAndKeys:tempOld,CAMERA_IMAGE_KEY,
-                                     [imagePickerData objectForKey:CAMERA_TIME_KEY], CAMERA_TIME_KEY,
-                                     tempOldstring,CAMERA_SENTENCE_KEY,[imagePickerData objectForKey:CAMERA_VOICE_NAEM_KEY], CAMERA_VOICE_NAEM_KEY,
-                                     nil];
-    //换新照的相片存到userinfo中，当成上次照的旧相片, 当用户再次点击时，获取
-    if(iSunORMoon == IS_SUN_TIME) {
-        self.userInfo.sun_image = UIImagePNGRepresentation(currentImage);
-        self.userInfo.sun_image_sentence = currentSentence;
-    }else if (iSunORMoon == IS_MOON_TIME)
-    {
-        self.userInfo.moon_image = UIImagePNGRepresentation(currentImage);
-        self.userInfo.moon_image_sentence = currentSentence;
-
-    }
-    //更新数据库
-    [self.userInfo updateTodayUserData:self.userInfo];
-    
-    [self reFreshcelement];
-
-     */
-    
-    [self RunIndicator:NO];
-
-    
 }
 
 -(UIImage *)changeImage:(int)index imageView:(UIImageView *)imageView
@@ -1070,33 +1044,6 @@
 
 
 
-#pragma mark - indicator
-- (void) RunIndicator:(BOOL)isStart
-{
- 
-    //未能显示，原因不明，暂缓
-    if (isStart) {
-
-         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            
-             [indicator startAnimating];
-             [self.view addSubview:indicator];
-             [self.view setUserInteractionEnabled:NO];
-            
-         });
-    }else
-    {
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [indicator stopAnimating];
-            [indicator removeFromSuperview];
-            [self.view setUserInteractionEnabled:YES];
-
-        });
-        
-    }
-}
-
 #pragma mark - camera utility
 - (BOOL) isCameraAvailable{
     return [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
@@ -1148,7 +1095,7 @@
 -(void) showCustomYesAlertSuperView:(NSString*) msg AlertKey:alertKey
 {
     
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"OK.png" posionShowMode:userSet  AlertKey:alertKey];
     [customAlertAutoDisYes setStartCenterPoint:self.view.center];
     [customAlertAutoDisYes setEndCenterPoint:self.view.center];
     [customAlertAutoDisYes setStartAlpha:0.1];
@@ -1157,7 +1104,7 @@
     [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
-    [customAlertAutoDisYes setDelayDisappearTime:5.0];
+    [customAlertAutoDisYes setDelayDisappearTime:4.0];
     [customAlertAutoDisYes setMsgFrontSize:35];
     [customAlertAutoDisYes setAlertMsg:msg];
     [customAlertAutoDisYes setCustomAlertDelegate:self];
@@ -1175,17 +1122,17 @@
 
 -(void) showCustomDelayAlertBottom:(NSString*) msg
 {
-    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"延时提示框.png"  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
+    customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getDelayBkByTime]  yesBtnImageName:nil posionShowMode:userSet AlertKey:nil];
     [customAlertAutoDis setStartHeight:0];
-    [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndHeight:60];
-    [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
-    [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2, customAlertAutoDis.endHeight/2+60)];
+    [customAlertAutoDis setStartWidth:SCREEN_WIDTH/5*4];
+    [customAlertAutoDis setEndWidth:SCREEN_WIDTH/5*4];
+    [customAlertAutoDis setEndHeight:customAlertAutoDis.endWidth*216/547];
+    [customAlertAutoDis setStartCenterPoint:self.view.center];
+    [customAlertAutoDis setEndCenterPoint:self.view.center];
     [customAlertAutoDis setStartAlpha:0.1];
     [customAlertAutoDis setEndAlpha:0.8];
-    [customAlertAutoDis setDelayDisappearTime:5.0];
-    [customAlertAutoDis setMsgFrontSize:30];
+    [customAlertAutoDis setDelayDisappearTime:4.0];
+    [customAlertAutoDis setMsgFrontSize:35];
     [customAlertAutoDis setAlertMsg:msg];
     [customAlertAutoDis RunCumstomAlert];
     

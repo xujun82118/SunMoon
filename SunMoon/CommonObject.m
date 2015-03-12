@@ -416,9 +416,37 @@
     }else
     {
         return  @"提示框V2-白.png";
+
         
     }
 }
+
++(NSString*)getDelayBkByTime
+{
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        return @"延时提示框-黄.png";
+        
+    }else
+    {
+        return  @"延时提示框-白.png";
+        
+        
+    }
+}
+
++(NSString*)getDelayBkByTimeType:(NSInteger) type
+{
+    if (type ==  IS_SUN_TIME) {
+        return @"延时提示框-黄.png";
+        
+    }else
+    {
+        return  @"延时提示框-白.png";
+        
+        
+    }
+}
+
 
 +(void)showAlert:(NSString *)msg titleMsg:(NSString *)title DelegateObject:(id) delegateObject{
     UIAlertView *alert = [[UIAlertView alloc]
