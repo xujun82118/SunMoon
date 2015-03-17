@@ -60,6 +60,9 @@
 #define USER_TYPE_VIP 10 //VIP用户
 
 
+//几个小时养成1个光
+#define BRING_UP_LIGHT_HOUR  1 
+
 //本地通知定义
 #define NOTIFY_LOCAL_NEED_CHANGE_UI   @"NeedChangeUI"
 
@@ -95,9 +98,10 @@ typedef enum
  */
 typedef enum
 {
-    lightTypeBlue = 0,
-    lightTypeRed  = 1,
-    lightTypeYellow = 2
+    lightTypeWhiteLight = 0,
+    lightTypeYellowLight,
+    lightTypeWhiteSpirite,
+    lightTypeYellowSpirte,
     
 }LightType;
 
@@ -133,16 +137,10 @@ typedef enum
 }DeviceTypeVersion;
 
 //阳光，月光时间
-#define SUN_TIME_MIN  6
+#define SUN_TIME_MIN  3
 #define SUN_TIME_MAX  18
-#define MOON_TIME_MIN  18
-#define MOON_TIME_MAX  6  //次日
-
-//test
-//#define MOON_TIME_MIN  6
-//#define MOON_TIME_MAX  18
-//#define SUN_TIME_MIN  18
-//#define SUN_TIME_MAX  6
+//#define MOON_TIME_MIN  18
+//#define MOON_TIME_MAX  6  //次日
 
 
 //阳光，月光标识
@@ -176,10 +174,23 @@ typedef enum
 
 //光类型的计数
 #define KEY_LIGHT_TYPE_SUM_COUNT  @"LightType_SumLight_Count"
-#define KEY_LIGHT_TYPE_RED_COUNT  @"LightType_RedLight_Count"
-#define KEY_LIGHT_TYPE_RED_COUNT_LEFT  @"LightType_RedLight_Count_Left"
-#define KEY_LIGHT_TYPE_BLUE_COUNT  @"LightType_BlueLight_Count"
+#define KEY_LIGHT_TYPE_LEFT_BASE_COUNT  @"LightType_LeftBase_Count"
+#define KEY_LIGHT_TYPE_SPIRITE_COUNT  @"LightType_SPIRITE_Count"
 
+//动画view的信息
+#define KEY_ANIMATION_VIEW  @"Animation_view"
+#define KEY_ANIMATION_LIGHT_TYPE  @"Animation_Light_type"
+
+
+//主页背图
+#define  MAIN_BK_IMAGE_SUN    @"sky_bk_sun_0.png"
+#define  MAIN_BK_IMAGE_MOON    @"sky_bk_moon_0.png"
+#define  MAIN_WINDOW_IMAGE_SUN    @"sky_window_sun_0.png"
+#define  MAIN_WINDOW_IMAGE_MOON    @"sky_window_moon_0.png"
+
+//太阳月亮图
+#define  SKY_IMAGE_SUN    @"sun.png"
+#define  SKY_IMAGE_MOON    @"moon.png"
 
 //用户连续登录次数
 #define KEY_CONTINUE_LOGIN_SUN_COUNT @"continueLoginSunCount"
@@ -240,7 +251,7 @@ typedef enum
 #define ALERT_IS_MOON_TIME     @"AlertIsMoonTime"
 
 //动画光环扩出动画实体的宽度
-#define LIGHT_ANIMATION_INTERVAL  7
+#define LIGHT_ANIMATION_INTERVAL  1
 
 
 
@@ -277,13 +288,99 @@ typedef enum
 #define  TAG_CUSTOM_ALER_BTN  250   //自定义aler的BTN
 #define  TAG_BRING_LING_BTN   251
 #define  TAG_INTO_CAMERA_BTN   252
+#define  TAG_SHARE_SKY_BTN   253
+
 
 #define  TAG_LIGHT_USER_HEADER 300 //300到307
 #define  TAG_LIGHT_TRACE 1000 //1000以后
 #define  TAG_SWIM_LIGHT_TRACE 10000 //10000以后
 
+#define KEY_IS_GIVE_FIRST_LIGHT       @"reminderGiveFirstLight"
+
+//aler提示KEY
+#define KEY_REMINDER_PAN_FOR_LIGHT    @"reminderPanForLight"
+#define KEY_REMINDER_GETINTO_CAMERA    @"reminderGetIntoCamera"
+#define KEY_REMINDER_PHOTO_COUNT_OVER  @"reminderPhotoCountOver"
+//#define KEY_REMINDER_SUCC_GET_LIGHT    @"reminderSuccGetLight"
+//#define KEY_REMINDER_GIVE_LIGHT        @"reminderGiveLight"
+#define KEY_REMINDER_GIVE_LIGHT_FROM_INTOHOME        @"reminderGiveLight_from_intoHome"  //点击头像，触发光的奖励
+#define KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA        @"reminderGiveLight_from_Camera"//从相机拍照回来，触发光的奖励
+#define KEY_REMINDER_GIVE_LIGHT_FROM_PAN_TO_USERHEADER        @"reminderGiveLight_from_Pan_to_userheader"//拖动回头像，触发光的奖励(未用到，走的其它召回流程)
+#define KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN        @"reminderGiveLight_from_Continue_login"//连续登录，触发光的奖励
+#define KEY_REMINDER_GIVE_LIGHT_BUT_TIME_ERROR        @"reminderGiveLight_but_error_time"//时间倒序，什么也不做
 
 
+
+
+
+
+//光与精灵动画key,流程入口为refreshLightStateForCallBackOrPopout
+//流程1：刷新天空
+//      <1>未养成状态，光都在头像，新的天空，从KEY_ANIMATION_FLY_SIMPLE_LIGHT_TO_SKY_FOR_NEWSKY开始，然后，先放出精灵，再放出光
+//      <2>养成状态，光在天空，有新奖励的光，从KEY_ANIMATION_SWIM_LIGHT_OUT_REFRESH_ADD开始，先增加光到天空，再计算是否要增加精灵，如要，先收回光，再放出新的精灵，再检查是否要放出多余的光
+//流程2：收回光
+//      <1>从KEY_ANIMATION_SWIM_LIGHT_BACK_FORFIANLBACK，KEY_ANIMATION_SWIM_SPIRITE_BACK开始，光和精灵同时回到日月，然后所有的光回到头像
+#define KEY_ANIMATION_PAN_TO_SKY_FAILED_TO_USERHEADER @"animation_pan_to_sky_failed_to_userHeader"//拖回日月失败，光又回到了头像
+#define KEY_ANIMATION_PAN_TO_USERHEADER_FAILED_TO_SKY @"animation_pan_to_userheader_failed_to_sky"//拖回头像失败，光又回到了日月
+
+#define KEY_ANIMATION_FLY_TO_USER_HEADER_FOR_GIVE_LIGHT @"animation_fly_to_user_header"//奖励光，由于光都在头像中，所以飞到头像
+//飞出光的KEY
+#define KEY_ANIMATION_FLY_SIMPLE_LIGHT_TO_SKY_FOR_NEWSKY @"animation_fly_to_sky_for_newsky"//新的天空，光飞回到日月，然后执行飞出动画
+#define KEY_ANIMATION_SWIM_SPIRITE_OUT_FOR_NEWSKY @"animation_swim_spirite_bazier_out_for_newSky" //新的天空，先放出精灵
+#define KEY_ANIMATION_SWIM_LIGHT_OUT_FOR_NEWSKY @"animation_swim_light_bazier_out_for_newSky"//新的天空，直接弹出光
+#define KEY_ANIMATION_SWIM_SPIRITE_OUT_FOR_REFRESH_ADD  @"animation_swim_spirite_bazier_out_for_refresh"//由于光满了，需要刷新增加天空精灵
+#define KEY_ANIMATION_SWIM_LIGHT_OUT_REFRESH_ADD  @"animation_bazier_give_one_light_add"//刷新天空，增加奖励的光,光从日月飞出
+#define KEY_ANIMATION_SWIM_LIGHT_OUT_FINAL_ADD  @"animation_bazier_give_one_light_final_add" //刷新天空，最后再确认是否有光弹出，光从日月飞出
+
+#define KEY_ANIMATION_SWIM_AROUND   @"animation_swim_around"
+//飞回光的KEY
+#define KEY_ANIMATION_SWIM_LIGHT_BACK_FORREFRESH   @"animation_swim_light_back_forRefresh"//刷新时，光满了，需回到日月
+#define KEY_ANIMATION_SWIM_LIGHT_BACK_FORFIANLBACK   @"animation_swim_light_back_forFinalBack"//手动召回时，光回到日月,然后一起回到头像
+#define KEY_ANIMATION_SWIM_SPIRITE_BACK   @"animation_swim_spirite_back"
+#define KEY_ANIMATION_FIANL_BACK_LIGHT  @"animation_bazier_final_back_light"//最后所有的光，从日月回到头像，手动召回时
+
+//精灵touch飞行动画
+#define KEY_ANIMATION_SPIRITE_FLY_TRACE_TOUCH  @"animation_spirte_fly_trace_touch"
+#define KEY_ANIMATION_SPIRITE_FLY_AUTO  @"animation_spirte_fly_AUTO"
+
+
+#define FULL_SKY_LIGHT_COUNT  25
+#define EVERY_LING_LIGHT_COUNT 5
+
+#define kMaxRadius 160
+
+#define SPIRITE_W_H 120
+#define LIGHT_W_H 30
+
+
+
+//控制在秒内全部释放完成，2秒内完成
+#define POP_OUT_ALL_LIGHT_TO_SKY_TIME  2 //从日月飞出光到天空，弹出的整个时间
+#define POP_OUT_ALL_SPIRITE_TO_SKY_TIME  2 //从日月飞出精灵到天空，弹出的整个时间
+#define POP_OUT_ONE_ANIMATION_TIME  1 //从日月飞出光或精灵到天空, 每个光的动画滞空时间
+
+//左右摆动的时间
+#define SWIM_AROUND_LIGHT_TIME  1
+//延迟一定时间才能召回，要等动画完成定位后,包括释放动画，摇摆动画(距离较小，不计)
+#define POP_BACK_SKY_LIGHT_TIME  1.0 //召回天空中的光回到日月的弹出时间
+#define POP_BACK_SPIRITE_TIME  0.5 //召回精灵回到日月的弹出时间
+#define FLY_BACK_TO_USERHEAER_TOTAL_TIME 2 //从太阳到头像的总弹出空时间
+#define SIMPLE_FLY_EVERY_LIGHT_TIME 0.5 //每一个光的飞行时间,在太阳与头像之间的，或奖励光的
+#define FLY_FROM_USERHEADRE_TO_SUN_MOON_TIME 2 //从头像到日月的时间
+#define POP_BACK_ONE_ANIMATION_TIME  1.0 //从天空飞回光和精灵到日月，每个光的动画滞空时长
+
+//点击屏幕，精灵飞动时间
+#define SPIRITE_FLY_FLY_INTER_TIME  0.5  //每个精灵开始飞行的时间间隔
+#define SPIRITE_FLY_TIME_AUTO 1 //每段飞行的滞空时间
+#define SPIRITE_FLY_TIME_TOUCH 3 //每段飞行的滞空时间
+#define SPIRITE_FLY_AUTO_INTERVAL 8.0 //触发精灵自动飞行的间隔
+
+//左右摆动的距离
+#define SWIM_AROUND_SPIRITE_DISTANCE  3
+#define SWIM_AROUND_LIGHT_DISTANCE  3
+
+//日月与头像之间飞动的最大的光数
+#define FLY_BETWEEN_SKY_USERHEADER_MAX_COUNT   100
 
 #define ORIGINAL_MAX_WIDTH 320.0f
 
@@ -309,8 +406,23 @@ typedef enum
 + (NSInteger) checkSunOrMoonTime;
 
 +(NSString*) getUsedSunMoonImageNameByTime;
-+(NSString*) getUsedSamllLightImageNameByTime;
-+(UIImage*) getLightImageByLightType:(LightType) lightType;
++(UIImage*) getAniStartImageByLightType:(LightType) lightType;
++(UIImage*) getStaticImageByLightType:(LightType) lightType;
++(UIImage*) getUsedCameraImageNameByTime:(BOOL)isIndi;
++(NSString*) getImageNameByLightType:(LightType) lightType;
++(LightType) getBaseLightTypeByTime;
++(UIImage*) getBaseLightImageByTime;
++(LightType) getSpiriteTypeByTime;
++(UIImage*) getSunOrMooonImageByTime;
+
++(UIImage*)getSkyBkImageByTime;
++(UIImage*)getSunMoonImageByTime;
++(UIImage*)getSkyWindowImageByTime;
+
++(UIColor*)getIndicationColorByTime;
+
++(NSString*)getLightCharactorByTime;
++(NSString*)getAlertBkByTime;
 
 
 
@@ -329,5 +441,10 @@ typedef enum
 
 
 + (int)getRandomNumber:(int)from to:(int)to;
+
++(CGPoint) getMidPointBetween:(CGPoint) p1   andPoint:(CGPoint) p2;
+
+
++(UIImage*) screenShot:(UIView*) view;
 
 @end

@@ -47,7 +47,7 @@
     [_superView addSubview:_msgLabel];
     
     if (btnImage) {
-        NSInteger yesW =_viewBkImageView.frame.size.width/5*4;
+        NSInteger yesW =_viewBkImageView.frame.size.width/5*2;
         NSInteger yesH =_viewBkImageView.frame.size.height/5*1;
         UIImage *tempImage1 = [UIImage imageNamed:btnImage];
         //需先初始化frame, 否则动时就立刻显示，原因不明？？
@@ -81,7 +81,7 @@
     [_viewBkImageView setFrame:CGRectMake(_startCenterPoint.x-_startWidth/2, _startCenterPoint.y-_startHeight/2, _startWidth, _startHeight)];
     
     if (_yesBtn) {
-        NSInteger yesW =_viewBkImageView.frame.size.width/6*5;
+        NSInteger yesW =_viewBkImageView.frame.size.width/6*3;
         NSInteger yesH =0;
         [_yesBtn setFrame:CGRectMake(_viewBkImageView.frame.origin.x+_viewBkImageView.frame.size.width/2-yesW/2, _viewBkImageView.frame.origin.y+_viewBkImageView.frame.size.height-yesH, yesW, yesH)];
     }
@@ -108,7 +108,7 @@
     _msgLabel.font = [UIFont fontWithName:@"Arial" size:_MsgFrontSize];
 
     //构造水印图
-    NSInteger x = 40;
+    NSInteger x = 45;
     NSInteger w = _viewBkImageView.image.size.width-x*2;
     NSInteger h = _viewBkImageView.image.size.height/7*6;
     //NSInteger h = _endHeight*5;
@@ -125,7 +125,7 @@
     [_viewBkImageView setFrame:CGRectMake(_startCenterPoint.x-_startWidth/2, _startCenterPoint.y-_startHeight/2, _startWidth, _startHeight)];
     
     if (_yesBtn) {
-        NSInteger yesW =_viewBkImageView.frame.size.width/6*5;
+        NSInteger yesW =_viewBkImageView.frame.size.width/6*3;
         NSInteger yesH =0;
         [_yesBtn setFrame:CGRectMake(_viewBkImageView.frame.origin.x+_viewBkImageView.frame.size.width/2-yesW/2, _viewBkImageView.frame.origin.y+_viewBkImageView.frame.size.height-yesH-_viewBkImageView.frame.size.height/8, yesW, yesH)];
 
@@ -141,8 +141,8 @@
     _viewBkImageView.hidden = NO;
     
     if (_yesBtn) {
-        NSInteger yesW =_viewBkImageView.frame.size.width/6*5;
-        NSInteger yesH =_viewBkImageView.frame.size.height/5;
+        NSInteger yesW =_viewBkImageView.frame.size.width/6*3;
+        NSInteger yesH =_viewBkImageView.frame.size.height/7;
         [_yesBtn setFrame:CGRectMake(_viewBkImageView.frame.origin.x+_viewBkImageView.frame.size.width/2-yesW/2, _viewBkImageView.frame.origin.y+_viewBkImageView.frame.size.height-yesH-_viewBkImageView.frame.size.height/10, yesW, yesH)];
         _yesBtn.hidden = NO;
     }
@@ -187,9 +187,7 @@
             
         }else
         {
-            
-            
-            
+ 
             //延迟消失
             [UIView beginAnimations:@"cutomeAlert_Dis" context:nil];
             [UIView setAnimationDuration:_delayDisappearTime];

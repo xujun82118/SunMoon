@@ -16,13 +16,6 @@
 #import "UserSetViewController.h"
 #import "WeiboSDK.h"
 
-#import "YouMiConfig.h"
-#import "YouMiWall.h"
-#import "YouMiWallAppModel.h"
-#import "YouMiPointsManager.h"
-
-
-
 #import "iLink.h"
 
 @interface MainSunMoonAppDelegate ()
@@ -77,17 +70,6 @@
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
     }
     
-
-    
-    //有米广告设置
-    [YouMiConfig setUseInAppStore:YES];  // [可选]开启内置appStore，详细请看YouMiSDK常见问题解答
-    [YouMiConfig setShouldGetLocation:NO];
-    [YouMiConfig launchWithAppID:@"a61d4d3e4309ce00" appSecret:@"d138c3f7423a6a22"];
-    [self.window makeKeyAndVisible];
-    // 设置显示全屏广告的window
-    [YouMiConfig setFullScreenWindow:self.window];
-    [YouMiWall enable];
-
     
     //ShareSDK 设置
     [ShareSDK registerApp:@"3e623a1fc526"];

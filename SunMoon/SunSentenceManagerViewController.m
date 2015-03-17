@@ -136,7 +136,7 @@
         if(indexPath.row == user.sunSentenceSelect)
         {
 
-            cell.imageView.image = [UIImage imageNamed:@"sun-小.png"];
+            cell.imageView.image = [UIImage imageNamed:@"light-yellow-0.png"];
         }
         
         else

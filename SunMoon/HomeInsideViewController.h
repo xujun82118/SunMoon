@@ -14,11 +14,11 @@
 #import <ShareSDK/ShareSDK.h>
 #import "ShareByShareSDR.h"
 #import "CustomAlertView.h"
+#import "PulsingHaloLayer.h"
 
-#import <iAd/iAd.h>
 
 
-@interface HomeInsideViewController : UIViewController<InfiniteScrollPickerDelegate,UserInfoCloudDelegate,ShareByShareSDRDelegate,CustomAlertDelegate,ADBannerViewDelegate,pitchDelegate>
+@interface HomeInsideViewController : UIViewController<InfiniteScrollPickerDelegate,UserInfoCloudDelegate,ShareByShareSDRDelegate,CustomAlertDelegate,pitchDelegate>
 {
       InfiniteScrollPicker *imageScrollSun;
       InfiniteScrollPicker *imageScrollMoon;
@@ -33,6 +33,9 @@
 @property (weak, nonatomic) IBOutlet UIImageView * bkGroundImageView;
 @property (weak, nonatomic) IBOutlet UIImageView * sunScrollImageView;
 @property (weak, nonatomic) IBOutlet UIImageView * moonScrollImageView;
+@property (nonatomic, assign) IBOutlet UIButton *sunCenter;
+@property (nonatomic, assign) IBOutlet UIButton *moonCenter;
+
 
 
 @property (weak, nonatomic) IBOutlet UITextField *sunTimeText;
@@ -64,6 +67,8 @@
 @property (nonatomic, copy) UserDB * userDB;
 @property (nonatomic, strong) UserInfoCloud* userCloud;
 
+
+@property (nonatomic, assign) PulsingHaloLayer *haloAdd;
 
 - (IBAction)moonAlertCtl:(id)sender;
 - (IBAction)sunAlertCtl:(id)sender;

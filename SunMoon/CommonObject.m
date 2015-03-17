@@ -139,15 +139,36 @@
     return  0;
 }
 
-+(NSString*) getUsedSamllLightImageNameByTime
+
+
++(UIImage*) getUsedCameraImageNameByTime:(BOOL)isIndi
 {
+    
     if ([self checkSunOrMoonTime] == IS_SUN_TIME) {
-        return @"sun-小.png";
+        
+        if (isIndi) {
+            return [UIImage imageNamed:@"camera-white-indi.png"];
+
+        }else
+        {
+            return [UIImage imageNamed:@"camera-white.png"];
+
+        }
+        
     }else
     {
-        return @"moon-小.png";
+        if (isIndi) {
+            return [UIImage imageNamed:@"camera-yellow-indi.png"];
+            
+        }else
+        {
+            return [UIImage imageNamed:@"camera-yellow.png"];
+            
+        }
     }
+
 }
+
 
 +(NSString*) getUsedSunMoonImageNameByTime
 {
@@ -160,20 +181,222 @@
 }
 
 
-+(UIImage*) getLightImageByLightType:(LightType) lightType
++(LightType) getSpiriteTypeByTime
 {
-    
-    if (lightType == lightTypeBlue) {
-        return [UIImage imageNamed:@"sun-小.png"];
-    }else if(lightType == lightTypeRed)
-    {
-        return [UIImage imageNamed:@"sun-小.png"];
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        return lightTypeYellowSpirte;
+        
     }else
     {
-        return [UIImage imageNamed:@"sun-小.png"];
+        return lightTypeWhiteSpirite;
+        
+    }
+    
+}
+
++(LightType) getBaseLightTypeByTime
+{
+    
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        return lightTypeYellowLight;
+
+    }else
+    {
+        return lightTypeWhiteLight;
 
     }
     
+
+}
+
++(UIImage*) getBaseLightImageByTime
+{
+    
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        return [UIImage imageNamed:@"light-yellow-0.png"];
+        
+    }else
+    {
+        return [UIImage imageNamed:@"light-white-0.png"];
+        
+    }
+}
+
++(UIImage*) getSunOrMooonImageByTime
+{
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        return [UIImage imageNamed:@"sun.png"];
+        
+    }else
+    {
+        return [UIImage imageNamed:@"moon.png"];
+        
+    }
+    
+}
+
++(UIImage*) getStaticImageByLightType:(LightType) lightType
+{
+    switch (lightType) {
+        case lightTypeWhiteLight:
+            return [UIImage imageNamed:@"light-white-static.png"];
+            break;
+            
+        case lightTypeYellowLight:
+            return [UIImage imageNamed:@"light-yellow-static.png"];
+            break;
+            
+        case lightTypeWhiteSpirite:
+            return [UIImage imageNamed:@"spirit-white-static.png"];
+            break;
+            
+        case lightTypeYellowSpirte:
+            return [UIImage imageNamed:@"spirit-yellow-static.png"];
+            break;
+            
+        default:
+            break;
+    }
+    
+    
+    return [UIImage imageNamed:@"spirit-yellow-static.png"];
+    
+}
++(UIImage*) getAniStartImageByLightType:(LightType) lightType
+{
+    
+    switch (lightType) {
+        case lightTypeWhiteLight:
+            return [UIImage imageNamed:@"light-white-0.png"];
+            break;
+            
+        case lightTypeYellowLight:
+            return [UIImage imageNamed:@"light-yellow-0.png"];
+            break;
+            
+        case lightTypeWhiteSpirite:
+            return [UIImage imageNamed:@"spirit-white-0.png"];
+            break;
+            
+        case lightTypeYellowSpirte:
+            return [UIImage imageNamed:@"spirit-yellow-0.png"];
+            break;
+            
+        default:
+            break;
+    }
+    
+    
+    return [UIImage imageNamed:@"spirit-yellow-0.png"];
+    
+}
+
+
++(NSString*) getImageNameByLightType:(LightType) lightType
+{
+    
+    switch (lightType) {
+        case lightTypeWhiteLight:
+            return @"light-white";
+            break;
+            
+        case lightTypeYellowLight:
+            return @"light-yellow";
+            break;
+            
+        case lightTypeWhiteSpirite:
+            return @"spirit-white";
+            break;
+            
+        case lightTypeYellowSpirte:
+            return @"spirit-yellow";
+            break;
+            
+        default:
+            break;
+    }
+    
+    
+    return @"spirit-white";
+
+}
+
+
++(UIImage*)getSkyBkImageByTime
+{
+    
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        return [UIImage imageNamed:MAIN_BK_IMAGE_SUN];
+        
+    }else
+    {
+        return [UIImage imageNamed:MAIN_BK_IMAGE_MOON];
+        
+    }
+}
++(UIImage*)getSkyWindowImageByTime
+{
+    
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        return [UIImage imageNamed:MAIN_WINDOW_IMAGE_SUN];
+        
+    }else
+    {
+        return [UIImage imageNamed:MAIN_WINDOW_IMAGE_MOON];
+        
+    }
+}
+
++(UIImage*)getSunMoonImageByTime
+{
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        return [UIImage imageNamed:SKY_IMAGE_SUN];
+        
+    }else
+    {
+        return [UIImage imageNamed:SKY_IMAGE_MOON];
+        
+    }
+    
+}
+
++(UIColor*)getIndicationColorByTime
+{
+    
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        return [UIColor yellowColor];
+        
+    }else
+    {
+        return [UIColor whiteColor];
+        
+    }
+}
+
+
++(NSString*)getLightCharactorByTime
+{
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        return @"阳";
+        
+    }else
+    {
+        return @"月";
+        
+    }
+
+}
+
++(NSString*)getAlertBkByTime
+{
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        return @"提示框V2-黄.png";
+        
+    }else
+    {
+        return  @"提示框V2-白.png";
+        
+    }
 }
 
 +(void)showAlert:(NSString *)msg titleMsg:(NSString *)title DelegateObject:(id) delegateObject{
@@ -323,13 +546,61 @@
 
 //获取一个随机整数，范围在[from,to），包括from，不包括to
 + (int)getRandomNumber:(int)from to:(int)to
-
 {
+    int x = to-from + 1;
+    if (x==0) {
+        return (int)(from + 0);
+    }else
+    {
+        return (int)(from + (arc4random() % x));
+
+    }
     
-    return (int)(from + (arc4random() % (to-from + 1)));
     
 }
 
 
++(CGPoint) getMidPointBetween:(CGPoint) p1   andPoint:(CGPoint) p2
+{
+    CGPoint mid;
+    if (p2.x > p1.x) {
+        
+        mid.x = p1.x + (p2.x - p1.x);
+    }else
+    {
+        mid.x = p2.x + (p1.x - p2.x);
+
+    }
+    
+    if (p2.y > p1.y) {
+        
+        mid.y = p1.y + (p2.y - p1.y);
+    }else
+    {
+        mid.y = p2.y + (p1.y - p2.y);
+        
+    }
+    
+    
+    return mid;
+    
+}
+
+
++(UIImage*) screenShot:(UIView*) view
+{
+    
+    CGSize size = CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT);
+    UIGraphicsBeginImageContextWithOptions(size, NO, [UIScreen mainScreen].scale);
+    
+    CGRect rec = CGRectMake(view.frame.origin.x, view.frame.origin.y,view.bounds.size.width, view.bounds.size.height);
+    [view drawViewHierarchyInRect:rec afterScreenUpdates:YES];
+    
+    UIImage *screenImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return screenImage;
+    
+}
 
 @end

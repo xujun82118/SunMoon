@@ -161,7 +161,7 @@
  */
 - (void) saveUserCheckByDataTime:(UserInfo *) user;
 
-
+-(NSInteger)getMaxuserValueByTime;
 -(NSString*)getMaxUserSunValue;
 -(NSString*)getMaxUserMoonValue;
 

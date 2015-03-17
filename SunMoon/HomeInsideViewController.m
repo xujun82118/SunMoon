@@ -13,10 +13,6 @@
 #import "ShareByShareSDR.h"
 #import "CustomIndicatorView.h"
 
-#import "ConfigHeader.h"
-#import "YouMiConfig.h"
-#import "YouMiWall.h"
-
 @interface HomeInsideViewController ()
 {
     
@@ -24,9 +20,6 @@
     
     CustomAlertView* customAlertAutoDis;
     CustomAlertView* customAlertAutoDisYes;
-    
-    ADBannerView *bannerView;
-
 
 
 }
@@ -44,6 +37,11 @@
 {
     
     NSDate* tmpStartData;
+    
+    NSInteger sunRepeatCount;
+    NSTimer* reapaterSun;
+    NSInteger moonRepeatCount;
+    NSTimer* reapaterMoon;
 }
 
 @synthesize user,userData,userDB,sunWordShow,moonWordShow,currentSelectDataSun,currentSelectDataMoon,sunScroll=_sunScroll,moonScroll = _moonScroll;
@@ -77,17 +75,6 @@
     [backBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y-backBtnHeight/2+10, backBtnWidth, backBtnHeight)];
     [backBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:backBtn];
-
-    
-    //加广告按钮
-    NSInteger backBtnWidthAd = 40;
-    NSInteger backBtnHeightAd = 40;
-    UIButton *backBtnAd =[UIButton buttonWithType:UIButtonTypeCustom];
-    [backBtnAd setImage:[UIImage imageNamed:@"应用推荐.png"] forState:UIControlStateNormal];
-    [backBtnAd setFrame:CGRectMake(RIGHT_NAVI_BTN_TO_SIDE_X-25, NAVI_BAR_BTN_Y-backBtnHeightAd/2+10, backBtnWidthAd, backBtnHeightAd)];
-    [backBtnAd addTarget:self action:@selector(youMiAd:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:backBtnAd];
-    
     
     
     //shareSdk**********
@@ -192,37 +179,88 @@
     sunValueStatic.text = [NSString stringWithFormat:@"%d", 0];
     moonValueStatic.text = [NSString stringWithFormat:@"%d", 0];
 
-    
-    //增加scroll图片,不能放在viewDidload中，会产生autolayout错误
-    //临时解决方法，在viewDidAppear中重新布局MOON的位置
-    //[self addScrollUserImageSunReFresh:NO];
-    //[self addScrollUserImageMoonReFresh:NO];
+}
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    [ShareSDK removeAllNotificationWithTarget:self];
 
 }
 
-//iAD
-//-(void)bannerView:(ADBannerView *)banner
-//didFailToReceiveAdWithError:(NSError *)error{
-//    NSLog(@"Error loading");
-//}
-//
-//-(void)bannerViewDidLoadAd:(ADBannerView *)banner{
-//    NSLog(@"Ad loaded");
-//}
-//-(void)bannerViewWillLoadAd:(ADBannerView *)banner{
-//    NSLog(@"Ad will load");
-//}
-//-(void)bannerViewActionDidFinish:(ADBannerView *)banner{
-//    NSLog(@"Ad did finish");
-//    
-//}
-//
+- (void) viewWillAppear:(BOOL)animated
+{
+    
+    [super viewWillAppear:animated];
+    
+    //test
+
+    
+    
+    //加载照片较耗时，增加等待，
+    NSInteger indiW = 50;
+    NSInteger indiH = 50;
+    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
+    [indicator startAnimating];
+    [self.view addSubview:indicator];
+
+    [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(StopIndicatorAni:) userInfo:nil repeats:NO];
+    
+    
+    //显示定时时间
+    NSCalendar* calendar = [NSCalendar currentCalendar];
+    NSDateComponents* comps;
+    comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:self.user.sunAlertTime];
+    NSInteger hour = [comps hour];
+    NSInteger miniute = [comps minute];
+    NSString *timeString = [[NSString alloc] initWithFormat:
+                            @"%d:%d", hour, miniute];
+    [sunTimeBtn setTitle:timeString forState:UIControlStateNormal];
+    [sunTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    
+    comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:self.user.moonAlertTime];
+    NSInteger hour1 = [comps hour];
+    NSInteger miniute1 = [comps minute];
+    NSString *timeString1 = [[NSString alloc] initWithFormat:
+                             @"%d:%d", hour1, miniute1];
+    [moonTimeBtn setTitle:timeString1 forState:UIControlStateNormal];
+    [moonTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+
+    
+    double deltaTime = [[NSDate date] timeIntervalSinceDate:tmpStartData];
+    //NSLog(@">>>>>>>>>>cost time = %f ms", deltaTime*1000);
+     
+    
+   
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
+    //test
+    
+    //动态显示阳光，月光值
+    if (sunValueStatic.text.integerValue ==0 ) {
+        [self animationIncreaseSunValue];
+    }
+    if (moonValueStatic.text.integerValue ==0 ) {
+        [self animationIncreaseMoonValue];
+    }
+    
+    [self addScrollUserImageSunReFresh:YES];
+
+    [self addScrollUserImageMoonReFresh:YES];
+    
+}
+
+
 
 
 -(void) addScrollUserImageSunReFresh:(BOOL) isFresh
 {
-
+    
     NSMutableArray *setSun = [[NSMutableArray alloc] init];
     
     //前nullCount为空，第nullCount+1为中间的位置，此处插入第一张相片,全屏显示fullCount张
@@ -284,15 +322,15 @@
                                    userInfo.sun_image_sentence,@"image_sentence",
                                    nil]];
             }
-
+            
             
         }
         
     }
-   
+    
     //第一次起动初始化时照片为空，前端4张固定为空
     NSInteger realCount = count + nullCount;
-
+    
     
     //全屏相示8张相片，小于8张的用默认图片填充
     if (realCount<fullCount) {
@@ -315,24 +353,24 @@
     //取得时间轴的相对位置
     UIImageView* scrollPosition = (UIImageView*)[self.view viewWithTag:TAG_TIME_SCROLL_SUN];
     //如果时间轴高度小于相片的高度，则缩小相片,使时间轴包进相片,此时的frame还未autolayout
-//    if (scrollPosition.frame.size.height<=size.height) {
-//        float rat = size.width/size.height;
-//        size.height = scrollPosition.frame.size.height -5;
-//        size.width = size.height*rat;
-//
-//    }
+    //    if (scrollPosition.frame.size.height<=size.height) {
+    //        float rat = size.width/size.height;
+    //        size.height = scrollPosition.frame.size.height -5;
+    //        size.width = size.height*rat;
+    //
+    //    }
     
-
-
+    
+    
     
     if (isFresh) {
         [imageScrollSun removeFromSuperview];
         //清空日期等
         sunTimeText.text = @"";
         sunWordShow.text = @"";
-
+        
     }
-
+    
     imageScrollSun = [[InfiniteScrollPicker alloc] initWithFrame:CGRectMake(0, scrollPosition.frame.origin.y-10, SCREEN_WIDTH, scrollPosition.frame.size.height+20)];
     [imageScrollSun setItemSize:size];
     [imageScrollSun setHeightOffset:20];//30
@@ -341,9 +379,10 @@
     [imageScrollSun setMode:IS_SUN_TIME];
     [imageScrollSun setScrollDelegate:self];
     [imageScrollSun setImageAry:setSun];
-    [self.view addSubview:imageScrollSun];
+    //[self.view addSubview:imageScrollSun];
+    [self.view insertSubview:imageScrollSun belowSubview:_sunCenter];
     
-
+    
 }
 
 
@@ -355,10 +394,10 @@
     NSInteger nullCount;
     NSInteger fullCount;
     /*
-    iphone6, 6+: 第3张在中间， 共5张
-    iphone6+: 第3张在中间， 共5张
-    iphone5s,5: 第4张在中间， 共6张
-    iphone4,4s: 第5张在中间， 共9张
+     iphone6, 6+: 第3张在中间， 共5张
+     iphone6+: 第3张在中间， 共5张
+     iphone5s,5: 第4张在中间， 共6张
+     iphone4,4s: 第5张在中间， 共9张
      */
     DeviceTypeVersion tempType = [CommonObject CheckDeviceTypeVersion];
     switch (tempType) {
@@ -388,10 +427,10 @@
     
     for (int i = 0; i<nullCount; i++) {
         [setMoon addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                           [UIImage imageNamed:@"null-相片.png"],@"image_data",
-                           @"",@"image_name_time",
-                           @"",@"image_sentence",
-                           nil]];
+                            [UIImage imageNamed:@"null-相片.png"],@"image_data",
+                            @"",@"image_name_time",
+                            @"",@"image_sentence",
+                            nil]];
         
     }
     
@@ -408,10 +447,10 @@
             if (addImage != Nil) {
                 
                 [setMoon addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                   addImage,@"image_data",
-                                   userInfo.moon_image_name,@"image_name_time",//name 即为时间
-                                   userInfo.moon_image_sentence,@"image_sentence",
-                                   nil]];
+                                    addImage,@"image_data",
+                                    userInfo.moon_image_name,@"image_name_time",//name 即为时间
+                                    userInfo.moon_image_sentence,@"image_sentence",
+                                    nil]];
             }
             
         }
@@ -419,7 +458,7 @@
     }
     
     NSInteger realCount = count + nullCount;
-
+    
     
     //全屏相示fullCount张相片，小于fullCount张的用默认图片填充
     if (realCount<fullCount) {
@@ -461,7 +500,9 @@
     [imageScrollMoon setScrollDelegate:self];
     //[imageScrollMoon setBackgroundColor:[UIColor redColor]];
     [self.view addSubview:imageScrollMoon];
-
+    [self.view insertSubview:imageScrollMoon belowSubview:_moonCenter];
+    
+    
     //imageScrollMoon.hidden = YES;
     
     
@@ -475,10 +516,10 @@
     //重取一次数据
     [self.user getUserInfoAtNormalOpen];
     self.userData  = self.user.userDataBase;
-
-
+    
+    
     [self addScrollUserImageSunReFresh:YES];
-
+    
     
 }
 
@@ -487,84 +528,11 @@
     //重取一次数据
     [self.user getUserInfoAtNormalOpen];
     self.userData  = self.user.userDataBase;
-
+    
     
     [self addScrollUserImageMoonReFresh:YES];
     
     
-    
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    
-    [ShareSDK removeAllNotificationWithTarget:self];
-    
-}
-
-- (void) viewWillAppear:(BOOL)animated
-{
-    
-    [super viewWillAppear:animated];
-
-    //加载照片较耗时，增加等待，
-    NSInteger indiW = 50;
-    NSInteger indiH = 50;
-    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
-    [indicator startAnimating];
-    [self.view addSubview:indicator];
-
-    [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(StopIndicatorAni:) userInfo:nil repeats:NO];
-    
-    /*
-    UIImage *backButtonBackgroundImage = [UIImage imageNamed:@"返回.png"];
-    // The background should be pinned to the left and not stretch.
-    backButtonBackgroundImage = [backButtonBackgroundImage resizableImageWithCapInsets:UIEdgeInsetsMake(0, backButtonBackgroundImage.size.width - 1, 0, 0)];
-    
-    id appearance = [UIBarButtonItem appearanceWhenContainedIn:[HomeInsideViewController class], nil];
-    [appearance setBackButtonBackgroundImage:backButtonBackgroundImage forState:UIControlStateNormal barMetrics:UIBarMetricsDefault];
-    UIBarButtonItem *backBarButton = [[UIBarButtonItem alloc] initWithTitle:@" " style:UIBarButtonItemStylePlain target:nil action:NULL];
-    self.navigationItem.backBarButtonItem = backBarButton;
-    */
-    
-    //显示定时时间
-    NSCalendar* calendar = [NSCalendar currentCalendar];
-    NSDateComponents* comps;
-    comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:self.user.sunAlertTime];
-    NSInteger hour = [comps hour];
-    NSInteger miniute = [comps minute];
-    NSString *timeString = [[NSString alloc] initWithFormat:
-                            @"%d:%d", hour, miniute];
-    [sunTimeBtn setTitle:timeString forState:UIControlStateNormal];
-    [sunTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    
-    comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:self.user.moonAlertTime];
-    NSInteger hour1 = [comps hour];
-    NSInteger miniute1 = [comps minute];
-    NSString *timeString1 = [[NSString alloc] initWithFormat:
-                             @"%d:%d", hour1, miniute1];
-    [moonTimeBtn setTitle:timeString1 forState:UIControlStateNormal];
-    [moonTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-
-    
-    double deltaTime = [[NSDate date] timeIntervalSinceDate:tmpStartData];
-    //NSLog(@">>>>>>>>>>cost time = %f ms", deltaTime*1000);
-   
-}
-
-- (void) viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-
-    
-    //动态显示阳光，月光值
-    [self animationIncreaseSunValue];
-    [self animationIncreaseMoonValue];
-    
-    [self addScrollUserImageSunReFresh:YES];
-
-    [self addScrollUserImageMoonReFresh:YES];
     
 }
 
@@ -646,44 +614,65 @@
 {
     
     //显示阳光，月光值, 从1增加到最大
-    int count = [[self.user getMaxUserSunValue] integerValue];
+    NSInteger count = [[self.user getMaxUserSunValue] integerValue];
     
     if (count==0) {
         return;
     }
+
+    [self startIncreaseSunLightValue];
     
+}
+
+
+-(void) startIncreaseSunLightValue
+{
+    
+    NSInteger count = [[self.user getMaxUserSunValue] integerValue];
+    //从最后30位开始
     float delayTime;
-    if (count < 10) {
-        delayTime = 0.3;
+    NSInteger startCount = 15;
+    if (count>startCount) {
+        sunValueStatic.text = [NSString stringWithFormat:@"%lu", count-startCount];
+        sunRepeatCount = sunValueStatic.text.integerValue;
+        delayTime = 0.1;
     }else
     {
-        delayTime = 0.1;
+        delayTime = 3/count;
+        sunRepeatCount = 0;
     }
     
-    if ([sunValueStatic.text integerValue]==0) {
-        
-        sunValueStatic.text = [NSString stringWithFormat:@"%d", [sunValueStatic.text integerValue]+1];
-        //NSLog(@"加值到 阳光值 = %d", [sunValueStatic.text integerValue]);
+    reapaterSun =  [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(processIncreaseSunLightValue:) userInfo:nil repeats:YES];
+    //立刻收回第一个
+    [reapaterSun fire];
+    
+}
 
-        [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(animationIncreaseSunValue) userInfo:nil repeats:NO];
-            
+
+-(void) processIncreaseSunLightValue:(NSTimer *)timer
+{
+    
+    NSInteger count = [[self.user getMaxUserSunValue] integerValue];
+    if (sunRepeatCount != count) {
+        sunValueStatic.text = [NSString stringWithFormat:@"%ld", [sunValueStatic.text integerValue]+1];
+        
+        self.haloAdd = [PulsingHaloLayer layer];
+        self.haloAdd.position = sunValueStatic.center;
+        self.haloAdd.radius = 0.5 * kMaxRadius;
+        self.haloAdd.animationDuration = 0.5;
+        self.haloAdd.eerepeatCount = 1;
+        self.haloAdd.backgroundColor = [UIColor yellowColor].CGColor;
+        [self.view.layer insertSublayer:self.haloAdd below:sunValueStatic.layer];
+        
+        sunRepeatCount ++;
+        
     }else
     {
-        
-        if ([sunValueStatic.text integerValue]!=count) {
-            
-            sunValueStatic.text = [NSString stringWithFormat:@"%d", [sunValueStatic.text integerValue]+1];
-            //NSLog(@"加值到 阳光值 = %d", [sunValueStatic.text integerValue]);
-
-            
-            [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(animationIncreaseSunValue) userInfo:nil repeats:NO];
-            
-        }else
-        {
-            NSLog(@"完成---加值到 阳光值 = %d", count);
-        }
+        [timer invalidate];
+        sunRepeatCount = 0;
     }
-
+    
+    
     
 }
 
@@ -691,57 +680,66 @@
 {
     
     //显示阳光，月光值, 从1增加到最大
-    int count = [[self.user getMaxUserMoonValue] integerValue];
+    NSInteger count = [[self.user getMaxUserMoonValue] integerValue];
 
     if (count==0) {
         return;
     }
     
-    float delayTime;
-    if (count < 10) {
-        delayTime = 0.3;
-    }else
-    {
-        delayTime = 0.1;
-    }
-    
-    if ([moonValueStatic.text integerValue]==0) {
-        
-        moonValueStatic.text = [NSString stringWithFormat:@"%d", [moonValueStatic.text integerValue]+1];
-        //NSLog(@"加值到 月光值 = %d", [moonValueStatic integerValue]);
-        
-        
-        [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(animationIncreaseMoonValue) userInfo:nil repeats:NO];
-        
-    }else
-    {
-        
-        if ([moonValueStatic.text integerValue]!=count) {
-            
-            moonValueStatic.text = [NSString stringWithFormat:@"%d", [moonValueStatic.text integerValue]+1];
-            //NSLog(@"加值到 月光值 = %d", [moonValueStatic integerValue]);
-            
-            
-            [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(animationIncreaseMoonValue) userInfo:nil repeats:NO];
-            
-        }else
-        {
-            NSLog(@"完成---加值到 月光值 = %d", count);
-        }
-    }
+    [self startIncreaseMoonLightValue];
+
     
     
 }
 
-
-#pragma mark - 有米广告
-- (void)youMiAd:(id)sender
+-(void) startIncreaseMoonLightValue
 {
-    [YouMiWall showOffers:NO didShowBlock:^{
-        NSLog(@"有米墙已显示");
-    } didDismissBlock:^{
-        NSLog(@"有米墙已退出");
-    }];
+    
+    NSInteger count = [[self.user getMaxUserMoonValue] integerValue];
+    //从最后15位开始
+    float delayTime;
+    NSInteger startCount = 15;
+    if (count>startCount) {
+        moonValueStatic.text = [NSString stringWithFormat:@"%lu", count-startCount];
+        moonRepeatCount = moonValueStatic.text.integerValue;
+        delayTime = 0.1;
+    }else
+    {
+        delayTime = 3/count;
+        moonRepeatCount = 0;
+    }
+    
+    reapaterMoon =  [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(processIncreaseMoonLightValue:) userInfo:nil repeats:YES];
+    //立刻收回第一个
+    [reapaterMoon fire];
+    
+}
+
+
+-(void) processIncreaseMoonLightValue:(NSTimer *)timer
+{
+    
+    NSInteger count = [[self.user getMaxUserMoonValue] integerValue];
+    if (moonRepeatCount != count) {
+        moonValueStatic.text = [NSString stringWithFormat:@"%ld", [moonValueStatic.text integerValue]+1];
+        
+        self.haloAdd = [PulsingHaloLayer layer];
+        self.haloAdd.position = moonValueStatic.center;
+        self.haloAdd.radius = 0.5 * kMaxRadius;
+        self.haloAdd.animationDuration = 0.5;
+        self.haloAdd.eerepeatCount = 1;
+        self.haloAdd.backgroundColor = [UIColor whiteColor].CGColor;
+        [self.view.layer insertSublayer:self.haloAdd below:moonValueStatic.layer];
+        
+        moonRepeatCount ++;
+        
+    }else
+    {
+        [timer invalidate];
+        moonRepeatCount = 0;
+    }
+    
+    
     
 }
 
@@ -1045,7 +1043,7 @@
 -(void) showCustomYesAlertSuperView:(NSString*) msg  AlertKey:(NSString*) alertKey
 {
     
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
     [customAlertAutoDisYes setStartCenterPoint:self.view.center];
     [customAlertAutoDisYes setEndCenterPoint:self.view.center];
     [customAlertAutoDisYes setStartAlpha:0.1];

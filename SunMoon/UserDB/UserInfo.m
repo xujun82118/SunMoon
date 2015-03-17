@@ -371,8 +371,7 @@ static UserInfo *sharedUserInfo;
     
     //初始创建数据库, 已存在，则不创建
     UserDB* userDB = [[UserDB alloc] init];
-    //[userDB createDataBase];
-    //NSLog(@"in saveUserCheckByDataTime: userDB =%@", userDB);
+    [userDB createDataBase];
     
     if ([userDB getUserDataByDateTime:user.date_time]) {
         NSLog(@"Datetime=%@， 重复，先删后插入一条!", user.date_time);
@@ -387,6 +386,21 @@ static UserInfo *sharedUserInfo;
     
 }
 
+
+-(NSInteger)getMaxuserValueByTime
+{
+    NSString * countString;
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        countString =  [self getMaxUserSunValue];
+    }else
+    {
+        countString = [self getMaxUserMoonValue];
+    }
+    
+    return countString.integerValue;
+        
+    
+}
 
 -(NSString*)getMaxUserSunValue
 {
@@ -730,7 +744,7 @@ static UserInfo *sharedUserInfo;
 {
     //初始创建数据库, 已存在，则不创建
     UserDB* userDB = [[UserDB alloc] init];
-    //[userDB createDataBase];
+    [userDB createDataBase];
     
     [userDB deleteUserWithDataTime:userInfo.date_time];
     [userDB saveUser:userInfo];
@@ -746,15 +760,15 @@ static UserInfo *sharedUserInfo;
     }
     
     if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-        self.sun_value = [NSString stringWithFormat:@"%d",[self.sun_value integerValue]+ value];
+        self.sun_value = [NSString stringWithFormat:@"%lu",[self.sun_value integerValue]+ value];
         
-        NSLog(@"Sun value + %d", value);
+        NSLog(@"Sun value + %lu", value);
         
     }else if([CommonObject checkSunOrMoonTime] == IS_MOON_TIME)
     {
-        self.moon_value = [NSString stringWithFormat:@"%d",[self.moon_value integerValue]+ value];
+        self.moon_value = [NSString stringWithFormat:@"%lu",[self.moon_value integerValue]+ value];
        
-        NSLog(@"Moon value + %d", value);
+        NSLog(@"Moon value + %lu", value);
 
 
     }

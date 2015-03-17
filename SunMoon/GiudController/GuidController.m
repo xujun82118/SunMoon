@@ -17,8 +17,21 @@
 }
 
 
-@synthesize fristlyOpenGuidCtl=_fristlyOpenGuidCtl,guidStepNumber=_guidStepNumber;
-@synthesize guidInfo=_guidInfo, guidIntoCamera=_guidIntoCamera,guidTapLight=_guidTapLight,guid2SDelay=_guid2SDelay,guidPanToBring=_guidPanToBring, guidHaveTakePhoto = _guidHaveTakePhoto, guidHaveGiveLight = _guidHaveGiveLight, guidFirstlyGiveLight=_guidFirstlyGiveLight;
+@synthesize guidStepNumber=_guidStepNumber;
+@synthesize guidInfo=_guidInfo;
+@synthesize guidStart=_guidStart;
+@synthesize guidFinishIntroStartFirstOpen=_guidFinishIntroStartFirstOpen;
+@synthesize guidFirstlyGiveLight=_guidFirstlyGiveLight;
+@synthesize guidPanToBring=_guidPanToBring;
+@synthesize guidPanToBring_waitForPan=_guidPanToBring_waitForPan;
+@synthesize guidIntoCamera=_guidIntoCamera;
+@synthesize guidIntoCamera_waitForTouch=_guidIntoCamera_waitForTouch;
+@synthesize mainView_End=_mainView_End;
+@synthesize camera_start=_camera_start;
+@synthesize camera_End=_camera_End;
+
+@synthesize guidHaveTakePhoto=_guidHaveTakePhoto;
+
 
 static GuidController *sharedGuidCtl;
 
@@ -45,25 +58,7 @@ static GuidController *sharedGuidCtl;
     return self;
 }
 
-- (BOOL)fristlyOpenGuidCtl {
 
-    BOOL Rtemp = [_guidInfo boolForKey:KEY_GUID_FIRSTLY_OPEN];
-
-    return Rtemp;
-    
-
-}
-
-
--(void) updateFirstlyOpenGuidCtl:(BOOL) isGuid
-{
-    [_guidInfo setBool:isGuid forKey:KEY_GUID_FIRSTLY_OPEN];
-    [_guidInfo synchronize];
-    
-    _fristlyOpenGuidCtl = isGuid;
-
-    
-}
 
 
 - (NSInteger)guidStepNumber {
@@ -75,7 +70,7 @@ static GuidController *sharedGuidCtl;
 
 //100:依次增1步, 1000:清0步开始
 //其它指定步
--(void) updateGuidStepNumber:(GuidStepNum) guidNum
+-(void) setGuidStepNumber:(GuidStepNum) guidNum
 {
     if (guidNum == guid_oneByOne) {
         
@@ -88,29 +83,63 @@ static GuidController *sharedGuidCtl;
         [_guidInfo setInteger:guid_Start  forKey:KEY_GUID_STEP_NUMBER];
         _guidStepNumber = guid_Start;
 
-    }else
+    }else if(guidNum == guid_setNumber)
     {
-        [_guidInfo setInteger:guidNum  forKey:KEY_GUID_STEP_NUMBER];
-        _guidStepNumber = guidNum;
+        //指定为当前应执行的步
+        [_guidInfo setInteger:_guidStepNumber  forKey:KEY_GUID_STEP_NUMBER];
+        _guidStepNumber = _guidStepNumber;
 
     }
     
     [_guidInfo synchronize];
     
-    NSLog(@"Guid Step current = %d", _guidStepNumber);
+    NSLog(@"Guid Step current = %lu", _guidStepNumber);
 
+    
+}
+
+
+- (BOOL)guidStart {
+    
+    return [_guidInfo boolForKey:KEY_GUID_START];
+    
+}
+
+-(void) setGuidStart:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_START];
+    [_guidInfo synchronize];
+    
+    _guidStart = isGuid;
+    
+    
+}
+
+- (BOOL)guidFinishIntroStartFirstOpen {
+    
+    return [_guidInfo boolForKey:KEY_GUID_finishIntro_Start_firstOpen];
+    
+}
+
+-(void) setGuidFinishIntroStartFirstOpen:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_finishIntro_Start_firstOpen];
+    [_guidInfo synchronize];
+    
+    _guidFinishIntroStartFirstOpen = isGuid;
+    
     
 }
 
 - (BOOL)guidFirstlyGiveLight {
     
-    return [_guidInfo boolForKey:KEY_GUID_FIRSTLY_GIVE_LIGHT];
+    return [_guidInfo boolForKey:KEY_GUID_giudStep_guidFirstlyGiveLight];
     
 }
 
--(void) updateGuidFirstlyGiveLight:(BOOL) isGuid
+-(void) setGuidFirstlyGiveLight:(BOOL) isGuid
 {
-    [_guidInfo setBool:isGuid forKey:KEY_GUID_FIRSTLY_GIVE_LIGHT];
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_giudStep_guidFirstlyGiveLight];
     [_guidInfo synchronize];
     
     _guidFirstlyGiveLight = isGuid;
@@ -118,63 +147,15 @@ static GuidController *sharedGuidCtl;
     
 }
 
-- (BOOL)guidIntoCamera {
-    
-    return [_guidInfo boolForKey:KEY_GUID_INTO_CAMERA];
-    
-}
-
--(void) updateGuidIntoCamera:(BOOL) isGuid
-{
-    [_guidInfo setBool:isGuid forKey:KEY_GUID_INTO_CAMERA];
-    [_guidInfo synchronize];
-    
-    _guidIntoCamera = isGuid;
-    
-    
-}
-
-- (BOOL)guidTapLight {
-    
-    return [_guidInfo boolForKey:KEY_GUID_TAP_BRING_LIGHT];
-    
-}
-
--(void) updateGuidITapLight:(BOOL) isGuid
-{
-    [_guidInfo setBool:isGuid forKey:KEY_GUID_TAP_BRING_LIGHT];
-    [_guidInfo synchronize];
-    
-    _guidTapLight = isGuid;
-    
-    
-}
-
-- (BOOL)guid2SDelay {
-    
-    return [_guidInfo boolForKey:KEY_GUID_2S_DELAY];
-    
-}
-
--(void) updateGuid2sDelay:(BOOL) isGuid
-{
-    [_guidInfo setBool:isGuid forKey:KEY_GUID_2S_DELAY];
-    [_guidInfo synchronize];
-    
-    _guid2SDelay = isGuid;
-    
-    
-}
-
 - (BOOL)guidPanToBring {
     
-    return [_guidInfo boolForKey:KEY_GUID_PAN_TO_BRING];
+    return [_guidInfo boolForKey:KEY_GUID_giudStep_guidPanToBring];
     
 }
 
--(void) updateGuidPanToBring:(BOOL) isGuid
+-(void) setGuidPanToBring:(BOOL) isGuid
 {
-    [_guidInfo setBool:isGuid forKey:KEY_GUID_PAN_TO_BRING];
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_giudStep_guidPanToBring];
     [_guidInfo synchronize];
     
     _guidPanToBring = isGuid;
@@ -182,6 +163,104 @@ static GuidController *sharedGuidCtl;
     
 }
 
+- (BOOL)guidPanToBring_waitForPan {
+    
+    return [_guidInfo boolForKey:KEY_GUID_guidPanToBring_waitForPan];
+    
+}
+
+-(void) setGuidPanToBring_waitForPan:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_guidPanToBring_waitForPan];
+    [_guidInfo synchronize];
+    
+    _guidPanToBring_waitForPan = isGuid;
+    
+    
+}
+
+
+- (BOOL)guidIntoCamera {
+    
+    return [_guidInfo boolForKey:KEY_GUID_guidIntoCamera];
+    
+}
+
+-(void) setGuidIntoCamera:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_guidIntoCamera];
+    [_guidInfo synchronize];
+    
+    _guidIntoCamera = isGuid;
+    
+    
+}
+
+
+- (BOOL)guidIntoCamera_waitForTouch {
+    
+    return [_guidInfo boolForKey:KEY_GUID_guidIntoCamera_waitForTouch];
+    
+}
+
+-(void) setGuidIntoCamera_waitForTouch:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_guidIntoCamera_waitForTouch];
+    [_guidInfo synchronize];
+    
+    _guidIntoCamera_waitForTouch = isGuid;
+    
+    
+}
+
+- (BOOL)mainView_End {
+    
+    return [_guidInfo boolForKey:KEY_GUID_mainView_End];
+    
+}
+
+-(void) setMainView_End:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_mainView_End];
+    [_guidInfo synchronize];
+    
+    _mainView_End = isGuid;
+    
+    
+}
+
+- (BOOL)camera_start {
+    
+    return [_guidInfo boolForKey:KEY_GUID_camera_start];
+    
+}
+
+-(void) setCamera_start:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_camera_start];
+    [_guidInfo synchronize];
+    
+    _camera_start = isGuid;
+    
+    
+}
+
+
+- (BOOL)camera_End {
+    
+    return [_guidInfo boolForKey:KEY_GUID_camera_End];
+    
+}
+
+-(void) setCamera_End:(BOOL) isGuid
+{
+    [_guidInfo setBool:isGuid forKey:KEY_GUID_camera_End];
+    [_guidInfo synchronize];
+    
+    _camera_End = isGuid;
+    
+    
+}
 
 - (BOOL)guidHaveTakePhoto {
     
@@ -189,7 +268,7 @@ static GuidController *sharedGuidCtl;
     
 }
 
--(void) updateGuidHaveTakePhoto:(BOOL) isGuid
+-(void) setGuidHaveTakePhoto:(BOOL) isGuid
 {
     [_guidInfo setBool:isGuid forKey:KEY_GUID_HAVE_TAKE_PHOTO];
     [_guidInfo synchronize];
@@ -200,21 +279,6 @@ static GuidController *sharedGuidCtl;
 }
 
 
-- (BOOL)guidHaveGiveLight {
-    
-    return [_guidInfo boolForKey:KEY_GUID_HAVE_GIVEN_LIGHT];
-    
-}
-
--(void) updateGuidHaveGiveLight:(BOOL) isGuid
-{
-    [_guidInfo setBool:isGuid forKey:KEY_GUID_HAVE_GIVEN_LIGHT];
-    [_guidInfo synchronize];
-    
-    _guidHaveGiveLight = isGuid;
-    
-    
-}
 
 
 -(void) AddTouchIndication:(UIView*) intoSuperView  TouchImageName:(NSString*) touchImageName  TouchFrame:(CGRect) touchedFrame

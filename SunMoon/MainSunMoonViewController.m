@@ -22,28 +22,12 @@
 #import "CustomAlertView.h"
 #import "GuidController.h"
 #import "AminationCustom.h"
+#import "ShareByShareSDR.h"
+#import "CustomIndicatorView.h"
 
 
-#define KEY_IS_GIVE_FIRST_LIGHT       @"reminderGiveFirstLight"
-#define KEY_REMINDER_PAN_FOR_LIGHT    @"reminderPanForLight"
-#define KEY_REMINDER_GETINTO_CAMERA    @"reminderGetIntoCamera"
-#define KEY_REMINDER_PHOTO_COUNT_OVER  @"reminderPhotoCountOver"
-#define KEY_REMINDER_SUCC_GET_LIGHT    @"reminderSuccGetLight"
-#define KEY_REMINDER_GIVE_LIGHT        @"reminderGiveLight"
-
-//控制在秒内全部释放完成，2秒内完成
-#define POP_OUT_ALL_LIGHT_TIME  1
-#define POP_OUT_ANIMATION_LIGHT_TIME  3
-//左右摆动的时间
-#define SWIM_AROUND_LIGHT_TIME  2
-//延迟一定时间才能召回，要等动画完成定位后,包括释放动画，摇摆动画(距离较小，不计)
-#define DELAY_TIME_FOR_POP_BACK 1//召回所有的光的时间
-#define POP_BACK_ALL_LIGHT_TIME  3
-#define POP_BACK_ANIMATION_LIGHT_TIME  2
 
 
-//左右摆动的距离
-#define SWIM_AROUND_LIGHT_DISTANCE  10
 
 
 @interface MainSunMoonViewController ()
@@ -53,9 +37,19 @@
     BOOL  isHaveFirstlyOpen; //第一次登录
     //BOOL  isHaveOpenUI;  //第一次打开主界面，用于区分第一次登录，和第一次打开主界面
     
-    BOOL  isGiveFirstLight;
+    //BOOL  isGiveFirstLight;
     
     EAIntroView *intro ;
+    
+    UIImageView* userHeaderSpiritBk; //标识现有精灵的个数
+    UILabel *spiritCountlabel;
+    UIImageView* spiriteViewInUserHeader; //在头像边上的精灵
+
+    
+    UIButton* _intoCameraBtn;
+
+    
+    BOOL alreadyDisable;//标识是否已禁止了触摸
     
     BOOL  isFromHeaderBegin;
     BOOL  isFromSunMoonBegin;
@@ -64,7 +58,6 @@
     UIImageView* lightUserHeader;//头像闪烁动画View, 7个闪烁光环
     UIImageView* panTracelight;  //拖动轨迹
     NSInteger  panTraceligntTag; //拖动轨迹的TAG
-    CALayer *panBackSunOrMoonlayer;  //拖动后，弹回的动画图层
     
     UIPanGestureRecognizer *panSunOrMoonGusture;  //拖动动画识别
     UITapGestureRecognizer *tapSunOrMoonGusture; //点击太阳的识别
@@ -76,8 +69,8 @@
     NSInteger  swimTraceligntTag; //游动的光的TAG
     CALayer *swimBackSunOrMoonlayer;  //游动的光的，弹回的动画图层
     
-    BOOL isStartSunOrmoonImageMoveToHeaderAnimation;//起动了向头像移动光的动画
-    BOOL isStartSunOrmoonImageMoveToSunMoonAnimation;//起动了向日月移动光的动画
+    //BOOL isStartSunOrmoonImageMoveToHeaderAnimation;//起动了向头像移动光的动画
+    //BOOL isStartSunOrmoonImageMoveToSunMoonAnimation;//起动了向日月移动光的动画
     
     BOOL isPopOutIntoCameraBtn;  //是否已弹出
     BOOL isPopOutShowBringLightBtn;
@@ -85,6 +78,7 @@
     NSInteger giveLingtCout; //奖励光的个数
     
     BOOL isGetinToHome; //是进入小屋的点击
+    
     
     CGRect srcIntoCameraBtnFrame ;
     CGPoint srcIntoCameraBtnCenter;
@@ -95,42 +89,70 @@
     CGRect srcShowBringLightBtnFrame;
     CGRect destShowBringLightBtnFrame;
     
-    
-    CGRect jumpSmallShowBringLightBtnFrame;
-    BOOL  startJump;
-    NSTimer*  JumpTimer;
-    
     UIImageView* bowLightView; //日月闪爆闪
     UIImageView* bowLightBringView; //育成光爆闪
     
     CustomAlertView* customAlertAutoDis;
     CustomAlertView* customAlertAutoDisYes;
     
-    UIImageView* userHeaderline; //头像的横线
-    
     CGAffineTransform inToCameraBtnTransform;
     
-    BOOL needStopIntoCamera; //用于停止IntoCamera的动画
     
-    AminationCustom* addVauleAnimation;
-    CustomAnimation* simOutAnimation;
-    NSMutableArray*  simOutAnimationArray;
-    NSMutableArray*  simOutRedImageViewArray; //红精灵组
-    NSMutableArray*  simOutBlueImageViewArray; //蓝精灵组
+    NSMutableArray* swimOutAnimationArray;//所有的动画组
+    NSMutableArray* swimOutAnimationLightArray;// 光的动画组,标识有多少个光的动画在外面
+    NSMutableArray* swimOutAnimationSpiriteArray;//精灵的动画组
+
+    NSMutableArray*  swimOutBaselightImageViewArray; //小光的view组,全量的,有新增的则补充
+    NSMutableArray*  swimOutBaselightImageViewArrayFrame; //小光组全量位置，全量的，开始就是全量的
+
+
+    NSMutableArray*  swimOutSpiriteImageViewArray; //精灵组，全量,有新增的则补充
+
+    NSMutableArray* swimOutSpiriteImageViewArrayFrame;//精灵组的位置，全量
+
+    NSMutableArray* swimOutSpiriteImageViewArrayaphale;
+    
+    NSMutableArray* spiriteAutoFlyPointArray; //精灵自动飞行的位置组
+    NSInteger spiriteAutoFlyPointCurrentIndex;//精灵自动飞行当前的位置
+    BOOL  spiriteFlyIsAuto; //精灵是否在自动飞行状态
+    NSTimer* spiriteFlyAutoReapaterTimer;
+
     NSTimer* swimAroundTimer; //随进四处游荡timer
 
-    NSInteger repeatCount;
+    CGPoint spiritFlyTouchPoint; //精灵要飞向的点击的位置
     
-    
+    NSInteger repeatCountLight;
+    NSInteger repeatCountSpirite;
+    NSInteger repeatCountSpiriteFlyTrace;
+    NSInteger repeatCountMoveSimpleLight; //简单的光移动动画，在太阳与头像之间等
+    UIImageView*  lastRepeatCountMoveSimpleLightView; //标识最后一个动画
+
+
+    BOOL needStopAnimationToCallBack; //是否需要停止动画，以便定位后，召回
+    BOOL needStopLightAnimationToCallBackForRefresh; //是否需要停止动画，以便定位后，召回,自动计算光的召回
+    BOOL needStopLightAnimationToCallBackForFinal; //手动最终召回
+    BOOL needStopSpiriteAnimationToCallBack;
+    BOOL needStopSpiriteAnimationToFlyTraceTouch; //为点击精灵飞动，而停止
+    BOOL needStopSpiriteAnimationToFlyAuto; //为精灵自动飞动，而停止
+
+
     NSDictionary * lightTypeCountInfo;
+    
+    CustomIndicatorView *indicator;
+
+    
 }
 
 @end
 
 @implementation MainSunMoonViewController
 
-@synthesize intoCameraBtn=_intoCameraBtn,mainBgImage,menuBtn,userInfo,userDB,userHeaderImageView = _userHeaderImageView;
-@synthesize skySunorMoonImage =_skySunorMoonImage,panSunorMoonImageView =_panSunorMoonImageView;
+@synthesize mainBgImage,menuBtn,userInfo,userDB,userHeaderImageView = _userHeaderImageView;
+@synthesize skySunorMoonImage =_skySunorMoonImage;
+@synthesize  panSunorMoonImageView =_panSunorMoonImageView;
+@synthesize skyWindow = _skyWindow,lightPostionFrame=_lightPostionFrame;
+
+
 
 - (void)viewDidLoad
 {
@@ -166,8 +188,6 @@
         //初始化用户为新用户
         self.userInfo = [self.userInfo initDefaultInfoAtFirstOpenwithTime:[CommonObject getCurrentTime]];
         
-        //[guidInfo updateFirstlyOpenGuidCtl:YES];
-
     }else
     {
         NSLog(@"Opened normally!");
@@ -184,46 +204,31 @@
     self.userCloud.userInfoCloudDelegate = self;
     
     //选择背景时间与日月图片等
-    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-        [mainBgImage setImage:[UIImage imageNamed:@"主页底图004.png"]];
-        [_skySunorMoonImage setImage:[UIImage imageNamed:@"sun.png"]];
+    [mainBgImage setImage:[CommonObject getSkyBkImageByTime]];
+    [_skySunorMoonImage setImage:[CommonObject getSunMoonImageByTime]];
+    [_skyWindow setImage:[CommonObject getSkyWindowImageByTime]];
 
-        
-    }else
-    {
-        [mainBgImage setImage:[UIImage imageNamed:@"moon-home.png"]];
-        [_skySunorMoonImage setImage:[UIImage imageNamed:@"moon.png"]];
-
-
-    }
-    
     //起动时间监视
     [self startAlertTimerForSunMoonTime];
     
+    
     //加载头像
-    NSInteger wHeader = SCREEN_WIDTH/3;
+    NSInteger wHeader = SCREEN_WIDTH/4;
     NSInteger hHeader = wHeader;
     NSInteger xHeader = SCREEN_WIDTH/2 - wHeader/2;
-    NSInteger yHeadr  = SCREEN_HEIGHT - 50 - hHeader;
+    NSInteger yHeadr  = SCREEN_HEIGHT - 10 - hHeader;
     if (!_userHeaderImageView) {
         _userHeaderImageView = [[UIImageView alloc] initWithFrame:CGRectMake(xHeader, yHeadr, wHeader, hHeader)];
         [_userHeaderImageView.layer setCornerRadius:(_userHeaderImageView.frame.size.height/2)];
         _userHeaderImageView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         [_userHeaderImageView.layer setMasksToBounds:YES];
-        [_userHeaderImageView setContentMode:UIViewContentModeScaleAspectFill];
+        [_userHeaderImageView setContentMode:UIViewContentModeScaleToFill];
         [_userHeaderImageView setClipsToBounds:YES];
         _userHeaderImageView.layer.shadowColor = [UIColor clearColor].CGColor;
         _userHeaderImageView.layer.shadowOffset = CGSizeMake(4, 4);
         _userHeaderImageView.layer.shadowOpacity = 0.5;
         _userHeaderImageView.layer.shadowRadius = 2.0;
-        if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-            _userHeaderImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
-            
-        }else
-        {
-            _userHeaderImageView.layer.borderColor = [[UIColor whiteColor] CGColor];
-            
-        }
+        _userHeaderImageView.layer.borderColor = [UIColor colorWithRed:234.0/255.0 green:52.0/255.0 blue:7.0/255.0 alpha:1.0].CGColor;
         _userHeaderImageView.layer.borderWidth = 3.5f;
         _userHeaderImageView.userInteractionEnabled = YES;
         _userHeaderImageView.backgroundColor = [UIColor blackColor];
@@ -238,13 +243,55 @@
     
     self.userHeaderImageView.image = self.userInfo.userHeaderImage;
     
+    //加载头像横标
+    if (!userHeaderSpiritBk) {
+        UIImage* spiImage = [UIImage imageNamed:@"头像横标.png"];
+        float rate = spiImage.size.width/spiImage.size.height;
+        float w = _userHeaderImageView.frame.size.width;
+        float h = w/rate;
+        float x = _userHeaderImageView.frame.origin.x+_userHeaderImageView.frame.size.width/4*3;
+        float y = _userHeaderImageView.frame.origin.y+_userHeaderImageView.frame.size.height/2 - h/2;
+        userHeaderSpiritBk = [[UIImageView alloc] initWithFrame:CGRectMake(x, y, w, h)];
+        userHeaderSpiritBk.image = spiImage;
+        [self.view insertSubview:userHeaderSpiritBk belowSubview:_userHeaderImageView];
     
-    addVauleAnimation = [[AminationCustom alloc] initWithKey:@"addValueinEdite"];
-    addVauleAnimation.aminationCustomDelegate =  self;
+    }
+    
+    //加载精灵个数
+    if (!spiritCountlabel) {
+        float labelHeight = userHeaderSpiritBk.frame.size.height;
+        float labelWidth = labelHeight;
+        float x = userHeaderSpiritBk.frame.origin.x+userHeaderSpiritBk.frame.size.width/5*3;
+        float y = userHeaderSpiritBk.frame.origin.y + userHeaderSpiritBk.frame.size.height/2 - labelHeight/2;
+        spiritCountlabel = [[UILabel alloc] initWithFrame:CGRectMake(x, y, labelWidth,labelHeight)];
+        [spiritCountlabel setBackgroundColor:[UIColor clearColor]];
+        [spiritCountlabel setText:@""];
+        [spiritCountlabel setTextAlignment:NSTextAlignmentCenter];
+        [spiritCountlabel setFont:[UIFont systemFontOfSize:24.0f]];
+        [spiritCountlabel setTextColor:[UIColor whiteColor]];
+        [self.view insertSubview:spiritCountlabel aboveSubview:userHeaderSpiritBk];
+    }
+    
+    //加载精灵图片
+    if (!spiriteViewInUserHeader) {
+        UIImage* spiImage = [CommonObject getStaticImageByLightType:[CommonObject getSpiriteTypeByTime]];
+        float interWidthX = spiritCountlabel.frame.origin.x - (_userHeaderImageView.frame.origin.x+_userHeaderImageView.frame.size.width);
+        float w = interWidthX * 2;
+        float h = w;
+        float x = _userHeaderImageView.frame.origin.x+_userHeaderImageView.frame.size.width + interWidthX/2 - w/2;
+        float y = userHeaderSpiritBk.center.y - h/4*3;
+        spiriteViewInUserHeader = [[UIImageView alloc] initWithFrame:CGRectMake(x, y, w, h)];
+        spiriteViewInUserHeader.image = spiImage;
+        [self.view insertSubview:spiriteViewInUserHeader aboveSubview:userHeaderSpiritBk];
+        spiriteViewInUserHeader.hidden = YES;
+
+    }
+    
     
     
 
 }
+
 
 
 
@@ -265,11 +312,20 @@
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    NSLog(@"---->viewDidAppear");
 
+    CGFloat cameraBtnHeight = _skySunorMoonImage.frame.size.width/4*2;
+    CGFloat cameraBtnwidth = cameraBtnHeight;
+    if (!_intoCameraBtn) {
+        _intoCameraBtn =[UIButton buttonWithType:UIButtonTypeCustom];
+        [_intoCameraBtn setImage:[CommonObject getUsedCameraImageNameByTime:YES] forState:UIControlStateNormal];
+        [_intoCameraBtn setFrame:CGRectMake(_skySunorMoonImage.center.x - cameraBtnwidth/2, _skySunorMoonImage.center.y - cameraBtnHeight/2, cameraBtnwidth, cameraBtnHeight)];
+        [_intoCameraBtn addTarget:self action:@selector(intoCamera:) forControlEvents:UIControlEventTouchUpInside];
+        [_intoCameraBtn setTag:TAG_INTO_CAMERA_BTN];
+        [self.view addSubview:_intoCameraBtn];
+        
+    }
     
     
-    needStopIntoCamera = FALSE;
 
     //检查日月时间是否变化
     NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
@@ -294,9 +350,7 @@
     //创建拖动轨迹识别
     panSunOrMoonGusture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(HandlePanSunOrMoon:)];
     [self.view addGestureRecognizer:panSunOrMoonGusture];
-    
-    //拖动动画图层
-    panBackSunOrMoonlayer=[[CALayer alloc]init];
+
     
     
     
@@ -310,7 +364,8 @@
             lightUserHeader.userInteractionEnabled=YES;
             lightUserHeader.contentMode=UIViewContentModeScaleToFill;
             lightUserHeader.hidden = YES;
-            [self.view addSubview:lightUserHeader];
+            //[self.view addSubview:lightUserHeader];
+            [self.view insertSubview:lightUserHeader belowSubview:userHeaderSpiritBk];
         }
         
     }
@@ -323,82 +378,6 @@
     tapSunOrMoonGusture.numberOfTapsRequired = 1;
     _skySunorMoonImage.userInteractionEnabled = YES;
     [_skySunorMoonImage addGestureRecognizer:tapSunOrMoonGusture];
-    
-
-    
-    //定位camera button
-//    NSInteger inTocameraBtnWidth = SCREEN_WIDTH/3;
-//    NSInteger inTocameraBtnHeight = inTocameraBtnWidth;
-//    srcIntoCameraBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
-//    destIntoCameraBtnFrame = CGRectMake(20,_skySunorMoonImage.center.y+inTocameraBtnHeight/5*1, inTocameraBtnWidth,inTocameraBtnHeight);
-//    srcIntoCameraBtnCenter =  _skySunorMoonImage.center;
-//    destIntoCameraBtnCenter = CGPointMake(destIntoCameraBtnFrame.origin.x+destIntoCameraBtnFrame.size.width/2, destIntoCameraBtnFrame.origin.y+destIntoCameraBtnFrame.size.height/2);
-//    //[_intoCameraBtn setFrame:srcIntoCameraBtnFrame];
-//    //[_intoCameraBtn setCenter:srcIntoCameraBtnCenter];
-//    [_intoCameraBtn setTag:TAG_INTO_CAMERA_BTN];
-
-    
-    
-    //定位养育光环
-//    NSInteger bringLightBtnWidth = SCREEN_WIDTH/3;
-//    NSInteger bringLightBtnHeight = bringLightBtnWidth;
-//    srcShowBringLightBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
-//    destShowBringLightBtnFrame = CGRectMake(SCREEN_WIDTH-bringLightBtnWidth-20,_skySunorMoonImage.center.y+bringLightBtnHeight/5*1, bringLightBtnWidth, bringLightBtnHeight);
-//    [_showBringLightBtn setFrame:srcShowBringLightBtnFrame];
-//    [_showBringLightBtn setTag:TAG_BRING_LING_BTN];
-
-    
-//    NSInteger bringLightJumpWidth = bringLightBtnWidth/3;
-//    NSInteger bringLightJumpHeight = bringLightBtnHeight/3;
-//    jumpSmallShowBringLightBtnFrame = CGRectMake(destShowBringLightBtnFrame.origin.x+(bringLightBtnWidth-bringLightJumpWidth)/2,destShowBringLightBtnFrame.origin.y+(bringLightBtnHeight-bringLightJumpHeight)/2, bringLightJumpWidth, bringLightJumpHeight);
-    
-
-    //isPopOutIntoCameraBtn = NO;
-    //isPopOutShowBringLightBtn = NO;
-    
-    
-    //初始化弹出按钮, 位置在太阳月亮中, 是否有光在育成
-//    NSInteger inTocameraBtnWidth = SCREEN_WIDTH/3;
-//    NSInteger inTocameraBtnHeight = inTocameraBtnWidth;
-//    srcIntoCameraBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
-////    NSLog(@"viewDidAppear---%f, %f, %f, %f ",srcIntoCameraBtnFrame.origin.x, srcIntoCameraBtnFrame.origin.y, srcIntoCameraBtnFrame.size.width,srcIntoCameraBtnFrame.size.height);
-//    destIntoCameraBtnFrame = CGRectMake(20,_skySunorMoonImage.center.y+inTocameraBtnHeight/5*1, inTocameraBtnWidth,inTocameraBtnHeight);
-////    NSLog(@"viewDidAppear---%f, %f, %f, %f ",destIntoCameraBtnFrame.origin.x, destIntoCameraBtnFrame.origin.y, destIntoCameraBtnFrame.size.width,destIntoCameraBtnFrame.size.height);
-    
-//    NSInteger bringLightBtnWidth = SCREEN_WIDTH/3;
-//    NSInteger bringLightBtnHeight = bringLightBtnWidth;
-//    srcShowBringLightBtnFrame = CGRectMake(_skySunorMoonImage.center.x, _skySunorMoonImage.center.y, 0,0);
-//    destShowBringLightBtnFrame = CGRectMake(SCREEN_WIDTH-bringLightBtnWidth-20,_skySunorMoonImage.center.y+bringLightBtnHeight/5*1, bringLightBtnWidth, bringLightBtnHeight);
-//    
-//    NSInteger bringLightJumpWidth = bringLightBtnWidth/3;
-//    NSInteger bringLightJumpHeight = bringLightBtnHeight/3;
-//    jumpSmallShowBringLightBtnFrame = CGRectMake(destShowBringLightBtnFrame.origin.x+(bringLightBtnWidth-bringLightJumpWidth)/2,destShowBringLightBtnFrame.origin.y+(bringLightBtnHeight-bringLightJumpHeight)/2, bringLightJumpWidth, bringLightJumpHeight);
-//    
-    
-//    if (!_intoCameraBtn ) {
-//        _intoCameraBtn = [[UIButton alloc] initWithFrame:srcIntoCameraBtnFrame];
-//        [_intoCameraBtn addTarget:self action:@selector(intoCamera:) forControlEvents:UIControlEventTouchUpInside];
-//        [_intoCameraBtn setTag:TAG_INTO_CAMERA_BTN];
-//        [self.view addSubview:_intoCameraBtn];
-//        
-//        NSLog(@"viewDidAppear--now-3-alloc-%f, %f, %f, %f ",_intoCameraBtn.frame.origin.x, _intoCameraBtn.frame.origin.y, _intoCameraBtn.frame.size.width,_intoCameraBtn.frame.size.height);
-//
-//    }
-
-
-
-    
-//    if (!_showBringLightBtn) {
-//        _showBringLightBtn = [[UIButton alloc] initWithFrame:srcShowBringLightBtnFrame];
-//        [_showBringLightBtn addTarget:self action:@selector(getBringedUpLight:) forControlEvents:UIControlEventTouchUpInside];
-//        [_showBringLightBtn setTag:TAG_BRING_LING_BTN];
-//        [self.view addSubview:_showBringLightBtn];
-//
-//    }
-    
-
-
-
      
     //初始化日月动画图
     //不能放到veiwDidload 和viewWillapear中
@@ -412,8 +391,8 @@
 
         [lightSkySunOrMoonView setFrame:CGRectMake(_skySunorMoonImage.center.x-lightSkySunOrMoonViewWidth/2, _skySunorMoonImage.center.y-lightSkySunOrMoonViewHeigth/2, lightSkySunOrMoonViewWidth, lightSkySunOrMoonViewHeigth)];
         
-        
-        [self.view addSubview:lightSkySunOrMoonView];
+        //test
+        //[self.view addSubview:lightSkySunOrMoonView];
     }
 
     [self.view bringSubviewToFront:_skySunorMoonImage];
@@ -440,9 +419,6 @@
     bowLightView.animationRepeatCount = 1;
     [self.view addSubview:bowLightView];
     [self.view  bringSubviewToFront:_skySunorMoonImage];
-    
-    
-
     
     //初始化头像爆闪动画图
     lightBowSkyUserHeaderView=[[UIImageView alloc] init];
@@ -475,10 +451,8 @@
     //始终保持两控件在最上面
     [self.view bringSubviewToFront:_intoCameraBtn];
     [self.view bringSubviewToFront:menuBtn];
-    
-    
-    
-    //起动引导滑屏
+  
+    //判断是否起动引导滑屏
     [self  HandleGuidProcess:guid_Start];
 
 
@@ -496,7 +470,6 @@
     [super viewDidDisappear:YES];
     
 
-    needStopIntoCamera = TRUE;
 
     
     //记录离开主界面时间，防止回来时，日月时间变化
@@ -513,8 +486,12 @@
 
     //第一次打开，奖励一个光值
     [self.userInfo  addSunOrMoonValue:1];
-    [self.userInfo updateisBringUpSunOrMoon:YES];
-    isGiveFirstLight = YES;//later
+    //第一个光回到头像，随后拖回天空
+    [self.userInfo updateisBringUpSunOrMoon:NO];
+    [self refreshLightCircleStatForUserHeaderOrSunMoon];
+    [self refreshIntoCameraBtnState];
+    //isGiveFirstLight = YES;//later
+    giveLingtCout = 1;
 
     
     //启动第一个光的引导
@@ -530,6 +507,20 @@
 
 -(void)whenCommonOpenViewHandle
 {
+    //更新光环状态,和天空状态，需在计算奖励之间更新
+    if ([self.userInfo checkIsBringUpinSunOrMoon]) {
+        //如果是养育状态，且光没有在天空中，说明是新登录，则释放出光
+        if (!swimOutAnimationArray || swimOutAnimationArray.count ==0) {
+            [self refreshLightStateForCallBackOrPopout:1];
+        }else
+        {
+            //光在天空中，从后台进入的，不做什么。。。
+        }
+        
+    }
+    [self refreshLightCircleStatForUserHeaderOrSunMoon];
+    [self refreshSpiritCountInHeaderView];
+    
     //判断是否是新登录, 新登录，连续登录值置为1， 连续登录，连续值加1
     //连续登录可得阳光，月光值1个
     if (![self.userInfo checkLoginLastDateIsToday])
@@ -537,7 +528,6 @@
         NSLog(@"当天新登录,更新当天照片未加光值");
         [self.userInfo updateIsHaveAddSunValueForTodayPhoto:NO];
         [self.userInfo updateIsHaveAddMoonValueForTodayPhoto:NO];
-        [self refreshIntoCameraBtnState];
 
         NSLog(@"当天新登录，判断是否连续登录？");
         
@@ -554,12 +544,10 @@
             
 
             if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-                [self showCustomYesAlertSuperView:@"阳光时间连续登录，奖励一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT];
-
+                [self showCustomYesAlertSuperView:@"今天连续登录\n奖励一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN];
             }else
             {
-                [self showCustomYesAlertSuperView:@"月光时间连续登录，奖励一个月光"  AlertKey:KEY_REMINDER_GIVE_LIGHT];
-
+                [self showCustomYesAlertSuperView:@"今夜连续登录\n奖励一个月光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN];
             }
             
         }else
@@ -580,70 +568,25 @@
     //更新登录时间
     [self.userInfo setLoginToday];
     
-    //是否有光在育成
-    if ([self.userInfo.sun_value intValue] !=0 || [self.userInfo.moon_value intValue]!=0)
-    {
-        
-        
-        if ([self.userInfo checkIsBringUpinSunOrMoon]) {
-            //有则，闪烁
-            [self animationLightFrameSkySunOrMoon:7];
-            NSLog(@"有光在育成， 闪烁。。");
-
-
-        }else
-        {
-            
-            //头像闪烁
-            if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
-                NSLog(@"无光在育成， 开启头像闪烁动画！");
-                [self animationLightFrameHeaderViewSetRange:[self.userInfo.sun_value intValue] isUseSetRange:YES];
-                
-            }else
-            {
-                NSLog(@"无光在育成， 开启头像闪烁动画！");
-                [self animationLightFrameHeaderViewSetRange:[self.userInfo.moon_value intValue] isUseSetRange:YES];
-                
-            }
-            
-            
-        }
-        
-    }
-    
-
-    
-    
     //更新状态,必须在处理登录判定后
     [self refreshIntoCameraBtnState];
     
     
 }
 
-#pragma mark - 检查是否要奖励光的动画
--(void) animationGiveLightCout:(NSInteger) count
-{
-    
-    [addVauleAnimation setStartPoint:_intoCameraBtn.center];
-    [addVauleAnimation setEndpoint:_skySunorMoonImage.center];
-    [addVauleAnimation setUseRepeatCount:giveLingtCout];
-    [addVauleAnimation setBkView:self.view];
-    [addVauleAnimation setImageName:[CommonObject getUsedSamllLightImageNameByTime]];
-    [addVauleAnimation setAminationImageViewframe:CGRectMake(_intoCameraBtn.frame.origin.x, _intoCameraBtn.frame.origin.y, 60, 60)];
-    [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
-    
 
-    
-}
-#pragma mark - AminationCustomDelegate
 
-- (void) animationFinishedRuturn:(NSString*) aniKey aniView:(UIImageView*) aniView
-{
-    if ([aniKey isEqualToString:@"simOutAnimation"]) {
-        
-    }
-    
-}
+
+
+//#pragma mark - AminationCustomDelegate
+//
+//- (void) animationFinishedRuturn:(NSString*) aniKey aniView:(UIImageView*) aniView
+//{
+//    if ([aniKey isEqualToString:@"simOutAnimation"]) {
+//        
+//    }
+//    
+//}
 
 //
 //#pragma mark -  弹出动画
@@ -719,24 +662,124 @@
 //
 
 
-#pragma mark - 更新状态
+#pragma mark - 更新相机按钮状态
 -(void) refreshIntoCameraBtnState
 {
-    
-    [_intoCameraBtn setImage:[UIImage imageNamed:[CommonObject getUsedSamllLightImageNameByTime]] forState:UIControlStateNormal];
-    
+
     if (![self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
-        
+
         NSLog(@"今天未得到过光的奖励,  相机提醒！");
+        _intoCameraBtn.alpha = 1.0;
+        [self endAnimationStartIntoCamera];
         [self animationStartIntoCamera];
+        [_intoCameraBtn setImage:[CommonObject getUsedCameraImageNameByTime:YES] forState:UIControlStateNormal];
+        
+
+//        //移动相机到太阳
+//        [UIView beginAnimations:@"MoveCameraToSunMoon" context:(__bridge void *)(_intoCameraBtn)];
+//        [UIView setAnimationDuration:1.0f];
+//        [UIView setAnimationDelegate:self];
+//        [UIView setAnimationDidStopSelector:@selector(moveIntoCameraBtnAnimationDisStop:finished:context:)];
+//        _intoCameraBtn.frame = alertRect;
+//        [UIView commitAnimations];
+        
         
     }else
     {
+
+        
         NSLog(@"今天已得到过光的奖励！");
+        _intoCameraBtn.alpha = 0.6;
+        [self endAnimationStartIntoCamera];
+        [_intoCameraBtn setImage:[CommonObject getUsedCameraImageNameByTime:NO] forState:UIControlStateNormal];
+
+//
+//        //移动相机到太阳
+//        [UIView beginAnimations:@"MoveCameraToSide" context:(__bridge void *)(_intoCameraBtn)];
+//        [UIView setAnimationDuration:1.0f];
+//        [UIView setAnimationDelegate:self];
+//        [UIView setAnimationDidStopSelector:@selector(moveIntoCameraBtnAnimationDisStop:finished:context:)];
+//        _intoCameraBtn.frame = inToCameraFrame;
+//        [UIView commitAnimations];
 
     }
     
+    [self.view bringSubviewToFront:_intoCameraBtn];
+
+    
 }
+- (void)moveIntoCameraBtnAnimationDisStop:(NSString *)animationID finished:(NSNumber *)finished context:(void *) contextImage
+{
+    if ([animationID isEqualToString:@"MoveCameraToSunMoon"]) {
+        [self animationStartIntoCamera];
+    }
+    
+    if ([animationID isEqualToString:@"MoveCameraToSide"]) {
+        [self endAnimationStartIntoCamera];
+    }
+    
+}
+
+#pragma mark - 更新精灵个数显示状态
+/**
+ *  更新头像侧面精灵个数的显示
+ */
+-(void)refreshSpiritCountInHeaderView
+{
+    //计算当前光和精灵的个数
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        
+        [self caculateLightTypeAndCountByCount:userInfo.sun_value.integerValue];
+        
+    }else
+    {
+        [self caculateLightTypeAndCountByCount:userInfo.moon_value.integerValue];
+        
+    }
+    
+    NSInteger currentSpiriteCount = [[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_SPIRITE_COUNT] integerValue];
+
+    if (spiritCountlabel.text.integerValue == 0) {
+        
+        spiriteViewInUserHeader.hidden = NO;
+        //[self animationSpiriteCountInHeaderChanged];
+        spiritCountlabel.text = [NSString stringWithFormat:@"%lu", currentSpiriteCount];
+    }else
+    {
+        if (currentSpiriteCount > spiritCountlabel.text.integerValue) {
+            //闪烁提示数字变化
+            [self animationSpiriteCountInHeaderChanged];
+            spiritCountlabel.text = [NSString stringWithFormat:@"%lu", currentSpiriteCount];
+            //[self showCustomDelayAlertBottom:[NSString stringWithFormat:NSLocalizedString(@"newCallSpiriteAlert", @""), currentSpiriteCount, [CommonObject getLightCharactorByTime]]];
+            [self showCustomYesAlertSuperView:[NSString stringWithFormat:NSLocalizedString(@"newCallSpiriteAlert", @""), currentSpiriteCount, [CommonObject getLightCharactorByTime]] AlertKey:@"newCallSpiriteAlert"];
+        }
+    }
+    
+    
+}
+
+-(void)animationSpiriteCountInHeaderChanged
+{
+    
+    //spiritCountlabel.transform = CGAffineTransformMakeScale(0, 0);
+    [UIView animateWithDuration:0.5 animations:^{
+        //spiritCountlabel.transform = CGAffineTransformIdentity;
+        spiritCountlabel.transform = CGAffineTransformMakeScale(5, 5);
+        
+    } completion:^(BOOL finished) {
+
+        [UIView animateWithDuration:0.3 animations:^{
+            spiritCountlabel.transform = CGAffineTransformIdentity;
+            
+        } completion:^(BOOL finished) {
+            
+        }];
+        
+    }];
+   
+}
+
+
 
 /*
 -(void) refreshShowBringLightBtnState
@@ -870,7 +913,7 @@
         
         
         //移动光到头像
-        [self moveLightWithRepeatCount:0 StartPoint:_skySunorMoonImage.center EndPoint:_userHeaderImageView.center IsUseRepeatCount:NO];
+        [self moveSimpleLightWithRepeatCount:0 StartPoint:_skySunorMoonImage.center EndPoint:_userHeaderImageView.center IsUseRepeatCount:NO];
         
         //更新为无光在育成
         [self.userInfo updateisBringUpSunOrMoon:NO];
@@ -906,42 +949,24 @@
 #pragma mark - 相机按钮动画
 -(void) animationStartIntoCamera
 {
+  
+    self.halo = [PulsingHaloLayer layer];
+    self.halo.position = _intoCameraBtn.center;
+    self.halo.radius = 0.7 * kMaxRadius;
+    self.halo.eerepeatCount = HUGE_VAL;
+    self.halo.backgroundColor = [CommonObject getIndicationColorByTime].CGColor;
+    [self.view.layer insertSublayer:self.halo below:_intoCameraBtn.layer];
     
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.5];
-    [UIView setAnimationDelegate:self];
-    [UIView setAnimationDidStopSelector:@selector(endAnimationStartIntoCamera)];
-    _intoCameraBtn.transform = CGAffineTransformScale(_intoCameraBtn.transform, 1.2, 1.2);
-    [UIView commitAnimations];
+    
 }
 
 -(void)endAnimationStartIntoCamera
-{
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.5];
-    [UIView setAnimationDelegate:self];
-    [UIView setAnimationDidStopSelector:@selector(endAnimationStartIntoCameraRepeat)];
-    _intoCameraBtn.transform = CGAffineTransformScale(_intoCameraBtn.transform, 1/1.2, 1/1.2);
-    [UIView commitAnimations];
-    
-    
+{    
+    [self.halo removeFromSuperlayer];
+ 
 }
 
--(void)endAnimationStartIntoCameraRepeat
-{
-    if (!needStopIntoCamera) {
-            [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(animationStartIntoCamera) userInfo:nil repeats:NO];
-        
-        //NSLog(@"---11");
 
-    }else
-    {
-        //NSLog(@"---");
-    }
-    
-
-    
-}
 
 
 - (UIViewController *)getCurrentVC
@@ -975,72 +1000,55 @@
 
 
 #pragma mark -  弹出按钮处理
-- (IBAction)getBringedUpLight:(id)sender
-{
-    
-    if ([self.userInfo checkIsBringUpinSunOrMoon]) {
-        //计算育成的时间，奖励光
-        [self caculateAndGiveSunOrMoon];
-    }
+//- (IBAction)getBringedUpLight:(id)sender
+//{
+//    
+//    if ([self.userInfo checkIsBringUpinSunOrMoon]) {
+//        //计算育成的时间，奖励光
+//        //[self caculateAndGiveSunOrMoon:<#(NSString *)#>];
+//    }
+//
+//
+//    //[self callBackLight];
+//    
+//    //移除点击指示
+//    [guidInfo RemoveTouchIndication];
+//    
+//    
+//}
 
 
-    [self callBackLight];
-    
-    
-    //移除点击指示
-    [guidInfo RemoveTouchIndication];
 
-
-    
-}
-
-
-//点击头像，或养育光环时，对光的处理
-//later
--(void)callBackLight
-{
-    //有奖励光，且没有光育成时，只移动一个奖励的光
-    if (![self.userInfo checkIsBringUpinSunOrMoon]) {
-        //奖励时，只移动一个光
-        [self moveLightWithRepeatCount:giveLingtCout StartPoint:_skySunorMoonImage.center EndPoint:_userHeaderImageView.center IsUseRepeatCount:YES];
-
-        giveLingtCout = 0;
-
-        isStartSunOrmoonImageMoveToHeaderAnimation = YES;
-        
-        
-    }
-    
-    
-    //如果有光在育成且有奖励光时，看到的是全部的光移动，或只要有光在育成，就移动全部的光
-    if (([self.userInfo checkIsBringUpinSunOrMoon]) || [self.userInfo checkIsBringUpinSunOrMoon]) {
-        
-        NSLog(@"停光的育成，移动到头像！");
-        
-        [self moveLightWithRepeatCount:0 StartPoint:_skySunorMoonImage.center EndPoint:_userHeaderImageView.center IsUseRepeatCount:NO];
-        
-        isStartSunOrmoonImageMoveToHeaderAnimation = YES;
-        
-        [self.userInfo updateisBringUpSunOrMoon:NO];
-
-        giveLingtCout = 0;
-        
-        NSString* temp =[NSString stringWithFormat:@"停止养育%@光",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-        [self showCustomDelayAlertBottom:temp];
-        
-        
-        
-    }else
-    {
-        NSLog(@"没有光在育成！");
-        
-    }
-    
-    //更新为没有光
-    //[self refreshShowBringLightBtnState];
-    
-    
-}
+//
+//-(void) isTimeProcessBackLight
+//{
+//    
+//    //如果有光移动全部的光，回头像
+//    if (([self.userInfo checkIsBringUpinSunOrMoon])) {
+//        
+//        NSLog(@"停光的育成，移动到头像！");
+//        
+//        [self moveSimpleLightWithRepeatCount:0 StartPoint:_skySunorMoonImage.center EndPoint:_userHeaderImageView.center IsUseRepeatCount:NO];
+//        
+//        isStartSunOrmoonImageMoveToHeaderAnimation = YES;
+//        
+//        [self.userInfo updateisBringUpSunOrMoon:NO];
+//        
+//        giveLingtCout = 0;
+//        
+//        NSString* temp =[NSString stringWithFormat:@"停止养育%@光",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+//        [self showCustomDelayAlertBottom:temp];
+//        
+//        
+//        
+//    }else
+//    {
+//        NSLog(@"ERROR: 没有光在育成, 无法召回！");
+//        
+//    }
+//    
+//    
+//}
 
 
 /*
@@ -1071,6 +1079,68 @@
 }
 */
 
+
+#pragma mark -  截屏分享
+
+/**
+ *  截屏分享
+ *
+ *  @param sender
+ */
+- (IBAction)screenShare:(id)sender
+{
+
+ 
+    ShareByShareSDR* share = [ShareByShareSDR alloc];
+    share.shareTitle = NSLocalizedString(@"appName", @"");
+    share.shareImage =[CommonObject screenShot:self.view];
+    share.shareMsg = [NSString stringWithFormat:NSLocalizedString(@"CutScreenShareMsg", @""), [CommonObject getLightCharactorByTime]];
+    share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
+    share.shareMsgPreFix  = [NSString stringWithFormat:NSLocalizedString(@"MySkyInfo", @""), [CommonObject getLightCharactorByTime], [self.userInfo getMaxuserValueByTime],[CommonObject getLightCharactorByTime],[[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_SPIRITE_COUNT] integerValue],[CommonObject getLightCharactorByTime]];
+    
+    share.customDelegate = self;
+    
+    [share shareImageNews];
+
+    
+}
+
+//delegate
+-(void) ShareStart
+{
+    //初始化指示器
+    NSInteger indiW = 50;
+    NSInteger indiH = 50;
+    indicator = [[CustomIndicatorView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-indiW/2, SCREEN_HEIGHT/2-indiH/2, indiW, indiH)];
+    [indicator startAnimating];
+    [self.view addSubview:indicator];
+}
+
+-(void) ShareCancel
+{
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
+    
+    [self showCustomYesAlertSuperView:@"取消分享" AlertKey:@"shareCancel"];
+}
+
+-(void) ShareReturnSucc
+{
+    
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
+    
+    [self showCustomYesAlertSuperView:@"分享成功" AlertKey:@"shareSucc"];
+    
+}
+
+-(void) ShareReturnFailed
+{
+    [indicator stopAnimating];
+    [indicator removeFromSuperview];
+    
+    [self showCustomYesAlertSuperView:@"分享失败，请检查网络" AlertKey:@"shareFailed"];
+}
 
 - (IBAction)intoCamera:(id)sender {
     
@@ -1142,133 +1212,336 @@
 #pragma mark -  引导过程处理
 - (void) HandleGuidProcess:(GuidStepNum) guidNeedNum
 {
- 
-    //test
-    return;
-    NSLog(@"Guid Step input=%d, current = %d", guidNeedNum, guidInfo.guidStepNumber);
-    //指定步等于当前步时，触发处理过程, 此设计可以任意放置HandleGuidProcess的调用
-    //如中途中断，从上一次断的步开始引导
-    if (guidNeedNum == guidInfo.guidStepNumber) {
-        //执行当前步
-        switch (guidInfo.guidStepNumber) {
-            case guid_Start:
-            {
-                [guidInfo updateGuidStepNumber:guid_oneByOne];
-                //起动滑动引导
-                [self showIntroWithCrossDissolve];
-            }
-
-                break;
-            case guid_finishIntro_Start_firstOpen:
-            {
-                [guidInfo updateGuidStepNumber:guid_oneByOne];
-
-                //第一打开界面
-                [self whenFirstlyOpenViewHandle];
-
-            }
-                break;
-//            case guid_bring_intro_tofront:
-//                [self.view bringSubviewToFront:intro];
-//                break;
-            case giudStep_guidFirstlyGiveLight:
-            {
-                [guidInfo updateGuidStepNumber:guid_oneByOne];
-
-                [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
-                
-                NSString* temp = [NSString stringWithFormat:@"首次登录\n奖励一个%@光\n点击获取",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-                [self showCustomYesAlertSuperView:temp AlertKey:KEY_IS_GIVE_FIRST_LIGHT];
-                
-            }
-                break;
-            case guidStep_guidFirstlyGiveLight_waitForTouchLigh:
-            {
-                [guidInfo updateGuidStepNumber:guid_oneByOne];
-
-                //禁止除点击的其它bringLightBtn外的操作,完成后打开
-                [self DisableUserInteractionInView:self.view exceptViewWithTag:TAG_BRING_LING_BTN];
+    
+    NSLog(@"Guid Step input=%u, current should be = %lu", guidNeedNum, guidInfo.guidStepNumber);
+    
+    //判断是否已执行过，执行过则返回，未执行过继续顺次执行
+    //引导耦合性太强，中间不能断，断了无法从上次断的地方执行，也无法进入whenCommonOpenViewHandle,待优化
+    switch (guidNeedNum) {
+        case guid_Start:
+            if(guidInfo.guidStart && guidInfo.guidStepNumber > guidStep_mainView_End)return;
+            break;
             
-                //增加点击指示
-                //[guidInfo AddTouchIndication:self.view TouchImageName:@"点击手势.png" TouchFrame:_showBringLightBtn.frame];
+        case guid_finishIntro_Start_firstOpen:
+            if(guidInfo.guidFinishIntroStartFirstOpen && guidInfo.guidStepNumber > guidStep_mainView_End)return;
+            break;
             
-            }
-                break;
-                
-            case giudStep_guidPanToBring:
-            {
-                [guidInfo updateGuidStepNumber:guid_oneByOne];
+        case giudStep_guidFirstlyGiveLight:
+            if(guidInfo.guidFirstlyGiveLight && guidInfo.guidStepNumber > guidStep_mainView_End)return;
+            break;
+            
+        case giudStep_guidPanToBring:
+            if(guidInfo.guidPanToBring && guidInfo.guidStepNumber > guidStep_mainView_End)return;
+            break;
+            
+        case giudStep_guidPanToBring_waitForPan:
+            if(guidInfo.guidPanToBring_waitForPan && guidInfo.guidStepNumber > guidStep_mainView_End)return;
+            break;
+            
+        case guidStep_guidIntoCamera:
+            if(guidInfo.guidIntoCamera && guidInfo.guidStepNumber > guidStep_mainView_End)return;
+            break;
+            
+        case guidStep_guidIntoCamera_waitForTouch:
+            if(guidInfo.guidIntoCamera_waitForTouch && guidInfo.guidStepNumber > guidStep_mainView_End)return;
+            break;
+            
+        case guidStep_mainView_End:
+            if(guidInfo.mainView_End && guidInfo.guidStepNumber > guidStep_mainView_End)return;
+            break;
+            
+        default:
+            break;
+            
+    }
+    
+    
+    
+     if (guidNeedNum == guidInfo.guidStepNumber)
+     {
+         //执行当前步
+         switch (guidInfo.guidStepNumber) {
+         case guid_Start:
+         {
+         [guidInfo setGuidStepNumber:guid_oneByOne];
+         //起动滑动引导
+         [self showIntroWithCrossDissolve];
+         
+         [guidInfo setGuidStart:YES];
+         }
+         
+         break;
+         case guid_finishIntro_Start_firstOpen:
+         {
+         [guidInfo setGuidStepNumber:guid_oneByOne];
+         
+         //第一打开界面
+         [self whenFirstlyOpenViewHandle];
+         
+         [guidInfo setGuidFinishIntroStartFirstOpen:YES];
+         
+         }
+         break;
+         case giudStep_guidFirstlyGiveLight:
+         {
+         [guidInfo setGuidStepNumber:guid_oneByOne];
+         
+         [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
+         
+         NSString* temp = [NSString stringWithFormat:@"首次登录\n奖励一个%@光\n",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+         [self showCustomYesAlertSuperView:temp AlertKey:KEY_IS_GIVE_FIRST_LIGHT];
+         
+         [guidInfo setGuidFirstlyGiveLight:YES];
+         
+         }
+         break;
+         
+         case giudStep_guidPanToBring:
+         {
+         [guidInfo setGuidStepNumber:guid_oneByOne];
+         
+         //禁止所有动作
+         [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
+         
+         NSString* alTemp = [NSString stringWithFormat:(@"拖回%@光\n%d小时养成1个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月",BRING_UP_LIGHT_HOUR,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+         [self showCustomYesAlertSuperView:alTemp AlertKey:KEY_REMINDER_PAN_FOR_LIGHT];
+         
+         [guidInfo setGuidPanToBring:YES];
+         
+         
+         }
+         break;
+         case giudStep_guidPanToBring_waitForPan:
+         {
+         [guidInfo setGuidStepNumber:guid_oneByOne];
+         
+         //禁止除拖动以外的所有动作(点OK时，会再次被打开,故需再一次)
+         [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
+         
+         
+         //增加拖动指示
+         [guidInfo AddTouchIndication:self.view TouchImageName:@"拖动手势.png" TouchFrame:self.view.frame];
+         
+         //打开self.view的拖动，点OK后打开
+         //panSunOrMoonGusture.enabled = YES;
+         [self.view addGestureRecognizer:panSunOrMoonGusture];
+         
+         [guidInfo setGuidPanToBring_waitForPan:YES];
+         }
+         break;
+         case guidStep_guidIntoCamera:
+         {
+         [guidInfo setGuidStepNumber:guid_oneByOne];
+         
+         //禁止所有动作
+         [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
+         
+         NSString* temp = [NSString stringWithFormat:@"进入相机\n大声说出你的%@光宣言",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+         [self showCustomYesAlertSuperView:temp AlertKey:KEY_REMINDER_GETINTO_CAMERA];
+         
+         [guidInfo RemoveTouchIndication];
+         
+         [guidInfo setGuidIntoCamera:YES];
+         
+         }
+         break;
+         case guidStep_guidIntoCamera_waitForTouch:
+         {
+         [guidInfo setGuidStepNumber:guid_oneByOne];
+         
+         [self DisableUserInteractionInView:self.view exceptViewWithTag:TAG_INTO_CAMERA_BTN];
+         
+         [guidInfo AddTouchIndication:self.view TouchImageName:@"点击手势.png" TouchFrame:_intoCameraBtn.frame];
+         
+         [guidInfo setGuidIntoCamera_waitForTouch:YES];
+         
+         }
+         break;
+         case guidStep_mainView_End:
+         {
+         [guidInfo setGuidStepNumber:guid_oneByOne];
+         
+         [guidInfo RemoveTouchIndication];
+         
+         //主界面引导结束,打开所有的
+         [self EnableUserInteractionInView:self.view];
+         
+         [guidInfo setMainView_End:YES];
+         
+         }
+         default:
+         break;
+         
+         }
+         
+         if (guidInfo.guidStepNumber > guidStep_mainView_End) {
+         //主界面引导结束,打开所有的
+         [self EnableUserInteractionInView:self.view];
+         }
+     
+     
+     }
+     
 
-                //禁止所有动作
-                [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
-                
-                NSString* alTemp = [NSString stringWithFormat:(@"拖回%@光\n3小时养成1个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-                [self showCustomYesAlertSuperView:alTemp AlertKey:KEY_REMINDER_PAN_FOR_LIGHT];
-                
-                
-            }
-                break;
-                case giudStep_guidPanToBring_waitForPan:
-            {
-                [guidInfo updateGuidStepNumber:guid_oneByOne];
-
-                //禁止除拖动以外的所有动作(点OK时，会再次被打开,故需再一次)
-                [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
-
-                
-                //增加拖动指示
-                [guidInfo AddTouchIndication:self.view TouchImageName:@"拖动手势.png" TouchFrame:self.view.frame];
-
-                //打开self.view的拖动，点OK后打开
-                panSunOrMoonGusture.enabled = YES;
-            }
-                break;
-            case guidStep_guidIntoCamera:
-            {
-                [guidInfo updateGuidStepNumber:guid_oneByOne];
-                
-                //禁止所有动作
-                [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
-
-                NSString* temp = [NSString stringWithFormat:@"进入相机\n大声说出你的%@光宣言",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-                [self showCustomYesAlertSuperView:temp AlertKey:KEY_REMINDER_GETINTO_CAMERA];
-
-                [guidInfo RemoveTouchIndication];
-                
-            }
-                break;
-            case guidStep_guidIntoCamera_waitForTouch:
-            {
-                [guidInfo updateGuidStepNumber:guid_oneByOne];
-                
-                [self DisableUserInteractionInView:self.view exceptViewWithTag:TAG_INTO_CAMERA_BTN];
-                
-                [guidInfo AddTouchIndication:self.view TouchImageName:@"点击手势.png" TouchFrame:_intoCameraBtn.frame];
-
-            }
-                break;
-            case guidStep_mainView_End:
-            {
-                [guidInfo updateGuidStepNumber:guid_oneByOne];
-                
-                [guidInfo RemoveTouchIndication];
-                
-                //主界面引导结束...
-                
-            }
-            default:
-                break;
-                
-        }
+    /*
+    
+    //找到未执行的一步开始执行
+    if (!guidInfo.guidStart)
+    {
+        guidNeedNum = guid_Start;
         
-        if (guidInfo.guidStepNumber > guidStep_mainView_End) {
-            //主界面引导结束,打开所有的
-            [self EnableUserInteractionInView:self.view];
-        }
+    }else if (!guidInfo.guidFinishIntroStartFirstOpen)
+    {
+        guidNeedNum = guid_finishIntro_Start_firstOpen;
 
+    }else if (!guidInfo.guidFirstlyGiveLight)
+    {
+        guidNeedNum = giudStep_guidFirstlyGiveLight;
+        
+    }else if (!guidInfo.guidPanToBring)
+    {
+        guidNeedNum = giudStep_guidPanToBring;
+        
+    }else if (!guidInfo.guidPanToBring_waitForPan)
+    {
+        guidNeedNum = giudStep_guidPanToBring_waitForPan;
+        
+    }else if (!guidInfo.guidIntoCamera)
+    {
+        guidNeedNum = guidStep_guidIntoCamera;
+        
+    }else if (!guidInfo.guidIntoCamera_waitForTouch)
+    {
+        guidNeedNum = guidStep_guidIntoCamera_waitForTouch;
+        
+    }else if (!guidInfo.mainView_End)
+    {
+        guidNeedNum = guidStep_mainView_End;
         
     }
+    
+    
+    //执行当前步
+    switch (guidNeedNum) {
+        case guid_Start:
+        {
+            [guidInfo setGuidStepNumber:guid_oneByOne];
+            //起动滑动引导
+            [self showIntroWithCrossDissolve];
+            
+            [guidInfo setGuidStart:YES];
+        }
+            
+            break;
+        case guid_finishIntro_Start_firstOpen:
+        {
+            [guidInfo setGuidStepNumber:guid_oneByOne];
+            
+            //第一打开界面
+            [self whenFirstlyOpenViewHandle];
+            
+            [guidInfo setGuidFinishIntroStartFirstOpen:YES];
+            
+        }
+            break;
+        case giudStep_guidFirstlyGiveLight:
+        {
+            [guidInfo setGuidStepNumber:guid_oneByOne];
+            
+            [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
+            
+            NSString* temp = [NSString stringWithFormat:@"首次登录\n奖励一个%@光\n",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+            [self showCustomYesAlertSuperView:temp AlertKey:KEY_IS_GIVE_FIRST_LIGHT];
+            
+            [guidInfo setGuidFirstlyGiveLight:YES];
+            
+        }
+            break;
+            
+        case giudStep_guidPanToBring:
+        {
+            [guidInfo setGuidStepNumber:guid_oneByOne];
+            
+            //禁止所有动作
+            [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
+            
+            NSString* alTemp = [NSString stringWithFormat:(@"拖回%@光\n%d小时养成1个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月",BRING_UP_LIGHT_HOUR,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+            [self showCustomYesAlertSuperView:alTemp AlertKey:KEY_REMINDER_PAN_FOR_LIGHT];
+            
+            [guidInfo setGuidPanToBring:YES];
+            
+            
+        }
+            break;
+        case giudStep_guidPanToBring_waitForPan:
+        {
+            [guidInfo setGuidStepNumber:guid_oneByOne];
+            
+            //禁止除拖动以外的所有动作(点OK时，会再次被打开,故需再一次)
+            [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
+            
+            
+            //增加拖动指示
+            [guidInfo AddTouchIndication:self.view TouchImageName:@"拖动手势.png" TouchFrame:self.view.frame];
+            
+            //打开self.view的拖动，点OK后打开
+            //panSunOrMoonGusture.enabled = YES;
+            [self.view addGestureRecognizer:panSunOrMoonGusture];
+            
+            [guidInfo setGuidPanToBring_waitForPan:YES];
+        }
+            break;
+        case guidStep_guidIntoCamera:
+        {
+            [guidInfo setGuidStepNumber:guid_oneByOne];
+            
+            //禁止所有动作
+            [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
+            
+            NSString* temp = [NSString stringWithFormat:@"进入相机\n大声说出你的%@光宣言",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+            [self showCustomYesAlertSuperView:temp AlertKey:KEY_REMINDER_GETINTO_CAMERA];
+            
+            [guidInfo RemoveTouchIndication];
+            
+            [guidInfo setGuidIntoCamera:YES];
+            
+        }
+            break;
+        case guidStep_guidIntoCamera_waitForTouch:
+        {
+            [guidInfo setGuidStepNumber:guid_oneByOne];
+            
+            [self DisableUserInteractionInView:self.view exceptViewWithTag:TAG_INTO_CAMERA_BTN];
+            
+            [guidInfo AddTouchIndication:self.view TouchImageName:@"点击手势.png" TouchFrame:_intoCameraBtn.frame];
+            
+            [guidInfo setGuidIntoCamera_waitForTouch:YES];
+            
+        }
+            break;
+        case guidStep_mainView_End:
+        {
+            [guidInfo setGuidStepNumber:guid_oneByOne];
+            
+            [guidInfo RemoveTouchIndication];
+            
+            //主界面引导结束,打开所有的
+            [self EnableUserInteractionInView:self.view];
+            
+            [guidInfo setMainView_End:YES];
+            
+        }
+        default:
+            break;
+            
+    }
+    
+    if (guidInfo.guidStepNumber > guidStep_mainView_End) {
+        //主界面引导结束,打开所有的
+        [self EnableUserInteractionInView:self.view];
+    }
 
+  */
     
 }
 
@@ -1278,13 +1551,32 @@
 -(void)DisableUserInteractionInView:(UIView *)superView exceptViewWithTag:(NSInteger)enableViewTag
 {
     
-    NSLog(@"----DisableUserInteractionInView");
-    [CommonObject DisableUserInteractionInView:superView exceptViewWithTag:enableViewTag];
     
-    //其它需要禁止的
-    panSunOrMoonGusture.enabled = NO;
-    tapSunOrMoonGusture.enabled = NO;
-    tapHeaderView.enabled = NO;
+    if (!alreadyDisable) {
+        NSLog(@"----DisableUserInteractionInView");
+        [CommonObject DisableUserInteractionInView:superView exceptViewWithTag:enableViewTag];
+        
+        //其它需要禁止的
+        //panSunOrMoonGusture.enabled = NO;
+        [self.view removeGestureRecognizer:panSunOrMoonGusture];
+        //tapSunOrMoonGusture.enabled = NO;
+        [_skySunorMoonImage removeGestureRecognizer:tapSunOrMoonGusture];
+        //tapHeaderView.enabled = NO;
+        [_userHeaderImageView removeGestureRecognizer:tapHeaderView];
+
+        alreadyDisable = YES;
+    }else
+    {
+        NSLog(@"----alreadyDisable, can not DisableUserInteractionInView");
+
+    }
+
+}
+
+-(void)DisableUserInteractionAllView:(UIView *)superView
+{
+    [superView setUserInteractionEnabled:NO];
+    
 }
 
 -(void)EnableUserInteractionInView:(UIView *)superView
@@ -1294,11 +1586,23 @@
 
     [CommonObject EnableUserInteractionInView:self.view];
     
-    panSunOrMoonGusture.enabled = YES;
-    tapSunOrMoonGusture.enabled = YES;
-    tapHeaderView.enabled = YES;
-
+    //panSunOrMoonGusture.enabled = YES;
+    //tapSunOrMoonGusture.enabled = YES;
+    //tapHeaderView.enabled = YES;
     
+    [self.view addGestureRecognizer:panSunOrMoonGusture];
+    [_skySunorMoonImage addGestureRecognizer:tapSunOrMoonGusture];
+    [_userHeaderImageView addGestureRecognizer:tapHeaderView];
+
+
+    alreadyDisable = NO;
+
+}
+
+-(void)EnableUserInteractionAllView:(UIView *)superView
+{
+    [superView setUserInteractionEnabled:YES];
+
 }
 
 
@@ -1336,11 +1640,17 @@
     if ([[imageFilterData objectForKey:CAMERA_LIGHT_COUNT] integerValue]!=0)
     {
         giveLingtCout = [[imageFilterData objectForKey:CAMERA_LIGHT_COUNT] integerValue];
-        [self showCustomYesAlertSuperView:@"完成阳光自拍，奖励一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT];
+        
+        if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+            [self showCustomYesAlertSuperView:@"完成阳光自拍，奖励一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA];
+        }else
+        {
+            [self showCustomYesAlertSuperView:@"完成月光自拍，奖励一个月光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA];
+        }
+
 
     }
     
-    //[self refreshShowBringLightBtnState];
     [self refreshIntoCameraBtnState];
 
     
@@ -1421,26 +1731,16 @@
         
         
         [UIView beginAnimations:@"reFreshSunMoonUI_ShowNew" context:(__bridge void *)(mainBgImage)];
-        [UIView setAnimationDuration:3.0f];
+        [UIView setAnimationDuration:1.0f];
         [UIView setAnimationDelegate:self];
         [UIView setAnimationDidStopSelector:@selector(reFreshSunMoonUIAnimationDidStop:finished:context:)];
         
-        if ([CommonObject checkSunOrMoonTime]== IS_SUN_TIME) {
-            [mainBgImage setImage:[UIImage imageNamed:@"主页底图004.png"]];
-            [_skySunorMoonImage setImage:[UIImage imageNamed:@"sun.png"]];
-
-
-            
-            
-        }else
-        {
-            [mainBgImage setImage:[UIImage imageNamed:@"moon-home.png"]];
-            [_skySunorMoonImage setImage:[UIImage imageNamed:@"moon.png"]];
-        }
         
-        
+        [mainBgImage setImage:[CommonObject getSkyBkImageByTime]];
+        [_skySunorMoonImage setImage:[CommonObject getSunMoonImageByTime]];
+        [_skyWindow setImage:[CommonObject getSkyWindowImageByTime]];
+
         [self refreshIntoCameraBtnState];
-        //[self refreshShowBringLightBtnState];
         
         NSLog(@"Change new  UI to %@", [mainBgImage.image description]);
 
@@ -1461,7 +1761,7 @@
 }
 
 
-#pragma mark -  getter
+//#pragma mark -  getter
 //- (UIImageView *)userHeaderImageView {
 //    
 //    NSInteger w = SCREEN_WIDTH/2;
@@ -1503,17 +1803,8 @@
 {
     
     
-    //test
-    //[self animationLightSwimOutCount:1];
-
-    //self animationLightSwimOutKeyFrameCount:15];
-    [self getAndPopOutSpirite];
-    
     if (gestureRecognizer.state == UIGestureRecognizerStateRecognized) {
         [bowLightView startAnimating];
-        
-        //later 点击后，太阳回到太阳，再弹出
-    
     }
 
 }
@@ -1528,7 +1819,7 @@
             return;
         }
         
-        _panSunorMoonImageView.image =[UIImage imageNamed:@"sun-小.png"];
+        //_panSunorMoonImageView.image =[CommonObject getBaseLightImageByTime];
         
     }else
     {
@@ -1536,7 +1827,7 @@
             NSLog(@"moon_value==0 handlePan return");
             return;
         }
-        _panSunorMoonImageView.image =[UIImage imageNamed:@"moon-小.png"];
+        //_panSunorMoonImageView.image =[CommonObject getBaseLightImageByTime];
 
         
     }
@@ -1567,6 +1858,7 @@
         //有光在头像中，可以开始从头像的拖动识别！
         if (gestureRecognizer.state == UIGestureRecognizerStateBegan ) {
             
+            
             NSInteger w = _userHeaderImageView.frame.size.width;
             NSInteger h = _userHeaderImageView.frame.size.height;
             CGRect tapRect = CGRectMake(location.x-w/2, location.y-h/2, w, h);
@@ -1577,9 +1869,9 @@
             {
                 NSLog(@" 开始拖动手势： 起点：头像之内！");
                 isFromHeaderBegin = YES;
-                _panSunorMoonImageView.center = _userHeaderImageView.center;
-                _panSunorMoonImageView.alpha = 1.0;
-                _panSunorMoonImageView.hidden =  YES;
+//                _panSunorMoonImageView.center = _userHeaderImageView.center;
+//                _panSunorMoonImageView.alpha = 1.0;
+//                _panSunorMoonImageView.hidden =  YES;
                 
             }else
             {
@@ -1594,11 +1886,11 @@
 
             
             if (isFromHeaderBegin) {
-                _panSunorMoonImageView.hidden =  YES;
-                _panSunorMoonImageView.center = location;
-                _panSunorMoonImageView.alpha = 1.0;
+//                _panSunorMoonImageView.hidden =  YES;
+//                _panSunorMoonImageView.center = location;
+//                _panSunorMoonImageView.alpha = 1.0;
                 
-                panTracelight = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[CommonObject getUsedSamllLightImageNameByTime]]];
+                panTracelight = [[UIImageView alloc] initWithImage:[CommonObject getBaseLightImageByTime]];
                 [panTracelight setFrame:CGRectMake(location.x, location.y, 15, 15)];
                 panTracelight.tag = TAG_LIGHT_TRACE+(++panTraceligntTag);
                 panTracelight.contentMode=UIViewContentModeScaleToFill;
@@ -1624,11 +1916,13 @@
                 NSLog(@" 结束拖动手势： 终点：日月之内！");
                 if (isFromHeaderBegin) {
                     NSLog(@"光被拖回日月育成！");
-                    [self moveLightWithRepeatCount:0 StartPoint:_userHeaderImageView.center EndPoint:_skySunorMoonImage.center IsUseRepeatCount:NO];
-                    isStartSunOrmoonImageMoveToSunMoonAnimation = YES;
-                    
-                    //更新为有光在育成
+
+                    //刷新光到天空
+                    [self refreshLightStateForCallBackOrPopout:1];
+                   
+                    //先更新为有光在育成，再动画，否则会判断无光在养成，后续流程被终止
                     [self.userInfo updateisBringUpSunOrMoon:YES];
+                    [self refreshLightCircleStatForUserHeaderOrSunMoon];
                     //更新光育成时间
                     [self.userInfo updateSunorMoonBringupTime:[NSDate date]];
 
@@ -1649,14 +1943,14 @@
             }else
             {
                 
-                NSLog(@" 结束拖动手势： 终点：日月之外, 回到日月！");
+                NSLog(@" 结束拖动手势： 终点：日月之外, 回到头像！");
                 //需以头像为起点
                 if (isFromHeaderBegin) {
                     
                     //回到头像里动画
-                    [self moveLightWithRepeatCount:1 StartPoint:location EndPoint:_userHeaderImageView.center IsUseRepeatCount:YES];
+                    NSMutableArray * twoPointArray = [self getSeveralTracePointFromPan:2];
+                    [self moveSimpleLightWithRepeatCount:1 StartPoint:location EndPoint:_userHeaderImageView.center totalTime:1  aniKey:KEY_ANIMATION_PAN_TO_SKY_FAILED_TO_USERHEADER withBazierP1:[[twoPointArray objectAtIndex:0] CGPointValue] bazierP2:[[twoPointArray objectAtIndex:1] CGPointValue]];
 
-                    isStartSunOrmoonImageMoveToHeaderAnimation = YES;
                     
                 }else
                 {
@@ -1710,9 +2004,9 @@
             {
                 NSLog(@" 开始拖动手势： 起点：日月之内！");
                 isFromSunMoonBegin = YES;
-                _panSunorMoonImageView.center = _skySunorMoonImage.center;
-                _panSunorMoonImageView.alpha = 1.0;
-                _panSunorMoonImageView.hidden =  YES;
+//                _panSunorMoonImageView.center = _skySunorMoonImage.center;
+//                _panSunorMoonImageView.alpha = 1.0;
+//                _panSunorMoonImageView.hidden =  YES;
                 
                 
             }else
@@ -1729,18 +2023,10 @@
 
             if (isFromSunMoonBegin) {
                 
-                _panSunorMoonImageView.center = location;
-                _panSunorMoonImageView.alpha = 1.0;
-                _panSunorMoonImageView.hidden = YES;
-                
-                if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-                    panTracelight = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sun-小.png"]];
-                    
-                }else
-                {
-                    panTracelight = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"moon-小.png"]];
-                    
-                }
+//                _panSunorMoonImageView.center = location;
+//                _panSunorMoonImageView.alpha = 1.0;
+//                _panSunorMoonImageView.hidden = YES;
+                panTracelight = [[UIImageView alloc] initWithImage:[CommonObject getBaseLightImageByTime]];
                 [panTracelight setFrame:CGRectMake(location.x, location.y, 15, 15)];
                 panTracelight.tag = TAG_LIGHT_TRACE+(++panTraceligntTag);
                 panTracelight.contentMode=UIViewContentModeScaleToFill;
@@ -1766,10 +2052,26 @@
 
                 if (isFromSunMoonBegin) {
                     NSLog(@"光被拖回头像！");
+                    
+                    if ([self caculateAndGiveSunOrMoon:KEY_REMINDER_GIVE_LIGHT_FROM_PAN_TO_USERHEADER]>0)
+                    {
+                        //等待用户点击OK后，光再返回头像
+                    }else
+                    {
+                        
+                        //无奖励，光直接返回头像
+                        [self refreshLightStateForCallBackOrPopout:0];
+                        //更新为光无养育
+                        [self.userInfo updateisBringUpSunOrMoon:NO];
+                        [self refreshLightCircleStatForUserHeaderOrSunMoon];
+
+
+                    }
+                    
 
                     
-                    [self callBackLight];
-                    isStartSunOrmoonImageMoveToHeaderAnimation = YES;
+
+
                     
                     isFromSunMoonBegin = NO;
 
@@ -1789,10 +2091,10 @@
                 if (isFromSunMoonBegin) {
                     
                     //回到日月里动画
+                    NSMutableArray * twoPointArray = [self getSeveralTracePointFromPan:2];
+                    [self moveSimpleLightWithRepeatCount:1 StartPoint:location EndPoint:_skySunorMoonImage.center totalTime:1 aniKey:KEY_ANIMATION_PAN_TO_USERHEADER_FAILED_TO_SKY withBazierP1:[[twoPointArray objectAtIndex:0] CGPointValue] bazierP2:[[twoPointArray objectAtIndex:1] CGPointValue]];
                     
-                    [self moveLightWithRepeatCount:1 StartPoint:location EndPoint:_skySunorMoonImage.center IsUseRepeatCount:YES];
-                    
-                    isStartSunOrmoonImageMoveToSunMoonAnimation = YES;
+                    //isStartSunOrmoonImageMoveToSunMoonAnimation = YES;
 
                 }else{
                     NSLog(@"不是从 日月 开始的！");
@@ -1821,6 +2123,7 @@
         for (NSInteger i=0; i<=panTraceligntTag; i++) {
             UIImageView* tempTrace = (UIImageView*)[self.view viewWithTag:(TAG_LIGHT_TRACE+i)];
             tempTrace.hidden = YES;
+            //不参remove，其还要用于取关键点
         }
 
     }
@@ -1832,145 +2135,322 @@
     
 }
 
-#pragma mark - 光游动而出, 又返回
+/**
+ *  从拖动痕迹中取几个关键点
+ *
+ *  @return 关键点的位置
+ */
+-(NSMutableArray*)getSeveralTracePointFromPan:(NSInteger) count
+{
+    if (count == 0) {
+        return nil;
+    }
+    
+    NSMutableArray*  pointArray = [NSMutableArray arrayWithCapacity:count];
+    
+    for (NSInteger i=0; i<count; i++) {
+
+        NSInteger keyTag = TAG_LIGHT_TRACE+panTraceligntTag/(count+1) *(i+1);
+        
+        UIImageView* tempTrace = (UIImageView*)[self.view viewWithTag:keyTag];
+        
+        [pointArray addObject:[NSValue valueWithCGPoint:tempTrace.center]];
+        
+    }
+    
+    return pointArray;
+    
+    
+}
+
+#pragma mark - 光的动画控制函数
 /**
  *  贝塞尔 曲线游动而出
  *
  *  @param count 最大为2，不能为0
  */
--(void) animationLightSwimOutBazierLightType:(LightType) type srcView:(UIImageView*) srcView  start:(CGPoint) startPoint end:(CGPoint) endPoint
-
+-(void) animationLightSwimOutBazierLightType:(LightType) type srcView:(UIImageView*) srcView  startFrame:(CGRect) startF endFrame:(CGRect) endF  number:(NSInteger) number aniKey:(NSString*)aniKey
 {
     
-    NSMutableArray* posionArry = [self getRadomPosionWithSize:CGSizeMake(15, 15) inFrame:CGRectMake(0, 0-200, SCREEN_WIDTH, SCREEN_HEIGHT-_userHeaderImageView.frame.size.height) exceptFrame:_skySunorMoonImage.frame Count:2];
+    NSMutableArray* posionArry = [self getRadomPosionWithSize:CGSizeMake(15, 15) inFrame:CGRectMake(0, 0+SCREEN_HEIGHT/4, SCREEN_WIDTH, SCREEN_HEIGHT/4*2) exceptFrame:_skySunorMoonImage.frame Count:2];
 
     
     if (!posionArry) {
         return;
     }
     
-    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimationWithSrcView:srcView];
+    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimation];
     
-    if (!simOutAnimationArray) {
-        simOutAnimationArray=[NSMutableArray arrayWithCapacity:0];
+    //存动画队列,收回，或换天时清空
+    [self addAnimationToArray:aniKey lightType:type aniObject:customAnimation];
+
+    
+    //计算此精灵的最终位置
+    CGPoint startPoint =CGPointMake(CGRectGetMidX(startF), CGRectGetMidY(startF));
+    CGPoint endPoint = CGPointMake(CGRectGetMidX(endF), CGRectGetMidY(endF));
+    //计算此精灵的最终大小
+    CGSize  startSize = startF.size;
+    CGSize endSize = endF.size;
+    
+    if (type == lightTypeWhiteSpirite || type == lightTypeYellowSpirte) {
+        CGRect bazier_1 = [[posionArry objectAtIndex:0] CGRectValue];
+        CGPoint bazierPoint_1 = CGPointMake(bazier_1.origin.x, bazier_1.origin.y);
+        
+        [customAnimation setAniBazierCenterPoint1:bazierPoint_1];
+        
+        CGRect bazier_2 = [[posionArry objectAtIndex:1] CGRectValue];
+        CGPoint bazierPoint_2 = CGPointMake(bazier_2.origin.x, bazier_2.origin.y);
+        
+        [customAnimation setAniBazierCenterPoint2:bazierPoint_2];
+    }else
+    {
+
+        CGPoint bazierPoint_1 = [CommonObject getMidPointBetween:startPoint andPoint:endPoint];
+        
+        [customAnimation setAniBazierCenterPoint1:bazierPoint_1];
+
+        CGPoint bazierPoint_2 = [CommonObject getMidPointBetween:startPoint andPoint:endPoint];
+        
+        [customAnimation setAniBazierCenterPoint2:bazierPoint_2];
     }
-    [simOutAnimationArray addObject:customAnimation];
     
-    CGRect bazier_1 = [[posionArry objectAtIndex:0] CGRectValue];
-    CGPoint bazierPoint_1 = CGPointMake(bazier_1.origin.x, bazier_1.origin.y);
-    [customAnimation setAniBazierCenterPoint1:bazierPoint_1];
+
     
-    CGRect bazier_2 = [[posionArry objectAtIndex:1] CGRectValue];
-    CGPoint bazierPoint_2 = CGPointMake(bazier_2.origin.x, bazier_2.origin.y);
-    [customAnimation setAniBazierCenterPoint2:bazierPoint_2];
     
+    NSDictionary* srcViewDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                srcView, KEY_ANIMATION_VIEW,
+                                [NSNumber numberWithInteger:type], KEY_ANIMATION_LIGHT_TYPE,nil];
     
     
     [customAnimation setAniType:BEZIER_ANI_TYPE];
-    [customAnimation setAniImageView:srcView];
+    [customAnimation setAniImageViewDic:srcViewDic];
     [customAnimation setBkLayer:self.view.layer];
-    [customAnimation setAniStartSize:CGSizeMake(30, 30)];
-    [customAnimation setAniEndSize:CGSizeMake(30, 30)];
     [customAnimation setAniStartPoint:startPoint];
     [customAnimation setAniEndpoint:endPoint];
-    [customAnimation setAniImage:srcView.image];
+    [customAnimation setAniStartSize:startSize];
+    [customAnimation setAniEndSize:endSize];
     [customAnimation setCustomAniDelegate:self];
-    [customAnimation setAnikey:@"animation_swim_bazier_out"];
+    [customAnimation setAnikey:aniKey];
     [customAnimation setAniRepeatCount:1];
-    [customAnimation setAniDuration:POP_OUT_ANIMATION_LIGHT_TIME];
+    
+    float duration = POP_OUT_ONE_ANIMATION_TIME * ((float)number+1)/(number+2);
+    
+    [customAnimation setAniDuration:duration];
+    
+    [customAnimation setSipiriteAnimationType:type];
+    [customAnimation displayLinkAnimationEnable];
     
     [customAnimation startCustomAnimation];
     
+    NSLog(@"Animation out, key =%@",aniKey);
+
     
 }
 
-#pragma mark - 光游动而出, 关键帧动画
 /**
  *  光游动而出，再返回, 关键帧动画
  *
  *  @param count 随机关键帧点的个数,不包括开始点,与结束点
  */
--(void) animationLightSwimOutKeyFrameCount:(NSInteger) count lightType:(LightType) type srcView:(UIImageView*) srcView
+-(void) animationLightSwimOutKeyFrameCount:(NSInteger) count lightType:(LightType) type srcView:(UIImageView*) srcView aniKey:(NSString*) aniKey
 {
-    //count = 4;
     
     NSMutableArray* posionArry = [self getRadomPosionWithSize:CGSizeMake(15, 15) inFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT-300) exceptFrame:_skySunorMoonImage.frame Count:count];
     if (!posionArry) {
         return;
     }
     
-    simOutAnimation = [[CustomAnimation alloc] initCustomAnimationWithSrcView:srcView];
+    CustomAnimation* animation = [[CustomAnimation alloc] initCustomAnimation];
     
-    if (!simOutAnimationArray) {
-        simOutAnimationArray=[NSMutableArray arrayWithCapacity:0];
-    }
-    [simOutAnimationArray addObject:simOutAnimation];
+    [self addAnimationToArray:aniKey lightType:type aniObject:animation];
     
     CGPoint startPoint = _skySunorMoonImage.center;
     CGPoint endPoint =CGPointMake([CommonObject getRandomNumber:0+15 to:SCREEN_WIDTH-15], [CommonObject getRandomNumber:0+15 to:SCREEN_HEIGHT-_userHeaderImageView.frame.size.height]);
     
-    [simOutAnimation setAniType:KEY_FRAME_POSION_TYPE];
-    [simOutAnimation setAniImageView:srcView];
-    [simOutAnimation setBkLayer:self.view.layer];
-    [simOutAnimation setAniStartSize:CGSizeMake(30, 30)];
-    [simOutAnimation setAniStartPoint:startPoint];
-    [simOutAnimation setAniEndpoint:endPoint];
-    [simOutAnimation setAniEndSize:CGSizeMake(30, 30)];
-    [simOutAnimation setAniImage:[CommonObject getLightImageByLightType:type]];
-    [simOutAnimation setCustomAniDelegate:self];
-    [simOutAnimation setAnikey:@"animation_swim_key_frame"];
-    [simOutAnimation setAniRepeatCount:1];
-    [simOutAnimation setAniDuration:POP_OUT_ANIMATION_LIGHT_TIME];
+    NSDictionary* srcViewDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                srcView, KEY_ANIMATION_VIEW,
+                                [NSNumber numberWithInteger:type], KEY_ANIMATION_LIGHT_TYPE,nil];
     
-    //开始点,结束点也算一帧
-    [simOutAnimation setAniKeyframePointCount:count+2];
+    [animation setAniType:KEY_FRAME_POSION_TYPE];
+    [animation setAniImageViewDic:srcViewDic];
+    [animation setBkLayer:self.view.layer];
+    [animation setAniStartSize:CGSizeMake(60, 60)];
+    [animation setAniStartPoint:startPoint];
+    [animation setAniEndpoint:endPoint];
+    [animation setAniEndSize:CGSizeMake(60, 60)];
+    [animation setCustomAniDelegate:self];
+    [animation setAnikey:aniKey];
+    [animation setAniRepeatCount:1];
+    [animation setAniDuration:POP_OUT_ONE_ANIMATION_TIME];
+    
+    [animation setAniKeyframePointCount:count];
 
     for (int i=0; i<count; i++) {
         
         //关键帧点
         CGRect rectSrc =[[posionArry objectAtIndex:i] CGRectValue];
         CGPoint pointKey = CGPointMake(rectSrc.origin.x, rectSrc.origin.y);
-        [simOutAnimation setAniKeyframePoint:pointKey];
+        [animation setAniKeyframePoint:pointKey];
         
     }
     
-    [simOutAnimation startCustomAnimation];
+    [animation startCustomAnimation];
 
 }
 
 
 
 
--(void) animationLightSwimBackKeyFrameWithAni:(CustomAnimation*) srcAni
+-(void) animationLightSwimBackKeyFrameWithAni:(CustomAnimation*) srcAni aniKey:(NSString*) aniKey number:(NSInteger) num
 {
     
+        UIImageView* aniView = (UIImageView*)[srcAni.aniImageViewDic objectForKey:KEY_ANIMATION_VIEW];
+    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimation];
     
-    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimationWithSrcView:srcAni.aniImageView];
+    LightType type = (LightType)[(NSNumber*)[srcAni.aniImageViewDic objectForKey:KEY_ANIMATION_LIGHT_TYPE] integerValue];
     
-    CGPoint startPoint = srcAni.aniImageView.center;
+    CGPoint startPoint = aniView.center;
+    CGPoint endPoint = _skySunorMoonImage.center;
+
+    //计算此精灵的最终大小
+    CGSize startSize;
+    CGSize endSize;
+    if (type == lightTypeWhiteSpirite || type == lightTypeYellowSpirte) {
+        startSize = CGSizeMake(SPIRITE_W_H, SPIRITE_W_H);
+        endSize = CGSizeMake(SPIRITE_W_H, SPIRITE_W_H);
+    }else
+    {
+        startSize = CGSizeMake(LIGHT_W_H, LIGHT_W_H);
+        endSize = CGSizeMake(LIGHT_W_H, LIGHT_W_H);
+    }
+
+    
+    CGPoint bazierPoint_1;
+    CGPoint bazierPoint_2;
+    //取得两点之间的中间点
+    CGPoint mid1 = [CommonObject getMidPointBetween:startPoint andPoint:endPoint];
+    bazierPoint_1 = CGPointMake(mid1.x/3 -[CommonObject getRandomNumber:0 to:10], mid1.y/3 -[CommonObject getRandomNumber:0 to:10]);
+    [customAnimation setAniBazierCenterPoint1:bazierPoint_1];
+    CGPoint mid2 = [CommonObject getMidPointBetween:mid1 andPoint:endPoint];
+    bazierPoint_2 = CGPointMake(mid2.x -[CommonObject getRandomNumber:20 to:40], mid2.y -[CommonObject getRandomNumber:20 to:40]);
+    [customAnimation setAniBazierCenterPoint2:bazierPoint_2];
+    
+    
+    [customAnimation setAniType:BEZIER_ANI_TYPE];
+    [customAnimation setAniImageViewDic:srcAni.aniImageViewDic];
+    [customAnimation setBkLayer:self.view.layer];
+    [customAnimation setAniStartPoint:startPoint];
+    [customAnimation setAniEndpoint:endPoint];
+    [customAnimation setAniStartSize:startSize];
+    [customAnimation setAniEndSize:endSize];
+    [customAnimation setCustomAniDelegate:self];
+    [customAnimation setAnikey:aniKey];
+    [customAnimation setAniRepeatCount:1];
+    float duration = POP_BACK_ONE_ANIMATION_TIME * ((float)num+1)/(num+2);
+    [customAnimation setAniDuration:duration];
+    
+    [customAnimation setSipiriteAnimationType:type];
+    [customAnimation displayLinkAnimationEnable];
+    
+    [customAnimation startCustomAnimation];
+    
+    /*
+    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimation];
+    
+    LightType type = (LightType)[(NSNumber*)[srcAni.aniImageViewDic objectForKey:KEY_ANIMATION_LIGHT_TYPE] integerValue];
+    
+    UIImageView* aniView = (UIImageView*)[srcAni.aniImageViewDic objectForKey:KEY_ANIMATION_VIEW];
+    [self.view addSubview:aniView];//test
+    
+    CGPoint startPoint = aniView.center;
     CGPoint endPoint = _skySunorMoonImage.center;
     
-    CGPoint bazierPoint_1 = CGPointMake(startPoint.x+(endPoint.x-startPoint.x)/2 + 50, startPoint.y+(endPoint.y-startPoint.y)/2+50);
+    CGPoint bazierPoint_1;
+    CGPoint bazierPoint_2;
+    //取得两点之间的中间点
+    CGPoint mid1 = [CommonObject getMidPointBetween:startPoint andPoint:endPoint];
+    bazierPoint_1 = CGPointMake(mid1.x/3 -[CommonObject getRandomNumber:0 to:10], mid1.y/3 -[CommonObject getRandomNumber:0 to:10]);
     [customAnimation setAniBazierCenterPoint1:bazierPoint_1];
-    
-    CGPoint bazierPoint_2 = CGPointMake(startPoint.x+(endPoint.x-startPoint.x)/2 + 70, startPoint.y+(endPoint.y-startPoint.y)/2+70);
+    CGPoint mid2 = [CommonObject getMidPointBetween:mid1 andPoint:endPoint];
+    bazierPoint_2 = CGPointMake(mid2.x -[CommonObject getRandomNumber:20 to:40], mid2.y -[CommonObject getRandomNumber:20 to:40]);
     [customAnimation setAniBazierCenterPoint2:bazierPoint_2];
     
     [customAnimation setAniType:BEZIER_ANI_TYPE];
-    [customAnimation setAniImageView:srcAni.aniImageView];
-    [customAnimation setBkLayer:self.view.layer];
-    [customAnimation setAniStartSize:CGSizeMake(30, 30)];
-    [customAnimation setAniEndSize:CGSizeMake(30, 30)];
+    [customAnimation setAniImageViewDic:srcAni.aniImageViewDic];
+    [customAnimation setAniStartSize:CGSizeMake(SPIRITE_W_H, SPIRITE_W_H)];
+    [customAnimation setAniEndSize:CGSizeMake(SPIRITE_W_H, SPIRITE_W_H)];
     [customAnimation setAniStartPoint:startPoint];
     [customAnimation setAniEndpoint:endPoint];
-    [customAnimation setAniImage:srcAni.aniImageView.image];
     [customAnimation setCustomAniDelegate:self];
-    [customAnimation setAnikey:@"animation_swim_back"];
+    [customAnimation setAnikey:aniKey];
     [customAnimation setAniRepeatCount:1];
-    [customAnimation setAniDuration:[CommonObject getRandomNumber:1 to:POP_BACK_ANIMATION_LIGHT_TIME]];
+    float duration = POP_BACK_ONE_ANIMATION_TIME * ((float)num+1)/(num+2);
+    [customAnimation setAniDuration:duration];
     
+    [customAnimation setSipiriteAnimationType:type];
+    [customAnimation displayLinkAnimationEnable];
+    
+    //直线过渡
+    //[customAnimation setAniKeyframePointCount:0];
     
     [customAnimation startCustomAnimation];
+ 
+    */
+}
+
+
+-(void) animationSpiriteFlyTraceWithAni:(CustomAnimation*) srcAni aniKey:(NSString*) aniKey number:(NSInteger) num startP:(CGPoint) start endP:(CGPoint)end
+{
+    
+    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimation];
+    
+    LightType type = (LightType)[(NSNumber*)[srcAni.aniImageViewDic objectForKey:KEY_ANIMATION_LIGHT_TYPE] integerValue];
+    
+    CGPoint startPoint = start;
+    CGPoint endPoint =end;
+
+    //计算此精灵的最终大小
+    CGSize  startSize = CGSizeMake(SPIRITE_W_H, SPIRITE_W_H);
+    CGSize endSize = CGSizeMake(SPIRITE_W_H, SPIRITE_W_H);
+    
+    CGPoint bazierPoint_1;
+    CGPoint bazierPoint_2;
+    //取得两点之间的中间点
+    CGPoint mid1 = [CommonObject getMidPointBetween:startPoint andPoint:endPoint];
+    bazierPoint_1 = CGPointMake(mid1.x/3 -[CommonObject getRandomNumber:0 to:10], mid1.y/3 -[CommonObject getRandomNumber:0 to:10]);
+    [customAnimation setAniBazierCenterPoint1:bazierPoint_1];
+    CGPoint mid2 = [CommonObject getMidPointBetween:mid1 andPoint:endPoint];
+    bazierPoint_2 = CGPointMake(mid2.x -[CommonObject getRandomNumber:20 to:40], mid2.y -[CommonObject getRandomNumber:20 to:40]);
+    [customAnimation setAniBazierCenterPoint2:bazierPoint_2];
+    
+    
+    [customAnimation setAniType:BEZIER_ANI_TYPE];
+    [customAnimation setAniImageViewDic:srcAni.aniImageViewDic];
+    [customAnimation setBkLayer:self.view.layer];
+    [customAnimation setAniStartPoint:startPoint];
+    [customAnimation setAniEndpoint:endPoint];
+    [customAnimation setAniStartSize:startSize];
+    [customAnimation setAniEndSize:endSize];
+    [customAnimation setCustomAniDelegate:self];
+    [customAnimation setAnikey:aniKey];
+    [customAnimation setAniRepeatCount:1];
+    float duration;
+    if ([aniKey isEqualToString:KEY_ANIMATION_SPIRITE_FLY_TRACE_TOUCH]) {
+        duration = SPIRITE_FLY_TIME_TOUCH * ((float)num+1)/(num+2);
+    }else if([aniKey isEqualToString:KEY_ANIMATION_SPIRITE_FLY_AUTO])
+    {
+        duration = SPIRITE_FLY_TIME_AUTO * ((float)num+1)/(num+2);
+
+    }
+    
+    
+    [customAnimation setAniDuration:duration];
+    
+    [customAnimation setSipiriteAnimationType:type];
+    [customAnimation displayLinkAnimationEnable];
+    
+    [customAnimation startCustomAnimation];
+
     
     
 }
@@ -1981,15 +2461,10 @@
  *
  *  @param aroundView 运动的view
  */
--(void)swimAroundReapt:(UIImageView*) aroundView
+-(void) animationLightSwimAround:(NSDictionary*) aroundViewDic
 {
-    
-    [self animationLightSwimAround:aroundView];
-    
-}
-
--(void) animationLightSwimAround:(UIImageView*) aroundView
-{
+    UIImageView* aroundView = (UIImageView*)[aroundViewDic objectForKey:KEY_ANIMATION_VIEW];
+    LightType type =(LightType)[(NSNumber*)[aroundViewDic objectForKey:KEY_ANIMATION_LIGHT_TYPE] integerValue];
     
     //当前位置为起点
     CGPoint startPoint = CGPointMake(aroundView.frame.origin.x+aroundView.frame.size.width/2, aroundView.frame.origin.y+aroundView.frame.size.height/2);
@@ -1998,22 +2473,43 @@
     CGPoint endPoint = startPoint;
     
     
-    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimationWithSrcView:aroundView];
+    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimation];
     
-    [customAnimation setAniBazierCenterPoint1:CGPointMake(startPoint.x+[CommonObject getRandomNumber:-SWIM_AROUND_LIGHT_DISTANCE to:SWIM_AROUND_LIGHT_DISTANCE], startPoint.y+[CommonObject getRandomNumber:-SWIM_AROUND_LIGHT_DISTANCE to:SWIM_AROUND_LIGHT_DISTANCE])];
+    //只让最后一个精灵游动
+    if (type == lightTypeYellowSpirte || type == lightTypeWhiteSpirite) {
+        
+       //[customAnimation setAniBazierCenterPoint1:CGPointMake(startPoint.x+[CommonObject getRandomNumber:-SWIM_AROUND_SPIRITE_DISTANCE to:SWIM_AROUND_SPIRITE_DISTANCE], startPoint.y+[CommonObject getRandomNumber:-SWIM_AROUND_SPIRITE_DISTANCE to:SWIM_AROUND_SPIRITE_DISTANCE])];
+        if (aroundView == ((UIImageView*)swimOutSpiriteImageViewArray.lastObject))
+        {
+            [customAnimation setAniBazierCenterPoint1:CGPointMake(startPoint.x+[CommonObject getRandomNumber:-SWIM_AROUND_SPIRITE_DISTANCE to:SWIM_AROUND_SPIRITE_DISTANCE], startPoint.y+[CommonObject getRandomNumber:-SWIM_AROUND_SPIRITE_DISTANCE to:SWIM_AROUND_SPIRITE_DISTANCE])];
+        }else
+        {
+            
+            return;
+        }
+    }else
+    {
+        [customAnimation setAniBazierCenterPoint1:CGPointMake(startPoint.x+[CommonObject getRandomNumber:-SWIM_AROUND_LIGHT_DISTANCE to:SWIM_AROUND_LIGHT_DISTANCE], startPoint.y+[CommonObject getRandomNumber:-SWIM_AROUND_LIGHT_DISTANCE to:SWIM_AROUND_LIGHT_DISTANCE])];
+    }
+
+
     
     [customAnimation setAniType:BEZIER_ANI_TYPE];
     [customAnimation setBkLayer:self.view.layer];
-    [customAnimation setAniStartSize:CGSizeMake(30, 30)];
-    [customAnimation setAniEndSize:CGSizeMake(30, 30)];
+    [customAnimation setBkLayerBelow:_lightPostionFrame.layer];
+    [customAnimation setAniStartSize:aroundView.frame.size];
+    [customAnimation setAniEndSize:aroundView.frame.size];
     [customAnimation setAniStartPoint:startPoint];
-    [customAnimation setAniImage:aroundView.image];
+    [customAnimation setAniImageViewDic:aroundViewDic];
     [customAnimation setCustomAniDelegate:self];
-    [customAnimation setAnikey:@"animation_swim_around"];
+    [customAnimation setAnikey:KEY_ANIMATION_SWIM_AROUND];
     [customAnimation setAniRepeatCount:1];
     [customAnimation setAniDuration:SWIM_AROUND_LIGHT_TIME];
     
     [customAnimation setAniEndpoint:endPoint];
+    [customAnimation setSipiriteAnimationType:type];
+    [customAnimation displayLinkAnimationEnable];
+
     
     [customAnimation startCustomAnimation];
     
@@ -2032,22 +2528,22 @@
     
     
     //解释。。。。
-    NSInteger start_x = inFrame.origin.x+ size.width/2;
-    NSInteger end_x = inFrame.origin.x+inFrame.size.width - size.width/2;
+    int start_x = inFrame.origin.x+ size.width/2;
+    int end_x = inFrame.origin.x+inFrame.size.width - size.width/2;
 
     
-    NSInteger start_y = inFrame.origin.y+size.height/2;
-    NSInteger end_y = inFrame.origin.y+inFrame.size.height - size.height/2;
+    int start_y = inFrame.origin.y+size.height/2;
+    int end_y = inFrame.origin.y+inFrame.size.height - size.height/2;
     
     
     //获取随机frame
     NSMutableArray * radomPosionArray = [NSMutableArray arrayWithCapacity:count];
     for (int i =0 ; i<count; i++) {
         //随机x
-        NSInteger radomX = [CommonObject getRandomNumber:start_x to:end_x];
+        int radomX = [CommonObject getRandomNumber:start_x to:end_x];
 
         //随机y
-        NSInteger radomY = [CommonObject getRandomNumber:start_y to:end_y];
+        int radomY = [CommonObject getRandomNumber:start_y to:end_y];
 
         CGRect getRect = CGRectMake(radomX, radomY, size.width, size.height);
         if (CGRectIntersectsRect(exceptFrame, getRect)) {
@@ -2066,46 +2562,1375 @@
     
 }
 
-#pragma mark -  ****** customAnimation  Delegate
-- (void) customAnimationFinishedRuturn:(NSString*) aniKey srcView:(UIImageView *)srcView
+/**
+ *  获取排列的位置,每行5个，从下到上依次减小精灵
+ *
+ *  @param count 需要位置的个数
+ *
+ *  @return <#return value description#>
+ */
+-(NSMutableArray*)getLineArrayPosion:(NSInteger)count
+{
+
+    //存位置与大小
+    NSMutableArray* spiFrameArray = [NSMutableArray arrayWithCapacity:count];
+
+    /*类似如下排列
+        |-[_]--[_]--[_]--[_]--[_]-|
+       |-[__]--[__]--[__]--[__]--[__]-|
+     |-[___]--[___]--[___]--[___]--[___]-|
+     */
+
+    //计算位置
+    CGRect  containFrame = CGRectMake(0, 0, SCREEN_WIDTH, _intoCameraBtn.frame.origin.y);
+    NSInteger interDis = 2;//精灵间隔,每个精灵之间有4，一边各一个
+    NSInteger countInLine = 5;//每行个数,固定
+    NSInteger decrease = 10;//每行精灵减小的像素
+    NSInteger everyWidth ;//每个精灵所占用的宽度，变化
+    NSInteger lineCount; //第几行
+    NSInteger lineSumcount;//总行数
+    NSInteger spiWid;//精灵的宽，长=宽
+    CGPoint spiPoint;//精灵中心点的位置
+    CGSize  spiSize;//精灵的大小
+    CGRect spiFrame ;//精灵的frame;
+    
+    //第一行
+    everyWidth = SCREEN_WIDTH/countInLine;
+    spiWid = everyWidth - interDis*2;
+    lineCount = 1;
+    for (int i = 0; i<countInLine; i++) {
+        //x位置是第（i+1）个everyWidth 后移everyWidth的一半，y是spiWid的一半
+        spiPoint = CGPointMake(everyWidth*(i+1)-everyWidth/2, containFrame.size.height - spiWid/2);
+        
+        spiSize = CGSizeMake(spiWid, spiWid);
+        
+        spiFrame = CGRectMake(spiPoint.x - spiSize.width/2, spiPoint.y - spiSize.height/2, spiSize.width, spiSize.height);
+        [spiFrameArray addObject:[NSValue valueWithCGRect:spiFrame]];
+    }
+    
+    //计算能有多少行
+    NSInteger sumHeight = spiSize.height;//当前高
+    NSInteger currSpiHeight =spiSize.height;
+    lineSumcount = 1;
+    while (containFrame.size.height>sumHeight ) {
+
+        //每次减像素
+        currSpiHeight = currSpiHeight-decrease;
+        //最小为10像素
+        if (currSpiHeight<10) {
+            break;
+        }
+        //每次的总高
+        sumHeight = sumHeight +currSpiHeight;
+        //行数加1
+        lineSumcount++;
+        
+    }
+    
+    //计算其它行,从第2行开始,高度初始为第1行的高
+    currSpiHeight = spiSize.height;
+    //当前Y的起始点，第2行为减去上一行的高
+    NSInteger sY =containFrame.size.height - spiSize.height;
+    for (int i = 0; i <lineSumcount-1; i++) {
+        
+        //每次减像素
+        currSpiHeight = currSpiHeight-decrease;
+        //当前行的起始x位,第一行减去行个数的decrease 的一半
+        NSInteger sX = decrease*(i+1)*countInLine/2;
+        //此时加间隔的宽度
+        everyWidth = currSpiHeight +interDis*2;
+        for (int j = 0; j <countInLine; j++)
+        {
+            spiPoint = CGPointMake(sX+everyWidth*(j+1)-everyWidth/2, sY-currSpiHeight/2);
+            
+            spiSize = CGSizeMake(currSpiHeight, currSpiHeight);
+            
+            spiFrame = CGRectMake(spiPoint.x - spiSize.width/2, spiPoint.y - spiSize.height/2, spiSize.width, spiSize.height);
+            [spiFrameArray addObject:[NSValue valueWithCGRect:spiFrame]];
+            
+        }
+
+        //下一行，再减一个高
+        sY = sY - spiSize.height;
+
+    }
+
+    NSLog(@"排列的精灵frame 为spiFrameArray= %@", spiFrameArray);
+    
+    return spiFrameArray;
+    
+}
+/**
+ *  count*count个精灵,在指定区域
+ *
+ *  @param count 每一行的个数
+ *
+ *  @return 排列位置
+ */
+-(NSMutableArray*)getLineToLineArrayPosion:(NSInteger)count inFrame:(CGRect) inFrame
 {
     
-    //NSLog(@"customAnimationFinishedRuturn ---- %@", aniKey);
+    /*类似如下排列,每一个“-”表示一个单位间隔
+     |-[_]--[_]--[_]--[_]--[_]-|
+     |-[_]--[_]--[_]--[_]--[_]-|
+     |-[_]--[_]--[_]--[_]--[_]-|
+     |-[_]--[_]--[_]--[_]--[_]-|
+     |-[_]--[_]--[_]--[_]--[_]-|
+     */
     
-    if ([aniKey isEqualToString:@"animation_swim_bazier_out"]) {
+    //存位置与大小
+    NSMutableArray* spiFrameArray = [NSMutableArray arrayWithCapacity:count];
+
+    float interDis = 2.0;//精灵间隔,每个精灵之间有4，一边各一个
+    float everyWidth ;//每个精灵所占用的宽度,包括间隔
+    float spiWid;//精灵的宽，长=宽
+    CGPoint spiPoint;//精灵中心点的位置
+    CGSize  spiSize;//精灵的大小
+    CGRect spiFrame ;//精灵的frame;
+    
+    //计算每个精灵的大小
+    everyWidth = CGRectGetHeight(inFrame)/count;
+    spiWid = everyWidth - interDis*2;
+    
+    //计算位置
+    //当前行的起始x位
+    NSInteger sX = inFrame.origin.x;
+    NSInteger sY = inFrame.origin.y+inFrame.size.height;
+    NSInteger getCount = 0;
+    for (int i = 0; i <count; i++) {
+
+        for (int j = 0; j <count; j++)
+        {
+            spiPoint = CGPointMake(sX+everyWidth*(j+1)-everyWidth/2, sY-everyWidth/2);
+            
+            spiSize = CGSizeMake(spiWid, spiWid);
+            
+            spiFrame = CGRectMake(spiPoint.x - spiSize.width/2, spiPoint.y - spiSize.height/2, spiSize.width, spiSize.height);
+            [spiFrameArray addObject:[NSValue valueWithCGRect:spiFrame]];
+            
+            getCount ++;
+        }
         
-        if (srcView == ((CustomAnimation*)simOutAnimationArray.lastObject).aniImageView) {
+        //下一行起始y的位置
+        sY = sY -everyWidth;
+        
+    }
+    
+    NSLog(@"排列的精灵frame 为spiFrameArray= %@", spiFrameArray);
+    
+    return spiFrameArray;
+    
+}
+
+/**
+ *  动画array只用于收回光和精灵回到日月,只在从日月飞出到天空时，调用animationLightSwimOutBazierLightType,和，animationLightSwimOutKeyFrameCount时，才加入其到队列，其它的动画不加入队列
+ *
+ *  @param aniKey 动画标识
+ */
+-(void) addAnimationToArray:(NSString*)aniKey lightType:(LightType) type aniObject:(CustomAnimation*)customAnimation
+{
+    
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_SWIM_SPIRITE_OUT_FOR_NEWSKY]
+        || [aniKey isEqualToString:KEY_ANIMATION_SWIM_LIGHT_OUT_FOR_NEWSKY]
+        || [aniKey isEqualToString:KEY_ANIMATION_SWIM_SPIRITE_OUT_FOR_REFRESH_ADD]
+        || [aniKey isEqualToString:KEY_ANIMATION_SWIM_LIGHT_OUT_REFRESH_ADD]
+        || [aniKey isEqualToString:KEY_ANIMATION_SWIM_LIGHT_OUT_FINAL_ADD])
+    {
+        if (!swimOutAnimationArray) {
+            swimOutAnimationArray=[NSMutableArray arrayWithCapacity:0];
+        }
+        [swimOutAnimationArray addObject:customAnimation];
+        
+        if (type == lightTypeYellowLight || type == lightTypeWhiteLight) {
+            if (!swimOutAnimationLightArray) {
+                swimOutAnimationLightArray=[NSMutableArray arrayWithCapacity:0];
+            }
+            [swimOutAnimationLightArray addObject:customAnimation];
+        }
+        
+        if (type == lightTypeWhiteSpirite || type == lightTypeYellowSpirte) {
+            if (!swimOutAnimationSpiriteArray) {
+                swimOutAnimationSpiriteArray=[NSMutableArray arrayWithCapacity:0];
+            }
+            [swimOutAnimationSpiriteArray addObject:customAnimation];
+        }
+    }
+    
+    
+}
+
+
+#pragma mark -  ****** customAnimation  Delegate
+- (void) customAnimationFinishedRuturn:(NSString*) aniKey srcViewDic:(NSDictionary*) srcViewDic
+{
+    //NSLog(@"customAnimationFinishedRuturn ---- %@", aniKey);
+    UIImageView* srcView = (UIImageView*)[srcViewDic objectForKey:KEY_ANIMATION_VIEW];
+    LightType type = (LightType)[(NSNumber*)[srcViewDic objectForKey:KEY_ANIMATION_LIGHT_TYPE] integerValue];
+    
+    //光都在日月中了，开始后续飞出动画
+    if ([aniKey isEqualToString:KEY_ANIMATION_FLY_SIMPLE_LIGHT_TO_SKY_FOR_NEWSKY]) {
+        
+        if (lastRepeatCountMoveSimpleLightView && srcView == lastRepeatCountMoveSimpleLightView) {
+            NSLog(@"KEY_ANIMATION_FLY_SIMPLE_LIGHT_TO_SKY_FOR_NEWSKY finished!");
+            [self EnableUserInteractionInView:self.view];
+            
+            //切换闪烁动画，和养育状态
+            [self.userInfo updateisBringUpMoon:YES];
+            [self refreshLightCircleStatForUserHeaderOrSunMoon];
+            //开始弹出光动画
+            [self newLightSkyMethod];
+        }
+        
+        [self arraiveToSkyIndication:srcView.center upView:srcView];
+        
+        //删除精灵原图
+        [srcView removeFromSuperview];
+    }
+    
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_FLY_TO_USER_HEADER_FOR_GIVE_LIGHT]) {
+        
+        //切换闪烁动画，和养育状态
+        [self.userInfo updateisBringUpMoon:NO];
+        [self refreshLightCircleStatForUserHeaderOrSunMoon];
+        
+        [self EnableUserInteractionInView:self.view];
+        
+        //第一个光回到头像后，起动拖动光的引导:giudStep_guidPanToBring
+        [self HandleGuidProcess:giudStep_guidPanToBring];
+        
+        [self arraiveToHeaderIndication];
+        
+        //删除精灵原图
+        [srcView removeFromSuperview];
+    }
+    
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_SWIM_SPIRITE_OUT_FOR_NEWSKY]) {
+        
+        if (srcView == ((UIImageView*)swimOutSpiriteImageViewArray.lastObject))
+        {
+
+            [self EnableUserInteractionInView:self.view];
+        
+            //最后一个动画完成,开始放光
+            [self newLightSkyAfterSpiritToLight];
+            
+        }
+        
+        [self arraiveToSkyIndication:srcView.center upView:srcView];
+        
+        [self animationLightSwimAround:srcViewDic];
+        
+        spiriteFlyIsAuto = YES;
+        [self startSpiritAutoFlyschedule];
+        
+
+    }
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_SWIM_SPIRITE_OUT_FOR_REFRESH_ADD]) {
+        
+        if (srcView == ((UIImageView*)swimOutSpiriteImageViewArray.lastObject))
+        {
+            
+            [self EnableUserInteractionInView:self.view];
+            
+            //再查看是否有光要上天空
+            [self finalAddLightForRefresh];
+            
+        }
+        
+        [self arraiveToSkyIndication:srcView.center upView:srcView];
+
+        
+        [self animationLightSwimAround:srcViewDic];
+        
+    }
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_SWIM_LIGHT_OUT_FOR_NEWSKY]) {
+        
+        if (srcView == ((UIImageView*)swimOutBaselightImageViewArray.lastObject)) {
             //最后一个动画完成
             [self EnableUserInteractionInView:self.view];
         }
         
-        [self swimAroundReapt:srcView];
+        [self animationLightSwimAround:srcViewDic];
+        
+        [self arraiveToSkyIndication:srcView.center upView:srcView];
+        
+        //判断是否要起动：guidStep_guidIntoCamera
+        [self HandleGuidProcess:guidStep_guidIntoCamera];
         
     }
     
-    if ([aniKey isEqualToString:@"animation_swim_around"])
-    {
-        [self swimAroundReapt:srcView];
+    if ([aniKey isEqualToString:KEY_ANIMATION_SWIM_LIGHT_OUT_REFRESH_ADD]) {
         
-    }
-    
-    if ([aniKey isEqualToString:@"animation_swim_back"]) {
-        
-        if (srcView == ((CustomAnimation*)simOutAnimationArray.lastObject).aniImageView) {
+        if (srcView == ((UIImageView*)swimOutBaselightImageViewArray.lastObject)) {
             //最后一个动画完成
             [self EnableUserInteractionInView:self.view];
-            [simOutAnimationArray removeAllObjects];
+            
+            //查看增加光后的状态
+            [self addLightToSkyMethodAfter];
+        }
+        
+        [self arraiveToSkyIndication:srcView.center upView:srcView];
+        
+        [self animationLightSwimAround:srcViewDic];
+        
+    }
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_SWIM_LIGHT_OUT_FINAL_ADD]) {
+        
+        if (srcView == ((UIImageView*)swimOutBaselightImageViewArray.lastObject)) {
+            //最后一个动画完成
+            [self EnableUserInteractionInView:self.view];
+            
+            NSLog(@"Notify: Finish the Process: givelight->addLight --> backLight-->add spirite--> addleftLight!");
+
+        }
+        
+        [self arraiveToSkyIndication:srcView.center upView:srcView];
+
+        [self animationLightSwimAround:srcViewDic];
+        
+    }
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_SWIM_AROUND])
+    {
+
+        //是否要求停止动画
+        if (needStopLightAnimationToCallBackForRefresh || needStopLightAnimationToCallBackForFinal) {
+            
+            if (srcView == (UIImageView*)swimOutBaselightImageViewArray.lastObject)
+            {
+                //最后一个光的游离动画完成,开始召回动画
+                if (needStopLightAnimationToCallBackForRefresh) {
+                    //用于自动刷新光数
+                    [self isTimeProcessBackSkyLight:KEY_ANIMATION_SWIM_LIGHT_BACK_FORREFRESH];
+
+                }else
+                {
+                    //用于最终召回所有的光
+                    [self isTimeProcessBackSkyLight:KEY_ANIMATION_SWIM_LIGHT_BACK_FORFIANLBACK];
+
+                }
+            }
+            
+            
+        }
+        
+        
+        if (needStopSpiriteAnimationToCallBack) {
+            
+            if (srcView == (UIImageView*)swimOutSpiriteImageViewArray.lastObject) {
+                //最后一个动画完成,开始召回动画
+                [self isTimeProcessBackSpirite];
+            }
+            
+        }
+        
+        if (needStopSpiriteAnimationToFlyTraceTouch || needStopSpiriteAnimationToFlyAuto) {
+            
+            if (srcView == (UIImageView*)swimOutSpiriteImageViewArray.lastObject) {
+                //最后一个动画完成,开始飞行
+                [self isTimeProcessSpiriteFlyTraceTouch];
+            }
+            
+        }
+        
+        //光和精灵都会进来，停止的需求时间是不同的，需要区别对待
+        if (type == lightTypeYellowLight || type==lightTypeWhiteLight) {
+            if (!needStopLightAnimationToCallBackForRefresh && !needStopLightAnimationToCallBackForFinal) {
+                
+                [self animationLightSwimAround:srcViewDic];
+            }
+        }else
+        {
+            if (!needStopSpiriteAnimationToCallBack && !needStopSpiriteAnimationToFlyTraceTouch && !needStopSpiriteAnimationToFlyAuto) {
+                
+                [self animationLightSwimAround:srcViewDic];
+                
+                
+            }
+            
+
+
+        }
+
+        
+        
+    }
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_SWIM_LIGHT_BACK_FORREFRESH]) {
+        
+        if (srcView == ((CustomAnimation*)swimOutAnimationLightArray.lastObject).aniImageView) {
+            //所有的动画都回来了，
+            [self EnableUserInteractionInView:self.view];
+            //清空所有的array,等待下一次释放
+            [swimOutAnimationLightArray removeAllObjects];
+            [swimOutBaselightImageViewArray removeAllObjects];
+            //弹出新的精灵
+            [self addSpiriteFromRefresh];
         }
         
         //删除精灵原图
         [srcView removeFromSuperview];
-        [srcView setHidden:YES];
         
     }
     
     
+    if ([aniKey isEqualToString:KEY_ANIMATION_SWIM_LIGHT_BACK_FORFIANLBACK]) {
+        
+        if (srcView == ((CustomAnimation*)swimOutAnimationLightArray.lastObject).aniImageView) {
+            //所有的动画都回来了，
+            [self EnableUserInteractionInView:self.view];
+            //清空所有的array,等待下一次释放
+            [swimOutAnimationLightArray removeAllObjects];
+            [swimOutBaselightImageViewArray removeAllObjects];
+            
+            //等精灵回来
+            [self isTimeToCallBackAllLightToUserHeader];
+        }
+        
+        //删除精灵原图
+        [srcView removeFromSuperview];
+        
+    }
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_SWIM_SPIRITE_BACK]) {
+        
+        if (srcView == ((CustomAnimation*)swimOutAnimationSpiriteArray.lastObject).aniImageView) {
+            //所有的动画都回来了，
+            [self EnableUserInteractionInView:self.view];
+            //清空所有的array,等待下一次释放
+            [swimOutAnimationSpiriteArray removeAllObjects];
+            [swimOutSpiriteImageViewArray removeAllObjects];
+
+            //等光回来
+            [self isTimeToCallBackAllLightToUserHeader];
+
+        }
+        
+        //删除精灵原图
+        [srcView removeFromSuperview];
+        
+    }
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_FIANL_BACK_LIGHT]) {
+        
+        //未初始化的情况是启动程序后，光始终都未飞上天空??(忘了为什么写这个了)
+        //if (!swimOutAnimationArray||swimOutAnimationArray.count == 0)
+        if (lastRepeatCountMoveSimpleLightView && srcView == lastRepeatCountMoveSimpleLightView)
+        {
+            //所有的动画都回来了，都被释放
+  
+            //切换闪烁动画
+            [self.userInfo updateisBringUpMoon:NO];
+            [self refreshLightCircleStatForUserHeaderOrSunMoon];
+
+            //回来的原因是想进入头像小屋
+            if (isGetinToHome) {
+                [self performSegueWithIdentifier:@"getintoHome" sender:nil];
+            }
+            
+            
+        }
+        
+        [self arraiveToHeaderIndication];
+        //删除精灵原图
+        [srcView removeFromSuperview];
+        
+    }
+    
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_PAN_TO_SKY_FAILED_TO_USERHEADER]) {
+
+        [self arraiveToHeaderIndication];
+
+        //删除精灵原图
+        [srcView removeFromSuperview];
+        
+    }
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_PAN_TO_USERHEADER_FAILED_TO_SKY]) {
+        
+        [self arraiveToSkyIndication:srcView.center upView:srcView];
+
+        //删除精灵原图
+        [srcView removeFromSuperview];
+        
+    }
+
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_SPIRITE_FLY_TRACE_TOUCH]) {
+        
+        if (srcView == ((CustomAnimation*)swimOutAnimationSpiriteArray.lastObject).aniImageView) {
+            
+            [self EnableUserInteractionInView:self.view];
+
+            //所有的精灵都停止游动了，开始飞行(必须此动画完成后，否则由于游动动画与此动画的时差，导致原来位置的游动动画在未被此动画触发停止之前，又再次被触发，表现为原有游动动画不能消除)
+            needStopSpiriteAnimationToFlyTraceTouch = FALSE;
+            
+            [self endTouchIndication];
+
+        }
+        
+        [self arraiveToSkyIndication:srcView.center upView:srcView];
+        //飞行完成后，继续原地游动
+        [self animationLightSwimAround:srcViewDic];
+        //只留最后一个精灵显示
+        if (srcView != ((CustomAnimation*)swimOutAnimationSpiriteArray.lastObject).aniImageView) {
+            [srcView removeFromSuperview];
+        }
+        
+    }
+    
+    
+    if ([aniKey isEqualToString:KEY_ANIMATION_SPIRITE_FLY_AUTO]) {
+        
+        if (srcView == ((CustomAnimation*)swimOutAnimationSpiriteArray.lastObject).aniImageView) {
+            
+            [self EnableUserInteractionInView:self.view];
+            
+            needStopSpiriteAnimationToFlyAuto = FALSE;
+            
+            [self endTouchIndication];
+            
+            if (spiriteFlyIsAuto) {
+                //重新开始计时触发下次自动飞行
+                [self startSpiritAutoFlyschedule];
+            }
+            
+        }
+        
+        [self arraiveToSkyIndication:srcView.center upView:srcView];
+        //飞行完成后，继续原地游动
+        [self animationLightSwimAround:srcViewDic];
+        
+        //只留最后一个精灵显示
+        if (srcView != ((CustomAnimation*)swimOutAnimationSpiriteArray.lastObject).aniImageView) {
+            [srcView removeFromSuperview];
+        }
+        
+        
+    }
     
 }
+
+
+#pragma mark - 各种闪烁提示
+-(void) StartTouchIndication:(CGPoint) tPoint
+{
+    
+    self.haloTouch = [PulsingHaloLayer layer];
+    self.haloTouch.position = tPoint;
+    self.haloTouch.radius = 0.2 * kMaxRadius;
+    self.haloTouch.animationDuration = 0.5;
+    self.haloTouch.eerepeatCount = 1;
+    self.haloTouch.backgroundColor = [CommonObject getIndicationColorByTime].CGColor;
+    [self.view.layer addSublayer:self.haloTouch];
+    
+}
+
+-(void)endTouchIndication
+{
+    [self.haloTouch removeFromSuperlayer];
+    
+}
+
+-(void) arraiveToHeaderIndication
+{
+    //到达闪烁
+    self.haloToHeader = [PulsingHaloLayer layer];
+    self.haloToHeader.position = _userHeaderImageView.center;
+    self.haloToHeader.radius = 0.5 * kMaxRadius;
+    self.haloToHeader.animationDuration = 0.5;
+    self.haloToHeader.eerepeatCount = 1;
+    self.haloToHeader.backgroundColor = [CommonObject getIndicationColorByTime].CGColor;
+    [self.view.layer addSublayer:self.haloToHeader];
+    
+}
+
+
+-(void) arraiveToSkyIndication:(CGPoint) arrivePoint upView:(UIImageView*) upView
+{
+    //到达闪烁
+    self.haloToSky = [PulsingHaloLayer layer];
+    self.haloToSky.position = arrivePoint;
+    self.haloToSky.radius = 0.3 * kMaxRadius;
+    self.haloToSky.animationDuration = 0.5;
+    self.haloToSky.eerepeatCount = 1;
+    self.haloToSky.backgroundColor = [CommonObject getIndicationColorByTime].CGColor;
+    [self.view.layer insertSublayer:self.haloToSky below:upView.layer];
+    
+}
+
+
+- (void) pulsingHaloLayerAnimationFinishedRuturn:(NSString*) aniKey  object:(PulsingHaloLayer*) selfObject
+{
+    CALayer* aniLayer = (CALayer* )selfObject;
+    [aniLayer removeFromSuperlayer];
+}
+
+#pragma mark - 计算光的类型个数
+-(void)caculateLightTypeAndCountByCount:(NSInteger) count
+{
+    //test
+    count = 245;
+    self.userInfo.sun_value = @"245";
+    self.userInfo.moon_value = @"245";
+    
+    //计算精灵个数,25个光生成1个精灵
+    NSInteger spiCount = count/25;
+    //还剩几个小光
+    NSInteger leftCount = count%25;
+    //计算蓝点点个数，100个红生成一个蓝
+
+    
+    lightTypeCountInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                         [NSNumber numberWithInteger:leftCount], KEY_LIGHT_TYPE_LEFT_BASE_COUNT,[NSNumber numberWithInteger:spiCount], KEY_LIGHT_TYPE_SPIRITE_COUNT,[NSNumber numberWithInteger:count], KEY_LIGHT_TYPE_SUM_COUNT,
+                          nil];
+    
+    NSLog(@"caculateLightTypeAndCount : %@",lightTypeCountInfo);
+    
+    
+}
+
+#pragma mark - ***************召唤并释放精灵 或 召回
+/**
+ *  判断是要收回，还是要刷新增加
+ *
+ *  @param type 0 收回,此时光必须是在养育态， 1刷新天空
+ */
+-(void) refreshLightStateForCallBackOrPopout:(NSInteger) type
+{
+    if (type==0) {
+        [self stopBringUpAndFinalCallBackLight];
+    }else if (type == 1)
+    {
+        [self reFreshCaculateAndPopOutLightSpirite];
+        
+    }else
+    {
+        NSLog(@"ERROR: callBackOrPopOutLigt type error (%lu)", type);
+    }
+    
+    //更新精灵个数提示
+    [self refreshSpiritCountInHeaderView];
+    
+}
+
+/**
+ *  重新计算，并刷新，看是否要进行弹出光和精灵
+ */
+-(void) reFreshCaculateAndPopOutLightSpirite
+{
+    
+    
+    //计算当前光和精灵的个数
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+
+        [self caculateLightTypeAndCountByCount:userInfo.sun_value.integerValue];
+        
+    }else
+    {
+        [self caculateLightTypeAndCountByCount:userInfo.moon_value.integerValue];
+
+    }
+
+    //动画逻辑控制
+    //光不在养育状态,在头像中
+    if (![userInfo checkIsBringUpinSunOrMoon]) {
+        
+        //此时是奖励光触发
+        if (giveLingtCout!=0) {
+            //奖励的光移动到头像
+            [self addLightToUserHeaderMethod:giveLingtCout];
+            //清空状态
+            giveLingtCout = 0;
+        }else
+        {
+            //此时是拖回光触发，先把光都移动到日月，再刷新天空
+            NSMutableArray * twoPointArray = [self getSeveralTracePointFromPan:2];
+            [self moveSimpleLightWithRepeatCount:[userInfo getMaxuserValueByTime] StartPoint:_userHeaderImageView.center EndPoint:_skySunorMoonImage.center  totalTime:FLY_FROM_USERHEADRE_TO_SUN_MOON_TIME  aniKey:KEY_ANIMATION_FLY_SIMPLE_LIGHT_TO_SKY_FOR_NEWSKY withBazierP1:[[twoPointArray objectAtIndex:0] CGPointValue] bazierP2:[[twoPointArray objectAtIndex:1] CGPointValue]];
+
+        }
+  
+        
+    }else//光在养育状态
+    {
+        //补全控制逻辑
+        if (giveLingtCout!=0) {
+            //逻辑1：givelight--> addlight but not enough
+            //逻辑2: givelight-->addLight --> backLight-->add spirite--> addleftLight
+            [self addLightToSkyMethod:giveLingtCout];
+            //清空状态
+            giveLingtCout = 0;
+        }else
+        {
+            //逻辑1：outSpirit--> outLight
+            [self newLightSkyMethod];
+        }
+        
+    }
+    
+}
+
+/**
+ *  切换，并刷新日月和头像的光环状态
+ */
+-(void) refreshLightCircleStatForUserHeaderOrSunMoon
+{
+    
+    if ([userInfo checkIsBringUpinSunOrMoon]) {
+        //闪烁日月
+        NSLog(@"开始 闪烁日月 动画！");
+        [self animationLightFrameSkySunOrMoon:7];
+
+        
+        NSLog(@"停止 头像闪烁 动画！");
+        //最多7个动画光环
+        for (int i =0; i<7; i++) {
+            UIImageView* lightUserHeaderTag = (UIImageView*)[self.view viewWithTag:(TAG_LIGHT_USER_HEADER+i)];
+            lightUserHeaderTag.hidden = YES;
+            [lightUserHeaderTag stopAnimating];
+        }
+    }else
+    {
+        NSLog(@"开始 头像闪烁 动画！");
+        if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+            [self animationLightFrameHeaderViewSetRange:[self.userInfo.sun_value intValue] isUseSetRange:YES];
+        }else
+        {
+            [self animationLightFrameHeaderViewSetRange:[self.userInfo.moon_value intValue] isUseSetRange:YES];
+            
+        }
+        
+        NSLog(@"停止 闪烁日月 动画！");
+        [lightSkySunOrMoonView stopAnimating];
+    }
+    
+    
+}
+
+-(void) addLightToUserHeaderMethod:(NSInteger) lightCount
+{
+    if (lightCount ==0) {
+        NSLog(@"Notify: addLightToUserHeaderMethod:no giveCount to getOut!");
+        return;
+    }
+
+    //构造光组
+    NSMutableArray * imageViewArray = [NSMutableArray arrayWithCapacity:lightCount];
+    LightType type = [CommonObject getBaseLightTypeByTime];
+    for (int i = 0; i<lightCount; i++) {
+        
+        UIImageView* baseView = [[UIImageView alloc]initWithImage:[CommonObject getStaticImageByLightType:type]];
+        baseView.frame = CGRectMake(0, 0, 0, 0);
+        [imageViewArray addObject:baseView];
+        [self.view addSubview:baseView];
+        
+    }
+    
+    //开始位置构造,长与宽一样
+    float wStart =LIGHT_W_H;
+    CGRect startRec = CGRectMake(CGRectGetMidX(_intoCameraBtn.frame) -wStart/2, CGRectGetMidY(_intoCameraBtn.frame) -wStart/2, wStart, wStart);
+    
+    //构造结束位置
+    NSMutableArray* endFrameArray = [NSMutableArray arrayWithCapacity:lightCount];
+    CGRect endRect = CGRectMake(CGRectGetMidX(_userHeaderImageView.frame) -wStart/2, CGRectGetMidY(_userHeaderImageView.frame) -wStart/2, wStart, wStart);
+    for (NSInteger i = 0; i<lightCount; i++) {
+        
+        [endFrameArray addObject:[NSValue valueWithCGRect:endRect]];
+    }
+
+    [self popOutLightCount:lightCount lightType:type srcViewArray:imageViewArray  aniKey:KEY_ANIMATION_FLY_TO_USER_HEADER_FOR_GIVE_LIGHT startFrame:startRec endFrameArray:endFrameArray];
+}
+
+-(void) addLightToSkyMethod:(NSInteger) giveCount
+{
+    
+    NSInteger currentLightCount = swimOutBaselightImageViewArray.count;
+    
+    if (giveCount <= FULL_SKY_LIGHT_COUNT - currentLightCount) {
+        //补全光
+        [self getOutBaseLight:giveCount outTypeKey:KEY_ANIMATION_SWIM_LIGHT_OUT_REFRESH_ADD];
+    }else
+    {
+        //选补全剩余的，收回全光，再弹出新精灵，再弹出多余的光
+        NSInteger getCount = FULL_SKY_LIGHT_COUNT - currentLightCount;
+        [self getOutBaseLight:getCount outTypeKey:KEY_ANIMATION_SWIM_LIGHT_OUT_REFRESH_ADD];
+    }
+    
+}
+
+
+-(void) addLightToSkyMethodAfter
+{
+    
+    if (swimOutBaselightImageViewArray.count == FULL_SKY_LIGHT_COUNT) {
+        //光被补全了，收回所有天空光
+        [self callBackLightToSunMoonForRefresh];
+        
+    }else
+    {
+        //光未补全，完成流程
+        NSLog(@"Notify: Finish the Process:givelight--> addlight but not enough!");
+        
+        
+        
+    }
+    
+}
+
+-(void)finalAddLightForRefresh
+{
+    
+    NSInteger getCount = [[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_LEFT_BASE_COUNT] integerValue];
+    if (getCount == 0) {
+        
+        NSLog(@"Notify: Finish the Process: givelight-->addLight --> backLight-->add spirite--> addleftLight!");
+        return;
+    }
+    
+    [self getOutBaseLight: getCount outTypeKey:KEY_ANIMATION_SWIM_LIGHT_OUT_FINAL_ADD];
+    
+}
+
+
+-(void) addSpiriteFromRefresh
+{
+    
+    NSInteger getCount;
+    if (!swimOutSpiriteImageViewArray || swimOutSpiriteImageViewArray.count == 0)
+    {
+        //如果没有精灵，全部增加
+        getCount =[[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_SPIRITE_COUNT] integerValue];
+    }else
+    {
+        //如果有精灵，计算应该增加的
+        getCount =[[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_SPIRITE_COUNT] integerValue] - swimOutSpiriteImageViewArray.count;
+    }
+    
+    [self getOutSpirite:getCount outTypeKey:KEY_ANIMATION_SWIM_SPIRITE_OUT_FOR_REFRESH_ADD];
+    
+}
+
+/**
+ *  新的天空，释放精灵和光
+ */
+-(void) newLightSkyMethod
+{
+    
+    if (!lightTypeCountInfo) {
+        return;
+    }
+    
+    NSInteger spiritCount =[[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_SPIRITE_COUNT] integerValue];
+    
+    //先释放精灵,结束后，释放光
+    if (spiritCount != 0) {
+        
+        [self getOutSpirite:spiritCount outTypeKey:KEY_ANIMATION_SWIM_SPIRITE_OUT_FOR_NEWSKY];
+    }else
+    {
+        //没有精灵，直接放光
+        [self newLightSkyAfterSpiritToLight];
+    }
+    
+
+}
+
+/**
+ *  释放精灵后，释放光
+ */
+-(void) newLightSkyAfterSpiritToLight
+{
+    if (!lightTypeCountInfo) {
+        return;
+    }
+
+    
+    NSInteger count = [[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_LEFT_BASE_COUNT] integerValue];
+    if (count == 0) {
+        NSLog(@"No light to pop out!");
+        return;
+    }
+
+    [self getOutBaseLight:count outTypeKey:KEY_ANIMATION_SWIM_LIGHT_OUT_FOR_NEWSKY];
+
+}
+
+/**
+ *  确认是否有错误的光状态
+ */
+-(void)checkSkyStatusIsRight
+{
+    
+    
+}
+
+/**
+ *  召唤并释放精灵
+ */
+//-(void) getAndPopOutSpirite
+//{
+//    //动画中，禁止所有操作
+//    [self DisableUserInteractionInView:self.view exceptViewWithTag:HUGE_VAL];
+//    
+//    needStopAnimationToCallBack = FALSE;
+//    
+//    NSInteger count;
+//    if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
+//        count = self.userInfo.sun_value.integerValue;
+//    }else
+//    {
+//        count = self.userInfo.moon_value.integerValue;
+//    }
+//    
+//    //test
+//    count = 30;
+//    
+//    [self caculateLightTypeAndCountByCount:count];
+//    
+//    //精灵召唤动画结束后，再放出小光
+//    [self firstGetOutSpirite];
+//    
+//    
+//}
+
+
+/**
+ *  此时光都在日月里，才能飞出精灵
+ *
+ *  @param getCount   <#getCount description#>
+ *  @param outTypeKey <#outTypeKey description#>
+ */
+-(void) getOutSpirite:(NSInteger) getCount  outTypeKey:(NSString*)outTypeKey
+{
+    if (getCount ==0) {
+        NSLog(@"Notify: getOutSpirite: no spirite to getOut!");
+        return;
+    }
+    
+    if (![userInfo checkIsBringUpinSunOrMoon]) {
+        NSLog(@"Notify: getOutSpirite: no spirite to getOut!");
+        return;
+    }
+    NSAssert([userInfo checkIsBringUpinSunOrMoon], @"The light is not in the sun or moon already, this fun can not be called!");
+    
+    //开始游离动画
+    needStopSpiriteAnimationToCallBack = FALSE;
+    needStopSpiriteAnimationToFlyTraceTouch = FALSE;
+    needStopSpiriteAnimationToFlyAuto = FALSE;
+    
+    //构造精灵
+    if (!swimOutSpiriteImageViewArray) {
+        swimOutSpiriteImageViewArray = [NSMutableArray arrayWithCapacity:getCount];
+
+    }
+    //当前已有的精灵个数，可能是0
+    NSInteger currentCount = swimOutSpiriteImageViewArray.count;
+    
+    LightType type = [CommonObject getSpiriteTypeByTime];
+    for (int i = 0; i<getCount; i++) {
+
+        UIImageView* spiView = [[UIImageView alloc]initWithImage:[CommonObject getAniStartImageByLightType:type]];
+        spiView.frame = CGRectMake(0, 0, 0, 0);
+        [swimOutSpiriteImageViewArray addObject:spiView];
+        [self.view addSubview:spiView];
+        
+    }
+  
+    //位置固定，每次重新取
+    swimOutSpiriteImageViewArrayFrame = [NSMutableArray arrayWithCapacity:getCount+currentCount];
+    //取得固定位置, 放在相机的右边
+    CGRect SpiRec = CGRectMake(_skySunorMoonImage.frame.origin.x - SPIRITE_W_H, _skySunorMoonImage.center.y - SPIRITE_W_H/2, SPIRITE_W_H, SPIRITE_W_H);
+    //精灵飞到同一个位置
+    for (int i =0 ; i<getCount+currentCount; i++) {
+        [swimOutSpiriteImageViewArrayFrame addObject:[NSValue valueWithCGRect:SpiRec]];
+    }
+    //存精灵自动位置
+    spiriteAutoFlyPointArray = [NSMutableArray arrayWithCapacity:0];
+    //初始点
+    CGPoint sp1 =CGPointMake(CGRectGetMidX(SpiRec), CGRectGetMidY(SpiRec));
+    [spiriteAutoFlyPointArray addObject:[NSValue valueWithCGPoint:sp1]];
+    //对面的点
+    CGPoint sp2 =CGPointMake((SCREEN_WIDTH - sp1.x),sp1.y);
+    [spiriteAutoFlyPointArray addObject:[NSValue valueWithCGPoint:sp2]];
+
+    
+    //开始位置构造,长与宽一样
+    CGRect startSpi = CGRectMake(_skySunorMoonImage.center.x -SPIRITE_W_H/2, _skySunorMoonImage.center.y - SPIRITE_W_H/2, SPIRITE_W_H, SPIRITE_W_H);
+    //结束位置构造，只取位置组的后几位，即此次增加的精灵
+    NSMutableArray* endFrameArray = [NSMutableArray arrayWithCapacity:getCount];
+    //从当前个数的frame向后取，当前个数可能为0
+    for (NSInteger i = currentCount; i<currentCount+getCount; i++) {
+        
+        NSAssert(swimOutSpiriteImageViewArrayFrame.count>=i , @"swimOutSpiriteImageViewArrayFrame beyond index: count=%lu, i = %lu, currentCount=%lu, getCount=%lu", swimOutSpiriteImageViewArrayFrame.count,i,currentCount,getCount);
+        
+        [endFrameArray addObject:[swimOutSpiriteImageViewArrayFrame objectAtIndex:i]];
+    }
+    
+    //构造View
+    NSMutableArray *srcViewArray =[NSMutableArray arrayWithCapacity:getCount];
+    for (NSInteger i = currentCount; i<currentCount+getCount; i++) {
+        
+        NSAssert(swimOutSpiriteImageViewArray.count>=i , @"swimOutSpiriteImageViewArray beyond index: count=%lu, i = %lu, currentCount=%lu, getCount=%lu", swimOutSpiriteImageViewArrayFrame.count,i,currentCount,getCount);
+        
+        [srcViewArray addObject:[swimOutSpiriteImageViewArray objectAtIndex:i]];
+    }
+    
+    [self popOutSpiriteCount:getCount  lightType:type srcViewArray:srcViewArray  aniKey:outTypeKey startFrame:startSpi endFrameArray:endFrameArray];
+    
+}
+
+/**
+ *  先放出精灵
+ */
+/*
+-(void) firstGetOutSpirite
+{
+    NSInteger getCount;
+    LightType type = lightTypeYellowSpirte;
+
+    getCount =[[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_SPIRITE_COUNT] integerValue];
+    if (getCount) {
+        //构造精灵
+        if (!swimOutSpiriteImageViewArray) {
+            swimOutSpiriteImageViewArray = [NSMutableArray arrayWithCapacity:getCount];
+        }
+        [swimOutSpiriteImageViewArray removeAllObjects];
+        for (int i = 0; i<getCount; i++) {
+            if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
+                type = lightTypeYellowSpirte;
+            }else
+            {
+                type = lightTypeWhiteSpirite;
+            }
+            UIImageView* spiView = [[UIImageView alloc]initWithImage:[CommonObject getLightImageByLightType:type]];
+            spiView.frame = CGRectMake(0, 0, 0, 0);
+            [swimOutSpiriteImageViewArray addObject:spiView];
+            [self.view addSubview:spiView];
+            
+        }
+        //取得固定位置, 放在相机的右边
+        CGRect SpiRec = CGRectMake(_intoCameraBtn.frame.origin.x/2 - SPIRITE_W_H/2, _intoCameraBtn.center.y- SPIRITE_W_H/2, SPIRITE_W_H, SPIRITE_W_H);
+        //精灵飞到同一个位置
+        swimOutSpiriteImageViewArrayFrame = [NSMutableArray arrayWithCapacity:getCount];
+        for (int i =0 ; i<getCount; i++) {
+            [swimOutSpiriteImageViewArrayFrame addObject:[NSValue valueWithCGRect:SpiRec]];
+        }
+        
+        //开始位置构造,长与宽一样
+        CGRect startSpi = CGRectMake(_skySunorMoonImage.center.x -SPIRITE_W_H/2, _skySunorMoonImage.center.y - SPIRITE_W_H/2, SPIRITE_W_H, SPIRITE_W_H);
+        
+        //先大范围弹出，结束后，再小范围游动，以便在召回时，位置可知
+        [self popOutSpiriteCount:getCount  lightType:type srcViewArray:swimOutSpiriteImageViewArray srcViewArrayFrame:swimOutSpiriteImageViewArrayFrame aniKey:KEY_ANIMATION_SWIM_SPIRITE_OUT startFrame:startSpi];
+    }
+
+    
+}
+*/
+
+-(void) getOutBaseLight:(NSInteger) getCount  outTypeKey:(NSString*)outTypeKey
+{
+    
+    if (getCount ==0) {
+        NSLog(@"Notify: no light to getOut!");
+        return;
+    }
+    
+    NSAssert([userInfo checkIsBringUpinSunOrMoon], @"The light is not in the sun or moon already, this fun can not be called!");
+    
+    //开始游离动画
+    needStopLightAnimationToCallBackForFinal = NO;
+    needStopLightAnimationToCallBackForRefresh = NO;
+    //构造小光
+    if (!swimOutBaselightImageViewArray) {
+        //新构造光组
+        swimOutBaselightImageViewArray = [NSMutableArray arrayWithCapacity:getCount];
+        
+        
+    }
+    
+    //获取精灵排列的位置,位置固定，每次重新取
+    CGRect inFrame = _lightPostionFrame.frame;
+    //取全部的位置，放置需要的小光
+    swimOutBaselightImageViewArrayFrame = [self getLineToLineArrayPosion:EVERY_LING_LIGHT_COUNT inFrame:inFrame];
+
+    
+    //当前已有几个光，可能是0个
+    NSInteger currentCount = swimOutBaselightImageViewArray.count;
+    
+    NSAssert(getCount+currentCount<=FULL_SKY_LIGHT_COUNT, @" get out base light count shoud not bigger than %d, getcount=%lu, currentcou%lu", FULL_SKY_LIGHT_COUNT, getCount, currentCount);
+    
+    //将光加入队列
+    LightType type = [CommonObject getBaseLightTypeByTime];
+    for (int i = 0; i<getCount; i++) {
+        
+        UIImageView* baseView = [[UIImageView alloc]initWithImage:[CommonObject getAniStartImageByLightType:type]];
+        baseView.frame = CGRectMake(0, 0, 0, 0);
+        [swimOutBaselightImageViewArray addObject:baseView];
+        [self.view addSubview:baseView];
+        
+    }
+    
+    //开始位置构造,长与宽一样
+    float wStart =CGRectGetWidth([[swimOutBaselightImageViewArrayFrame objectAtIndex:0] CGRectValue]);
+    CGRect startSpi = CGRectMake(CGRectGetMidX(_skySunorMoonImage.frame) -wStart/2, CGRectGetMidY(_skySunorMoonImage.frame) -wStart/2, wStart, wStart);
+    
+    //构造结束位置
+    NSMutableArray* endFrameArray = [NSMutableArray arrayWithCapacity:getCount];
+    //从当前个数的frame向后取，当前个数可能为0
+    for (NSInteger i = currentCount; i<currentCount+getCount; i++) {
+        
+        [endFrameArray addObject:[swimOutBaselightImageViewArrayFrame objectAtIndex:i]];
+    }
+    
+    //构造View
+    NSMutableArray *srcViewArray =[NSMutableArray arrayWithCapacity:getCount];
+    for (NSInteger i = currentCount; i<currentCount+getCount; i++) {
+        
+        [srcViewArray addObject:[swimOutBaselightImageViewArray objectAtIndex:i]];
+    }
+    
+    //先大范围弹出，结束后，再小范围游动，以便在召回时，位置可知
+    [self popOutLightCount:getCount  lightType:type srcViewArray:srcViewArray  aniKey:outTypeKey startFrame:startSpi endFrameArray:endFrameArray];
+    
+}
+
+#pragma mark -
+/**
+ *  停止养成，并召回所有的光，光和精灵先回日月，再回头像
+ */
+-(void)stopBringUpAndFinalCallBackLight
+{
+
+    NSAssert([userInfo checkIsBringUpinSunOrMoon], @"stopBringUpAndFinalCallBackLight: no light is in bringup state, this fun can not be called!");
+    
+    [self callBackLightToSunMoonForFinal];
+    [self callBackSpiriteToSunMoon];
+    
+}
+
+//召回光回到日月
+/**
+ *  两种召回，一种是自动计算满格后，自动刷新召回太阳，一种是手动最终全召回，先回到太阳，再回到头像
+ */
+-(void) callBackLightToSunMoonForRefresh
+{
+    
+    if (!swimOutBaselightImageViewArray || swimOutBaselightImageViewArray.count == 0) {
+        NSLog(@"Notify:No light to call back  to sunMoon!");
+        return;
+    }
+    
+    
+    //等待 游荡动画全结束时，触发召回动画
+    needStopLightAnimationToCallBackForRefresh = YES;
+    
+}
+
+-(void) callBackLightToSunMoonForFinal
+{
+    
+    if (!swimOutAnimationLightArray || swimOutAnimationLightArray.count == 0) {
+        NSLog(@"Notify:No light to call back  to sunMoon!");
+        return;
+    }
+    
+    
+    //等待 游荡动画全结束时，触发召回动画
+    needStopLightAnimationToCallBackForFinal = YES;
+    
+}
+
+
+-(void)callBackSpiriteToSunMoon
+{
+    if (!swimOutAnimationSpiriteArray || swimOutAnimationSpiriteArray.count == 0) {
+        NSLog(@"Notify:No spirit to call back to sunMoon!");
+        return;
+    }
+    
+    needStopSpiriteAnimationToCallBack = YES;
+}
+
+
+/**
+ *  判断是否所有的光与精灵回到日月的动画已完成
+ */
+-(void) isTimeToCallBackAllLightToUserHeader
+{
+    //两个array会在回到日月后清空一次
+    if (swimOutAnimationLightArray.count ==0 && swimOutAnimationSpiriteArray.count == 0) {
+        [self callBackHandleAllLightToUserHeader];
+    }else
+    {
+        NSLog(@"Notity: Light or spirite are still in the sky, waitting..");
+    }
+    
+    
+}
+
+//手动召回所有光回到头像，这之前要计算奖励，如有奖励，弹出提示，点击OK后，
+/**
+ *  此时所有的光已回到了日月，把它们召回头像
+ */
+-(void)callBackHandleAllLightToUserHeader
+{
+    
+    
+    NSInteger count;
+    if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
+        count = userInfo.sun_value.integerValue;
+    }else
+    {
+        count = userInfo.moon_value.integerValue;
+    }
+    
+    if (count ==0) {
+        NSLog(@"Notify:No light to Call back to user header!");
+        return;
+    }
+    
+    CGRect startF = _skySunorMoonImage.frame;
+    CGRect endF = _userHeaderImageView.frame;
+    
+    //计算此精灵的最终位置
+    CGPoint startPoint =CGPointMake(CGRectGetMidX(startF), CGRectGetMidY(startF));
+    CGPoint endPoint = CGPointMake(CGRectGetMidX(endF), CGRectGetMidY(endF));
+    
+    //执行召回动画
+    NSMutableArray * twoPointArray = [self getSeveralTracePointFromPan:2];
+    [self moveSimpleLightWithRepeatCount:count StartPoint:startPoint EndPoint:endPoint totalTime:FLY_BACK_TO_USERHEAER_TOTAL_TIME aniKey:KEY_ANIMATION_FIANL_BACK_LIGHT withBazierP1:[[twoPointArray objectAtIndex:0] CGPointValue] bazierP2:[[twoPointArray objectAtIndex:1] CGPointValue]];
+    
+//    //执行召回动画
+//    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimation];
+//    
+//
+//    //计算此精灵的最终大小
+//    CGSize  startSize = CGSizeMake(LIGHT_W_H, LIGHT_W_H);
+//    CGSize endSize = CGSizeMake(LIGHT_W_H, LIGHT_W_H);
+//    
+//    
+//    CGPoint bazierPoint_1 = CGPointMake((endPoint.x - startPoint.x)/3 -[CommonObject getRandomNumber:0 to:10], (endPoint.y - startPoint.y)/3 -[CommonObject getRandomNumber:0 to:10]);
+//    [customAnimation setAniBazierCenterPoint1:bazierPoint_1];
+//    
+//    CGPoint bazierPoint_2 = CGPointMake((endPoint.x - startPoint.x)/3*2 -[CommonObject getRandomNumber:0 to:10], (endPoint.y - startPoint.y)/3*2 -[CommonObject getRandomNumber:0 to:10]);
+//    [customAnimation setAniBazierCenterPoint2:bazierPoint_2];
+//    
+//    UIImageView* srcView = [[UIImageView alloc] initWithImage:[CommonObject getBaseLightImageByTime]];
+//    srcView.frame = CGRectZero;
+//    [self.view addSubview:srcView];
+//    NSDictionary* srcViewDic = [NSDictionary dictionaryWithObjectsAndKeys:
+//                                srcView, KEY_ANIMATION_VIEW,
+//                                [NSNumber numberWithInteger:[CommonObject getBaseLightTypeByTime]], KEY_ANIMATION_LIGHT_TYPE,nil];
+//    
+//    
+//    [customAnimation setAniType:BEZIER_ANI_TYPE];
+//    [customAnimation setAniImageViewDic:srcViewDic];
+//    [customAnimation setBkLayer:self.view.layer];
+//    [customAnimation setAniStartPoint:startPoint];
+//    [customAnimation setAniEndpoint:endPoint];
+//    [customAnimation setAniStartSize:startSize];
+//    [customAnimation setAniEndSize:endSize];
+//    [customAnimation setCustomAniDelegate:self];
+//    [customAnimation setAnikey:KEY_ANIMATION_FIANL_BACK_LIGHT];
+//    [customAnimation setAniRepeatCount:count];
+//    
+//    //计算每个用时
+//    float eTime = FLY_BACK_TO_USERHEAER_TIME/count;
+//    [customAnimation setAniDuration:eTime];
+//    
+//    [customAnimation setSipiriteAnimationType:[CommonObject getBaseLightTypeByTime]];
+//    [customAnimation displayLinkAnimationEnable];
+//    
+//    [customAnimation startCustomAnimation];
+    
+    
+    [self clearSkyArrayData];
+
+    
+}
+
+
+-(void) clearSkyArrayData
+{
+    //清除天空数据array
+    [swimOutAnimationArray removeAllObjects];
+    
+    [swimOutAnimationLightArray removeAllObjects];
+    
+    [swimOutAnimationSpiriteArray removeAllObjects];
+    
+    [swimOutBaselightImageViewArray removeAllObjects];
+    
+    [swimOutSpiriteImageViewArray removeAllObjects];
+    
+    
+    //FrameArray值是固定的，不用清
+    //[swimOutBaselightImageViewArrayFrame removeAllObjects];
+    //[swimOutSpiriteImageViewArrayFrame removeAllObjects];
+    
+}
+
+
+/**
+ *  先放出剩余的小光
+ */
+/*
+-(void) secondGetOutLeftBaseLight
+{
+    
+    NSInteger getCount;
+
+    //召换小光
+    getCount =[[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_LEFT_BASE_COUNT] integerValue];
+    if (getCount) {
+        //构造小光
+        if (!swimOutBaselightImageViewArray) {
+            swimOutBaselightImageViewArray = [NSMutableArray arrayWithCapacity:getCount];
+        }
+        //重新放出光，先清空
+        [swimOutBaselightImageViewArray removeAllObjects];
+        LightType type;
+        for (int i = 0; i<getCount; i++) {
+            LightType type;
+            if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
+                type = lightTypeYellowLight;
+            }else
+            {
+                type = lightTypeWhiteLight;
+            }
+            UIImageView* baseView = [[UIImageView alloc]initWithImage:[CommonObject getLightImageByLightType:type]];
+            baseView.frame = CGRectMake(0, 0, 0, 0);
+            [swimOutBaselightImageViewArray addObject:baseView];
+            [self.view addSubview:baseView];
+            
+        }
+        //获取精灵排列的位置
+        float w = SCREEN_WIDTH /4 *3;
+        CGRect inFrame = CGRectMake(self.view.center.x - w/2, 30+w, w, w);
+        if (!swimOutBaselightImageViewArrayFrame) {
+            //取全部的位置，放置需要的小光
+            swimOutBaselightImageViewArrayFrame = [self getLineToLineArrayPosion:EVERY_LING_LIGHT_COUNT inFrame:inFrame];
+        }
+        
+        //开始位置构造,长与宽一样
+        float wStart =CGRectGetWidth([[swimOutBaselightImageViewArrayFrame objectAtIndex:0] CGRectValue]);
+        CGRect startSpi = CGRectMake(CGRectGetMidX(_skySunorMoonImage.frame) -wStart/2, CGRectGetMidY(_skySunorMoonImage.frame) -wStart/2-20, wStart, wStart);
+        
+        //先大范围弹出，结束后，再小范围游动，以便在召回时，位置可知
+        [self popOutLightCount:getCount  lightType:type srcViewArray:swimOutBaselightImageViewArray srcViewArrayFrame:swimOutBaselightImageViewArrayFrame aniKey:KEY_ANIMATION_SWIM_LIGHT_OUT startFrame:startSpi];
+    }
+    
+}
+*/
+
+
 
 
 #pragma mark - 放出光
@@ -2117,19 +3942,27 @@
  *  @param type  光的类型
  *  @param srcView  待操作的原view
  */
-- (void) popOutLightCount:(NSInteger) count lightType:(LightType) type srcViewArray:(NSMutableArray*) srcViewArray
+- (void) popOutLightCount:(NSInteger) count lightType:(LightType) type srcViewArray:(NSMutableArray*) srcViewArray   aniKey:(NSString*)aniKey  startFrame:(CGRect) startFrame endFrameArray:(NSMutableArray*) endFrameArray
 {
     
+    //动画中，禁止所有操作
+    [self DisableUserInteractionInView:self.view exceptViewWithTag:HUGE_VAL];
+
+    
     //控制在2秒内全部释放完成
-    float timeInterval = POP_OUT_ALL_LIGHT_TIME / count;
+    float timeInterval = POP_OUT_ALL_LIGHT_TO_SKY_TIME / count;
     
     NSDictionary * timerUserInfo =[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:type], @"popOutLightType",
-    [NSNumber numberWithInt:count], @"popOutLightCount",
-    srcViewArray,@"popOutLightViewArray",
-    nil];
-
-    repeatCount =0;
-    [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(popOutLight:) userInfo:timerUserInfo repeats:YES];
+                                   [NSNumber numberWithInteger:count], @"popOutLightCount",
+                                   srcViewArray,@"popOutLightViewArray",
+                                   endFrameArray,@"popOutLightViewArrayFrame",
+                                   aniKey,@"popOutLightAniKey",
+                                   [NSValue valueWithCGRect:startFrame],@"popOutLightStartFrame",
+                                   nil];
+    
+    repeatCountLight =0;
+    NSTimer* reapater = [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(popOutLight:) userInfo:timerUserInfo repeats:YES];
+    [reapater fire];
     
     
 }
@@ -2139,161 +3972,354 @@
     
     
     NSDictionary *timerUserInfo = (NSDictionary *)timer.userInfo;
-    LightType type = [[timerUserInfo objectForKey:@"popOutLightType"] integerValue];
+    LightType type = (LightType)[[timerUserInfo objectForKey:@"popOutLightType"] integerValue];
     NSInteger count = [[timerUserInfo objectForKey:@"popOutLightCount"] integerValue];
     NSMutableArray * viewArray =(NSMutableArray*)[timerUserInfo objectForKey:@"popOutLightViewArray"];
+    NSMutableArray * viewArrayFrame =(NSMutableArray*)[timerUserInfo objectForKey:@"popOutLightViewArrayFrame"];
+    NSString * aniKey =[timerUserInfo objectForKey:@"popOutLightAniKey"];
+    CGRect startRect =[[timerUserInfo objectForKey:@"popOutLightStartFrame"] CGRectValue];
     
-    if (repeatCount != count) {
+    if (repeatCountLight != count) {
         //弹出 count 个精灵
-        [self animationLightSwimOutBazierLightType:type srcView:[viewArray objectAtIndex:repeatCount] start:_skySunorMoonImage.center end:CGPointMake([CommonObject getRandomNumber:0+15 to:SCREEN_WIDTH-15], [CommonObject getRandomNumber:0 to:SCREEN_HEIGHT-_userHeaderImageView.frame.size.height])];
+        //精灵的最终位置
+        NSAssert(repeatCountLight<viewArrayFrame.count, @"popOutLight: repeatCountLight(%lu)>viewArrayFrame.count(%lu)", repeatCountLight, viewArrayFrame.count);
+        NSAssert(repeatCountLight<viewArray.count, @"popOutLight: repeatCountLight(%lu)>viewArray.count(%lu)", repeatCountLight, viewArray.count);
+        CGRect endRect = [[viewArrayFrame objectAtIndex:repeatCountLight] CGRectValue];
         
-        repeatCount ++;
+        [self animationLightSwimOutBazierLightType:type srcView:[viewArray objectAtIndex:repeatCountLight] startFrame:startRect endFrame:endRect number:repeatCountLight aniKey:aniKey];
+        
+        repeatCountLight ++;
         
     }else
     {
         [timer invalidate];
-        repeatCount = 0;
+        repeatCountLight = 0;
     }
     
 }
 
 
-#pragma mark - 计算光的类型
--(void)caculateLightTypeAndCountByCount:(NSInteger) count
+- (void) popOutSpiriteCount:(NSInteger) count lightType:(LightType) type srcViewArray:(NSMutableArray*) srcViewArray  aniKey:(NSString*)aniKey startFrame:(CGRect) startFrame  endFrameArray:(NSMutableArray*) endFrameArray
+
 {
     
-    
-    NSInteger sumCount = count;
-    
-    //计算红点点个数,20个光生成1个红点点
-    NSInteger redCount = sumCount/20;
-    //计算蓝点点个数，100个红生成一个蓝
-    NSInteger blueCount = redCount/100;
-    NSInteger redCountLeft = redCount%100;
-
-    
-    lightTypeCountInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                         [NSNumber numberWithInt:sumCount], KEY_LIGHT_TYPE_SUM_COUNT,[NSNumber numberWithInt:redCount], KEY_LIGHT_TYPE_RED_COUNT,[NSNumber numberWithInt:blueCount], KEY_LIGHT_TYPE_BLUE_COUNT,[NSNumber numberWithInt:redCountLeft], KEY_LIGHT_TYPE_RED_COUNT_LEFT,nil];
-    
-    NSLog(@"caculateLightTypeAndCount : %@",lightTypeCountInfo);
-    
-    
-}
-
-#pragma mark - ***************召唤并释放精灵 或 召回
-
-/**
- *  召唤并释放精灵
- */
--(void) getAndPopOutSpirite
-{
     //动画中，禁止所有操作
     [self DisableUserInteractionInView:self.view exceptViewWithTag:HUGE_VAL];
-    
-    NSInteger count;
-    if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-        count = self.userInfo.sun_value.integerValue;
-    }else
-    {
-        count = self.userInfo.moon_value.integerValue;
-    }
-    
-    //test
-    count = 20;
-    
-    [self caculateLightTypeAndCountByCount:count];
-    
-    
-    NSInteger getCount,leftCount;
-    //召唤红
-    getCount =[[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_RED_COUNT] integerValue];
-    leftCount=[[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_RED_COUNT_LEFT] integerValue];
-    if (leftCount>0) {
-        getCount = leftCount;
-    }
-    
-    if (getCount) {
-        //构造红精灵
-        if (!simOutRedImageViewArray) {
-            simOutRedImageViewArray = [NSMutableArray arrayWithCapacity:getCount];
-        }
-        [simOutRedImageViewArray removeAllObjects];
-        for (int i = 0; i<getCount; i++) {
-            UIImageView* redView = [[UIImageView alloc]initWithImage:[CommonObject getLightImageByLightType:lightTypeRed]];
-            redView.frame = CGRectMake(0, 0, 0, 0);
-            [simOutRedImageViewArray addObject:redView];
-            [self.view addSubview:redView];
-            
-        }
-        //先大范围弹出，结束后，再小范围游动，以便在召回时，位置可知
-        [self popOutLightCount:getCount  lightType:lightTypeRed srcViewArray:simOutRedImageViewArray];
-    }
-    
 
     
+    //控制在2秒内全部释放完成
+    float timeInterval = POP_OUT_ALL_SPIRITE_TO_SKY_TIME / count;
     
+    NSDictionary * timerUserInfo =[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:type], @"popOutSpiriteType",
+                                   [NSNumber numberWithInteger:count], @"popOutSpiriteCount",
+                                   srcViewArray,@"popOutSpiriteViewArray",
+                                   endFrameArray,@"popOutSpiriteViewArrayFrame",
+                                   aniKey,@"popOutSpiriteAniKey",
+                                   [NSValue valueWithCGRect:startFrame],@"popOutSpiriteStartFrame",
+                                   nil];
     
-     //召唤蓝
-    getCount =[[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_BLUE_COUNT] integerValue];
-    if (getCount) {
-        //构造蓝精灵
-        if (!simOutBlueImageViewArray) {
-            simOutBlueImageViewArray = [NSMutableArray arrayWithCapacity:getCount];
-        }
-        [simOutBlueImageViewArray removeAllObjects];
-        for (int i = 0; i<getCount; i++) {
-            UIImageView* blueView = [[UIImageView alloc]initWithImage:[CommonObject getLightImageByLightType:lightTypeBlue]];
-            blueView.frame = CGRectMake(0, 0, 0, 0);
-            [simOutBlueImageViewArray addObject:blueView];
-            [self.view addSubview:blueView];
-        }
-        [self popOutLightCount:getCount  lightType:lightTypeBlue srcViewArray:simOutBlueImageViewArray];
-    }
-
+    repeatCountSpirite =0;
+    NSTimer* reapater = [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(popOutSpirite:) userInfo:timerUserInfo repeats:YES];
+    [reapater fire];
     
     
 }
 
-
--(void) stopAndGetBackSpirite
+- (void) popOutSpirite:(NSTimer*) timer
 {
     
-    if (simOutAnimationArray.count == 0) {
-        NSLog(@"Notify: no spirite need to be call back");
+    
+    NSDictionary *timerUserInfo = (NSDictionary *)timer.userInfo;
+    LightType type = (LightType)[[timerUserInfo objectForKey:@"popOutSpiriteType"] integerValue];
+    NSInteger count = [[timerUserInfo objectForKey:@"popOutSpiriteCount"] integerValue];
+    NSMutableArray * viewArray =(NSMutableArray*)[timerUserInfo objectForKey:@"popOutSpiriteViewArray"];
+    NSMutableArray * viewArrayFrame =(NSMutableArray*)[timerUserInfo objectForKey:@"popOutSpiriteViewArrayFrame"];
+    NSString * aniKey =[timerUserInfo objectForKey:@"popOutSpiriteAniKey"];
+    CGRect startRect =[[timerUserInfo objectForKey:@"popOutSpiriteStartFrame"] CGRectValue];
+    
+    if (repeatCountSpirite != count) {
+        //弹出 count 个精灵
+        //精灵的最终位置
+        CGRect endSpi = [[viewArrayFrame objectAtIndex:repeatCountSpirite] CGRectValue];
+        
+        [self animationLightSwimOutBazierLightType:type srcView:[viewArray objectAtIndex:repeatCountSpirite] startFrame:startRect endFrame:endSpi number:repeatCountSpirite aniKey:aniKey];
+        
+        repeatCountSpirite ++;
+        
+    }else
+    {
+        [timer invalidate];
+        repeatCountSpirite = 0;
+    }
+    
+}
+
+
+///**
+// *  收回所有的光
+// */
+//-(void) callBackAllLight
+//{
+//    
+//}
+//
+///**
+// *  收回精灵
+// */
+//-(void) callBackAllSpirite
+//{
+//    
+//    if (swimOutAnimationArray.count == 0) {
+//        NSLog(@"Notify: no spirite need to be call back");
+//        return;
+//    }
+//    
+//    //等待 游荡动画全结束
+//    needStopAnimationToCallBack = TRUE;
+//    
+//}
+
+-(void) isTimeProcessBackSkyLight:(NSString*) anKey
+{
+    if (!swimOutBaselightImageViewArray || swimOutBaselightImageViewArray.count == 0) {
+        NSLog(@"ERROR: no Light to call back to SunMoon, isTimeProcessBackSkyLight shoud not be called!");
         return;
     }
     
     //动画中，禁止所有操作
     [self DisableUserInteractionInView:self.view exceptViewWithTag:HUGE_VAL];
-
+    
     //控制在2秒内全部释放完成
-    float timeInterval = POP_BACK_ALL_LIGHT_TIME / simOutAnimationArray.count;
-
-    repeatCount = 0;
-    [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(getBackSpirite:) userInfo:nil repeats:YES];
+    float timeInterval = POP_BACK_SKY_LIGHT_TIME / swimOutBaselightImageViewArray.count;
+    
+    repeatCountLight = 0;
+    NSTimer* reapater =  [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(processBackSkyLight:) userInfo:anKey repeats:YES];
+    //立刻收回第一个
+    [reapater fire];
     
 }
 
--(void) getBackSpirite:(NSTimer *)timer
+-(void) processBackSkyLight:(NSTimer *)timer
 {
-    
-    CustomAnimation* backAni = [simOutAnimationArray objectAtIndex:repeatCount];
-    [self animationLightSwimBackKeyFrameWithAni:backAni];
 
-    repeatCount++;
     
-    if(repeatCount == simOutAnimationArray.count)
+    if (repeatCountLight != swimOutAnimationLightArray.count && swimOutAnimationLightArray.count !=0) {
+
+        NSAssert(repeatCountLight<swimOutAnimationLightArray.count, @"processBackSkyLight: repeatCountLight(%lu)>swimOutAnimationLightArray(%lu)", repeatCountLight, swimOutAnimationLightArray.count);
+        
+        CustomAnimation* backAni = [swimOutAnimationLightArray objectAtIndex:repeatCountLight];
+        [self animationLightSwimBackKeyFrameWithAni:backAni aniKey:(NSString*)timer.userInfo number:repeatCountLight];
+        repeatCountLight ++;
+        
+    }else
     {
         [timer invalidate];
-        timer = nil;
+        repeatCountLight = 0;
+    }
+    
+    
+    
+}
+
+
+-(void) isTimeProcessBackSpirite
+{
+    
+    //动画中，禁止所有操作
+    [self DisableUserInteractionInView:self.view exceptViewWithTag:HUGE_VAL];
+    
+    //控制在2秒内全部释放完成
+    float timeInterval = (float)POP_BACK_SPIRITE_TIME / swimOutSpiriteImageViewArray.count;
+    
+    repeatCountSpirite = 0;
+    NSTimer* reapater =  [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(processBackSpirite:) userInfo:nil repeats:YES];
+    //立刻收回第一个
+    [reapater fire];
+    
+}
+
+-(void) processBackSpirite:(NSTimer *)timer
+{
+
+    
+    if (repeatCountSpirite != swimOutAnimationSpiriteArray.count&& swimOutAnimationSpiriteArray.count !=0) {
+
+        NSAssert(repeatCountSpirite<swimOutAnimationSpiriteArray.count, @"processBackSpirite: repeatCountSpirite(%lu)>swimOutAnimationSpiriteArray(%lu)", repeatCountSpirite, swimOutAnimationSpiriteArray.count);
+        
+        CustomAnimation* backAni = [swimOutAnimationSpiriteArray objectAtIndex:repeatCountSpirite];
+        [self animationLightSwimBackKeyFrameWithAni:backAni aniKey:KEY_ANIMATION_SWIM_SPIRITE_BACK number:repeatCountSpirite];
+        repeatCountSpirite ++;
+        
+    }else
+    {
+        [timer invalidate];
+        repeatCountSpirite = 0;
     }
     
     
 }
 
+#pragma mark - 屏幕touch 精灵飞动
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    
+    UITouch *touch=touches.anyObject;
+    CGPoint location= [touch locationInView:self.view];
+    
+    
+}
+
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch *touch=touches.anyObject;
+    CGPoint location= [touch locationInView:self.view];
+    
+    //不能点击头像
+    if(CGRectContainsPoint(_userHeaderImageView.frame, location))
+    {
+        NSLog(@"Touch point can not be in userHeader Rect");
+        return;
+    }
+    
+    if(CGRectContainsPoint(_skySunorMoonImage.frame, location))
+    {
+        NSLog(@"Touch point can not be in sunOrMoon Rect");
+        return;
+    }
+    
+    //点击闪烁提示
+    [self StartTouchIndication:location];
+    
+    //启动精灵飞行
+    [self spiriteFlyTraceTouch:location fromUserTouch:YES];
+
+    
+}
+
+
+
+- (void)spiriteFlyTraceTouch:(CGPoint) touchPoint  fromUserTouch:(BOOL) isTouch
+{
+    if (!swimOutAnimationSpiriteArray || swimOutAnimationSpiriteArray.count == 0) {
+        NSLog(@"Notify:No spirit to fly trace by touch!");
+        return;
+    }
+    
+    if (isTouch) {
+        spiriteFlyIsAuto = FALSE;
+         spiritFlyTouchPoint = touchPoint;
+        needStopSpiriteAnimationToFlyTraceTouch = YES;
+        [self DisableUserInteractionInView:self.view exceptViewWithTag:TAG_SHARE_SKY_BTN];
+
+    }else
+    {
+        //自动飞行时，目的点取spiriteAutoFlyPointArray
+        needStopSpiriteAnimationToFlyAuto = YES;
+
+    }
+    
+
+
+    
+    //每次飞行动画时开始时禁止自动飞行，避免在飞行过程中，再次触发自动飞行,飞行结束后，再次开始计时
+    [spiriteFlyAutoReapaterTimer invalidate];
+
+    
+    
+}
+
+
+-(void) isTimeProcessSpiriteFlyTraceTouch
+{
+    CustomAnimation* backAni = (CustomAnimation*)swimOutAnimationSpiriteArray.lastObject;
+    UIImageView* aniView = (UIImageView*)[backAni.aniImageViewDic objectForKey:KEY_ANIMATION_VIEW];
+    CGPoint startPoint = aniView.center;
+    CGPoint endPoint ;
+    NSString* aniKey;
+    if (spiriteFlyIsAuto) {
+        //自动飞行时，顺次取位置
+        spiriteAutoFlyPointCurrentIndex=(spiriteAutoFlyPointCurrentIndex+1)%spiriteAutoFlyPointArray.count;
+        endPoint = [[spiriteAutoFlyPointArray objectAtIndex:spiriteAutoFlyPointCurrentIndex] CGPointValue];
+        aniKey =KEY_ANIMATION_SPIRITE_FLY_AUTO;
+    }else
+    {
+        //非自动时，用户点击位置
+        endPoint = spiritFlyTouchPoint;
+        aniKey =KEY_ANIMATION_SPIRITE_FLY_TRACE_TOUCH;
+
+    }
+    
+    NSDictionary * timerUserInfo =[NSDictionary dictionaryWithObjectsAndKeys:
+                                   [NSValue valueWithCGPoint:startPoint], @"SpiritFlyStartPoint",
+                                   [NSValue valueWithCGPoint:endPoint], @"SpiritFlyEndPoint",
+                                   aniKey,@"SpiritFlyAniKey",
+                                   nil];
+    
+    //控制在2秒内全部释放完成
+    float timeInterval = SPIRITE_FLY_FLY_INTER_TIME/swimOutAnimationSpiriteArray.count;
+    
+    repeatCountSpiriteFlyTrace = 0;
+    NSTimer* reapater =  [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(processSpiriteFlyTraceTouch:) userInfo:timerUserInfo repeats:YES];
+    //立刻收回第一个
+    [reapater fire];
+    
+}
+
+-(void) processSpiriteFlyTraceTouch:(NSTimer *)timer
+{
+    NSDictionary *timerUserInfo = (NSDictionary *)timer.userInfo;
+
+    CGPoint startP =[[timerUserInfo objectForKey:@"SpiritFlyStartPoint"] CGPointValue];
+    CGPoint endP =[[timerUserInfo objectForKey:@"SpiritFlyEndPoint"] CGPointValue];
+    NSString* aniKey =[timerUserInfo objectForKey:@"SpiritFlyAniKey"];
+
+    
+    if (repeatCountSpiriteFlyTrace != swimOutAnimationSpiriteArray.count&& swimOutAnimationSpiriteArray.count !=0) {
+        
+        NSAssert(repeatCountSpiriteFlyTrace<swimOutAnimationSpiriteArray.count, @"processSpiriteFlyTraceTouch: repeatCountSpiriteFlyTrace(%lu)>swimOutAnimationSpiriteArray(%lu)", repeatCountSpiriteFlyTrace, swimOutAnimationSpiriteArray.count);
+        
+        CustomAnimation* backAni = [swimOutAnimationSpiriteArray objectAtIndex:repeatCountSpiriteFlyTrace];
+        
+        [self animationSpiriteFlyTraceWithAni:backAni aniKey:aniKey  number:repeatCountSpiriteFlyTrace startP:startP endP:endP];
+        repeatCountSpiriteFlyTrace ++;
+        
+    }else
+    {
+        [timer invalidate];
+        repeatCountSpiriteFlyTrace = 0;
+    }
+    
+    
+}
+
+-(void)startSpiritAutoFlyschedule
+{
+    CGFloat timeInterval = SPIRITE_FLY_AUTO_INTERVAL;
+    
+    spiriteFlyAutoReapaterTimer = [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(isTimeToSpiritAutoFly:) userInfo:nil repeats:NO];
+    
+    
+}
+
+-(void)isTimeToSpiritAutoFly:(NSTimer*) timer
+{
+
+    if (spiriteFlyIsAuto) {
+        [self spiriteFlyTraceTouch:CGPointZero fromUserTouch:NO];
+    }else
+    {
+        [timer invalidate];
+
+    }
+    
+    
+}
+
+
 #pragma mark - 计算光的奖励
 //return 奖励的个数
--(NSInteger) caculateAndGiveSunOrMoon
+-(NSInteger) caculateAndGiveSunOrMoon:(NSString*) cacuKey
 {
     NSTimeInterval time;
     NSDate* startDate;
@@ -2317,8 +4343,17 @@
     int hours=((int)time)%(3600*24)/3600;
     
     int totalHours = days*24+hours;
+    if (totalHours <0) {
+        NSString* timeAlert = [NSString stringWithFormat:(@"混乱，检测到时光倒流\n请调整时间！")];
+        [self showCustomYesAlertSuperView:timeAlert AlertKey:KEY_REMINDER_GIVE_LIGHT_BUT_TIME_ERROR];
+        //清空光育成时间
+        [self.userInfo updateSunorMoonBringupTime:0];
+        return HUGE_VAL;
+    }
+    
+    
     //每3小时奖励一个光
-    int giveCount = totalHours / 3;
+    int giveCount = totalHours / BRING_UP_LIGHT_HOUR;
     [self.userInfo addSunOrMoonValue:giveCount];
     
     
@@ -2332,7 +4367,7 @@
 //
 //    }
     
-    if (totalHours>0 && totalHours<3) {
+    if (totalHours>0 && totalHours<BRING_UP_LIGHT_HOUR) {
         //NSString* timeAlert = [NSString stringWithFormat:(@"%@光托管了%d小时\n每3个小时奖励1个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
         //[self showCustomYesAlertSuperView:timeAlert AlertKey:KEY_REMINDER_SUCC_GET_LIGHT];
         
@@ -2343,9 +4378,9 @@
 
     }
     
-    if (totalHours>3) {
+    if (totalHours>=BRING_UP_LIGHT_HOUR) {
         NSString* timeAlert = [NSString stringWithFormat:(@"%@光养育了%d小时\n养成%d个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours, giveCount,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
-        [self showCustomYesAlertSuperView:timeAlert AlertKey:KEY_REMINDER_SUCC_GET_LIGHT];
+        [self showCustomYesAlertSuperView:timeAlert AlertKey:cacuKey];
 
         
         //清空光育成时间
@@ -2365,193 +4400,148 @@
 }
 
 #pragma mark - Animation
--(void) moveLightWithRepeatCount:(NSInteger)repeatCount  StartPoint:(CGPoint) start  EndPoint:(CGPoint) end  IsUseRepeatCount:(BOOL) isUseRepeatCount
+-(void) moveSimpleLightWithRepeatCount:(NSInteger)count  StartPoint:(CGPoint) start  EndPoint:(CGPoint) end  totalTime:(float)totalTime aniKey:(NSString*) aniKey  withBazierP1:(CGPoint) bazierP1  bazierP2:(CGPoint) bazierP2
 {
-    NSString* imageName = NULL;
-    if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
-        imageName = @"sun-小.png";
-        
-        if (!isUseRepeatCount) {
-            repeatCount = [self.userInfo.sun_value intValue];
-        }
-        NSLog(@"移动 %d 个阳光", repeatCount);
+    
+    
+    //计算此精灵的最终位置
+    CGPoint startPoint =start;
+    CGPoint endPoint = end;
+    
+    CGPoint bazierPoint_1;
+    CGPoint bazierPoint_2;
+    
+    if (!CGPointEqualToPoint(bazierP1, CGPointZero)) {
+        bazierPoint_1 = bazierP1;
+    }else
+    {
+        //取得两点之间的中间点
+        CGPoint mid = [CommonObject getMidPointBetween:startPoint andPoint:endPoint];
+        bazierPoint_1 = CGPointMake(mid.x/3 -[CommonObject getRandomNumber:0 to:10], mid.y/3 -[CommonObject getRandomNumber:0 to:10]);
+    }
+    
+    if (!CGPointEqualToPoint(bazierP2, CGPointZero)) {
+        bazierPoint_2 = bazierP2;
+    }else
+    {
+        //取得两点之间的中间点
+        CGPoint mid = [CommonObject getMidPointBetween:startPoint andPoint:endPoint];
+        bazierPoint_2 = CGPointMake(mid.x -[CommonObject getRandomNumber:20 to:40], mid.y -[CommonObject getRandomNumber:20 to:40]);
+    }
+    
+    
+    //限制飞行的光数
+    if (count > FLY_BETWEEN_SKY_USERHEADER_MAX_COUNT) {
+        count = FLY_BETWEEN_SKY_USERHEADER_MAX_COUNT;
+    }
+    
+    NSDictionary * timerUserInfo =[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInteger:count],@"moveSimpleCount",
+                                   [NSValue valueWithCGPoint:start], @"moveSimpleStartPoint",
+                                   [NSValue valueWithCGPoint:end], @"moveSimpleEndPoint",
+                                   aniKey,@"moveSimpleAniKey",
+                                   [NSValue valueWithCGPoint:bazierPoint_1],@"moveSimpleBaziar1",
+                                   [NSValue valueWithCGPoint:bazierPoint_2],@"moveSimpleBaziar2",
+                                   nil];
+    
+    CGFloat delayTime = totalTime/count;
+    
+    repeatCountMoveSimpleLight =0;
+    NSTimer* reapater = [NSTimer scheduledTimerWithTimeInterval:delayTime target:self selector:@selector(startMoveSimpleLightRepeat:) userInfo:timerUserInfo repeats:YES];
+    [reapater fire];
+    
+  
 
+ 
+}
+
+
+
+-(void)startMoveSimpleLightRepeat:(NSTimer*) timer
+{
+    
+    NSDictionary *timerUserInfo = (NSDictionary *)timer.userInfo;
+    NSInteger count =[[timerUserInfo objectForKey:@"moveSimpleCount"] integerValue];
+    CGPoint start = [[timerUserInfo objectForKey:@"moveSimpleStartPoint"] CGPointValue];
+    CGPoint end = [[timerUserInfo objectForKey:@"moveSimpleEndPoint"] CGPointValue];
+    CGPoint bazierP1 = [[timerUserInfo objectForKey:@"moveSimpleBaziar1"] CGPointValue];
+    CGPoint bazierP2 = [[timerUserInfo objectForKey:@"moveSimpleBaziar2"] CGPointValue];
+    NSString * aniKey =[timerUserInfo objectForKey:@"moveSimpleAniKey"];
+
+    
+    if (repeatCountMoveSimpleLight != count) {
+        
+        BOOL isLastOne;
+        if (repeatCountMoveSimpleLight +1 == count) {
+            isLastOne = YES;
+        }else
+        {
+            isLastOne = NO;
+
+        }
+        
+        [self moveSimpleLightWithStartPoint:start EndPoint:end aniKey:aniKey withBazierP1:bazierP1 bazierP2:bazierP2 isLastOne:isLastOne];
+        repeatCountMoveSimpleLight ++;
         
     }else
     {
-        imageName = @"moon-小.png";
-        
-        if (!isUseRepeatCount) {
-            repeatCount = [self.userInfo.moon_value intValue];
-        }
-        
-        NSLog(@"移动 %d 个月光", repeatCount);
+        [timer invalidate];
+        repeatCountMoveSimpleLight = 0;
 
-        
     }
-    _panSunorMoonImageView.image =[UIImage imageNamed:imageName];
-    ///[_panSunorMoonImageView setFrame:CGRectMake(start.x, start.y, 30, 30)];
-    [_panSunorMoonImageView setCenter:start];
-    _panSunorMoonImageView.alpha = 1.0;
-    _panSunorMoonImageView.hidden =  YES;
     
-    panBackSunOrMoonlayer.contents=_panSunorMoonImageView.layer.contents;
-    panBackSunOrMoonlayer.frame=_panSunorMoonImageView.frame;
-    panBackSunOrMoonlayer.opacity=1;
-    [self.view.layer addSublayer:panBackSunOrMoonlayer];
-    //动画 终点 都以sel.view为参考系
-    CGPoint endpoint=[self.view convertPoint:end fromView:nil];
-    UIBezierPath *path=[UIBezierPath bezierPath];
-    //动画起点
-    CGPoint startPoint=[self.view convertPoint:start fromView:nil];
-    [path moveToPoint:startPoint];
-    //贝塞尔曲线中间点
-    float sx=startPoint.x;
-    float sy=startPoint.y;
-    float ex=endpoint.x;
-    float ey=endpoint.y;
-    float x=sx+(ex-sx)/3;
-    float y=sy+(ey-sy)*0.5-100;
-    CGPoint centerPoint=CGPointMake(x,y);
-    [path addQuadCurveToPoint:endpoint controlPoint:centerPoint];
     
-    CAKeyframeAnimation *animation=[CAKeyframeAnimation animationWithKeyPath:@"position"];
-    animation.path = path.CGPath;
-    animation.removedOnCompletion = NO;
-    animation.fillMode = kCAFillModeForwards;
-    animation.duration=0.6;
-    animation.delegate=self;
-    animation.repeatCount = repeatCount;
-    animation.repeatDuration = 1;
-    animation.autoreverses= NO;
-    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
-    if (repeatCount>10) {
-        animation.repeatDuration = 3;
-        animation.repeatCount = 10;
-
-        
-    }
-    [panBackSunOrMoonlayer addAnimation:animation forKey:@"moveLight"];
- 
-    
- 
 }
 
-- (void)goPutThemBack:(NSString *)animationID finished:(NSNumber *)finished context:(id )context
+
+-(void) moveSimpleLightWithStartPoint:(CGPoint) start  EndPoint:(CGPoint) end aniKey:(NSString*) aniKey  withBazierP1:(CGPoint) bazierP1  bazierP2:(CGPoint) bazierP2 isLastOne:(BOOL)isLastOne
 {
-    NSLog(@"00000---goPutThemBack");
-    UIImageView *dollarView2 = (UIImageView *)context;
-    [dollarView2 removeFromSuperview];
-}
-
-
-- (void)animationDidStart:(CAAnimation *)anim
-{
-    if (isStartSunOrmoonImageMoveToHeaderAnimation) {
     
-        [self animationBowLightFrameHeaderView:1];
     
+    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimation];
+    
+    //计算此精灵的最终位置
+    CGPoint startPoint =start;
+    CGPoint endPoint = end;
+    //计算此精灵的最终大小
+    CGSize  startSize = CGSizeMake(LIGHT_W_H, LIGHT_W_H);
+    CGSize endSize = CGSizeMake(LIGHT_W_H, LIGHT_W_H);
+    [customAnimation setAniBazierCenterPoint1:bazierP1];
+    [customAnimation setAniBazierCenterPoint2:bazierP2];
+    
+    //构造光view
+    UIImageView* srcView = [[UIImageView alloc] initWithImage:[CommonObject getBaseLightImageByTime]];
+    srcView.frame = CGRectZero;
+    [self.view addSubview:srcView];
+    NSDictionary* srcViewDic = [NSDictionary dictionaryWithObjectsAndKeys:
+                                srcView, KEY_ANIMATION_VIEW,
+                                [NSNumber numberWithInteger:[CommonObject getBaseLightTypeByTime]], KEY_ANIMATION_LIGHT_TYPE,nil];
+    
+    if (isLastOne) {
+        lastRepeatCountMoveSimpleLightView = srcView;
+    }else
+    {
+        lastRepeatCountMoveSimpleLightView = Nil;
     }
     
+    [customAnimation setAniType:BEZIER_ANI_TYPE];
+    [customAnimation setAniImageViewDic:srcViewDic];
+    [customAnimation setBkLayer:self.view.layer];
+    [customAnimation setAniStartPoint:startPoint];
+    [customAnimation setAniEndpoint:endPoint];
+    [customAnimation setAniStartSize:startSize];
+    [customAnimation setAniEndSize:endSize];
+    [customAnimation setCustomAniDelegate:self];
+    [customAnimation setAnikey:aniKey];
+    [customAnimation setAniDuration:SIMPLE_FLY_EVERY_LIGHT_TIME];
+    [customAnimation setAniRepeatCount:1];
+    
+    [customAnimation setSipiriteAnimationType:[CommonObject getBaseLightTypeByTime]];
+    [customAnimation displayLinkAnimationEnable];
+    
+    [customAnimation startCustomAnimation];
+    
     
 }
-
--(void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
-{
-    NSString* value=[(CAKeyframeAnimation*)anim valueForKey:@"position"];
-    NSLog(@"animationDidStop----%@",value);
-    
-    if (isStartSunOrmoonImageMoveToHeaderAnimation) {
-        
-        //第一个光回到头像后，起动拖动光的引导:giudStep_guidPanToBring
-        [self HandleGuidProcess:giudStep_guidPanToBring];
-        
-        //删除拖动动画图层
-        [panBackSunOrMoonlayer removeFromSuperlayer];
-        
-        _panSunorMoonImageView.hidden = YES;
-
-        isStartSunOrmoonImageMoveToHeaderAnimation = NO;
-        
-        //完成移动动画后，开启头像动画
-        if ([self.userInfo checkIsBringUpinSunOrMoon]==NO) {
-      
-            if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-                [self animationLightFrameHeaderViewSetRange:[self.userInfo.sun_value intValue] isUseSetRange:YES];
-            }else
-            {
-                [self animationLightFrameHeaderViewSetRange:[self.userInfo.moon_value intValue] isUseSetRange:YES];
-                
-            }
-            
-            NSLog(@"停止 日月 动画！");
-            [lightSkySunOrMoonView stopAnimating];
-        }
-        
-        
-        for (int i = 0; i<panTraceligntTag; i++) {
-            panTracelight = (UIImageView*)[self.view viewWithTag:(TAG_LIGHT_TRACE+i)];
-            //panTracelight.hidden =YES;
-            [panTracelight removeFromSuperview];
-        }
-        
-        //如果是进入小屋触发的动画，则完成时进入小屋
-        if (isGetinToHome) {
-            [self performSegueWithIdentifier:@"getintoHome" sender:nil];
-        }
-
-        
-        [self stopAndGetBackSpirite];
-        
-    }
-    
-    if (isStartSunOrmoonImageMoveToSunMoonAnimation) {
-        
-        
-        //判断是否完成了引导拖动
-        //起动：guidStep_guidIntoCamera
-        [self HandleGuidProcess:guidStep_guidIntoCamera];
-        
-        //删除拖动动画图层
-        [panBackSunOrMoonlayer removeFromSuperlayer];
-        
-        _panSunorMoonImageView.hidden = YES;
-        
-        isStartSunOrmoonImageMoveToSunMoonAnimation = NO;
-        
-        if ([self.userInfo checkIsBringUpinSunOrMoon]==YES) {
-            //开启日月动画
-            if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-                
-                [self animationLightFrameSkySunOrMoon:7];
-            }else
-            {
-                
-                [self animationLightFrameSkySunOrMoon:7];
-                
-            }
-            
-            NSLog(@"停止 头像 动画！");
-            //最多7个动画光环
-            for (int i =0; i<7; i++) {
-                UIImageView* lightUserHeaderTag = (UIImageView*)[self.view viewWithTag:(TAG_LIGHT_USER_HEADER+i)];
-                lightUserHeaderTag.hidden = YES;
-                [lightUserHeaderTag stopAnimating];
-            }
-        }
-        
-        
-        //计算并召唤精灵
-        [self getAndPopOutSpirite];
-
-        
-    }
-    
-
-
-}
-
-
 //增加彩虹
 -(void) animationRainbow:(NSInteger) count
 {
@@ -2614,6 +4604,9 @@
         return;
     }
 
+    //定为光环不变化
+    realRange = 7;
+    
     NSLog(@"开启头像闪烁动画, range=%d！", realRange);
     
     NSInteger bigRang = realRange/7+1;
@@ -2665,7 +4658,7 @@
 
         [lightUserHeaderTag setFrame:CGRectMake(_userHeaderImageView.center.x-lightBowSkyUserHeaderViewWidth/2, _userHeaderImageView.center.y-lightBowSkyUserHeaderViewHeigth/2, lightBowSkyUserHeaderViewWidth, lightBowSkyUserHeaderViewHeigth)];
         lightUserHeaderTag.animationDuration=1.0;
-        [self.view insertSubview:lightUserHeaderTag belowSubview:_userHeaderImageView];
+        [self.view insertSubview:lightUserHeaderTag belowSubview:userHeaderSpiritBk];
         [lightUserHeaderTag startAnimating];
         
     }
@@ -2727,9 +4720,8 @@
 
 - (IBAction)showMenu
 {
-    //test
-     [self stopAndGetBackSpirite];
-    //[self.frostedViewController presentMenuViewController];
+
+    [self.frostedViewController presentMenuViewController];
 }
 
 - (void)didReceiveMemoryWarning
@@ -2744,17 +4736,17 @@
 -(void) showCustomYesAlertSuperView:(NSString*) msg  AlertKey:(NSString*) alertKey
 {
     
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"YES.png" posionShowMode:userSet  AlertKey:alertKey];
     [customAlertAutoDisYes setStartCenterPoint:self.view.center];
     [customAlertAutoDisYes setEndCenterPoint:self.view.center];
     [customAlertAutoDisYes setStartAlpha:0.1];
     [customAlertAutoDisYes setEndAlpha:1.0];
     [customAlertAutoDisYes setStartHeight:0];
-    [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*3];
-    [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
+    [customAlertAutoDisYes setStartWidth:SCREEN_WIDTH/5*4];
+    [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*4];
     [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
     [customAlertAutoDisYes setDelayDisappearTime:5.0];
-    [customAlertAutoDisYes setMsgFrontSize:45];
+    [customAlertAutoDisYes setMsgFrontSize:35];
     [customAlertAutoDisYes setAlertMsg:msg];
     [customAlertAutoDisYes setCustomAlertDelegate:self];
     [customAlertAutoDisYes RunCumstomAlert];
@@ -2777,9 +4769,9 @@
     [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
     [customAlertAutoDis setEndHeight:60];
     [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
-    [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2, customAlertAutoDis.endHeight/2+60)];
+    [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2,customAlertAutoDis.endHeight/2+10)];
     [customAlertAutoDis setStartAlpha:0.1];
-    [customAlertAutoDis setEndAlpha:0.8];
+    [customAlertAutoDis setEndAlpha:1.0];
     [customAlertAutoDis setDelayDisappearTime:5.0];
     [customAlertAutoDis setMsgFrontSize:30];
     [customAlertAutoDis setAlertMsg:msg];
@@ -2792,14 +4784,20 @@
 {
     NSLog(@"custom aler ok return");
     if ([alertKey isEqualToString:KEY_IS_GIVE_FIRST_LIGHT]) {
-        //起动：guidStep_guidFirstlyGiveLight_waitForTouchLigh
-        [self HandleGuidProcess:guidStep_guidFirstlyGiveLight_waitForTouchLigh];
+        
+        [self EnableUserInteractionInView:self.view];
+        
+        //第一个光回到头像
+        [self refreshLightStateForCallBackOrPopout:1];
+        
 
 
     }
     
     
     if ([alertKey isEqualToString:KEY_REMINDER_PAN_FOR_LIGHT]) {
+        
+        [self EnableUserInteractionInView:self.view];
         
         //起动：giudStep_guidPanToBring_waitForPan
         [self HandleGuidProcess:giudStep_guidPanToBring_waitForPan];
@@ -2809,24 +4807,38 @@
     
     if ([alertKey isEqualToString:KEY_REMINDER_GETINTO_CAMERA]) {
         
+        [self EnableUserInteractionInView:self.view];
+
         //起动：guidStep_guidIntoCamera_waitForTouch
         [self HandleGuidProcess:guidStep_guidIntoCamera_waitForTouch];
         
         
     }
-    
-    if ([alertKey isEqualToString:KEY_REMINDER_GIVE_LIGHT]) {
+    //从相机奖励，或， 连续登录奖励，刷新光状态
+    if ([alertKey isEqualToString:KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA] ||
+        [alertKey isEqualToString:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN]) {
         
-        [self animationGiveLightCout:giveLingtCout];
+        [self refreshLightStateForCallBackOrPopout:1];
+        
+        
     }
     
-    //点击头像，有光在养育，有奖励，点OK后，进入小屋
-    if ([alertKey isEqualToString:KEY_REMINDER_SUCC_GET_LIGHT]) {
+    //点击头像，
+    //或，拖回头像
+    if ([alertKey isEqualToString:KEY_REMINDER_GIVE_LIGHT_FROM_INTOHOME] || [alertKey isEqualToString:KEY_REMINDER_GIVE_LIGHT_FROM_PAN_TO_USERHEADER]) {
         
-        if (isGetinToHome) {
-            [self performSegueWithIdentifier:@"getintoHome" sender:nil];
-        }
+        //直接全收回，不显示新奖励的光,收回动画完成后，进入小屋
+        [self refreshLightStateForCallBackOrPopout:0];
+        //更新为光无养育
+        [self.userInfo updateisBringUpSunOrMoon:NO];
+        [self refreshLightCircleStatForUserHeaderOrSunMoon];
+
+
+    }
+    
+    if ([alertKey isEqualToString:KEY_REMINDER_GIVE_LIGHT_BUT_TIME_ERROR]) {
         
+        //什么也不做，返回
         
     }
     
@@ -2902,8 +4914,7 @@
     //引导完成的第一次起动处理
     //起动:guid_finishIntro_Start_firstOpen
     [self HandleGuidProcess:guid_finishIntro_Start_firstOpen];
-    //jjj
-    //[self whenFirstlyOpenViewHandle];
+
 }
 
 - (void)introDidEndScrollAt:(NSInteger) currentIndex  TotalCount:(NSInteger)pageCount
@@ -2981,14 +4992,18 @@
         if ([self.userInfo checkIsBringUpinSunOrMoon]) {
             
             //计算育成的时间，奖励光
-            if ([self caculateAndGiveSunOrMoon]>0) {
+            if ([self caculateAndGiveSunOrMoon:KEY_REMINDER_GIVE_LIGHT_FROM_INTOHOME]>0) {
                 //等用户点击OK时进入小屋
             }else
             {
-                [self callBackLight];
                 //待完成收回动画后，再进入小屋
+                [self refreshLightStateForCallBackOrPopout:0];
+                //更新为光无养育
+                [self.userInfo updateisBringUpSunOrMoon:NO];
+                [self refreshLightCircleStatForUserHeaderOrSunMoon];
 
             }
+
             isGetinToHome =  YES;
 
 
@@ -3065,14 +5080,21 @@
             if ([self.userInfo checkIsBringUpinSunOrMoon]) {
                 
                 //计算育成的时间，奖励光
-                if ([self caculateAndGiveSunOrMoon]>0) {
+                if ([self caculateAndGiveSunOrMoon:KEY_REMINDER_GIVE_LIGHT_FROM_INTOHOME]>0) {
                     //等用户点击OK时进入小屋
                 }else
                 {
-                    [self callBackLight];
+                    //[self callBackLight];
                     //待完成收回动画后，再进入小屋
+                    [self refreshLightStateForCallBackOrPopout:0];
                     
                 }
+                
+                
+                //光被召回了，更新养育状态
+                [self.userInfo updateisBringUpSunOrMoon:NO];
+                [self refreshLightCircleStatForUserHeaderOrSunMoon];
+                
                 isGetinToHome =  YES;
 
 
@@ -3287,6 +5309,17 @@
 }
 
 #pragma mark  - ------测试-------
+- (IBAction)testButton1:(id)sender
+{
+    
+    giveLingtCout = 1;
+    [userInfo addSunOrMoonValue:1];
+    [self reFreshCaculateAndPopOutLightSpirite];
+    
+    
+    
+    
+}
 - (IBAction)testNet:(id)sender {
     
     [_userCloud updateUserImage:Nil];

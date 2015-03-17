@@ -23,6 +23,7 @@
 
     UIImage *editImageOld;
     UIImageView* editImageOldView;
+    NSString* editOldSentence;
     UIImage *sunMoonImage;
     UIImageView *sunMoonImageView;
     NSString* timeString;
@@ -80,7 +81,7 @@
     
     currentImage = [imagePickerData objectForKey:CAMERA_IMAGE_KEY];
     
-    UIImage *bkImage = [UIImage imageNamed:@"编辑背景图.png"];
+    UIImage *bkImage = [UIImage imageNamed:@"编辑背景图V1.png"];
     UIImageView *bkImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     bkImageView.image = bkImage;
     bkImageView.backgroundColor = [UIColor blackColor];
@@ -101,18 +102,18 @@
     [self.view addSubview:toolBarImageView];
     
     //加重拍按钮
-    NSInteger rePhotoBtnWidth = 25;
-    NSInteger rePhotoBtnHeight = 20;
+    NSInteger rePhotoBtnWidth;
+    NSInteger rePhotoBtnHeight;
     if ([CommonObject CheckDeviceTypeVersion]==iphone6Pluse) {
-        rePhotoBtnWidth = 35;
-        rePhotoBtnHeight = 30;
+        rePhotoBtnWidth = 35+20;
+        rePhotoBtnHeight = 30+20;
     }else
     {
-        rePhotoBtnWidth = 25;
-        rePhotoBtnHeight = 20;
+        rePhotoBtnWidth = 25+20;
+        rePhotoBtnHeight = 20+20;
     }
     UIButton *rePhotoBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rePhotoBtn setImage:[UIImage imageNamed:@"camera.png"] forState:UIControlStateNormal];
+    [rePhotoBtn setImage:[UIImage imageNamed:@"camera-yellow.png"] forState:UIControlStateNormal];
     [rePhotoBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, toolBarImageView.center.y-rePhotoBtnHeight/2, rePhotoBtnWidth, rePhotoBtnHeight)];
     [rePhotoBtn addTarget:self action:@selector(reDoPhoto:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:rePhotoBtn];
@@ -191,7 +192,6 @@
     [self.view addSubview:rightBtn];
     
     //相片显示
-
     [self.view setBackgroundColor:[UIColor colorWithWhite:0.388 alpha:1.000]];
     NSInteger y = 60;
     float imageWideth ;
@@ -211,10 +211,6 @@
         y = 70;
 
     }
-    //NSLog(@"****&&&&&****%f", [[UIScreen mainScreen] bounds].size.width);
-    //NSLog(@"****&&&&&****%f", [[UIScreen mainScreen] bounds].size.height);
-    
-
     
     
     float imageHeight = imageWideth*960/640;
@@ -228,9 +224,11 @@
     editImageOld = Nil;
     if(iSunORMoon == IS_SUN_TIME) {
         editImageOld = [UIImage imageWithData:self.userInfo.sun_image];
+        editOldSentence = self.userInfo.sun_image_sentence;
     }else if (iSunORMoon == IS_MOON_TIME)
     {
         editImageOld = [UIImage imageWithData:self.userInfo.moon_image];
+        editOldSentence = self.userInfo.moon_image_sentence;
     }
     
     float editImageOldWideth = 30;
@@ -260,14 +258,7 @@
     
     //日月
     int sunMoonImageDiameter = 60;
-    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-        sunMoonImage = [UIImage imageNamed:@"sun-小.png"];
-
-    }else
-    {
-        sunMoonImage = [UIImage imageNamed:@"moon-小.png"];
-
-    }
+    sunMoonImage = [CommonObject getBaseLightImageByTime];
     sunMoonImageView = [[UIImageView alloc]initWithFrame:CGRectMake(timeImageView.frame.origin.x-30, timeImageView.frame.origin.y+timeImageHeight/2-sunMoonImageDiameter/2, sunMoonImageDiameter, sunMoonImageDiameter)];
     sunMoonImageView.image = sunMoonImage;
     [self.view addSubview:sunMoonImageView];
@@ -416,14 +407,7 @@
     
     //日月最上方的
     UIImage *sunMoonImageTop;
-    if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-        sunMoonImageTop = [UIImage imageNamed:@"sun-小.png"];
-        
-    }else
-    {
-        sunMoonImageTop = [UIImage imageNamed:@"moon-小.png"];
-        
-    }
+    sunMoonImageTop = [CommonObject getSunOrMooonImageByTime];
     NSInteger sunMoonImageTopWidth = 200;
     NSInteger sunMoonImageTopHeigth =200;
     sunMoonImageViewTop = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2 - sunMoonImageTopWidth/2, -140, sunMoonImageTopWidth, sunMoonImageTopHeigth)];
@@ -632,46 +616,60 @@
     }
     
     //增加光的动画准备
-    [addVauleAnimation setStartPoint:sunMoonImageViewTop.center];
-    [addVauleAnimation setEndpoint:sunMoonImageView.center];
-    [addVauleAnimation setUseRepeatCount:count];
-    [addVauleAnimation setBkView:self.view];
-    if (iSunORMoon == IS_SUN_TIME) {
-        [addVauleAnimation setImageName:@"sun-小.png"];
-    }else
-    {
-        [addVauleAnimation setImageName:@"moon-小.png"];
-    }
-    [addVauleAnimation setAminationImageViewframe:CGRectMake(sunMoonImageViewTop.frame.origin.x, sunMoonImageViewTop.frame.origin.y, 60, 60)];
+    UIImageView* srcView = [[UIImageView alloc] initWithImage:[CommonObject getBaseLightImageByTime]];
+    LightType type = [CommonObject getBaseLightTypeByTime];
+    NSDictionary *aniDic = [NSDictionary dictionaryWithObjectsAndKeys:srcView,KEY_ANIMATION_VIEW,[NSNumber numberWithInteger:type],KEY_ANIMATION_LIGHT_TYPE, nil];
+    [self.view addSubview:srcView];
     
-    //判断是否增加阳光月光值
-        
-    if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
-        
-        [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
-        [self.userInfo addSunOrMoonValue:count];
-        [self.userInfo updateIsHaveAddSunValueForTodayPhoto:YES];
+    CustomAnimation* customAnimation = [[CustomAnimation alloc] initCustomAnimation];
+    
+    CGPoint startPoint = sunMoonImageViewTop.center;
+    CGPoint endPoint = sunMoonImageView.center;
+    
+    float disX = endPoint.x - startPoint.x;
+    float disY = endPoint.y - startPoint.y;
+    
+    CGPoint bazierPoint_1 = CGPointMake(startPoint.x+(disX/3)+20, startPoint.y + (disY/3) +20);
+    
+    [customAnimation setAniBazierCenterPoint1:bazierPoint_1];
+    
+    CGPoint bazierPoint_2 = CGPointMake(startPoint.x+(disX/3*2)+20, startPoint.y + (disY/3*2) +20);
+    [customAnimation setAniBazierCenterPoint2:bazierPoint_2];
+    
+    [customAnimation setAniType:BEZIER_ANI_TYPE];
+    [customAnimation setAniImageViewDic:aniDic];
+    [customAnimation setBkLayer:self.view.layer];
+    [customAnimation setAniStartSize:CGSizeMake(30, 30)];
+    [customAnimation setAniEndSize:CGSizeMake(30, 30)];
+    [customAnimation setAniStartPoint:startPoint];
+    [customAnimation setAniEndpoint:endPoint];
+    [customAnimation setCustomAniDelegate:self];
+    [customAnimation setAnikey:@"animation_bazier_add_one_light"];
+    [customAnimation setAniRepeatCount:1];
+    [customAnimation setAniDuration:1.5];
+    
+    [customAnimation startCustomAnimation];
+    
+    [self.userInfo addSunOrMoonValue:count];
+    [self.userInfo updateIsHaveAddSunValueForTodayPhoto:YES];
+    
 
-    }else
-    {
-        
-        [addVauleAnimation moveLightWithIsUseRepeatCount:YES];
-        [self.userInfo addSunOrMoonValue:count];
-        [self.userInfo updateIsHaveAddMoonValueForTodayPhoto:YES];
-        
-    }
-    
  
     return count;
 }
 
 #pragma mark - AminationCustomDelegate
-
-- (void) animationFinishedRuturn:(NSString*) aniKey
+- (void) customAnimationFinishedRuturn:(NSString*) aniKey  srcViewDic:(NSDictionary*) srcViewDic
 {
+        UIImageView* srcView = (UIImageView*)[srcViewDic objectForKey:KEY_ANIMATION_VIEW];
+    
+    [srcView removeFromSuperview];
     valuelabel.text = @"+1";
     
+    
+
 }
+
 #pragma mark -
 
 - (IBAction)setImageStyle:(UITapGestureRecognizer *)sender
@@ -757,7 +755,7 @@
 }
 
 
-- (IBAction)fitlerDone:(id)sender
+- (void)fitlerDone:(id)sender
 {
     
     [self dismissViewControllerAnimated:YES completion:^{
@@ -765,8 +763,8 @@
 
         NSDictionary* imageFilterData = [NSDictionary dictionaryWithObjectsAndKeys:rootImageView.image,CAMERA_IMAGE_KEY,
                                          [imagePickerData objectForKey:CAMERA_TIME_KEY], CAMERA_TIME_KEY,
-                                         [imagePickerData objectForKey:CAMERA_SENTENCE_KEY], CAMERA_SENTENCE_KEY,
-                                         [NSString stringWithFormat:@"%d", finalGiveLightCout],CAMERA_LIGHT_COUNT,
+                                         currentSentence, CAMERA_SENTENCE_KEY,
+                                         [NSString stringWithFormat:@"%u", finalGiveLightCout],CAMERA_LIGHT_COUNT,
                                          nil];
         [delegate imageFitlerProcessDone:imageFilterData];
         
@@ -777,6 +775,8 @@
         }
         
     }];
+    
+    
 }
 
 - (IBAction)reDoPhoto:(id)sender {
@@ -905,22 +905,60 @@
 {
     [self RunIndicator:YES];
     
+    //存旧的相片
+    UIImage* tempImage = editImageOld;
+    NSString* tempString = editOldSentence;
+//    if(iSunORMoon == IS_SUN_TIME) {
+//        tempImage = [UIImage imageWithData:self.userInfo.sun_image];
+//        tempString = self.userInfo.sun_image_sentence;
+//    }else if (iSunORMoon == IS_MOON_TIME)
+//    {
+//        tempImage = [UIImage imageWithData:self.userInfo.moon_image];
+//        tempString = self.userInfo.moon_image_sentence;
+//    }
+//    
+//    if (!tempImage || !tempString) {
+//        [self RunIndicator:NO];
+//        return;
+//    }
     
-    UIImage* tempOld = Nil;
-    NSString* tempOldstring = Nil;
-    if(iSunORMoon == IS_SUN_TIME) {
-        tempOld = [UIImage imageWithData:self.userInfo.sun_image];
-        tempOldstring = self.userInfo.sun_image_sentence;
-    }else if (iSunORMoon == IS_MOON_TIME)
+
+    //交换位置
+    //更新旧的相片为现有相片
+    editImageOld = currentImage;
+    editImageOldView.image =currentImage;
+    editOldSentence = currentSentence;
+    
+    //更新现有相片
+    currentImage = tempImage;
+    rootImageView.image = tempImage;
+    currentSentence =tempString;
+
+
+
+    /*
+    //时间值
+    NSString* tempTime =[imagePickerData objectForKey:CAMERA_TIME_KEY];
+    tempTime = [tempTime stringByReplacingOccurrencesOfString:@"." withString:@"月"];
+    timeString = [tempTime stringByAppendingString:@"日"];
+    [timelabel setText:timeString];
+    
+    
+    //语录
+    currentSentence = [imagePickerData objectForKey:CAMERA_SENTENCE_KEY];
+    [sentencelabel setText:currentSentence];
+    
+    //调色盘
+    for(int i=0;i<14;i++)
     {
-        tempOld = [UIImage imageWithData:self.userInfo.moon_image];
-        tempOldstring = self.userInfo.moon_image_sentence;
+        //UIImageView * scrollView = (UIImageView*)[self.view viewWithTag:(TAG_EDITE_PHOTO_SCROLL_VIEW)];
+        UIImageView *scrollImageView= (UIImageView*)[scrollerView viewWithTag:(i)];
+        bgImageScroll = [self changeImage:i imageView:nil];
+        scrollImageView.image = bgImageScroll;
+        
     }
     
-    if (!tempOld || !tempOldstring) {
-        [self RunIndicator:NO];
-        return;
-    }
+    
     
     //交换新旧图片
     //旧相片放到imagePickerData中
@@ -928,7 +966,7 @@
                                      [imagePickerData objectForKey:CAMERA_TIME_KEY], CAMERA_TIME_KEY,
                                      tempOldstring,CAMERA_SENTENCE_KEY,[imagePickerData objectForKey:CAMERA_VOICE_NAEM_KEY], CAMERA_VOICE_NAEM_KEY,
                                      nil];
-    //换新照的相片存到userinfo中，当成上次照的旧相片
+    //换新照的相片存到userinfo中，当成上次照的旧相片, 当用户再次点击时，获取
     if(iSunORMoon == IS_SUN_TIME) {
         self.userInfo.sun_image = UIImagePNGRepresentation(currentImage);
         self.userInfo.sun_image_sentence = currentSentence;
@@ -943,6 +981,8 @@
     
     [self reFreshcelement];
 
+     */
+    
     [self RunIndicator:NO];
 
     
@@ -1108,7 +1148,7 @@
 -(void) showCustomYesAlertSuperView:(NSString*) msg AlertKey:alertKey
 {
     
-    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:@"提示框v1.png"  yesBtnImageName:@"YES.png" posionShowMode:userSet AlertKey:alertKey];
+    customAlertAutoDisYes = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view taget:(id)self bkImageName:[CommonObject getAlertBkByTime]  yesBtnImageName:@"YES.png" posionShowMode:userSet AlertKey:alertKey];
     [customAlertAutoDisYes setStartCenterPoint:self.view.center];
     [customAlertAutoDisYes setEndCenterPoint:self.view.center];
     [customAlertAutoDisYes setStartAlpha:0.1];
@@ -1118,7 +1158,7 @@
     [customAlertAutoDisYes setEndWidth:SCREEN_WIDTH/5*3];
     [customAlertAutoDisYes setEndHeight:customAlertAutoDisYes.endWidth];
     [customAlertAutoDisYes setDelayDisappearTime:5.0];
-    [customAlertAutoDisYes setMsgFrontSize:45];
+    [customAlertAutoDisYes setMsgFrontSize:35];
     [customAlertAutoDisYes setAlertMsg:msg];
     [customAlertAutoDisYes setCustomAlertDelegate:self];
     [customAlertAutoDisYes RunCumstomAlert];
@@ -1139,7 +1179,7 @@
     [customAlertAutoDis setStartHeight:0];
     [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
     [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndHeight:50];
+    [customAlertAutoDis setEndHeight:60];
     [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
     [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2, customAlertAutoDis.endHeight/2+60)];
     [customAlertAutoDis setStartAlpha:0.1];

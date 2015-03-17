@@ -8,26 +8,28 @@
 
 
 
-"Sun_sentenc_1" = "全新的一天，全新的我！";  //初始默认
+"Sun_sentenc_1" = "Hi，今天一天好心情！";  //初始默认
 "Sun_sentenc_2" = "阳光自信每一天，这就是我！";
 "Sun_sentenc_3" = "努力，我最棒！";
 
-"Moon_sentenc_1" = "我是月光公主！";  //初始默认
+"Moon_sentenc_1" = "又一天过去了，月光公主要睡个好觉喽！";  //初始默认
 "Moon_sentenc_2" = "我觉得，我今天美到无与伦比，哇咔咔！";
 "Moon_sentenc_3" = "晚安，好好睡个美容觉吧！";
 
-"Sun time is on" = "阳光时间到了，向着太阳说出你的美丽宣言！";
-"Moon time is on" = "月光时间到了，和月亮说一句美丽宣言！";
+"Sun time is on" = "早上美拍时间到了，和太阳说出你的美丽宣言！";
+"Moon time is on" = "晚上美拍时间到了，和月亮说一句美丽宣言！";
 
 "appName" = "日月美拍";
 "appUrl"  = "https://itunes.apple.com/cn/app/ri-yue-mei-pai/id929494640";
 "FromUri" = "（大家快来一起:https://itunes.apple.com/cn/app/ri-yue-mei-pai/id929494640）";
 "MsgFrefixSun" = "今天的阳光宣言：";
 "MsgFrefixMoon" = "今天的月光宣言：";
+"CutScreenShareMsg" = "自拍还可以这样玩，玩出美丽，玩出%@光天空";
+"MySkyInfo" = "我的%@光天空已拥有%lu个%@光，召唤了%lu个%@光之精灵，";
+"newCallSpiriteAlert" = "现在已召唤了%lu个%@光之精灵了\n分享给好友吧！";
 
-
-"Change to sun time hi message" = "阳光时间到了，向着太阳说出你的美丽宣言！";
-"Change to moon time hi message" = "月光时间到了，和月亮说一句美丽宣言！";
+"Change to sun time hi message" = "早上美拍时间到了，和太阳说出你的美丽宣言！";
+"Change to moon time hi message" = "晚上美拍时间到了，和月亮说一句美丽宣言！";
 
 
 "iLinkAppMessage" = " \n需要尝鲜新功能吗？";

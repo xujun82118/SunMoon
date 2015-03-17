@@ -131,14 +131,7 @@
 
         //日月最上方的
         UIImage *sunMoonImageTop;
-        if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-            sunMoonImageTop = [UIImage imageNamed:@"sun-小.png"];
-            
-        }else
-        {
-            sunMoonImageTop = [UIImage imageNamed:@"moon-小.png"];
-            
-        }
+        sunMoonImageTop = [CommonObject getSunOrMooonImageByTime];
         NSInteger sunMoonImageTopWidth = 200;
         NSInteger sunMoonImageTopHeigth =200;
         sunMoonImageViewTop = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2 - sunMoonImageTopWidth/2, -140, sunMoonImageTopWidth, sunMoonImageTopHeigth)];
@@ -623,7 +616,6 @@
         sayView.hidden = NO;
         voiceValueLabel.hidden = NO;
         voiceValueLabel.text = @"0";
-
         
     }
     
@@ -663,6 +655,17 @@
     
     if ([twodelayTime.text isEqualToString:@"3s"]) {
         twodelayTime.text = @"2s";
+        [UIView animateWithDuration:0.5 animations:^{
+            twodelayTime.transform = CGAffineTransformMakeScale(2, 2);
+            
+        } completion:^(BOOL finished) {
+            
+            [UIView animateWithDuration:0.3 animations:^{
+                twodelayTime.transform = CGAffineTransformIdentity;
+                
+            } completion:^(BOOL finished) {
+            }];
+        }];
         [NSTimer scheduledTimerWithTimeInterval:1.0
                                          target:self
                                        selector:@selector(delay2SandTakePicture)
@@ -673,6 +676,17 @@
     
     if ([twodelayTime.text isEqualToString:@"2s"]) {
         twodelayTime.text = @"1s";
+        [UIView animateWithDuration:0.5 animations:^{
+            twodelayTime.transform = CGAffineTransformMakeScale(2, 2);
+            
+        } completion:^(BOOL finished) {
+            
+            [UIView animateWithDuration:0.3 animations:^{
+                twodelayTime.transform = CGAffineTransformIdentity;
+                
+            } completion:^(BOOL finished) {
+            }];
+        }];
         [NSTimer scheduledTimerWithTimeInterval:1.0
                                          target:self
                                        selector:@selector(delay2SandTakePicture)
@@ -683,6 +697,17 @@
     
     if ([twodelayTime.text isEqualToString:@"1s"]) {
         twodelayTime.text = @"Action";
+        [UIView animateWithDuration:0.5 animations:^{
+            twodelayTime.transform = CGAffineTransformMakeScale(2, 2);
+            
+        } completion:^(BOOL finished) {
+            
+            [UIView animateWithDuration:0.3 animations:^{
+                twodelayTime.transform = CGAffineTransformIdentity;
+                
+            } completion:^(BOOL finished) {
+            }];
+        }];
         [NSTimer scheduledTimerWithTimeInterval:1.0
                                          target:self
                                        selector:@selector(delay2SandTakePicture)
@@ -693,6 +718,17 @@
     
     if ([twodelayTime.text isEqualToString:@"Action"]) {
         twodelayTime.hidden = YES;
+        [UIView animateWithDuration:0.5 animations:^{
+            twodelayTime.transform = CGAffineTransformMakeScale(2, 2);
+            
+        } completion:^(BOOL finished) {
+            
+            [UIView animateWithDuration:0.3 animations:^{
+                twodelayTime.transform = CGAffineTransformIdentity;
+                
+            } completion:^(BOOL finished) {
+            }];
+        }];
         
         [NSTimer scheduledTimerWithTimeInterval:1.0
                                          target:self
@@ -798,17 +834,17 @@
         if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
             if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"请每天阳光时间\n美拍一次" AlertKey:@"reminderOnce"];
+                [self showCustomYesAlertSuperView:@"每天早上美拍一次就够了^_^" AlertKey:@"reminderOnce"];
                 
-                [[GuidController sharedSingleUserInfo] updateGuidHaveTakePhoto:YES];
+                [[GuidController sharedSingleUserInfo] setGuidHaveTakePhoto:YES];
             }
         }else
         {
             if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"请每天月光时间\n美拍一次" AlertKey:@"reminderOnce"];
+                [self showCustomYesAlertSuperView:@"每天晚上美拍一次就够了^_^" AlertKey:@"reminderOnce"];
 
-                [[GuidController sharedSingleUserInfo] updateGuidHaveTakePhoto:YES];
+                [[GuidController sharedSingleUserInfo] setGuidHaveTakePhoto:YES];
 
             }
 
@@ -1013,16 +1049,26 @@
     {
         NSLog(@"音量够大，奖励一个光");
         
+        //闪光提示
+        
+        self.haloGive = [PulsingHaloLayer layer];
+        self.haloGive.position = self.view.center;
+        self.haloGive.radius = 0.8 * kMaxRadius;
+        self.haloGive.animationDuration = 0.8;
+        self.haloGive.eerepeatCount = 1;
+        self.haloGive.backgroundColor = [CommonObject getIndicationColorByTime].CGColor;
+        [self.view.layer addSublayer:self.haloGive];
+        
         //增加光的动画准备
         [addVauleAnimation setStartPoint:self.view.center];
         [addVauleAnimation setEndpoint:sunMoonImageViewTop.center];
         [addVauleAnimation setUseRepeatCount:1];
         [addVauleAnimation setBkView:self.view];
         if (iSunORMoon == IS_SUN_TIME) {
-            [addVauleAnimation setImageName:@"sun-小.png"];
+            [addVauleAnimation setImageName:@"light-yellow-0.png"];
         }else
         {
-            [addVauleAnimation setImageName:@"moon-小.png"];
+            [addVauleAnimation setImageName:@"light-white-0.png"];
         }
         [addVauleAnimation setAminationImageViewframe:CGRectMake(voiceValueView.frame.origin.x, voiceValueView.frame.origin.y, 60, 60)];
         
@@ -1044,6 +1090,12 @@
 #pragma mark - AminationCustomDelegate
 
 - (void) animationFinishedRuturn:(NSString*) aniKey aniView:(UIImageView*) aniView
+{
+    
+    
+}
+
+- (void) customAnimationFinishedRuturn:(NSString*) aniKey  srcViewDic:(NSDictionary*) srcViewDic
 {
     
     
@@ -1121,12 +1173,12 @@
 {
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
         
-        [CommonObject showActionSheetOptiontitleMsg:@"说出美丽宣言自拍后，才能获得阳光" ShowInView:self.view CancelMsg:@"宣言&自拍" DelegateObject:self Option:@"使用相片"];
+        [CommonObject showActionSheetOptiontitleMsg:@"说出美丽宣言自拍，才能获得阳光" ShowInView:self.view CancelMsg:@"宣言&自拍" DelegateObject:self Option:@"使用相片"];
         
         
     }else if([CommonObject checkSunOrMoonTime] ==  IS_MOON_TIME)
     {
-        [CommonObject showActionSheetOptiontitleMsg:@"说出美丽宣言自拍后，才能获得月光" ShowInView:self.view CancelMsg:@"宣言&自拍" DelegateObject:self Option:@"使用相片"];
+        [CommonObject showActionSheetOptiontitleMsg:@"说出美丽宣言自拍，才能获得月光" ShowInView:self.view CancelMsg:@"宣言&自拍" DelegateObject:self Option:@"使用相片"];
     }
     
 
@@ -1160,7 +1212,7 @@
         switch (guidInfo.guidStepNumber) {
             case guid_camera_start:
             {
-                [guidInfo updateGuidStepNumber:guid_oneByOne];
+                [guidInfo setGuidStepNumber:guid_oneByOne];
                 
                 [self showCustomYesAlertSuperView:@"可选择松开后2s\n自动拍照" AlertKey:nil];
             }
@@ -1169,7 +1221,7 @@
 
             case guid_camera_End:
             {
-                [guidInfo updateGuidStepNumber:guid_oneByOne];
+                [guidInfo setGuidStepNumber:guid_oneByOne];
                 
                 [guidInfo RemoveTouchIndication];
                 
@@ -1215,30 +1267,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     }
     
     image = [image clipImageWithScaleWithsize:CGSizeMake(320, 480)] ;
-    
-    
-
-    /*
-    [picker dismissViewControllerAnimated:YES completion:^{
-        
-        //test
-        NSDictionary *imageData = [NSDictionary dictionaryWithObjectsAndKeys:
-                                   image,CAMERA_IMAGE_KEY,
-                                   [CommonObject getCurrentDate], CAMERA_TIME_KEY,
-                                   labelSentence, CAMERA_SENTENCE_KEY,
-                                   _voiceName, CAMERA_VOICE_NAEM_KEY,
-                                   @"1", CAMERA_LIGHT_COUNT,
-                                   nil];
-        
-        ImageFilterProcessViewController*  fitler = [[ImageFilterProcessViewController alloc] init];
-        
-        [fitler setDelegate:self];
-        [fitler setISunORMoon:[CommonObject checkSunOrMoonTime]];
-        [fitler setUserInfo:self.userInfo];
-        fitler.imagePickerData = imageData;
-        [self presentViewController:fitler animated:YES completion:NULL];
-    }];
-    */
      
 
     [picker dismissViewControllerAnimated:NO completion:^{
@@ -1259,16 +1287,6 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
                                    _voiceName, CAMERA_VOICE_NAEM_KEY,
                                    addValue, CAMERA_LIGHT_COUNT,
                                    nil];
-        
-        //test
-//        NSInteger static i =1;
-//        NSString * testDate = [NSString stringWithFormat:@"%d", i++];
-//        NSDictionary *imageData = [NSDictionary dictionaryWithObjectsAndKeys:
-//                                   image,CAMERA_IMAGE_KEY,
-//                                   testDate, CAMERA_TIME_KEY,
-//                                   labelSentence, CAMERA_SENTENCE_KEY,
-//                                   _voiceName, CAMERA_VOICE_NAEM_KEY,
-//                                   nil];
         
         [_customDelegate cameraPhoto:imageData];
 
@@ -1406,7 +1424,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     [customAlertAutoDis setStartHeight:0];
     [customAlertAutoDis setStartWidth:SCREEN_WIDTH-30];
     [customAlertAutoDis setEndWidth:SCREEN_WIDTH-30];
-    [customAlertAutoDis setEndHeight:50];
+    [customAlertAutoDis setEndHeight:60];
     [customAlertAutoDis setStartCenterPoint:CGPointMake(SCREEN_WIDTH/2, -customAlertAutoDis.endHeight/2)];
     [customAlertAutoDis setEndCenterPoint:CGPointMake(SCREEN_WIDTH/2, customAlertAutoDis.endHeight/2+60)];
     [customAlertAutoDis setStartAlpha:0.1];

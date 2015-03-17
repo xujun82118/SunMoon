@@ -9,11 +9,14 @@
 #import "CustomAnimation.h"
 
 @implementation CustomAnimation
+{
+    int _index;
+}
 @synthesize aniType = _aniType;
 @synthesize bkLayer = _bkLayer;
 @synthesize aniLayer = _aniLayer;
-@synthesize aniImageView =_aniImageView;
-@synthesize aniImage = _aniImage;
+@synthesize aniImageViewDic = _aniImageViewDic;
+@synthesize aniImageView = _aniImageView;
 @synthesize aniStartSize = _aniStartSize;
 @synthesize aniEndSize = _aniEndSize;
 @synthesize aniStartPoint = _aniStartPoint;
@@ -32,22 +35,15 @@
 @synthesize aniKeyframePointCount = _aniKeyframePointCount;
 
 
+@synthesize sipiriteArray=_sipiriteArray;
+@synthesize sipiriteAnimationType=_sipiriteAnimationType;
 
-//-(instancetype)initCustomAnimation
-//{
-//    
-//    self = [super init];
-//    if (!self) {
-//        return nil;
-//    }
-//
-//    _aniLayer=[[CALayer alloc]init];
-//    
-//    return self;
-//    
-//}
+@synthesize displayLink=_displayLink;
+@synthesize displayLinkEnable=_displayLinkEnable;
 
--(instancetype)initCustomAnimationWithSrcView:(UIImageView*) srcView
+
+
+-(instancetype)initCustomAnimation
 {
     
     self = [super init];
@@ -56,7 +52,12 @@
     }
     
     _aniLayer=[[CALayer alloc]init];
-    _aniImageView = srcView;
+    
+    _aniKeyframePointArray = [NSMutableArray arrayWithCapacity:0];
+
+    
+    _displayLink=[CADisplayLink displayLinkWithTarget:self selector:@selector(step)];
+    _displayLinkEnable = FALSE;
     
     return self;
 }
@@ -66,10 +67,19 @@
 {
     _bkLayer = layer;
     NSAssert((_bkLayer), @"_bkLayer == nil, it must be set before _aniLayer");
-    [_bkLayer addSublayer:_aniLayer];
+    _bkLayerBelow =  _bkLayer;
+
 
 }
 
+
+-(void)setAniImageViewDic:(NSDictionary *)aniImageViewDic
+{
+    
+    _aniImageViewDic = aniImageViewDic;
+    _aniImageView = (UIImageView*)([_aniImageViewDic objectForKey:KEY_ANIMATION_VIEW]);
+    aniImage = _aniImageView.image;
+}
 
 -(void) startCustomAnimation
 {
@@ -77,9 +87,12 @@
     //设置动画内容
     _aniLayer.position=_aniStartPoint;
     _aniLayer.anchorPoint=CGPointMake(0.5, 0.5);
-    _aniLayer.contents=(id)_aniImage.CGImage;
+    _aniLayer.contents=(id)aniImage.CGImage;
     _aniLayer.opacity=1;
     _aniLayer.bounds=CGRectMake(0, 0, _aniStartSize.width,_aniStartSize.height);
+    [self addAniLayer];
+
+
     
     if (_aniType == BEZIER_ANI_TYPE) {
         [self bazierCustomAnimation];
@@ -94,20 +107,24 @@
         [self keyFramePostionAnimation];
     }
     
+    if (_aniType == KEY_FRAME_POSION_UIVIEW_TYPE) {
+        [self keyFramePostionAnimationByUiew];
+    }
     
 }
 
-
+/**
+ *  关键帧动画，可设置任意多的关键帧位置
+ */
 -(void) keyFramePostionAnimation
 {
     //1.创建关键帧动画并设置动画属性
     _aniKeyFrame=[CAKeyframeAnimation animationWithKeyPath:@"position"];
     
     //2.设置关键帧
-    //加入开始，与结束位置
-    [_aniKeyframePointArray insertObject:[NSValue valueWithCGPoint:_aniStartPoint] atIndex:0];
-    [_aniKeyframePointArray insertObject:[NSValue valueWithCGPoint:_aniEndpoint] atIndex:_aniKeyframePointArray.count];
+    [self insertStartEndPointForKeyFrameArray];
     _aniKeyFrame.values=_aniKeyframePointArray;
+
 
     //设置其他属性
     _aniKeyFrame.duration=_aniDuration;
@@ -117,24 +134,7 @@
     _aniKeyFrame.delegate = self;
     _aniKeyFrame.removedOnCompletion = YES;
 
-
-    //设置随机帧时间
-    NSMutableArray* keyFrameTimeArray =[NSMutableArray arrayWithCapacity:_aniKeyframePointCount];
-    //第1帧时间
-    [keyFrameTimeArray addObject:[NSNumber numberWithFloat:0.0]];
-    //中间n-2帧时间，把0.0到0.9分成n-2份
-    float sTimeAdd;
-    NSInteger n =_aniKeyframePointCount-2;
-    float everyTime = (0.9-0.0)/n;
-    for (int i = 0; i<n; i++) {
-        
-        sTimeAdd = everyTime * (i+1);
-        NSNumber *sTime = [NSNumber numberWithFloat:(sTimeAdd)];
-        [keyFrameTimeArray addObject:sTime];
-    }
-    //最后一帧时间，保证设定总时间内完成
-    [keyFrameTimeArray addObject:[NSNumber numberWithFloat:1.0]];
-    _aniKeyFrame.keyTimes = keyFrameTimeArray;
+    _aniKeyFrame.keyTimes = [self setKeyFrameTimes];
     _aniKeyFrame.repeatCount = _aniRepeatCount;
     
     
@@ -144,13 +144,87 @@
     
 }
 
--(void)  setAniKeyframePoint:(CGPoint) setPoint
-{
-    if (!_aniKeyframePointArray) {
-        _aniKeyframePointArray = [NSMutableArray arrayWithCapacity:_aniKeyframePointCount];
 
+-(void) insertStartEndPointForKeyFrameArray
+{
+    //加入开始，与结束位置
+    [_aniKeyframePointArray insertObject:[NSValue valueWithCGPoint:_aniStartPoint] atIndex:0];
+    [_aniKeyframePointArray insertObject:[NSValue valueWithCGPoint:_aniEndpoint] atIndex:_aniKeyframePointArray.count];
+    
+    if (_aniKeyframePointCount == 0)
+    {
+        //NSLog(@"Notify: No middle key frame is set, only start and end point!");
     }
     
+    
+}
+
+/**
+ *  计算关键帧时间,第一个是0.0，最后一个是1.0
+ *
+ *  @return 返回时间ARRAY
+ */
+-(NSMutableArray*)setKeyFrameTimes
+{
+    
+    //设置随机帧时间
+    NSMutableArray* keyFrameTimeArray =[NSMutableArray arrayWithCapacity:_aniKeyframePointCount];
+    //第1帧时间
+    [keyFrameTimeArray addObject:[NSNumber numberWithFloat:0.0]];
+    //中间n-2帧时间，把0.0到0.9分成n-2份
+    float sTimeAdd;
+    if (_aniKeyframePointCount != 0) {
+        
+        float everyTime = (0.9-0.0)/_aniKeyframePointCount;
+        for (int i = 0; i<_aniKeyframePointCount; i++) {
+            
+            sTimeAdd = everyTime * (i+1);
+            NSNumber *sTime = [NSNumber numberWithFloat:(sTimeAdd)];
+            [keyFrameTimeArray addObject:sTime];
+        }
+    }
+
+    //最后一帧时间，保证设定总时间内完成
+    [keyFrameTimeArray addObject:[NSNumber numberWithFloat:1.0]];
+    
+    return keyFrameTimeArray;
+}
+
+/**
+ *  用UIview封装实现的关键帧动画，封装不支持关键帧路径的贝塞尔动画
+ */
+-(void) keyFramePostionAnimationByUiew
+{
+    
+    [self insertStartEndPointForKeyFrameArray];
+
+    NSMutableArray* keyFrameTimeArray = [self setKeyFrameTimes];
+    
+    [UIView animateKeyframesWithDuration:_aniDuration delay:0 options: UIViewAnimationOptionCurveLinear| UIViewAnimationOptionCurveLinear animations:^{
+        
+        NSInteger keyCount = _aniKeyframePointArray.count;
+        for (int i = 0 ; i <keyCount-1; i++) {
+            
+            float keyTime = [[keyFrameTimeArray objectAtIndex:(i+1)] floatValue];
+            [UIView addKeyframeWithRelativeStartTime:0.0 relativeDuration:keyTime animations:^{
+                _aniImageView.center= [[_aniKeyframePointArray objectAtIndex:(i+1)] CGPointValue];
+            }];
+        }
+        
+    } completion:^(BOOL finished) {
+        
+        
+        [self.customAniDelegate customAnimationFinishedRuturn:_anikey srcViewDic:_aniImageViewDic];
+        
+        
+    }];
+    
+}
+
+-(void)  setAniKeyframePoint:(CGPoint) setPoint
+{
+
+
     [_aniKeyframePointArray addObject:[NSValue valueWithCGPoint:setPoint]];
     
     
@@ -214,43 +288,149 @@
 #pragma mark 动画开始
 -(void)animationDidStart:(CAAnimation *)anim
 {
-    //NSLog(@"animation(%@) start.\r_aniLayer.frame=%@",anim,NSStringFromCGRect(_aniLayer.frame));
-    
-    //通过前面的设置的key获得动画
-    //NSLog(@"%@",[_aniLayer animationForKey:_anikey]);
-    
-    //隐藏原view
-    _aniImageView.alpha =  0.0;
 
     
+    //先移动srcview的位置，否则结束时什么闪烁
+    [self moveSrceViewToEndFrame:anim];
+    
+    //隐藏原view
+    [self needHideSrcView];
 }
 
 
 -(void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
 {
     //NSLog(@"%@",[_aniLayer animationForKey:_animationkey]);
+
+
+    //[self moveSrceViewToEndFrame:anim];
     
-    //开启事务
+    //移除时钟对象到主运行循环
+    if (_displayLinkEnable) {
+        [_displayLink removeFromRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+    }
+    
+    [self specialCustomFinishHandle:anim];
+
+    
+    [self.customAniDelegate customAnimationFinishedRuturn:_anikey srcViewDic:_aniImageViewDic];
+    
+
+}
+
+-(void)moveSrceViewToEndFrame:(CAAnimation *)anim
+{
+    
     [CATransaction begin];
     //禁用隐式动画
     [CATransaction setDisableActions:YES];
     _aniLayer.position=[[anim valueForKey:@"animation_coustom_end_point"] CGPointValue];
     
-    //NSLog(@"_aniLayer.position  end = %@",NSStringFromCGPoint(_aniLayer.position));
-    
-    //移动原view到终点位置
-    [_aniImageView setFrame:CGRectMake(_aniLayer.position.x-_aniEndSize.width/2, _aniLayer.position.y-_aniEndSize.height/2, _aniEndSize.width, _aniEndSize.height)];
-    _aniImageView.alpha =  1.0;
+    //移动原view到终点位置,必须放到动画开始中，否则会在原位闪烁
+    [_aniImageView setFrame:CGRectMake(_aniEndpoint.x-_aniEndSize.width/2, _aniEndpoint.y-_aniEndSize.height/2, _aniEndSize.width, _aniEndSize.height)];
     
     //提交事务
     [CATransaction commit];
+}
+
+/**
+ *  某些特点动画流程，需要特别的处理
+ */
+-(void) specialCustomStartHandle:(CAAnimation *)anim
+{
     
-    //显示的是_aniImageView，_aniLayer要移除
-    [_aniLayer removeFromSuperlayer];
-    
-    [self.customAniDelegate customAnimationFinishedRuturn:_anikey srcView:_aniImageView];
-    
+
     
 }
+
+-(void) specialCustomFinishHandle:(CAAnimation *)anim
+{
+    
+    if ((_sipiriteAnimationType == lightTypeYellowSpirte||_sipiriteAnimationType == lightTypeWhiteSpirite) && ([_anikey isEqualToString:KEY_ANIMATION_SWIM_SPIRITE_OUT_FOR_NEWSKY] || [_anikey isEqualToString:KEY_ANIMATION_SWIM_SPIRITE_OUT_FOR_REFRESH_ADD]||[_anikey isEqualToString:KEY_ANIMATION_SPIRITE_FLY_TRACE_TOUCH]))
+    {
+        //此种情况需要隐藏,因为它后面是连续动画
+        _aniImageView.hidden =  YES;
+    }else
+    {
+        //显示原view
+        _aniImageView.hidden =  NO;
+        
+    }
+    
+    //显示的是aniImageView，_aniLayer要移除
+    [self removeAniLayer];
+}
+
+
+
+
+
+#pragma mark - 精灵动画准备
+-(void) setSipiriteAnimationType:(LightType) sipiriteType
+{
+    _sipiriteAnimationType = sipiriteType;
+    _sipiriteArray=[NSMutableArray arrayWithCapacity:0];
+    //默认为2个动画片段
+    for (int i=1; i<3; i++) {
+        
+        NSString* spiTypeName = [CommonObject getImageNameByLightType:_sipiriteAnimationType];
+        NSString *name=[NSString stringWithFormat:@"%@-%d",spiTypeName,i];
+        UIImage *image=[UIImage imageNamed:name];
+        
+        NSAssert(image, @"GET image failed!, image name = %@", name);
+        
+        [_sipiriteArray addObject:image];
+    }
+    
+}
+
+-(void) displayLinkAnimationEnable
+{
+    //添加时钟对象到主运行循环
+    [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+    _displayLinkEnable = YES;
+    
+}
+
+
+//每次屏幕刷新就会执行一次此方法(每秒接近60次)
+-(void)step{
+    //定义一个变量记录执行次数
+    static int s=0;
+    NSInteger imageCount = _sipiriteArray.count;
+    //每秒执行6次
+    if (++s%4==0) {
+        UIImage *image=_sipiriteArray[_index];
+        _aniLayer.contents=(id)image.CGImage;//更新图片
+        _index=(_index+1)%imageCount;
+    }
+}
+
+#pragma mark - 动画层，及原动画图片设置
+//不同动画情况下，需要对动画层，及原动画图片进行设置
+-(void) removeAniLayer
+{
+    [_aniLayer removeFromSuperlayer];
+}
+
+-(void) addAniLayer
+{
+    //[_bkLayer addSublayer:_aniLayer];
+    [_bkLayer insertSublayer:_aniLayer above:_bkLayerBelow];
+
+}
+
+-(void)needHideSrcView
+{
+    _aniImageView.hidden = YES;
+    
+}
+
+-(void)needShowSrcView
+{
+    _aniImageView.hidden = NO;
+    
+}
+
 
 @end

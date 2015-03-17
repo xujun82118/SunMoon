@@ -55,6 +55,8 @@
                                           description:nil
                                             mediaType:SSPublishContentMediaTypeImage];
 
+    UIImage* temp =[ShareSDK jpegImageWithImage:shareImage
+                                        quality:CGFLOAT_DEFINED];
     
     
     NSArray *shareList = [ShareSDK getShareListWithType:

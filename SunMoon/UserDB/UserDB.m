@@ -41,7 +41,7 @@
 
     } else {
         // TODO: 插入新的数据库
-        NSString * sql = @"CREATE TABLE UserInfo (uid INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL, date_time TEXT, sun_value TEXT,sun_image_name TEXT,sun_image_sentence,sun_image BLOB, moon_value TEXT, moon_image_name TEXT,moon_image_sentence,moon_image BLOB)";
+        NSString * sql = @"CREATE TABLE UserInfo (uid INTEGER PRIMARY KEY AUTOINCREMENT  NOT NULL, date_time DOUBLE, sun_value INTEGER,sun_image_name TEXT,sun_image_sentence,sun_image BLOB, moon_value INTEGER, moon_image_name TEXT,moon_image_sentence,moon_image BLOB)";
         BOOL res = [_db executeUpdate:sql];
         if (!res) {
             [MainSunMoonAppDelegate showStatusWithText:@"数据库创建失败" duration:2];
@@ -110,12 +110,13 @@
     if (user.date_time) {
         [keys appendString:@"date_time,"];
         [values appendString:@"?,"];
-        [arguments addObject:user.date_time];
+        [arguments addObject:[NSNumber numberWithDouble:[self getDoubleByTimeString:user.date_time]]];
+
     }
     if (user.sun_value) {
         [keys appendString:@"sun_value,"];
         [values appendString:@"?,"];
-        [arguments addObject:user.sun_value];
+        [arguments addObject:[NSNumber numberWithInteger:user.sun_value.integerValue]];
     }
     if (user.sun_image_name) {
         [keys appendString:@"sun_image_name,"];
@@ -135,7 +136,7 @@
     if (user.moon_value) {
         [keys appendString:@"moon_value,"];
         [values appendString:@"?,"];
-        [arguments addObject:user.moon_value];
+        [arguments addObject:[NSNumber numberWithInteger:user.moon_value.integerValue]];
     }
     if (user.moon_image_name) {
         [keys appendString:@"moon_image_name,"];
@@ -167,7 +168,53 @@
 }
 
 
+-(NSTimeInterval) getDoubleByTimeString:(NSString*) dateString
+{
+    //获取年
+    NSDate *nowDate = [NSDate date];
+    NSCalendar* calendar = [NSCalendar currentCalendar];
+    NSDateComponents* comps;
+    comps =[calendar components:(NSYearCalendarUnit)fromDate:nowDate];
+    NSInteger year = [comps year];
+    
+    //构造double数据，存入库
+    NSRange positon = [dateString rangeOfString:@"."];
+    NSString* month = [dateString substringToIndex:positon.location];
+    NSString* day = [dateString substringFromIndex:positon.location+1];
+    
+    NSDateComponents *components = [[NSDateComponents alloc] init];
+    [components setYear:year];
+    [components setMonth:month.integerValue];
+    [components setDay:day.integerValue];
+    NSDate *nsdate = [calendar dateFromComponents:components];
+    NSTimeInterval dateInter = [nsdate timeIntervalSince1970];
 
+    
+    //反向取得时间的方法
+    //NSDate* dateInter1 = [NSDate dateWithTimeIntervalSince1970:dateInter];
+    
+    return dateInter;
+    
+}
+
+-(NSString*) getDateTimeStringByDoubleDateTime:(NSTimeInterval) timeDouble
+{
+    
+    NSDate* dateInter = [NSDate dateWithTimeIntervalSince1970:timeDouble];
+    
+    NSDateFormatter *format = [[NSDateFormatter alloc] init];
+    [format setDateFormat:@"MM"];
+    NSString *month = [[format stringFromDate:dateInter] substringToIndex:2];
+    month = [month stringByReplacingOccurrencesOfString:@"0" withString:@"" options:0 range:NSMakeRange(0, 1)];
+    [format setDateFormat:@"dd"];
+    NSString *day = [[format stringFromDate:dateInter] substringToIndex:2];
+    day = [day stringByReplacingOccurrencesOfString:@"0" withString:@"" options:0 range:NSMakeRange(0, 1)];
+    
+    NSString* dateTime = [NSString stringWithFormat:@"%@.%@", month, day];
+
+    return dateTime;
+
+}
 
 /**
  * @brief 删除一条用户数据
@@ -182,7 +229,15 @@
 
 
 - (void) deleteUserWithDataTime:(NSString *) dateTime {
-    NSString * query = [NSString stringWithFormat:@"DELETE FROM UserInfo WHERE date_time = '%@'",dateTime];
+    
+    NSNumber*  dateNumber = [NSNumber numberWithDouble:[self getDoubleByTimeString:dateTime]];
+    
+    NSString* dateString = [NSString stringWithFormat:@"%@", dateNumber];
+    
+    NSString * query = [NSString stringWithFormat:@"DELETE FROM UserInfo WHERE date_time = '%@'",dateString];
+    
+    
+    
     [MainSunMoonAppDelegate showStatusWithText:@"删除一条数据" duration:2.0];
     [_db executeUpdate:query];
 }
@@ -207,7 +262,9 @@
     NSMutableString * temp = [NSMutableString stringWithCapacity:20];
     // xxx = xxx;
     if (user.date_time) {
-        [temp appendFormat:@" date_time = '%@',",user.date_time];
+        NSNumber*  dateNumber = [NSNumber numberWithDouble:[self getDoubleByTimeString:user.date_time]];
+        NSString* dateString = [NSString stringWithFormat:@"%@", dateNumber];
+        [temp appendFormat:@" date_time = '%@',",dateString];
     }
     if (user.sun_value) {
         [temp appendFormat:@" sun_value = '%@',",user.sun_value];
@@ -266,6 +323,11 @@
     if (user.uid) {
         [temp appendFormat:@" uid = '%@',",user.uid];
     }
+    if (user.date_time) {
+        NSNumber*  dateNumber = [NSNumber numberWithDouble:[self getDoubleByTimeString:user.date_time]];
+        NSString* dateString = [NSString stringWithFormat:@"%@", dateNumber];
+        [temp appendFormat:@" date_time = '%@',",dateString];
+    }
     if (user.sun_value) {
         [temp appendFormat:@" sun_value = '%@',",user.sun_value];
     }
@@ -276,9 +338,8 @@
         [temp appendFormat:@" sun_image_sentence = '%@',",user.sun_image_sentence];
     }
     if (user.sun_image) {
-        //[temp appendFormat:@" sun_image = '%@',",user.sun_image];
+        [temp appendFormat:@" sun_image = '%@',",user.sun_image];
     }
-    
     
     if (user.moon_value) {
         [temp appendFormat:@" moon_value = '%@',",user.moon_value];
@@ -325,6 +386,7 @@
         UserInfo * user = [UserInfo new];
         
         user.uid = [rs stringForColumn:@"uid"];
+        user.date_time = [self getDateTimeStringByDoubleDateTime:[rs doubleForColumn:@"date_time"]];
         user.sun_value = [rs stringForColumn:@"sun_value"];
         user.sun_image_name = [rs stringForColumn:@"sun_image_name"];
         user.sun_image_sentence = [rs stringForColumn:@"sun_image_sentence"];
@@ -353,7 +415,7 @@
         UserInfo * user = [UserInfo new];
         
         user.uid = [rs stringForColumn:@"uid"];
-        user.date_time = [rs stringForColumn:@"date_time"];
+        user.date_time = [self getDateTimeStringByDoubleDateTime:[rs doubleForColumn:@"date_time"]];
         user.sun_value = [rs stringForColumn:@"sun_value"];
         user.sun_image_name = [rs stringForColumn:@"sun_image_name"];
         user.sun_image_sentence = [rs stringForColumn:@"sun_image_sentence"];
@@ -381,13 +443,17 @@
 
 -(UserInfo*) getUserDataByDateTime: (NSString*) dateTime
 {
-        NSString * query = @"SELECT uid,date_time, sun_value,sun_image,sun_image_name,sun_image_sentence, moon_value, moon_image, moon_image_name,moon_image_sentence FROM UserInfo ";
+   // NSString * query = @"SELECT uid,date_time, sun_value,sun_image,sun_image_name,sun_image_sentence, moon_value, moon_image, moon_image_name,moon_image_sentence FROM UserInfo ";
+    
+    NSNumber*  dateNumber = [NSNumber numberWithDouble:[self getDoubleByTimeString:dateTime]];
+    
+    NSString * query = @"SELECT * FROM UserInfo ";
     
     if (dateTime.length == 0) {
         return nil;
     }else
     {
-        query = [query stringByAppendingFormat:@"WHERE date_time = %@ ", dateTime];
+        query = [query stringByAppendingFormat:@"WHERE date_time = %@ ", dateNumber];
     }
     
     FMResultSet * rs = [_db executeQuery:query];
@@ -396,7 +462,7 @@
         UserInfo * user = [UserInfo new];
         
         user.uid = [rs stringForColumn:@"uid"];
-        user.date_time = [rs stringForColumn:@"date_time"];
+        user.date_time = [self getDateTimeStringByDoubleDateTime:[rs doubleForColumn:@"date_time"]];
         user.sun_value = [rs stringForColumn:@"sun_value"];
         user.sun_image_name = [rs stringForColumn:@"sun_image_name"];
         user.sun_image_sentence = [rs stringForColumn:@"sun_image_sentence"];
@@ -441,7 +507,7 @@
         UserInfo * user = [UserInfo new];
         
         user.uid = [rs stringForColumn:@"uid"];
-        user.date_time = [rs stringForColumn:@"date_time"];
+        user.date_time = [self getDateTimeStringByDoubleDateTime:[rs doubleForColumn:@"date_time"]];
         user.sun_value = [rs stringForColumn:@"sun_value"];
         user.sun_image_name = [rs stringForColumn:@"sun_image_name"];
         user.sun_image_sentence = [rs stringForColumn:@"sun_image_sentence"];

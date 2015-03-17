@@ -11,6 +11,9 @@
 #import "AFPickerView.h"
 #import "VoicePressedHold.h"
 #import "AminationCustom.h"
+#import "CustomAnimation.h"
+#import "PulsingHaloLayer.h"
+
 //#import "ImageFilterProcessViewController.h"
 
 
@@ -19,7 +22,7 @@
 @protocol CustomImagePickerControllerDelegate;
 
 @interface CustomImagePickerController : UIImagePickerController
-<UINavigationControllerDelegate,UIImagePickerControllerDelegate,AFPickerViewDataSource, AFPickerViewDelegate,pitchDelegate,AminationCustomDelegate>
+<UINavigationControllerDelegate,UIImagePickerControllerDelegate,AFPickerViewDataSource, AFPickerViewDelegate,pitchDelegate,AminationCustomDelegate,CustomAnimationDelegate>
 {
     id<CustomImagePickerControllerDelegate> _customDelegate;
      AFPickerView *defaultPickerView;
@@ -40,6 +43,7 @@
 @property (retain, nonatomic)  F3BarGauge *customRangeBar;
 
 @property (nonatomic, strong)NSString*  voiceName;
+@property (nonatomic, assign) PulsingHaloLayer *haloGive;
 
 
 - (void)setNewPith:(float)pitchValue;

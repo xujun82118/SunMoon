@@ -16,14 +16,16 @@
 #import "CommonObject.h"
 #import "CustomAlertView.h"
 #import "CustomAnimation.h"
+#import "PulsingHaloLayer.h"
 
 
 
 
-@interface MainSunMoonViewController : UIViewController<CustomImagePickerControllerDelegate,ImageFitlerProcessDelegate, UserInfoCloudDelegate,VPImageCropperDelegate,CustomAlertDelegate,CustomAnimationDelegate>
+@interface MainSunMoonViewController : UIViewController<CustomImagePickerControllerDelegate,ImageFitlerProcessDelegate, UserInfoCloudDelegate,VPImageCropperDelegate,CustomAlertDelegate,CustomAnimationDelegate,PulsingHaloLayerAnimationDelegate,ShareByShareSDRDelegate>
 {
 
 }
+- (IBAction)testButton1:(id)sender;
 
 - (IBAction)showMenu;
 
@@ -39,6 +41,7 @@
 
 - (IBAction)intoCamera:(id)sender;
 - (IBAction)getBringedUpLight:(id)sender;
+- (IBAction)screenShare:(id)sender;
 
 
 
@@ -57,9 +60,20 @@
 @property (weak, nonatomic) IBOutlet UIImageView *panSunorMoonImageView;
 
 @property (weak, nonatomic) IBOutlet UIButton* menuBtn;
+@property (nonatomic, assign) IBOutlet UIButton* screenShareBtn;
 
 
-@property (weak, nonatomic) IBOutlet UIButton* intoCameraBtn;
+@property (weak, nonatomic) IBOutlet UIImageView *skyWindow;
+@property (weak, nonatomic) IBOutlet UIImageView *lightPostionFrame;
+
+
+//@property (weak, nonatomic) IBOutlet UIButton* intoCameraBtn;
+
+@property (nonatomic, strong) PulsingHaloLayer *halo;
+@property (nonatomic, strong) PulsingHaloLayer *haloTouch;
+@property (nonatomic, assign) PulsingHaloLayer *haloToHeader;
+@property (nonatomic, assign) PulsingHaloLayer *haloToSky;
+
 
 
 
