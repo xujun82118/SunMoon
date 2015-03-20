@@ -162,7 +162,7 @@
         imageView.image = self.user.userHeaderImage;
         imageView.layer.masksToBounds = YES;
         imageView.layer.cornerRadius = 35.0;
-        imageView.layer.borderColor = [UIColor brownColor].CGColor;
+        imageView.layer.borderColor = [UIColor colorWithRed:234.0/255.0 green:52.0/255.0 blue:7.0/255.0 alpha:1.0].CGColor;
         imageView.layer.borderWidth = 3.0f;
         imageView.layer.rasterizationScale = [UIScreen mainScreen].scale;
         imageView.layer.shouldRasterize = YES;
@@ -774,9 +774,7 @@
 - (void)authSwitchChangeHandler:(UISwitch *)sender
 {
     //MainSunMoonAppDelegate *appDelegate = (MainSunMoonAppDelegate *)[UIApplication sharedApplication].delegate;
-    
-    
-    
+
     //tag与表中的授权选项行对应
     NSInteger index = sender.tag;
     
@@ -841,8 +839,12 @@
                                                
                                            }
                                            
+                                       }else
+                                       {
+                                           [indicatorView stopAnimating];
+                                            NSLog(@"%ld:%@",(long)[error errorCode], [error errorDescription]);
                                        }
-                                       NSLog(@"%ld:%@",(long)[error errorCode], [error errorDescription]);
+
 
                                        [self.tableView reloadData];
                                    }];

@@ -491,12 +491,12 @@
     ShareByShareSDR* share = [ShareByShareSDR alloc];
     share.shareImage =srcImage;
     if (iSunORMoon ==  IS_SUN_TIME) {
-        share.waterImage = [UIImage imageNamed:@"水印V1.png"];
+        share.waterImage = [UIImage imageNamed:@"water-sun.png"];
         share.lightCount = self.userInfo.sun_value;
 
     }else
     {
-        share.waterImage = [UIImage imageNamed:@"水印V1.png"];
+        share.waterImage = [UIImage imageNamed:@"water-moon.png"];
         share.lightCount = self.userInfo.moon_value;
 
     }
@@ -638,7 +638,7 @@
     if ([self.userInfo checkIsHaveAddSunOrMoonValueForTodayPhoto]) {
         NSLog(@" 已奖励过光，返回");
 
-        [self showCustomDelayAlertBottom:[NSString stringWithFormat:(@"不再重复奖励%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"]];
+        [self showCustomDelayAlertBottom:[NSString stringWithFormat:(@"今天的%@光已经摘走了^_^"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"]];
         return 0;
 
     }
@@ -677,9 +677,7 @@
     [customAnimation setAniDuration:1.5];
     
     [customAnimation startCustomAnimation];
-    
-    [self.userInfo addSunOrMoonValue:count];
-    [self.userInfo updateIsHaveAddSunValueForTodayPhoto:YES];
+
     
 
  
@@ -734,7 +732,7 @@
         
         if([valuelabel.text isEqualToString:@"+1"])
         {
-            [CommonObject showActionSheetOptiontitleMsg:@"放弃将失去此次奖励的阳光" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+            [CommonObject showActionSheetOptiontitleMsg:@"放弃将失去此次摘得的阳光" ShowInView:self.view CancelMsg:@"不放弃" DelegateObject:self Option:@"放弃"];
             
         }else
         {
@@ -748,7 +746,7 @@
     {
         if([valuelabel.text isEqualToString:@"+1"])
         {
-            [CommonObject showActionSheetOptiontitleMsg:@"放弃将失去此次奖励的月光" ShowInView:self.view CancelMsg:@"放弃" DelegateObject:self Option:@"不放弃"];
+            [CommonObject showActionSheetOptiontitleMsg:@"放弃将失去此次摘得的月光" ShowInView:self.view CancelMsg:@"不放弃" DelegateObject:self Option:@"放弃"];
             
         }else
         {
@@ -771,9 +769,10 @@
         //动画:...
         if([valuelabel.text isEqualToString:@"+1"])
         {
-            [self.userInfo decreaseSunOrMoonValue:1];
+            //最后OK返回时，才加光，置已照过相
+            //[self.userInfo decreaseSunOrMoonValue:1];
             [valuelabel setText:@""];
-            [self.userInfo updateIsHaveAddSunOrMoonValueForTodayPhoto:NO];
+            //[self.userInfo updateIsHaveAddSunOrMoonValueForTodayPhoto:NO];
             
         }else
         {
@@ -802,6 +801,11 @@
     
     [self dismissViewControllerAnimated:YES completion:^{
 
+        
+        //待优化 count选写死为1， 出现了加光错乱的情况
+        NSInteger count = 1;
+        [self.userInfo addSunOrMoonValue:count];
+        [self.userInfo updateIsHaveAddSunOrMoonValueForTodayPhoto:YES];
 
         NSDictionary* imageFilterData = [NSDictionary dictionaryWithObjectsAndKeys:rootImageView.image,CAMERA_IMAGE_KEY,
                                          [imagePickerData objectForKey:CAMERA_TIME_KEY], CAMERA_TIME_KEY,
@@ -874,16 +878,19 @@
     share.shareTitle = NSLocalizedString(@"appName", @"");
     share.shareImage =[self ShareImageWitheWater:rootImageView.image];
     share.shareMsg = [imagePickerData objectForKey:CAMERA_SENTENCE_KEY];
-    share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
+    
+    NSString* addShow = [NSString stringWithFormat:NSLocalizedString(@"CutScreenShareMsg", @""), [CommonObject getLightCharactorByTime]];
+    share.shareMsgSignature = [addShow stringByAppendingString: NSLocalizedString(@"FromUri", @"")];
+    
     NSString* tempShare;
     if (iSunORMoon == IS_SUN_TIME) {
-        tempShare = [NSString stringWithFormat:@"养成了%d个阳光,", [self.userInfo.sun_value intValue]];
+        tempShare = [NSString stringWithFormat:@"我的天空养成了%d个阳光,", [self.userInfo.sun_value intValue]];
         share.shareMsgPreFix = [tempShare stringByAppendingString:NSLocalizedString(@"MsgFrefixSun", @"")];
         
 
     }else
     {
-        tempShare = [NSString stringWithFormat:@"养成了%d个月光,", [self.userInfo.moon_value intValue]];
+        tempShare = [NSString stringWithFormat:@"我的天空养成了%d个月光,", [self.userInfo.moon_value intValue]];
         share.shareMsgPreFix = [tempShare stringByAppendingString:NSLocalizedString(@"MsgFrefixMoon", @"")];
     }
     share.customDelegate = self;
@@ -897,32 +904,33 @@
 //delegate
 -(void) ShareStart
 {
+    
     [indicatorView startAnimating];
 }
 
 -(void) ShareCancel
 {
+    
     [indicatorView stopAnimating];
     
-    [self showCustomYesAlertSuperView:@"取消分享" AlertKey:@"shareCancel"];
+    [self showCustomDelayAlertBottom:@"取消分享"];
 }
 
 -(void) ShareReturnSucc
 {
     
     [indicatorView stopAnimating];
-
     
-    [self showCustomYesAlertSuperView:@"分享成功" AlertKey:@"shareSucc"];
+    
+    [self showCustomDelayAlertBottom:@"分享成功"];
     
 }
 
 -(void) ShareReturnFailed
 {
     [indicatorView stopAnimating];
-
     
-    [self showCustomYesAlertSuperView:@"分享失败，请检查网络" AlertKey:@"shareFailed"];
+    [self showCustomYesAlertSuperView:@"分享失败\n请检查网络" AlertKey:@"shareFailed"];
 }
 
 
@@ -930,6 +938,9 @@
 - (void)cameraPhoto:(NSDictionary *) imagePickerDataReturn
 {
     imagePickerData = imagePickerDataReturn;
+    //重取一次
+    finalGiveLightCout = [self checkFinalWetherAndGiveLight];
+
     [self viewDidLoad];
 
 }

@@ -8,7 +8,7 @@
 
 
 
-"Sun_sentenc_1" = "Hi，今天一天好心情别国加加圆圆另加国另加加加！";  //初始默认
+"Sun_sentenc_1" = "Hi，今天一天好心情！";  //初始默认
 "Sun_sentenc_2" = "阳光自信每一天，这就是我！";
 "Sun_sentenc_3" = "努力，我最棒！";
 
@@ -27,10 +27,10 @@
 "FromUri" = "（大家快来一起:https://itunes.apple.com/cn/app/ri-yue-mei-pai/id929494640）";
 "MsgFrefixSun" = "今天的阳光宣言：";
 "MsgFrefixMoon" = "今天的月光宣言：";
-"CutScreenShareMsg" = "自拍还可以这样玩，玩出美丽，玩出%@光天空";
+"CutScreenShareMsg" = "自拍还可以这样玩，玩出美丽与自信，玩出%@光天空";
 "MySkyInfo" = "我的%@光天空已拥有%lu个%@光，召唤了%lu个%@光之精灵，";
 "newCallSpiriteAlert" = "拥有%lu个精灵,分享给好友吧";
-"reminderHowToGetSpirite" = "当天空布满%@光\n可召唤1个精灵";
+"reminderHowToGetSpirite" = "当天空布满%@光\n可召唤精灵\n截屏给好友看漫天的精灵舞";
 
 "changeDay" = "切换至%@光相片";
 

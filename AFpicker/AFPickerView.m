@@ -321,7 +321,7 @@
 
 - (UIImageView *)glassView:(NSString *)imageURL {
     UIImage *glassImage = [UIImage imageNamed:imageURL];
-    UIImageView *glassImageView = [[UIImageView alloc] initWithFrame:CGRectMake(36, 115.0, glassImage.size.width, glassImage.size.height)];
+    UIImageView *glassImageView = [[UIImageView alloc] initWithFrame:CGRectMake(/*36*/SCREEN_WIDTH/22.3*2.3, 115.0, glassImage.size.width, glassImage.size.height)];
     glassImageView.image = glassImage;
     return glassImageView;
 }

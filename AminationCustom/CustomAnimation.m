@@ -255,9 +255,10 @@
     _aniKeyFrame.path=path;//设置path属性
     CGPathRelease(path);//释放路径对象
     //设置其他属性
-    _aniKeyFrame.duration=_aniDuration;
     //keyframeAnimation.beginTime=CACurrentMediaTime()+2;//设置延迟2秒执行
+
     _aniKeyFrame.repeatCount = _aniRepeatCount;
+    _aniKeyFrame.duration=_aniDuration;
     _aniKeyFrame.delegate = self;
     _aniKeyFrame.removedOnCompletion = YES;
 
@@ -265,8 +266,9 @@
     [_aniKeyFrame setValue:[NSValue valueWithCGPoint:_aniEndpoint] forKey:@"animation_coustom_end_point"];
     
     //3.添加动画到图层，添加动画后就会执行动画
-    [_aniLayer addAnimation:_aniKeyFrame forKey:_anikey];
     
+    [_aniLayer addAnimation:_aniKeyFrame forKey:_anikey];
+
     
 }
 
@@ -313,6 +315,8 @@
     
     [self specialCustomFinishHandle:anim];
 
+    //防止内存泄露
+    [_aniLayer removeAllAnimations];
     
     [self.customAniDelegate customAnimationFinishedRuturn:_anikey srcViewDic:_aniImageViewDic];
     
@@ -451,7 +455,7 @@
 -(void) addAniLayer
 {
     //[_bkLayer addSublayer:_aniLayer];
-    [_bkLayer insertSublayer:_aniLayer above:_bkLayerBelow];
+    [_bkLayer insertSublayer:_aniLayer below:_bkLayerBelow];
 
 }
 

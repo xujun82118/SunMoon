@@ -784,11 +784,25 @@ static UserInfo *sharedUserInfo;
         return;
     }
     
+    NSInteger count;
     if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-        self.sun_value = [NSString stringWithFormat:@"%d",[self.sun_value integerValue]- value];
+
+        self.sun_value = [NSString stringWithFormat:@"%ld",[self.sun_value integerValue]- value];
+        
+        //当为0时，-1为-1
+        count = self.sun_value.integerValue;
+        if (count<=0) {
+            self.sun_value =[NSString stringWithFormat:@"%d", 0];
+        }
+        
     }else if([CommonObject checkSunOrMoonTime] == IS_MOON_TIME)
     {
-        self.moon_value = [NSString stringWithFormat:@"%d",[self.moon_value integerValue]- value];
+        self.moon_value = [NSString stringWithFormat:@"%ld",[self.moon_value integerValue]- value];
+        
+        count = self.moon_value.integerValue;
+        if (count<=0) {
+            self.moon_value =[NSString stringWithFormat:@"%d", 0];
+        }
         
     }
     
@@ -1004,27 +1018,7 @@ static UserInfo *sharedUserInfo;
     
 }
 
--(void) updateIsHaveAddSunValueForTodayPhoto:(BOOL) isOrNo
-{
-    
-    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
-    
-    [userBaseData setBool:isOrNo forKey:KEY_IS_HAVE_ADD_SUN];
-  
-    [userBaseData synchronize];
-    
-}
 
--(void) updateIsHaveAddMoonValueForTodayPhoto:(BOOL) isOrNo
-{
-    
-    NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
-
-    [userBaseData setBool:isOrNo forKey:KEY_IS_HAVE_ADD_MOON];
-
-    [userBaseData synchronize];
-    
-}
 
 -(void) updateIsHaveAddSunOrMoonValueForTodayPhoto:(BOOL) isOrNo
 {

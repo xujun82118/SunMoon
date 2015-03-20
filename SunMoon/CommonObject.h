@@ -62,7 +62,7 @@
 
 
 //几个小时养成1个光
-#define BRING_UP_LIGHT_HOUR  1 
+#define BRING_UP_LIGHT_HOUR  6 
 
 //本地通知定义
 #define NOTIFY_LOCAL_NEED_CHANGE_UI   @"NeedChangeUI"
@@ -222,12 +222,13 @@ typedef enum
 #define KEY_BACK_GROUND_TIME_SUNMOON @"backGroundTimeSunMoon"
 
 
+
 //当天照片是否加过光值
 #define KEY_IS_HAVE_ADD_SUN @"isHaveAddSun"
 #define KEY_IS_HAVE_ADD_MOON @"isHaveAddMoon"
 
 //奖励光的音量
-#define GIVE_ONE_LIGHT_VOICE_VALUE  200
+#define GIVE_ONE_LIGHT_VOICE_VALUE  150
 
 //开始养育光的时间
 #define KEY_START_BRING_UP_SUN_TIME @"startBringupSunTime"
@@ -370,8 +371,8 @@ typedef enum
 
 #define kMaxRadius 160
 
-#define SPIRITE_W_H 120
-#define LIGHT_W_H 30
+#define SPIRITE_W_H  SCREEN_WIDTH/2.5
+#define LIGHT_W_H SCREEN_WIDTH/10
 
 
 
@@ -469,5 +470,11 @@ typedef enum
 
 
 +(UIImage*) screenShot:(UIView*) view;
+
+
++(UIImage *)reduceImage:(UIImage *)image percent:(float)percent;
+
++ (UIImage*)imageWithImageSimple:(UIImage*)image scaledToSize:(CGSize)newSize;
+
 
 @end

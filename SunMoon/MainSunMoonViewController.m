@@ -50,7 +50,8 @@
     
     UIButton* _intoCameraBtn;
 
-    
+    NSString* userDir;
+
     BOOL alreadyDisable;//标识是否已禁止了触摸
     
     BOOL ToreFreshSky;//是否正在刷新天空
@@ -83,7 +84,8 @@
     
     BOOL isGetinToHome; //是进入小屋的点击
     
-    
+    NSMutableArray *_shareTypeArray;
+
     CGRect srcIntoCameraBtnFrame ;
     CGPoint srcIntoCameraBtnCenter;
     CGRect destIntoCameraBtnFrame ;
@@ -151,6 +153,13 @@
     
 }
 
+/**
+ *	@brief	用户信息更新
+ *
+ *	@param 	notif 	通知
+ */
+- (void)userInfoUpdateHandler:(NSNotification *)notif;
+
 @end
 
 @implementation MainSunMoonViewController
@@ -176,6 +185,56 @@
     indicatorView.internalSpacing = 4;
     indicatorView.center = self.view.center;
     [self.view addSubview:indicatorView];
+    
+    
+    //shareSdk**********
+    //监听用户信息变更
+    [ShareSDK removeAllNotificationWithTarget:self];
+    [ShareSDK addNotificationWithName:SSN_USER_INFO_UPDATE
+                               target:self
+                               action:@selector(userInfoUpdateHandler:)];
+    
+    _shareTypeArray = [[NSMutableArray alloc] init];
+    
+    NSArray *shareTypes = [ShareSDK connectedPlatformTypes];
+    for (int i = 0; i < [shareTypes count]; i++)
+    {
+        NSNumber *typeNum = [shareTypes objectAtIndex:i];
+        ShareType type = (ShareType)[typeNum integerValue];
+        //id<ISSPlatformApp> app = [ShareSDK getClientWithType:type];
+        
+        if (type == ShareTypeSinaWeibo || type == ShareTypeTencentWeibo)
+        {
+            [_shareTypeArray addObject:[NSMutableDictionary dictionaryWithObject:[shareTypes objectAtIndex:i]
+                                                                          forKey:@"type"]];
+        }
+    }
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    userDir= [paths objectAtIndex:0];
+    
+    NSArray *authList = [NSArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir]];
+    if (authList == nil)
+    {
+        [_shareTypeArray writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir] atomically:YES];
+    }
+    else
+    {
+        for (int i = 0; i < [authList count]; i++)
+        {
+            NSDictionary *item = [authList objectAtIndex:i];
+            for (int j = 0; j < [_shareTypeArray count]; j++)
+            {
+                if ([[[_shareTypeArray objectAtIndex:j] objectForKey:@"type"] integerValue] == [[item objectForKey:@"type"] integerValue])
+                {
+                    [_shareTypeArray replaceObjectAtIndex:j withObject:[NSMutableDictionary dictionaryWithDictionary:item]];
+                    break;
+                }
+            }
+        }
+    }
+    //shareSdk**********
+    
     
     //注册本地通知
     NSNotificationCenter  * notificationCenter = [ NSNotificationCenter  defaultCenter];
@@ -304,11 +363,18 @@
     }
     
     
-    //test
-    NSInteger count = 25 - userInfo.sun_value.integerValue%25 -1;
-    [userInfo addSunOrMoonValue:count];
-    
+    //创建拖动轨迹识别
+    panSunOrMoonGusture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(HandlePanSunOrMoon:)];
+    [self.view addGestureRecognizer:panSunOrMoonGusture];
 
+    
+    //增加点击识别，进入拍照，或回归光到头像, 拖动也可让光回到头像
+    //只设置点击 闪烁功能
+    tapSunOrMoonGusture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(TapSkySumOrMoonhandle:)];
+    tapSunOrMoonGusture.numberOfTouchesRequired = 1;
+    tapSunOrMoonGusture.numberOfTapsRequired = 1;
+    _skySunorMoonImage.userInteractionEnabled = YES;
+    [_skySunorMoonImage addGestureRecognizer:tapSunOrMoonGusture];
 }
 
 
@@ -319,6 +385,7 @@
     [super viewWillAppear:animated];
     NSLog(@"---->viewWillAppear");
 
+    [self.view.layer removeAllAnimations];
 
 
 
@@ -348,15 +415,11 @@
     if (![[CommonObject getCurrentDate] isEqualToString:[userBaseData objectForKey:KEY_BACK_GROUND_TIME]] || [CommonObject checkSunOrMoonTime] != [userBaseData integerForKey:KEY_BACK_GROUND_TIME_SUNMOON])
         
     {
-
+        //如果是重新登录引起的变化，则变化已被执行过，此处是从其它界面而来引起的变化
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFY_LOCAL_NEED_CHANGE_UI object:self];
     }
 
-    
-    if (isFromLowView) {
-        isFromLowView = FALSE;
-        return;
-    }
+
     
     CGFloat cameraBtnHeight = _skySunorMoonImage.frame.size.width/4*2;
     CGFloat cameraBtnwidth = cameraBtnHeight;
@@ -369,14 +432,6 @@
         [self.view addSubview:_intoCameraBtn];
         
     }
-    
-    
-
-
-    
-    //创建拖动轨迹识别
-    panSunOrMoonGusture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(HandlePanSunOrMoon:)];
-    [self.view addGestureRecognizer:panSunOrMoonGusture];
 
     
     
@@ -396,16 +451,9 @@
         }
         
     }
+
+
     
-    
-    //增加点击识别，进入拍照，或回归光到头像, 拖动也可让光回到头像
-    //只设置点击 闪烁功能
-    tapSunOrMoonGusture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(TapSkySumOrMoonhandle:)];
-    tapSunOrMoonGusture.numberOfTouchesRequired = 1;
-    tapSunOrMoonGusture.numberOfTapsRequired = 1;
-    _skySunorMoonImage.userInteractionEnabled = YES;
-    [_skySunorMoonImage addGestureRecognizer:tapSunOrMoonGusture];
-     
     //初始化日月动画图
     //不能放到veiwDidload 和viewWillapear中
     NSInteger IntervalWidth = 10;// 光环向日月外扩的宽度,日月的光晕较大
@@ -462,10 +510,21 @@
     //退出了小屋
     isGetinToHome = NO;
     
-//    WeatherLoc* testWeather = [[WeatherLoc alloc] init];
-//    [testWeather startGetWeather];
-//    [testWeather startGetWeatherSimple];
     
+    [self refreshLightCircleStatForUserHeaderOrSunMoon];
+    [self refreshIntoCameraBtnState];
+
+    
+    //从下一级view退回，不进行以下登录过程
+    if (isFromLowView) {
+        isFromLowView = FALSE;
+        return;
+    }
+    
+    //一定是照机回来的，不进行以下登录过程，待优化为判断从任何下一级进入的
+    if (giveLingtCout!=0) {
+        return;
+    }
 
     //引导结束，执行一般打开状态
     if (guidInfo.guidStepNumber >guidStep_mainView_End)
@@ -488,6 +547,9 @@
 -(void) viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:YES];
+    //防止动画的内存泄露
+    [self.view.layer removeAllAnimations];
+
     
 }
 
@@ -537,10 +599,24 @@
     if (ToreFreshSky)ToreFreshSky = FALSE;
     
     
+    //计算当前光和精灵的个数
+    if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
+        
+        [self caculateLightTypeAndCountByCount:userInfo.sun_value.integerValue];
+        
+    }else
+    {
+        [self caculateLightTypeAndCountByCount:userInfo.moon_value.integerValue];
+        
+    }
+    NSInteger lightCount = [[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_LEFT_BASE_COUNT] integerValue];
+    NSInteger spiriteCount = [[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_SPIRITE_COUNT] integerValue];
+    
     //更新光环状态,和天空状态，需在计算奖励之间更新
     if ([self.userInfo checkIsBringUpinSunOrMoon]) {
         //如果是养育状态，且光没有在天空中，说明是新登录，则释放出光
-        if (!swimOutAnimationLightArray || swimOutAnimationLightArray.count ==0||!swimOutAnimationSpiriteArray || swimOutAnimationSpiriteArray.count ==0)
+        if ((lightCount!=0 && (!swimOutAnimationLightArray || swimOutAnimationLightArray.count ==0))
+            ||(spiriteCount!=0&&(!swimOutAnimationSpiriteArray || swimOutAnimationSpiriteArray.count ==0)))
         {
             [self refreshLightStateForCallBackOrPopout:1];
         }else
@@ -559,8 +635,7 @@
     if (![self.userInfo checkLoginLastDateIsToday])
     {
         NSLog(@"当天新登录,更新当天照片未加光值");
-        [self.userInfo updateIsHaveAddSunValueForTodayPhoto:NO];
-        [self.userInfo updateIsHaveAddMoonValueForTodayPhoto:NO];
+        [self.userInfo updateIsHaveAddSunOrMoonValueForTodayPhoto:NO];
 
         NSLog(@"当天新登录，判断是否连续登录？");
         
@@ -577,10 +652,10 @@
             
 
             if ([CommonObject checkSunOrMoonTime] == IS_SUN_TIME) {
-                [self showCustomYesAlertSuperView:@"阳光天空连续登录\n奖励一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN];
+                [self showCustomYesAlertSuperView:@"阳光天空连续登录\n摘得一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN];
             }else
             {
-                [self showCustomYesAlertSuperView:@"月光天空连续登录\n奖励一个月光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN];
+                [self showCustomYesAlertSuperView:@"月光天空连续登录\n摘得一个月光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CONTINUE_LOGIN];
             }
             
         }else
@@ -614,9 +689,6 @@
         //都飞回来了，开始其它新天空的更新更新
         [self whenCommonOpenViewHandle];
         
-    }else
-    {
-
     }
     
     
@@ -711,7 +783,7 @@
 -(void) refreshIntoCameraBtnState
 {
 
-    if (![self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
+    if (![self.userInfo checkIsHaveAddSunOrMoonValueForTodayPhoto]) {
 
         NSLog(@"今天未得到过光的奖励,  相机提醒！");
         _intoCameraBtn.alpha = 1.0;
@@ -805,7 +877,7 @@
     //spiritCountlabel.transform = CGAffineTransformMakeScale(0, 0);
     [UIView animateWithDuration:0.5 animations:^{
         //spiritCountlabel.transform = CGAffineTransformIdentity;
-        spiritCountlabel.transform = CGAffineTransformMakeScale(5, 5);
+        spiritCountlabel.transform = CGAffineTransformMakeScale(3, 3);
         
     } completion:^(BOOL finished) {
 
@@ -1135,6 +1207,11 @@
     ShareByShareSDR* share = [ShareByShareSDR alloc];
     share.shareTitle = NSLocalizedString(@"appName", @"");
     share.shareImage =[CommonObject screenShot:self.view];
+    //压缩图片
+    share.shareImage = [CommonObject reduceImage:share.shareImage percent:0.4];
+
+    share.shareImage = [CommonObject imageWithImageSimple:share.shareImage scaledToSize:CGSizeMake(320, 320*share.shareImage.size.height/share.shareImage.size.width)];
+    
     share.shareMsg = [NSString stringWithFormat:NSLocalizedString(@"CutScreenShareMsg", @""), [CommonObject getLightCharactorByTime]];
     share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
     share.shareMsgPreFix  = [NSString stringWithFormat:NSLocalizedString(@"MySkyInfo", @""), [CommonObject getLightCharactorByTime], [self.userInfo getMaxuserValueByTime],[CommonObject getLightCharactorByTime],[[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_SPIRITE_COUNT] integerValue],[CommonObject getLightCharactorByTime]];
@@ -1148,11 +1225,13 @@
 //delegate
 -(void) ShareStart
 {
+    
     [indicatorView startAnimating];
 }
 
 -(void) ShareCancel
 {
+    
     [indicatorView stopAnimating];
     
     [self showCustomDelayAlertBottom:@"取消分享"];
@@ -1162,10 +1241,9 @@
 {
     
     [indicatorView stopAnimating];
-
+    
     
     [self showCustomDelayAlertBottom:@"分享成功"];
-
     
 }
 
@@ -1173,9 +1251,97 @@
 {
     [indicatorView stopAnimating];
     
-    [self showCustomDelayAlertBottom:@"分享失败，请检查网络"];
-
+    [self showCustomYesAlertSuperView:@"分享失败\n请检查网络" AlertKey:@"shareFailed"];
 }
+
+
+
+//增加用户信息时，才会调用，删除鉴权时不会
+- (void)userInfoUpdateHandler:(NSNotification *)notif
+{
+    NSInteger plat = [[[notif userInfo] objectForKey:SSK_PLAT] integerValue];
+    id<ISSPlatformUser> userInfo = [[notif userInfo] objectForKey:SSK_USER_INFO];
+    
+    for (int i = 0; i < [_shareTypeArray count]; i++)
+    {
+        NSMutableDictionary *item = [_shareTypeArray objectAtIndex:i];
+        ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
+        if (type == plat)
+        {
+            [item setObject:[userInfo nickname] forKey:@"username"];
+        }else
+        {
+            //取消另一个授权，保持只有一个
+            [ShareSDK cancelAuthWithType:type];
+            
+        }
+    }
+    
+    
+    //存用户授权信息
+    NSMutableArray *authList = [NSMutableArray arrayWithContentsOfFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir]];
+    if (authList == nil)
+    {
+        authList = [NSMutableArray array];
+    }
+    
+    NSString *platName = nil;
+    //NSInteger plat = [[[notif userInfo] objectForKey:SSK_PLAT] integerValue];
+    switch (plat)
+    {
+        case ShareTypeSinaWeibo:
+            platName = NSLocalizedString(@"TEXT_SINA_WEIBO", @"新浪微博");
+            break;
+            
+        case ShareTypeTencentWeibo:
+            platName = NSLocalizedString(@"TEXT_TENCENT_WEIBO", @"腾讯微博");
+            break;
+            
+        default:
+            platName = NSLocalizedString(@"TEXT_UNKNOWN", @"未知");
+    }
+    
+    //id<ISSPlatformUser> userInfo = [[notif userInfo] objectForKey:SSK_USER_INFO];
+    BOOL hasExists = NO;
+    for (int i = 0; i < [authList count]; i++)
+    {
+        NSMutableDictionary *item = [authList objectAtIndex:i];
+        ShareType type = (ShareType)[[item objectForKey:@"type"] integerValue];
+        if (type == plat)
+        {
+            [item setObject:[userInfo nickname] forKey:@"username"];
+            hasExists = YES;
+            break;
+        }
+    }
+    
+    if (!hasExists)
+    {
+        NSDictionary *newItem = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                 platName,
+                                 @"title",
+                                 [NSNumber numberWithInteger:plat],
+                                 @"type",
+                                 [userInfo nickname],
+                                 @"username",
+                                 nil];
+        [authList addObject:newItem];
+    }
+    
+    [authList writeToFile:[NSString stringWithFormat:@"%@/loginListCache.plist",userDir] atomically:YES];
+    
+    
+    //更新本地用户信息
+    [self.userInfo updateSns_ID:[userInfo uid] PlateType:[userInfo type]];
+    [self.userInfo updateuserName:[userInfo nickname]];
+    
+    NSURL *portraitUrl = [NSURL URLWithString:[userInfo profileImage]];
+    UIImage *protraitImg = [UIImage imageWithData:[NSData dataWithContentsOfURL:portraitUrl]];
+    [self.userInfo updateUserHeaderImage:protraitImg];
+    
+}
+
+
 
 - (IBAction)intoCamera:(id)sender {
     
@@ -1331,7 +1497,7 @@
          
          [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
          
-         NSString* temp = [NSString stringWithFormat:@"首次登录\n奖励一个%@光\n",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+         NSString* temp = [NSString stringWithFormat:@"首次登录\n摘得一个%@光\n",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
          [self showCustomYesAlertSuperView:temp AlertKey:KEY_IS_GIVE_FIRST_LIGHT];
          
          [guidInfo setGuidFirstlyGiveLight:YES];
@@ -1377,7 +1543,6 @@
          {
              [guidInfo setGuidStepNumber:guid_oneByOne];
              [self DisableUserInteractionInView:self.view exceptViewWithTag:BIGGEST_NUMBER];
-             [guidPanToSkyAni removeAniLayer];
 
              //增加精灵数提示
              self.haloToReminber = [PulsingHaloLayer layer];
@@ -1405,7 +1570,7 @@
              
           guidTouchIntoCameraAni = [self addGuidTouchAnimationAtPoint:_intoCameraBtn.center withAniKey:KEY_ANIMATION_GUID_TOUCH_CAMEREA];
          
-         NSString* temp = [NSString stringWithFormat:@"进入相机\n大声说出你的%@光宣言",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+         NSString* temp = [NSString stringWithFormat:@"进入相机\n说出你的%@光宣言",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
          [self showCustomYesAlertSuperView:temp AlertKey:KEY_REMINDER_GETINTO_CAMERA];
              
          [guidInfo setGuidIntoCamera:YES];
@@ -1646,10 +1811,10 @@
         giveLingtCout = [[imageFilterData objectForKey:CAMERA_LIGHT_COUNT] integerValue];
         
         if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-            [self showCustomYesAlertSuperView:@"完成阳光自拍\n奖励一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA];
+            [self showCustomYesAlertSuperView:@"完成阳光自拍\n摘得一个阳光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA];
         }else
         {
-            [self showCustomYesAlertSuperView:@"完成月光自拍\n奖励一个月光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA];
+            [self showCustomYesAlertSuperView:@"完成月光自拍\n摘得一个月光"  AlertKey:KEY_REMINDER_GIVE_LIGHT_FROM_CAMERA];
         }
 
 
@@ -1731,7 +1896,9 @@
         
         //如果有光在天空,先召回
         ToreFreshSky =  TRUE;
-        if (([CommonObject checkSunOrMoonTime] != [userBaseData integerForKey:KEY_BACK_GROUND_TIME_SUNMOON]) &&((swimOutAnimationLightArray&&swimOutAnimationLightArray.count !=0) || (swimOutAnimationSpiriteArray&&swimOutAnimationSpiriteArray.count !=0))) {
+        if (([CommonObject checkSunOrMoonTime] != [userBaseData integerForKey:KEY_BACK_GROUND_TIME_SUNMOON])
+            &&
+            ((swimOutAnimationLightArray&&swimOutAnimationLightArray.count !=0) || (swimOutAnimationSpiriteArray&&swimOutAnimationSpiriteArray.count !=0))) {
             //如果日月变化，且原天空有光，则召回光
             //完成飞回光到太阳动画后，再更新其它界面元素
             [self refreshLightStateForCallBackOrPopout:0];
@@ -1957,6 +2124,10 @@
                     NSString* time = [NSString stringWithFormat:@"开始养育%@光了", ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
                     NSLog(@"%@", time);
                     [self showCustomDelayAlertBottom:time];
+                    
+                    //消除拖动指示
+                    [guidPanToSkyAni removeAniLayer];
+
                     
                     
                 }else
@@ -2448,9 +2619,16 @@
  */
 -(void) animationLightSwimAround:(NSDictionary*) aroundViewDic
 {
+
+    
     UIImageView* aroundView = (UIImageView*)[aroundViewDic objectForKey:KEY_ANIMATION_VIEW];
     LightType type =(LightType)[(NSNumber*)[aroundViewDic objectForKey:KEY_ANIMATION_LIGHT_TYPE] integerValue];
     
+    //待修改:不在走游动动画
+    aroundView.hidden = NO;
+    [self.view insertSubview:aroundView belowSubview:_lightPostionFrame];
+    return;
+
     //当前位置为起点
     CGPoint startPoint = CGPointMake(aroundView.frame.origin.x+aroundView.frame.size.width/2, aroundView.frame.origin.y+aroundView.frame.size.height/2);
     //30像素范围内随机变化
@@ -2767,7 +2945,7 @@
             [self newLightSkyMethod];
         }
         
-        [self arraiveToSkyIndication:srcView.center upView:srcView];
+        [self arraiveToSunMoonIndication:srcView.center upView:srcView];
         
         //删除精灵原图
         [srcView removeFromSuperview];
@@ -3150,7 +3328,7 @@
     //到达闪烁
     self.haloToHeader = [PulsingHaloLayer layer];
     self.haloToHeader.position = _userHeaderImageView.center;
-    self.haloToHeader.radius = 0.5 * kMaxRadius;
+    self.haloToHeader.radius = 0.7 * kMaxRadius;
     self.haloToHeader.animationDuration = 0.5;
     self.haloToHeader.eerepeatCount = 1;
     self.haloToHeader.backgroundColor = [CommonObject getIndicationColorByTime].CGColor;
@@ -3172,6 +3350,17 @@
     
 }
 
+-(void) arraiveToSunMoonIndication:(CGPoint) arrivePoint upView:(UIImageView*) upView
+{
+
+    self.haloToSunMoon = [PulsingHaloLayer layer];
+    self.haloToSunMoon.position = arrivePoint;
+    self.haloToSunMoon.radius = 0.7 * kMaxRadius;
+    self.haloToSunMoon.animationDuration = 0.5;
+    self.haloToSunMoon.eerepeatCount = 1;
+    self.haloToSunMoon.backgroundColor = [CommonObject getIndicationColorByTime].CGColor;
+    [self.view.layer insertSublayer:self.haloToSunMoon below:upView.layer];
+}
 
 - (void) pulsingHaloLayerAnimationFinishedRuturn:(NSString*) aniKey  object:(PulsingHaloLayer*) selfObject
 {
@@ -3235,15 +3424,15 @@
 
     //计算当前光和精灵的个数
     if ([CommonObject checkSunOrMoonTime] ==  IS_SUN_TIME) {
-
+        
         [self caculateLightTypeAndCountByCount:userInfo.sun_value.integerValue];
         
     }else
     {
         [self caculateLightTypeAndCountByCount:userInfo.moon_value.integerValue];
-
+        
     }
-
+    
     //动画逻辑控制
     //光不在养育状态,在头像中
     if (![userInfo checkIsBringUpinSunOrMoon]) {
@@ -3463,7 +3652,18 @@
         return;
     }
 
-    [self getOutBaseLight:count outTypeKey:KEY_ANIMATION_SWIM_LIGHT_OUT_FOR_NEWSKY];
+    NSInteger getCount;
+    if (!swimOutBaselightImageViewArray || swimOutBaselightImageViewArray.count == 0)
+    {
+        //如果没有光，全部增加
+        getCount = count;
+    }else
+    {
+        //如果有光，计算应该增加的
+        getCount =count - swimOutBaselightImageViewArray.count;
+    }
+    
+    [self getOutBaseLight:getCount outTypeKey:KEY_ANIMATION_SWIM_LIGHT_OUT_FOR_NEWSKY];
 
 }
 
@@ -3517,7 +3717,20 @@
         UIImageView* spiView = [[UIImageView alloc]initWithImage:[CommonObject getAniStartImageByLightType:type]];
         spiView.frame = CGRectMake(0, 0, 0, 0);
         [swimOutSpiriteImageViewArray addObject:spiView];
-        //[self.view addSubview:spiView];//全程动画，不用显示
+        [self.view addSubview:spiView];
+        
+        //给其加入动画
+        NSMutableArray *iArr=[NSMutableArray arrayWithCapacity:0];
+        for (int i=0; i<3; i++) {
+            NSString *name = [CommonObject getImageNameByLightType:[CommonObject getSpiriteTypeByTime]];
+            
+            UIImage *image=[UIImage imageNamed:[NSString stringWithFormat:@"%@-%d",name,i]];
+            [iArr addObject:image];
+        }
+        spiView.animationImages=iArr;
+        spiView.animationDuration=0.3;
+        spiView.animationRepeatCount = HUGE_VAL;
+        [spiView startAnimating];
         
     }
   
@@ -3651,7 +3864,7 @@
         UIImageView* baseView = [[UIImageView alloc]initWithImage:[CommonObject getAniStartImageByLightType:type]];
         baseView.frame = CGRectMake(0, 0, 0, 0);
         [swimOutBaselightImageViewArray addObject:baseView];
-        //[self.view addSubview:baseView];//全程动画，不用显示
+        [self.view addSubview:baseView];
         
     }
     
@@ -3707,6 +3920,10 @@
     //等待 游荡动画全结束时，触发召回动画
     needStopLightAnimationToCallBackForRefresh = YES;
     
+    //待修改:不在走游动动画
+    [self isTimeProcessBackSkyLight:KEY_ANIMATION_SWIM_LIGHT_BACK_FORREFRESH];
+
+    
 }
 
 -(void) callBackLightToSunMoonForFinal
@@ -3721,6 +3938,9 @@
     //等待 游荡动画全结束时，触发召回动画
     needStopLightAnimationToCallBackForFinal = YES;
     
+    //待修改:不在走游动动画
+    [self isTimeProcessBackSkyLight:KEY_ANIMATION_SWIM_LIGHT_BACK_FORFIANLBACK];
+    
 }
 
 
@@ -3732,6 +3952,9 @@
     }
     
     needStopSpiriteAnimationToCallBack = YES;
+    
+    //待修改:不在走游动动画
+    [self isTimeProcessBackSpirite];
 }
 
 
@@ -4139,8 +4362,8 @@
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     
-    UITouch *touch=touches.anyObject;
-    CGPoint location= [touch locationInView:self.view];
+//    UITouch *touch=touches.anyObject;
+//    CGPoint location= [touch locationInView:self.view];
     
     
 }
@@ -4191,6 +4414,10 @@
 {
     if (!swimOutAnimationSpiriteArray || swimOutAnimationSpiriteArray.count == 0) {
         NSLog(@"Notify:No spirit to fly trace by touch!");
+        
+        //跳动静态精灵提示
+        [self animationSpiriteCountInHeaderChanged];
+        
         return;
     }
     
@@ -4199,16 +4426,17 @@
          spiritFlyTouchPoint = touchPoint;
         needStopSpiriteAnimationToFlyTraceTouch = YES;
         [self DisableUserInteractionInView:self.view exceptViewWithTag:TAG_SHARE_SKY_BTN];
+        
+        //待修改:不在走游动动画
+        [self isTimeProcessSpiriteFlyTraceTouch];
 
     }else
     {
         //自动飞行时，目的点取spiriteAutoFlyPointArray
         needStopSpiriteAnimationToFlyAuto = YES;
+        [self isTimeProcessSpiriteFlyTraceTouch];
 
     }
-    
-
-
     
     //每次飞行动画时开始时禁止自动飞行，避免在飞行过程中，再次触发自动飞行,飞行结束后，再次开始计时
     [spiriteFlyAutoReapaterTimer invalidate];
@@ -4348,12 +4576,6 @@
     NSString* timeshow = [NSString stringWithFormat:(@"从%@ 开始养育 (%d) 光，养育了%d 小时，奖励 %d 个光"), startDate, [CommonObject checkSunOrMoonTime], totalHours, giveCount];
     NSLog(@"%@", timeshow);
     
-//    if (totalHours==0) {
-//        customAlertAutoDis = [[CustomAlertView alloc] InitCustomAlertViewWithSuperView:self.view bkImageName:@"提示框v1.png"  yesBtnImageName:nil posionShowMode:viewCenterBig];
-//        [customAlertAutoDis setAlertMsg:@"Oh,养育时间太短了"];
-//        [customAlertAutoDis RunCumstomAlert];
-//
-//    }
     
     if (totalHours>0 && totalHours<BRING_UP_LIGHT_HOUR) {
         //NSString* timeAlert = [NSString stringWithFormat:(@"%@光托管了%d小时\n每3个小时奖励1个%@光"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", totalHours,([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
@@ -4892,6 +5114,8 @@
     EAIntroPage *page1 = [EAIntroPage page];
     EAIntroPage *page2 = [EAIntroPage page];
     EAIntroPage *page3 = [EAIntroPage page];
+    EAIntroPage *page4 = [EAIntroPage page];
+
 
 
     //page1.title = @"";
@@ -4902,12 +5126,16 @@
         page1.titleImage = [UIImage imageNamed:@"引导1.png"];
         page2.titleImage = [UIImage imageNamed:@"引导2.png"];
         page3.titleImage = [UIImage imageNamed:@"引导3.png"];
+        page4.titleImage = [UIImage imageNamed:@"引导4.png"];
+
 
     }else
     {
         page1.titleImage = [UIImage imageNamed:@"引导1-4.png"];
         page2.titleImage = [UIImage imageNamed:@"引导2-4.png"];
         page3.titleImage = [UIImage imageNamed:@"引导3-4.png"];
+        page4.titleImage = [UIImage imageNamed:@"引导4-4.png"];
+
 
     }
  
@@ -4917,7 +5145,7 @@
     
     
     
-    intro = [[EAIntroView alloc] initWithFrame:self.view.bounds andPages:@[page1,page2,page3]];
+    intro = [[EAIntroView alloc] initWithFrame:self.view.bounds andPages:@[page1,page2,page3,page4]];
     [intro.skipButton setHidden:YES];
 
     [intro setDelegate:self];
@@ -5344,9 +5572,9 @@
 - (IBAction)testButton1:(id)sender
 {
     
-    giveLingtCout = 1;
-    [userInfo addSunOrMoonValue:1];
-    [self reFreshCaculateAndPopOutLightSpirite];
+//    giveLingtCout = 1;
+//    [userInfo addSunOrMoonValue:1];
+//    [self reFreshCaculateAndPopOutLightSpirite];
     
     
     
@@ -5369,7 +5597,6 @@
      
      [_userDB saveUser:user];
      
-     //test 取数据
      _userData = [NSMutableArray arrayWithArray:[_userDB findWithUid:nil limit:10000]];
      
      

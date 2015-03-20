@@ -66,6 +66,15 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    [self doSelect:Nil];
+
+    
+}
+
 - (void)doSelect:(id)sender {
     
     NSDate *selected = [self.datePicker date];
@@ -186,6 +195,7 @@
     [self.navigationController popViewControllerAnimated:YES];
     
 }
+
 
 /*
 #pragma mark - Navigation

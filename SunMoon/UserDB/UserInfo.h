@@ -215,9 +215,6 @@
 
 -(BOOL)checkIsBringUpinSunOrMoon;
 
-
--(void) updateIsHaveAddSunValueForTodayPhoto:(BOOL) isOrNo;
--(void) updateIsHaveAddMoonValueForTodayPhoto:(BOOL) isOrNo;
 -(void) updateIsHaveAddSunOrMoonValueForTodayPhoto:(BOOL) isOrNo;
 
 -(BOOL) checkIsHaveAddSunValueForTodayPhoto;

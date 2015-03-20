@@ -33,6 +33,9 @@
 
 
 @implementation MainSunMoonAppDelegate
+{
+
+}
 
 @synthesize userInfo =_userInfo,userCloud=_userCloud;
 //@synthesize viewDelegate = _viewDelegate;
@@ -208,15 +211,7 @@
 {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    
-    
 
-    _userInfo= [UserInfo  sharedSingleUserInfo];
-    //云同步
-    self.userCloud = [[UserInfoCloud alloc] init];
-    self.userCloud.userInfoCloudDelegate = self;
-    
-    //[self.userCloud upateUserInfo:self.userInfo];
     
 
     //3小时内不重复通知
@@ -245,7 +240,7 @@
     if ([_userInfo checkIsBringUpinSunOrMoon] && (totalHoursIs>REMINDER_INTERVEL_TIME || totalHoursIs<0 || lastNotifyIs == nil)) {
         
         //告知在养育光了
-        temp = [NSString stringWithFormat:@"正在养育%@光，等你回来啊",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
+        temp = [NSString stringWithFormat:@"你的天空正在养育%@光，等你回来啊",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"];
         
         alertNotification.alertBody = temp;
 
@@ -272,7 +267,7 @@
         }
         
         if (alert) {
-            temp = [NSString stringWithFormat:@"快回来呦，没有把%@光托付给%@",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"太阳":@"月亮"];
+            temp = [NSString stringWithFormat:@"快回来呦，没有把%@光托付给%@",([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月", ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳光天空":@"月光天空"];
             
             alertNotification.alertBody = temp;
             
@@ -300,27 +295,80 @@
 {
     
     NSLog(@"Syn UserInfo Succ!");
+    NSString* cloudSun = [userInfo objectForKey:@"sun_value"];
+    NSString* cloudMoon = [userInfo objectForKey:@"moon_value"];
+    if (![cloudSun  isEqualToString:self.userInfo.sun_value] || ![cloudMoon isEqualToString: self.userInfo.moon_value]) {
+        NSLog(@"cloudSun or moon != local value!  --->checkAddCurrValueWithCloudSunVaule, 待优化！");
+        [self.userInfo checkAddCurrValueWithCloudSunVaule:cloudSun.integerValue MoonValue:cloudMoon.integerValue];
+        
+        //同步新数据
+        [_userCloud upateUserInfo:self.userInfo];
+        
+    }else
+    {
+        NSLog(@"cloudSun or moon == local value!");
+//
+//        UILocalNotification* alertNoti=[[UILocalNotification alloc] init];
+//        
+//        alertNoti.fireDate = Nil;
+//        alertNoti.timeZone=[NSTimeZone defaultTimeZone];
+//        alertNoti.soundName = UILocalNotificationDefaultSoundName;
+//        
+//        alertNoti.alertBody = @"阳光或月光无增值, 无需同步";
+//        
+//        [[UIApplication sharedApplication] scheduleLocalNotification:alertNoti];
+        
+    }
     
-    [CommonObject showAlert:@"同步数据成功！" titleMsg:Nil DelegateObject:self];
-    
-    alertNotification=[[UILocalNotification alloc] init];
 
-    alertNotification.fireDate = Nil;
-    alertNotification.timeZone=[NSTimeZone defaultTimeZone];
-    alertNotification.soundName = UILocalNotificationDefaultSoundName;
     
-    //NSDictionary* info = [NSDictionary dictionaryWithObject:ALERT_IS_SUN_TIME forKey:ALERT_SUN_MOON_TIME];
-    //alertNotification.userInfo = info;
-    
-    alertNotification.alertBody = @"同步成功！";
-    
-    [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
+
 }
 
 
 - (void) getUserInfoFinishFailed
 {
-    [CommonObject showAlert:@"同步数据失败, 请检查网络！" titleMsg:Nil DelegateObject:self];
+
+    alertNotification=[[UILocalNotification alloc] init];
+    alertNotification.fireDate = Nil;
+    alertNotification.timeZone=[NSTimeZone defaultTimeZone];
+    alertNotification.soundName = UILocalNotificationDefaultSoundName;
+    alertNotification.alertBody = @"同步数据失败 请检查网络！";
+    [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
+    
+}
+
+- (void) updateUserInfoSuccReturn
+{
+    NSString* logValue = [NSString stringWithFormat:@"同步成功\n阳光%@个，月光%@个", _userInfo.sun_value, _userInfo.moon_value];
+
+    UILocalNotification* alertNoti=[[UILocalNotification alloc] init];
+    
+    alertNoti.fireDate = Nil;
+    alertNoti.timeZone=[NSTimeZone defaultTimeZone];
+    alertNoti.soundName = UILocalNotificationDefaultSoundName;
+    alertNoti.alertBody =logValue;
+    [[UIApplication sharedApplication] scheduleLocalNotification:alertNoti];
+
+}
+
+
+- (void) updateUserInfoFailedReturn
+{
+    NSLog(@"updateUserInfoFailedReturn---check reason!");
+    
+}
+
+- (void) updateUserInfoFailedReturnByNetWork
+{
+    
+    alertNotification=[[UILocalNotification alloc] init];
+    alertNotification.fireDate = Nil;
+    alertNotification.timeZone=[NSTimeZone defaultTimeZone];
+    alertNotification.soundName = UILocalNotificationDefaultSoundName;
+    alertNotification.alertBody =@"同步数据失败 请检查网络！";
+    [[UIApplication sharedApplication] scheduleLocalNotification:alertNotification];
+
     
 }
 
@@ -337,6 +385,19 @@
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     
+    _userInfo= [UserInfo  sharedSingleUserInfo];
+    
+    if (self.userInfo.cloudSynAutoCtl) {
+        //云同步
+        self.userCloud = [[UserInfoCloud alloc] init];
+        self.userCloud.userInfoCloudDelegate = self;
+        
+        //先获得现有用户云数据，对比后同步,待优化，进入后台后，网络被切断，无法同步了，再激活才能同步
+        [_userCloud GetCloudUserInfo:self.userInfo];
+        //[_userCloud upateUserInfo:self.userInfo];
+        
+    }
+
     
     //初始化判断并更新时间,用于从后台进入前台时变换时间
     NSUserDefaults* userBaseData = [NSUserDefaults standardUserDefaults];
@@ -364,5 +425,7 @@
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
+
 
 @end

@@ -176,13 +176,37 @@
 {
     
     [super viewWillAppear:animated];
-
+    //显示定时时间
+    NSCalendar* calendar = [NSCalendar currentCalendar];
+    NSDateComponents* comps;
+    if (_DayType==IS_SUN_TIME) {
+        comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:self.user.sunAlertTime];
+    }else
+    {
+        comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:self.user.moonAlertTime];
+    }
+    
+    NSInteger hour = [comps hour];
+    NSInteger miniute = [comps minute];
+    NSString *timeString = [[NSString alloc] initWithFormat:
+                            @"%d:%d", hour, miniute];
+    if (_DayType==IS_SUN_TIME) {
+        
+        [sunTimeBtn setTitle:timeString forState:UIControlStateNormal];
+        [sunTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        
+    }else
+    {
+        [moonTimeBtn setTitle:timeString forState:UIControlStateNormal];
+        [moonTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    }
+    
     if (!isFromLowView) {
         [self refreshUIForDayTypeViewWillAppear];
         
     }
     
-    
+
     double deltaTime = [[NSDate date] timeIntervalSinceDate:tmpStartData];
     //NSLog(@">>>>>>>>>>cost time = %f ms", deltaTime*1000);
 
@@ -213,7 +237,15 @@
     indicatorView.center = CGPointMake(self.view.center.x, self.view.center.y - CUSTOM_ALERT_HEIGHT/2 - indicatorView.radius/2 - 10);
     [indicatorView startAnimating];
     [self.view addSubview:indicatorView];
-
+    
+    //云状态更新
+    if (self.user.cloudSynAutoCtl) {
+        [_cloudCtlBtn setImage:[UIImage imageNamed:@"云OK.png"] forState:UIControlStateNormal ];
+    }else
+    {
+        [_cloudCtlBtn setImage:[UIImage imageNamed:@"小云.png"] forState:UIControlStateNormal ];
+    }
+    
     
     
     //更新太阳月亮
@@ -285,33 +317,6 @@
 -(void) refreshUIForDayTypeViewDidAppear
 {
     
-
-    
-  
-    //显示定时时间
-    NSCalendar* calendar = [NSCalendar currentCalendar];
-    NSDateComponents* comps;
-    if (_DayType==IS_SUN_TIME) {
-        comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:self.user.sunAlertTime];
-    }else
-    {
-        comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:self.user.moonAlertTime];
-    }
-
-    NSInteger hour = [comps hour];
-    NSInteger miniute = [comps minute];
-    NSString *timeString = [[NSString alloc] initWithFormat:
-                            @"%d:%d", hour, miniute];
-    if (_DayType==IS_SUN_TIME) {
-        
-        [sunTimeBtn setTitle:timeString forState:UIControlStateNormal];
-        [sunTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        
-    }else
-    {
-        [moonTimeBtn setTitle:timeString forState:UIControlStateNormal];
-        [moonTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    }
 
     
     
@@ -725,17 +730,20 @@
      share.shareTitle = NSLocalizedString(@"appName", @"");
      share.shareImage =imageData.image;
      share.shareMsg = imageSentence;
-     share.shareMsgSignature = NSLocalizedString(@"FromUri", @"");
+     
+     NSString* addShow = [NSString stringWithFormat:NSLocalizedString(@"CutScreenShareMsg", @""), [CommonObject getLightCharactorByTime]];
+     share.shareMsgSignature = [addShow stringByAppendingString: NSLocalizedString(@"FromUri", @"")];
+
      NSString* tempShare;
-     tempShare = [NSString stringWithFormat:@"养成了%@个%@光,", sunMoonValueStatic.text,(_DayType==IS_SUN_TIME)?@"阳":@"月"];
+     tempShare = [NSString stringWithFormat:@"我的天空养成了%@个%@光,", sunMoonValueStatic.text,(_DayType==IS_SUN_TIME)?@"阳":@"月"];
      if (_DayType == IS_SUN_TIME) {
         share.shareMsgPreFix = [tempShare stringByAppendingString:NSLocalizedString(@"MsgFrefixSun", @"")];
-        share.waterImage = [UIImage imageNamed:@"水印V1.png"];
+        share.waterImage = [UIImage imageNamed:@"water-sun.png"];
 
      }else
      {
          share.shareMsgPreFix = [tempShare stringByAppendingString:NSLocalizedString(@"MsgFrefixMoon", @"")];
-         share.waterImage = [UIImage imageNamed:@"水印V1.png"];
+         share.waterImage = [UIImage imageNamed:@"water-moon.png"];
      }
 
      share.timeString = sunMoonTimeText.text;
@@ -980,7 +988,8 @@
     //查看网络
     NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
     if (typeNet == netNon) {
-        [CommonObject showAlert:@"请检查网络" titleMsg:nil DelegateObject:self];
+        [self showCustomDelayAlertBottom:@"请检查网络"];
+
         return;
     }
     
@@ -991,7 +1000,7 @@
     }
     
     if (self.user.cloudSynAutoCtl) {
-        [self showCustomYesAlertSuperView:@"已开启自动云同步\n退出时自动同步" AlertKey:@"needRegister"];
+        [self showCustomYesAlertSuperView:@"已开启自动云同步\n登录时自动同步" AlertKey:@"needRegister"];
     }else
     {
         //先获得现有用户云数据，对比后同步
@@ -1019,7 +1028,9 @@
     }else
     {
         NSLog(@"cloudSun or moon == local value!");
-        [CommonObject showAlert:@"阳光或月光无增值, 无需同步" titleMsg:Nil DelegateObject:self];
+        //[CommonObject showAlert:@"阳光或月光无增值, 无需同步" titleMsg:Nil DelegateObject:self];
+        [self showCustomDelayAlertBottom:@"阳光或月光无增值, 无需同步" ];
+
     }
     
 
@@ -1042,7 +1053,8 @@
 - (void) getUserInfoFinishFailedByNetWork
 {
     
-    [CommonObject showAlert:@"同步数据失败\n请检查网络！" titleMsg:Nil DelegateObject:self];
+    [self showCustomDelayAlertBottom:@"同步数据失败 请检查网络！"];
+
 
 }
 
@@ -1050,8 +1062,8 @@
 - (void) updateUserInfoSuccReturn
 {
     
-    NSString* logValue = [NSString stringWithFormat:@"同步数据成功\n阳光%@个，月光%@个", self.user.sun_value, self.user.moon_value];
-    [CommonObject showAlert:logValue titleMsg:Nil DelegateObject:self];
+    NSString* logValue = [NSString stringWithFormat:@"同步成功\n阳光%@个 月光%@个", self.user.sun_value, self.user.moon_value];
+    [self showCustomYesAlertSuperView:logValue AlertKey:@"synUserData"];
     
     sunMoonValueStatic.text =self.user.sun_value;
     NSLog(@"sun change to %@",sunMoonValueStatic.text);
@@ -1067,8 +1079,9 @@
 
 - (void) updateUserInfoFailedReturnByNetWork
 {
-    
-    [CommonObject showAlert:@"同步数据失败\n请检查网络！" titleMsg:Nil DelegateObject:self];
+
+    [self showCustomDelayAlertBottom:@"同步数据失败 请检查网络！"];
+
 
 }
 
@@ -1242,6 +1255,32 @@
         day = @"月";
     }
     [self showCustomDelayAlertBottom:[NSString stringWithFormat:NSLocalizedString(@"changeDay", @""), day] ];
+
+    
+    //显示定时时间
+    NSCalendar* calendar = [NSCalendar currentCalendar];
+    NSDateComponents* comps;
+    if (_DayType==IS_SUN_TIME) {
+        comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:self.user.sunAlertTime];
+    }else
+    {
+        comps =[calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit |NSSecondCalendarUnit)fromDate:self.user.moonAlertTime];
+    }
+    
+    NSInteger hour = [comps hour];
+    NSInteger miniute = [comps minute];
+    NSString *timeString = [[NSString alloc] initWithFormat:
+                            @"%d:%d", hour, miniute];
+    if (_DayType==IS_SUN_TIME) {
+        
+        [sunTimeBtn setTitle:timeString forState:UIControlStateNormal];
+        [sunTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        
+    }else
+    {
+        [moonTimeBtn setTitle:timeString forState:UIControlStateNormal];
+        [moonTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    }
 
     
     [self refreshUIForDayTypeViewWillAppear];
@@ -1462,6 +1501,23 @@
     _voiceReplayBtn.alpha = 1;
     
     _deleteImageBtn.alpha = 1;
+    
+    NSString*  timeSun = [currentSelectData objectForKey:@"image_name_time"];
+    if ([timeSun isEqualToString:@""]) {
+        //return;
+    }
+    
+    NSString* nameSun = [NSString stringWithFormat:@"%@_%d", timeSun, _DayType];
+    [pressedVoiceForPlay setVoiceName:nameSun];
+    
+    if (![pressedVoiceForPlay checkVoiceFile]) {
+        [_voiceReplayBtn setImage:[UIImage imageNamed:@"放音-白.png"] forState:UIControlStateNormal];
+    }else
+    {
+        [_voiceReplayBtn setImage:[UIImage imageNamed:@"放音-白-点.png"] forState:UIControlStateNormal];
+    }
+    
+    
     if (picker.mode == IS_SUN_TIME)
     {
 

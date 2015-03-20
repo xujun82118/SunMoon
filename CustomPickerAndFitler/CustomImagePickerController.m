@@ -286,9 +286,9 @@
         [PLCameraView addSubview:twodelayTime];
         
         //说话提示
-        NSInteger sayViewWidth = 150;
-        NSInteger sayViewHeigth =150;
-        sayView = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2-sayViewWidth/2, sentenceView.frame.origin.y-sayViewHeigth-5, sayViewWidth, sayViewHeigth)];
+        NSInteger sayViewWidth = 120;
+        NSInteger sayViewHeigth =120;
+        sayView = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2-sayViewWidth/2, SCREEN_HEIGHT/2-sayViewHeigth/2, sayViewWidth, sayViewHeigth)];
         sayView.image = [UIImage imageNamed:@"说话-1.png"];
         sayView.hidden = YES;
         sayView.alpha = 0.8;
@@ -302,7 +302,7 @@
         voiceValueLabel.tag = TAB_VOICE_VALUE;
         voiceValueLabel.text = @"0";
         voiceValueLabel.hidden = YES;
-        voiceValueLabel.font = [UIFont fontWithName:@"Arial" size:30];
+        voiceValueLabel.font = [UIFont fontWithName:@"Arial" size:25];
         voiceValueLabel.textColor = [UIColor whiteColor];
         voiceValueLabel.textAlignment = NSTextAlignmentCenter;
         //voiceValueLabel.adjustsFontSizeToFitWidth = YES;
@@ -1074,7 +1074,7 @@
         
     }else
     {
-        [self showCustomDelayAlertBottom:@"音量小于200\n请大点声，多点自信"];
+        [self showCustomDelayAlertBottom:@"音量小于150\n请大点声，多点自信"];
         
         return  1;
     }
@@ -1101,10 +1101,10 @@
 {
    
     if (defaultPickerView == nil) {
-        defaultPickerView = [[AFPickerView alloc] initWithFrame:CGRectMake(0,ScreenHeight-216,320,216) backgroundImage:@"PickerBG.png" shadowImage:@"PickerShadow.png" glassImage:@"pickerGlass.png" title:@"选择宣言"];
+        defaultPickerView = [[AFPickerView alloc] initWithFrame:CGRectMake(0,ScreenHeight-216,SCREEN_WIDTH,216) backgroundImage:@"PickerBG.png" shadowImage:@"PickerShadow.png" glassImage:@"pickerGlass.png" title:@"选择宣言"];
         defaultPickerView.dataSource = self;
         defaultPickerView.delegate = self;
-        defaultPickerView.rowFont = [UIFont fontWithName:@"Arial" size:20];
+        defaultPickerView.rowFont = [UIFont fontWithName:@"Arial" size:15];
         [self.view addSubview:defaultPickerView];
     }
     [defaultPickerView showPicker];
@@ -1229,7 +1229,7 @@
             {
                 [guidInfo setGuidStepNumber:guid_oneByOne];
                 
-                [self showCustomYesAlertSuperView:@"可选择松开后2s\n自动拍照" AlertKey:nil];
+                [self showCustomYesAlertSuperView:@"请选择宣言2s后\n延时拍照" AlertKey:nil];
             }
                 
                 break;
@@ -1444,7 +1444,7 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info
     [customAlertAutoDis setStartAlpha:0.1];
     [customAlertAutoDis setEndAlpha:0.8];
     [customAlertAutoDis setDelayDisappearTime:4.0];
-    [customAlertAutoDis setMsgFrontSize:35];
+    [customAlertAutoDis setMsgFrontSize:30];
     [customAlertAutoDis setAlertMsg:msg];
     [customAlertAutoDis RunCumstomAlert];
     

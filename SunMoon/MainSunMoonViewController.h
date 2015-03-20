@@ -45,7 +45,7 @@
 
 
 
-@property (nonatomic, copy) UserDB * userDB;
+@property (nonatomic, strong) UserDB * userDB;
 
 @property (nonatomic, strong) UserInfo * userInfo;
 
@@ -60,7 +60,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *panSunorMoonImageView;
 
 @property (weak, nonatomic) IBOutlet UIButton* menuBtn;
-@property (nonatomic, assign) IBOutlet UIButton* screenShareBtn;
+@property (weak, nonatomic) IBOutlet UIButton* screenShareBtn;
 
 
 @property (weak, nonatomic) IBOutlet UIImageView *skyWindow;
@@ -71,9 +71,11 @@
 
 @property (nonatomic, strong) PulsingHaloLayer *halo;
 @property (nonatomic, strong) PulsingHaloLayer *haloTouch;
-@property (nonatomic, assign) PulsingHaloLayer *haloToHeader;
-@property (nonatomic, assign) PulsingHaloLayer *haloToSky;
-@property (nonatomic, assign) PulsingHaloLayer *haloToReminber;
+@property (nonatomic, strong) PulsingHaloLayer *haloToHeader;
+@property (nonatomic, strong) PulsingHaloLayer *haloToSky;
+@property (nonatomic, strong) PulsingHaloLayer *haloToReminber;
+@property (nonatomic, strong) PulsingHaloLayer *haloToSunMoon;
+
 
 
 

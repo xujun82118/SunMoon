@@ -30,54 +30,54 @@ typedef enum
 
 }
 
-@property(nonatomic) id<CustomAnimationDelegate> customAniDelegate;
+@property(nonatomic,weak) id<CustomAnimationDelegate> customAniDelegate;
 
-@property (nonatomic,) aniCustomType  aniType; //动画类型
-@property (nonatomic, ) NSString* anikey; //动画的名称
+@property (nonatomic, assign) aniCustomType  aniType; //动画类型
+@property (nonatomic, copy) NSString* anikey; //动画的名称
 
-@property (nonatomic)CALayer * bkLayer; //被添加的根图层
-@property (nonatomic)CALayer * aniLayer; //被创建的动画图层
+@property (nonatomic, strong)CALayer * bkLayer; //被添加的根图层
+@property (nonatomic, strong)CALayer * aniLayer; //被创建的动画图层
 @property (nonatomic,assign)CALayer * bkLayerBelow; //被添加在此图层之上, 处理弹出后，被新加图层覆盖问题,默认为bkLayer
 
 
 
 @property (nonatomic, strong) NSDictionary* aniImageViewDic; //动画的原view信息，用于动画后对其操作
-@property (nonatomic,) UIImageView* aniImageView; //动画的原view,不用初始化
+@property (nonatomic,strong) UIImageView* aniImageView; //动画的原view,不用初始化
 
 
-@property(nonatomic) CGSize   aniStartSize;
-@property(nonatomic) CGSize   aniEndSize;
+@property(nonatomic,assign) CGSize   aniStartSize;
+@property(nonatomic,assign) CGSize   aniEndSize;
 
-@property (nonatomic, ) CGPoint aniStartPoint;
-@property (nonatomic, ) CGPoint aniEndpoint;
+@property (nonatomic, assign) CGPoint aniStartPoint;
+@property (nonatomic, assign) CGPoint aniEndpoint;
 
 
-@property (nonatomic, )  NSInteger aniRepeatCount;
-@property (nonatomic, )  float aniDuration;
+@property (nonatomic, assign)  NSInteger aniRepeatCount;
+@property (nonatomic, assign)  float aniDuration;
 
-@property (nonatomic, ) CGPoint aniCurrentpoint;
+@property (nonatomic, assign) CGPoint aniCurrentpoint;
 
 
 /**
  *  用户贝塞尔 和 关键帧动画
  */
-@property (nonatomic,)  CAKeyframeAnimation * aniKeyFrame;;
+@property (nonatomic,strong)  CAKeyframeAnimation * aniKeyFrame;;
 
 /**
  *  贝塞尔  动画参数
  */
-@property (nonatomic, ) CGPoint aniBazierCenterPoint1; //贝塞尔曲线中间点1
-@property (nonatomic, ) CGPoint aniBazierCenterPoint2; //贝塞尔曲线中间点2
+@property (nonatomic, assign) CGPoint aniBazierCenterPoint1; //贝塞尔曲线中间点1
+@property (nonatomic, assign) CGPoint aniBazierCenterPoint2; //贝塞尔曲线中间点2
 -(void) bazierCustomAnimation;
 
 
 /**
  *  关键帧动画点
  */
-@property (nonatomic, ) NSMutableArray* aniKeyframePointArray;
-@property (nonatomic, ) NSInteger aniKeyframePointCount;
-@property (nonatomic, ) CADisplayLink *displayLink;
-@property (nonatomic, ) BOOL displayLinkEnable;
+@property (nonatomic, strong) NSMutableArray* aniKeyframePointArray;
+@property (nonatomic, assign) NSInteger aniKeyframePointCount;
+@property (nonatomic, strong) CADisplayLink *displayLink;
+@property (nonatomic, assign) BOOL displayLinkEnable;
 
 
 -(void)  setAniKeyframePoint:(CGPoint) setPoint;
@@ -85,18 +85,18 @@ typedef enum
 
 
 
-@property (nonatomic, ) NSValue* aniKeyframePoint1; //关键帧点1
-@property (nonatomic, ) NSValue* aniKeyframePoint2; //关键帧点2
-@property (nonatomic, ) NSValue* aniKeyframePoint3; //关键帧点3
-@property (nonatomic, ) NSValue* aniKeyframePoint4; //关键帧点4
-@property (nonatomic, ) NSValue* aniKeyframePoint5; //关键帧点5
+@property (nonatomic, strong) NSValue* aniKeyframePoint1; //关键帧点1
+@property (nonatomic, strong) NSValue* aniKeyframePoint2; //关键帧点2
+@property (nonatomic, strong) NSValue* aniKeyframePoint3; //关键帧点3
+@property (nonatomic, strong) NSValue* aniKeyframePoint4; //关键帧点4
+@property (nonatomic, strong) NSValue* aniKeyframePoint5; //关键帧点5
 
 
 /**
  *  精灵动画资源加载
  */
 @property (nonatomic, strong) NSMutableArray *sipiriteArray; //精灵动画组
-@property (nonatomic, ) LightType sipiriteAnimationType; //精灵类型
+@property (nonatomic, assign) LightType sipiriteAnimationType; //精灵类型
 
 
 /**
