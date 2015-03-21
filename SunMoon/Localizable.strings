@@ -29,7 +29,7 @@
 "MsgFrefixMoon" = "今天的月光宣言：";
 "CutScreenShareMsg" = "自拍还可以这样玩，玩出美丽，玩出%@光天空";
 "MySkyInfo" = "我的%@光天空已拥有%lu个%@光，召唤了%lu个%@光之精灵，";
-"newCallSpiriteAlert" = "已召唤%lu个%@光之精灵\n快分享给好友吧！";
+"newCallSpiriteAlert" = "拥有%lu个精灵,分享给好友吧";
 "reminderHowToGetSpirite" = "当天空布满%@光\n可召唤1个精灵";
 
 "changeDay" = "切换至%@光相片";

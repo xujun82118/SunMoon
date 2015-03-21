@@ -304,6 +304,9 @@
     }
     
     
+    //test
+    NSInteger count = 25 - userInfo.sun_value.integerValue%25 -1;
+    [userInfo addSunOrMoonValue:count];
     
 
 }
@@ -405,7 +408,7 @@
      
     //初始化日月动画图
     //不能放到veiwDidload 和viewWillapear中
-    NSInteger IntervalWidth = 5;// 光环向日月外扩的宽度,日月的光晕较大
+    NSInteger IntervalWidth = 10;// 光环向日月外扩的宽度,日月的光晕较大
     NSInteger lightSkySunOrMoonViewWidth = _skySunorMoonImage.frame.size.width+IntervalWidth*2;
     NSInteger lightSkySunOrMoonViewHeigth = _skySunorMoonImage.frame.size.height+IntervalWidth*2;
     if (!lightSkySunOrMoonView) {
@@ -784,7 +787,7 @@
         if (currentSpiriteCount > spiritCountlabel.text.integerValue) {
             //闪烁提示数字变化
             [self animationSpiriteCountInHeaderChanged];
-            [self showCustomYesAlertSuperView:[NSString stringWithFormat:NSLocalizedString(@"newCallSpiriteAlert", @""), currentSpiriteCount, [CommonObject getLightCharactorByTime]] AlertKey:@"newCallSpiriteAlert"];
+            [self showCustomDelayAlertBottom:[NSString stringWithFormat:NSLocalizedString(@"newCallSpiriteAlert", @""), currentSpiriteCount]];
             spiritCountlabel.text = [NSString stringWithFormat:@"%lu", currentSpiriteCount];
 
         }
@@ -3355,7 +3358,7 @@
     
     NSInteger currentLightCount = swimOutBaselightImageViewArray.count;
     
-    if (giveCount <= FULL_SKY_LIGHT_COUNT - currentLightCount) {
+    if (giveCount < FULL_SKY_LIGHT_COUNT - currentLightCount) {
         //补全光
         [self getOutBaseLight:giveCount outTypeKey:KEY_ANIMATION_SWIM_LIGHT_OUT_REFRESH_ADD];
     }else
@@ -4635,8 +4638,8 @@
         NSInteger lightBowSkyUserHeaderViewHeigth;
         if (i==0) {
             //定位第一个环的位置
-            lightBowSkyUserHeaderViewWidth = _userHeaderImageView.frame.size.width+75;
-            lightBowSkyUserHeaderViewHeigth = _userHeaderImageView.frame.size.height+75;
+            lightBowSkyUserHeaderViewWidth = _userHeaderImageView.frame.size.width+65;
+            lightBowSkyUserHeaderViewHeigth = _userHeaderImageView.frame.size.height+65;
         }else
         {
             lightBowSkyUserHeaderViewWidth = lightBowSkyUserHeaderViewWidth+IntervalWidth*2;
