@@ -29,6 +29,8 @@
 		<key>1a0beb16-39a9-491a-8432-0dfbb1476d54++7897</key>
 		<string>https://svn.duapp.com/appid9kgedf0yca</string>
 	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>svn://127.0.0.1</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
@@ -37,7 +39,7 @@
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.subversion</string>
+			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>08038320-10a7-4ed3-8daf-a121c0a69385++8655</string>
 			<key>IDESourceControlWCCName</key>
@@ -45,7 +47,7 @@
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
+			<string>public.vcs.subversion</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>08038320-10a7-4ed3-8daf-a121c0a69385++8655</string>
 			<key>IDESourceControlWCCName</key>
