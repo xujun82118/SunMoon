@@ -153,7 +153,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
-    NSArray *titles = @[@"   我的天空", @"   我的设置",@"   关于我们",@"   天空玩法"];
+    NSArray *titles = @[@"   我的天空", @"   我的设置",@"   关于我们",@"   美拍玩法"];
     cell.textLabel.text = titles[indexPath.row];
     cell.textAlignment = NSTextAlignmentLeft;
     cell.backgroundColor = [UIColor redColor];

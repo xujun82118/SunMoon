@@ -38,8 +38,15 @@
     self.navigationController.navigationBarHidden = NO;
     self.navigationController.navigationBar.opaque = YES;
     
+    
 }
 
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [_pageInfo setContentOffset:CGPointMake(0.0,0.0) animated:NO];
+
+}
 
 - (IBAction)showMenu
 {

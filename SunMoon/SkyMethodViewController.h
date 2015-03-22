@@ -10,6 +10,7 @@
 #import "REFrostedViewController.h"
 
 @interface SkyMethodViewController : UIViewController
+@property (weak, nonatomic) IBOutlet UITextView *pageInfo;
 
 - (IBAction)showMenu;
 
