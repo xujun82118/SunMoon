@@ -229,6 +229,9 @@
 {
     
     //初始化指示器
+    if (indicatorView) {
+        [indicatorView stopAnimating];
+    }
     indicatorView = [[MONActivityIndicatorView alloc] init];
     indicatorView.delegate = self;
     indicatorView.numberOfCircles = 4;
@@ -1029,7 +1032,7 @@
     {
         NSLog(@"cloudSun or moon == local value!");
         //[CommonObject showAlert:@"阳光或月光无增值, 无需同步" titleMsg:Nil DelegateObject:self];
-        [self showCustomDelayAlertBottom:@"阳光或月光无增值, 无需同步" ];
+        [self showCustomDelayAlertBottom:@"阳光和月光无增值, 无需同步" ];
 
     }
     
@@ -1116,22 +1119,30 @@
             UserInfo* selectUserInfo = [userDB getUserDataByDateTime:imageName];
             
             if (selectUserInfo) {
-                NSLog(@"DeleteMorningImage, Datetime=%@， 此条存在，先删后插入新的一条!", selectUserInfo.date_time);
-                [userDB deleteUserWithDataTime:selectUserInfo.date_time];
+                NSLog(@"删除相片：%@， type=%ld", selectUserInfo.date_time,_DayType);
                 //置空删除的相片
-                selectUserInfo.sun_image = Nil;
-                //重存此条数据
+                if (_DayType == IS_SUN_TIME) {
+                    selectUserInfo.sun_image = Nil;
+                    selectUserInfo.sun_image_name = @"";
+                    selectUserInfo.sun_image_sentence = @"";
+                }else
+                {
+                    selectUserInfo.moon_image = Nil;
+                    selectUserInfo.moon_image_name = @"";
+                    selectUserInfo.moon_image_sentence = @"";
+                }
+                //[userDB mergeWithUserByDateTime:selectUserInfo];
+                [userDB deleteUserWithDataTime:selectUserInfo.date_time];
                 [userDB saveUser:selectUserInfo];
             }else
             {
-                NSLog(@"DeleteMorningImage，错误，此条不存在!");
-                [userDB saveUser:selectUserInfo];
+                NSLog(@"DeleteImage，错误，此条不存在!");
             }
             
             //删除语音
-            NSString*  timeSun = [currentSelectData objectForKey:@"image_name_time"];
-            NSString* nameSun = [NSString stringWithFormat:@"%@_%d", timeSun, _DayType];
-            [pressedVoiceForPlay setVoiceName:nameSun];
+            NSString*  timeSunMoon = [currentSelectData objectForKey:@"image_name_time"];
+            NSString* nameSunMoon = [NSString stringWithFormat:@"%@_%d", timeSunMoon, _DayType];
+            [pressedVoiceForPlay setVoiceName:nameSunMoon];
             [pressedVoiceForPlay deleteVoiceFile];
             
             NSLog(@"刷新 阳光 数据");

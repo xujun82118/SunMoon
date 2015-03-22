@@ -638,7 +638,7 @@
     if ([self.userInfo checkIsHaveAddSunOrMoonValueForTodayPhoto]) {
         NSLog(@" 已奖励过光，返回");
 
-        [self showCustomDelayAlertBottom:[NSString stringWithFormat:(@"今天的%@光已经摘走了^_^"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"]];
+        [self showCustomDelayAlertBottom:[NSString stringWithFormat:(@"今天的%@光已经摘走了"),([CommonObject checkSunOrMoonTime]==IS_SUN_TIME)?@"阳":@"月"]];
         return 0;
 
     }
@@ -705,6 +705,13 @@
     
     [srcView removeFromSuperview];
     valuelabel.text = @"+1";
+    
+    
+    if ([aniKey isEqualToString:@"animation_bazier_add_one_light"]) {
+        
+        AudioServicesPlaySystemSound(1113);
+        
+    }
     
     
 
@@ -783,7 +790,7 @@
         VoicePressedHold* pressedVoiceFordelete = [[VoicePressedHold alloc] init];
         NSString* nameVoice = [imagePickerData objectForKey:CAMERA_VOICE_NAEM_KEY];
         [pressedVoiceFordelete setVoiceName:nameVoice];
-        [pressedVoiceFordelete deleteVoiceFile];
+        //[pressedVoiceFordelete deleteVoiceFile];
         
         [self dismissViewControllerAnimated:YES completion:NULL];
         
@@ -802,11 +809,13 @@
     [self dismissViewControllerAnimated:YES completion:^{
 
         
-        //待优化 count选写死为1， 出现了加光错乱的情况
-        NSInteger count = 1;
-        [self.userInfo addSunOrMoonValue:count];
-        [self.userInfo updateIsHaveAddSunOrMoonValueForTodayPhoto:YES];
+        //待优化 增加写死为1， 出现了加光错乱的情况
+        if (finalGiveLightCout>0) {
+            [self.userInfo addSunOrMoonValue:1];
+            [self.userInfo updateIsHaveAddSunOrMoonValueForTodayPhoto:YES];
 
+        }
+  
         NSDictionary* imageFilterData = [NSDictionary dictionaryWithObjectsAndKeys:rootImageView.image,CAMERA_IMAGE_KEY,
                                          [imagePickerData objectForKey:CAMERA_TIME_KEY], CAMERA_TIME_KEY,
                                          currentSentence, CAMERA_SENTENCE_KEY,

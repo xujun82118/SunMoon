@@ -219,6 +219,11 @@
     [timerForPitch invalidate];
     timerForPitch = nil;
     _customRangeBar.value = 0.0;
+    
+    //设置为AVAudioSessionCategoryPlayback，否则系统音被关闭
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    [audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
+
 }
 
 -(void) playRecording
@@ -230,19 +235,18 @@
     NSArray *dirPaths = NSSearchPathForDirectoriesInDomains(
                                                             NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *docsDir = [dirPaths objectAtIndex:0];
-    //NSString *soundFilePath = [docsDir stringByAppendingPathComponent:@"recordTest.caf"];
     NSString *soundFilePath = [docsDir stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.caf", _voiceName]];
 
     
     NSURL *url = [NSURL fileURLWithPath:soundFilePath];
     
-    // NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/recordTest.caf", [[NSBundle mainBundle] resourcePath]]];
     NSError *error;
     audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
     audioPlayer.numberOfLoops = 0;
     audioPlayer.delegate = self;
     [audioPlayer play];
     NSLog(@"playing");
+
 }
 
 -(void) stopPlaying

@@ -113,9 +113,7 @@
     self.userData  = self.userInfo.userDataBase;
     
     //语音名子 “time_日月”
-    _voiceName = [NSString stringWithFormat:@"%@_%d", [CommonObject getCurrentDate], [CommonObject checkSunOrMoonTime]];
-    
-    
+    _voiceName = [NSString stringWithFormat:@"%@_%ld", [CommonObject getCurrentDate], [CommonObject checkSunOrMoonTime]];
     pressedVoice = [VoicePressedHold alloc];
     pressedVoice.getPitchDelegate = self;
     [pressedVoice setVoiceName:_voiceName];
@@ -357,9 +355,6 @@
         //[PLCameraView addSubview:delayTime];
         [overlyView addSubview:delayTime];
 
-
-
-        
 
         //按住说语录按钮
         NSInteger voicePressedWidth = everyW;
@@ -829,7 +824,7 @@
         if ([CommonObject checkSunOrMoonTime]==IS_SUN_TIME) {
             if ([self.userInfo checkIsHaveAddSunValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"每天早上美拍一次就够了^_^" AlertKey:@"reminderOnce"];
+                [self showCustomYesAlertSuperView:@"每天早上美拍一次就好" AlertKey:@"reminderOnce"];
                 
                 [[GuidController sharedSingleUserInfo] setGuidHaveTakePhoto:YES];
             }
@@ -837,7 +832,7 @@
         {
             if ([self.userInfo checkIsHaveAddMoonValueForTodayPhoto]) {
                 
-                [self showCustomYesAlertSuperView:@"每天晚上美拍一次就够了^_^" AlertKey:@"reminderOnce"];
+                [self showCustomYesAlertSuperView:@"每天晚上美拍一次就好^" AlertKey:@"reminderOnce"];
 
                 [[GuidController sharedSingleUserInfo] setGuidHaveTakePhoto:YES];
 

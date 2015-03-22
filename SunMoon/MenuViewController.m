@@ -11,6 +11,7 @@
 #import "UIViewController+REFrostedViewController.h"
 #import "UserSetViewController.h"
 #import "AboutViewController.h"
+#import "SkyMethodViewController.h"
 
 
 
@@ -114,6 +115,12 @@
         navigationController.viewControllers = @[thirdViewController];
         
     }
+    else if (indexPath.section == 0 && indexPath.row == 3)
+    {
+        SkyMethodViewController *fouthViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"SkyMethodController"];
+        navigationController.viewControllers = @[fouthViewController];
+        
+    }
 
     [self.frostedViewController hideMenuViewController];
 }
@@ -133,7 +140,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)sectionIndex
 {
-    return 3;
+    return 4;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -146,7 +153,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
-    NSArray *titles = @[@"   我的天空", @"   我的设置",@"   关于我们"];
+    NSArray *titles = @[@"   我的天空", @"   我的设置",@"   关于我们",@"   天空玩法"];
     cell.textLabel.text = titles[indexPath.row];
     cell.textAlignment = NSTextAlignmentLeft;
     cell.backgroundColor = [UIColor redColor];
@@ -167,6 +174,13 @@
         tableView.separatorColor = [UIColor whiteColor];
 
         cell.imageView.image = [UIImage imageNamed:@"ning.png"];
+        
+    }
+    else if(indexPath.row == 3)
+    {
+        tableView.separatorColor = [UIColor whiteColor];
+        
+        cell.imageView.image = [UIImage imageNamed:@"blinklist.png"];
         
     }
 

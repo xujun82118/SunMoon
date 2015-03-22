@@ -12,7 +12,6 @@
 
 @interface AboutViewController : UIViewController
 
--(void) back;
 - (IBAction)showMenu;
 
 @end

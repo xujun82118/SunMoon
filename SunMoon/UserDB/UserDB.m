@@ -236,9 +236,6 @@
     
     NSString * query = [NSString stringWithFormat:@"DELETE FROM UserInfo WHERE date_time = '%@'",dateString];
     
-    
-    
-    [MainSunMoonAppDelegate showStatusWithText:@"删除一条数据" duration:2.0];
     [_db executeUpdate:query];
 }
 
@@ -316,6 +313,8 @@
 //    [self mergeWithUserByUID:[self getUserDataByDateTime:user.date_time]];
 //    
 //    UserInfo * user1 = [self getUserDataByDateTime:user.date_time];
+    NSNumber*  dateNumber = [NSNumber numberWithDouble:[self getDoubleByTimeString:user.date_time]];
+    NSString* dateString = [NSString stringWithFormat:@"%@", dateNumber];
     
     NSString * query = @"UPDATE UserInfo SET";
     NSMutableString * temp = [NSMutableString stringWithCapacity:20];
@@ -324,8 +323,7 @@
         [temp appendFormat:@" uid = '%@',",user.uid];
     }
     if (user.date_time) {
-        NSNumber*  dateNumber = [NSNumber numberWithDouble:[self getDoubleByTimeString:user.date_time]];
-        NSString* dateString = [NSString stringWithFormat:@"%@", dateNumber];
+
         [temp appendFormat:@" date_time = '%@',",dateString];
     }
     if (user.sun_value) {
@@ -355,7 +353,7 @@
     }
     
     [temp appendString:@")"];
-    query = [query stringByAppendingFormat:@"%@ WHERE date_time = '%@'",[temp stringByReplacingOccurrencesOfString:@",)" withString:@""],user.date_time];
+    query = [query stringByAppendingFormat:@"%@ WHERE date_time = '%@'",[temp stringByReplacingOccurrencesOfString:@",)" withString:@""],dateString];
     //NSLog(@"%@",query);
     [MainSunMoonAppDelegate showStatusWithText:@"修改一条数据" duration:2.0];
     if(![_db executeUpdate:query])
@@ -365,6 +363,7 @@
     }
     
 }
+
 
 /**
  * @brief 模拟分页查找数据。取uid大于某个值以后的limit个数据

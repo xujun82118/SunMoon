@@ -748,7 +748,6 @@ static UserInfo *sharedUserInfo;
     
     [userDB deleteUserWithDataTime:userInfo.date_time];
     [userDB saveUser:userInfo];
-    //[userDB mergeWithUserByDateTime:userInfo];
     
 }
 

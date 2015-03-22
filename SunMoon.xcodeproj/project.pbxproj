@@ -236,6 +236,7 @@
 		6B4509B11AB8128100507525 /* 引导4.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B4509AF1AB8128100507525 /* 引导4.png */; };
 		6B4509B41AB8128100507525 /* 引导4-4.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B4509B31AB8128100507525 /* 引导4-4.png */; };
 		6B4509BA1AB97ACB00507525 /* 云OK.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B4509B91AB97ACB00507525 /* 云OK.png */; };
+		6B4509BC1ABC336D00507525 /* 照片时间.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B4509BB1ABC336D00507525 /* 照片时间.png */; };
 		6B468C2F1AAEC5E00054C4E4 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C2E1AAEC5E00054C4E4 /* Main_iPhone.storyboard */; };
 		6B468C311AAEC5E00054C4E4 /* changeDay.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C301AAEC5E00054C4E4 /* changeDay.png */; };
 		6B468C331AB0BB3A0054C4E4 /* 延时提示框V1.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B468C321AB0BB3A0054C4E4 /* 延时提示框V1.png */; };
@@ -277,6 +278,8 @@
 		6B86C3A91A47DA4900F450E1 /* ShareSDKShareActionSheet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B86C3961A47DA4900F450E1 /* ShareSDKShareActionSheet.framework */; };
 		6B86C3AB1A47DB2C00F450E1 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B86C3AA1A47DB2C00F450E1 /* Social.framework */; };
 		6B86C3AD1A47DB3B00F450E1 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B86C3AC1A47DB3B00F450E1 /* Accounts.framework */; };
+		6B9925F41ABE3E9C008DB648 /* SkyMethodViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B9925F31ABE3E9C008DB648 /* SkyMethodViewController.m */; };
+		6B9925F61ABE541D008DB648 /* blinklist.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B9925F51ABE541D008DB648 /* blinklist.png */; };
 		6BA8A8991A7F483D004BC38D /* PulsingHaloLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BA8A8981A7F483D004BC38D /* PulsingHaloLayer.m */; };
 		6BCA94091A989EEA0070FA59 /* camera-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BCA94071A989EEA0070FA59 /* camera-white.png */; };
 		6BCA940A1A989EEA0070FA59 /* camera-yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BCA94081A989EEA0070FA59 /* camera-yellow.png */; };
@@ -596,6 +599,7 @@
 		6B4509AF1AB8128100507525 /* 引导4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "引导4.png"; sourceTree = "<group>"; };
 		6B4509B31AB8128100507525 /* 引导4-4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "引导4-4.png"; sourceTree = "<group>"; };
 		6B4509B91AB97ACB00507525 /* 云OK.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "云OK.png"; sourceTree = "<group>"; };
+		6B4509BB1ABC336D00507525 /* 照片时间.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "照片时间.png"; sourceTree = "<group>"; };
 		6B468C2E1AAEC5E00054C4E4 /* Main_iPhone.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main_iPhone.storyboard; sourceTree = "<group>"; };
 		6B468C301AAEC5E00054C4E4 /* changeDay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = changeDay.png; sourceTree = "<group>"; };
 		6B468C321AB0BB3A0054C4E4 /* 延时提示框V1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "延时提示框V1.png"; sourceTree = "<group>"; };
@@ -643,6 +647,9 @@
 		6B86C3961A47DA4900F450E1 /* ShareSDKShareActionSheet.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ShareSDKShareActionSheet.framework; sourceTree = "<group>"; };
 		6B86C3AA1A47DB2C00F450E1 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		6B86C3AC1A47DB3B00F450E1 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		6B9925F21ABE3E9C008DB648 /* SkyMethodViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyMethodViewController.h; sourceTree = "<group>"; };
+		6B9925F31ABE3E9C008DB648 /* SkyMethodViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SkyMethodViewController.m; sourceTree = "<group>"; };
+		6B9925F51ABE541D008DB648 /* blinklist.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blinklist.png; sourceTree = "<group>"; };
 		6BA8A8971A7F483D004BC38D /* PulsingHaloLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PulsingHaloLayer.h; sourceTree = "<group>"; };
 		6BA8A8981A7F483D004BC38D /* PulsingHaloLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PulsingHaloLayer.m; sourceTree = "<group>"; };
 		6BCA94071A989EEA0070FA59 /* camera-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "camera-white.png"; sourceTree = "<group>"; };
@@ -654,6 +661,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DABFEBE195873700000D5B2 /* AVFoundation.framework in Frameworks */,
 				5D523DC919EBBD01004FE84E /* StoreKit.framework in Frameworks */,
 				6B3258721A6CD30200612A71 /* libz.dylib in Frameworks */,
 				6B3258701A6CD2F600612A71 /* MediaPlayer.framework in Frameworks */,
@@ -680,7 +688,6 @@
 				6B86C3A61A47DA4900F450E1 /* ShareSDK.framework in Frameworks */,
 				5DABFEC0195873800000D5B2 /* CoreAudio.framework in Frameworks */,
 				6B86C39B1A47DA4900F450E1 /* WeChatConnection.framework in Frameworks */,
-				5DABFEBE195873700000D5B2 /* AVFoundation.framework in Frameworks */,
 				6B86C3A81A47DA4900F450E1 /* ShareSDKFlatShareViewUI.framework in Frameworks */,
 				5DF11E3018F5905700684122 /* MessageUI.framework in Frameworks */,
 				5DF11E2C18F58FCE00684122 /* libstdc++.dylib in Frameworks */,
@@ -1077,6 +1084,8 @@
 				5D618AB31924E7F900150945 /* SunMoonAlertTime.m */,
 				5D5114011939624500F41F8A /* AboutViewController.h */,
 				5D5114021939624500F41F8A /* AboutViewController.m */,
+				6B9925F21ABE3E9C008DB648 /* SkyMethodViewController.h */,
+				6B9925F31ABE3E9C008DB648 /* SkyMethodViewController.m */,
 				5D12D0CF195084D4000E2543 /* ShareByShareSDR.h */,
 				5D12D0D0195084D4000E2543 /* ShareByShareSDR.m */,
 				5DE48CC41956479F007A8A17 /* WeatherLoc.h */,
@@ -1143,6 +1152,8 @@
 		5DF238A718E7BF7500538DA1 /* Image */ = {
 			isa = PBXGroup;
 			children = (
+				6B9925F51ABE541D008DB648 /* blinklist.png */,
+				6B4509BB1ABC336D00507525 /* 照片时间.png */,
 				6B468C321AB0BB3A0054C4E4 /* 延时提示框V1.png */,
 				6B468C341AB0BEEB0054C4E4 /* 提示框V2.png */,
 				6B468C301AAEC5E00054C4E4 /* changeDay.png */,
@@ -1594,6 +1605,7 @@
 				6B4D97FB1AB3E12B00739B05 /* 提示框V2-黄.png in Resources */,
 				5D45CE061919C670007900A7 /* 分享.png in Resources */,
 				6B45096A1AB8128100507525 /* scroll-9.png in Resources */,
+				6B4509BC1ABC336D00507525 /* 照片时间.png in Resources */,
 				5D8334AC1978011D00EC5201 /* headerFrame_7.png in Resources */,
 				5DFFEDF2194D3DC900688032 /* 丢弃.png in Resources */,
 				5D8AC8CB190CBA8C00E41FBA /* sun.png in Resources */,
@@ -1601,6 +1613,7 @@
 				5DE48CB7195464EE007A8A17 /* sns_icon_24@2x.png in Resources */,
 				6B468C3A1AB0C5870054C4E4 /* 延时提示框-白.png in Resources */,
 				6B70C0931AA9548600F25F43 /* touch-1.png in Resources */,
+				6B9925F61ABE541D008DB648 /* blinklist.png in Resources */,
 				5DF2CA1719754BBA0078BF63 /* 小云-touch.png in Resources */,
 				6B4509A51AB8128100507525 /* light-yellow-0.png in Resources */,
 				6B4509A91AB8128100507525 /* spirit-white-1.png in Resources */,
@@ -1729,6 +1742,7 @@
 				5D18093918F127FF0039F50E /* UIImage+Cut.m in Sources */,
 				5D2609A3197230C400741953 /* TapSeeImage.m in Sources */,
 				5D2609A6197234E000741953 /* TapShowImageViewController.m in Sources */,
+				6B9925F41ABE3E9C008DB648 /* SkyMethodViewController.m in Sources */,
 				5DABFEBC195873290000D5B2 /* VoicePressedHold.m in Sources */,
 				6B45094E1AB8125700507525 /* RECommonFunctions.m in Sources */,
 				6B16C84A1A70FCAF00F1EE99 /* CustomAnimation.m in Sources */,
