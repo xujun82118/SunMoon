@@ -402,7 +402,7 @@
     view.backgroundColor = [UIColor colorWithRed:167/255.0f green:167/255.0f blue:167/255.0f alpha:0.6f];
     
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 8, 0, 0)];
-    label.text = @"关于";
+    label.text = @"用户关怀";
     label.font = [UIFont systemFontOfSize:15];
     label.textColor = [UIColor whiteColor];
     label.backgroundColor = [UIColor clearColor];
@@ -426,22 +426,22 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+//    if (indexPath.section  == 2 && indexPath.row == 0)
+//    {
+//        
+//        //查看网络
+//        NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
+//        if (typeNet == netNon) {
+//            [self showCustomYesAlertSuperView:@"请检查网络" AlertKey:@"netFailed"];
+//            return;
+//        }
+//        
+//        NSURL *url = [NSURL URLWithString:@"https://itunes.apple.com/cn/app/ri-yue-mei-pai/id929494640"];
+//        [[UIApplication sharedApplication] openURL:url];
+//    }
+    
+    
     if (indexPath.section  == 2 && indexPath.row == 0)
-    {
-        
-        //查看网络
-        NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
-        if (typeNet == netNon) {
-            [self showCustomYesAlertSuperView:@"请检查网络" AlertKey:@"netFailed"];
-            return;
-        }
-        
-        NSURL *url = [NSURL URLWithString:@"https://itunes.apple.com/cn/app/ri-yue-mei-pai/id929494640"];
-        [[UIApplication sharedApplication] openURL:url];
-    }
-    
-    
-    if (indexPath.section  == 2 && indexPath.row == 1)
     {
         //查看网络
         NetConnectType typeNet = [CommonObject CheckConnectedToNetwork];
@@ -584,7 +584,7 @@
         return 1;
     }
     
-    return 3;
+    return 1;
 
 }
 
@@ -702,32 +702,23 @@
         if (indexPath.row == 0) {
             
             
-            cell.textLabel.text = @"查看最新版本";
-            
-
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-
-        }
-        
-        if (indexPath.row == 1) {
-            
-            
             cell.textLabel.text = @"@开发者";
             
-            
+
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            
+
         }
         
-//        if (indexPath.row == 2) {
+//        if (indexPath.row == 1) {
 //            
 //            
-//            cell.textLabel.text = @"关于我们";
+//            cell.textLabel.text = @"@开发者";
 //            
 //            
 //            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 //            
 //        }
+        
         
     }
     return cell;
