@@ -11,7 +11,6 @@
 @protocol EAIntroDelegate
 @optional
 - (void)introDidFinish;
-- (void)introDidEndScrollAt:(NSInteger) currentIndex  TotalCount:(NSInteger)pageCount;
 @end
 
 @interface EAIntroView : UIView <UIScrollViewDelegate>

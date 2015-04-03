@@ -148,18 +148,12 @@
     }
     
     if(page.titleImage) {
-        /*UIImageView *titleImageView = [[UIImageView alloc] initWithImage:page.titleImage];
+        UIImageView *titleImageView = [[UIImageView alloc] initWithImage:page.titleImage];
         CGRect rect1 = titleImageView.frame;
         rect1.origin.x = (self.scrollView.frame.size.width - rect1.size.width)/2;
         rect1.origin.y = page.imgPositionY;
         [titleImageView setFrame:rect1];
         [pageView addSubview:titleImageView];
-        */
-        UIImageView *bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-        bgImageView.image = page.titleImage;
-        [pageView addSubview:bgImageView];
-
-        
     }
     
     if([page.title length]) {
@@ -242,10 +236,6 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     self.currentPageIndex = scrollView.contentOffset.x/self.scrollView.frame.size.width;
-  
-    if ([(id)self.delegate respondsToSelector:@selector(introDidEndScrollAt:TotalCount:)]) {
-        [self.delegate introDidEndScrollAt:self.currentPageIndex  TotalCount:pageViews.count];
-    }
     
     if (self.currentPageIndex == (pageViews.count)) {
         if ([(id)self.delegate respondsToSelector:@selector(introDidFinish)]) {

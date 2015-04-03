@@ -151,9 +151,6 @@
 		5DF2387418E7B48A00538DA1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF2385018E7B48A00538DA1 /* Foundation.framework */; };
 		5DF2387518E7B48A00538DA1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DF2385418E7B48A00538DA1 /* UIKit.framework */; };
 		5DF2387D18E7B48A00538DA1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5DF2387B18E7B48A00538DA1 /* InfoPlist.strings */; };
-		5DF2389A18E7B5A100538DA1 /* EAIntroPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DF2388D18E7B5A100538DA1 /* EAIntroPage.m */; };
-		5DF2389B18E7B5A100538DA1 /* EAIntroView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DF2388F18E7B5A100538DA1 /* EAIntroView.m */; };
-		5DF238A418E7BB0400538DA1 /* Guid-start.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DF238A318E7BB0400538DA1 /* Guid-start.png */; };
 		5DF2CA1519754AE70078BF63 /* 小云.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DF2CA1419754AE70078BF63 /* 小云.png */; };
 		5DF2CA1719754BBA0078BF63 /* 小云-touch.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DF2CA1619754BBA0078BF63 /* 小云-touch.png */; };
 		5DF2CA1919754E740078BF63 /* 分享-黄.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DF2CA1819754E740078BF63 /* 分享-黄.png */; };
@@ -281,6 +278,8 @@
 		6B9925F41ABE3E9C008DB648 /* SkyMethodViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B9925F31ABE3E9C008DB648 /* SkyMethodViewController.m */; };
 		6B9925F61ABE541D008DB648 /* blinklist.png in Resources */ = {isa = PBXBuildFile; fileRef = 6B9925F51ABE541D008DB648 /* blinklist.png */; };
 		6BA8A8991A7F483D004BC38D /* PulsingHaloLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BA8A8981A7F483D004BC38D /* PulsingHaloLayer.m */; };
+		6BBBE18D1ACA838500DD0266 /* EAIntroPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BBBE18A1ACA838500DD0266 /* EAIntroPage.m */; };
+		6BBBE18E1ACA838500DD0266 /* EAIntroView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BBBE18C1ACA838500DD0266 /* EAIntroView.m */; };
 		6BCA94091A989EEA0070FA59 /* camera-white.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BCA94071A989EEA0070FA59 /* camera-white.png */; };
 		6BCA940A1A989EEA0070FA59 /* camera-yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 6BCA94081A989EEA0070FA59 /* camera-yellow.png */; };
 /* End PBXBuildFile section */
@@ -484,11 +483,6 @@
 		5DF2387218E7B48A00538DA1 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		5DF2387A18E7B48A00538DA1 /* SunMoonTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SunMoonTests-Info.plist"; sourceTree = "<group>"; };
 		5DF2387C18E7B48A00538DA1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		5DF2388C18E7B5A100538DA1 /* EAIntroPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAIntroPage.h; sourceTree = "<group>"; };
-		5DF2388D18E7B5A100538DA1 /* EAIntroPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAIntroPage.m; sourceTree = "<group>"; };
-		5DF2388E18E7B5A100538DA1 /* EAIntroView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAIntroView.h; sourceTree = "<group>"; };
-		5DF2388F18E7B5A100538DA1 /* EAIntroView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAIntroView.m; sourceTree = "<group>"; };
-		5DF238A318E7BB0400538DA1 /* Guid-start.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Guid-start.png"; sourceTree = "<group>"; };
 		5DF2CA1419754AE70078BF63 /* 小云.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "小云.png"; sourceTree = "<group>"; };
 		5DF2CA1619754BBA0078BF63 /* 小云-touch.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "小云-touch.png"; sourceTree = "<group>"; };
 		5DF2CA1819754E740078BF63 /* 分享-黄.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "分享-黄.png"; sourceTree = "<group>"; };
@@ -652,6 +646,10 @@
 		6B9925F51ABE541D008DB648 /* blinklist.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blinklist.png; sourceTree = "<group>"; };
 		6BA8A8971A7F483D004BC38D /* PulsingHaloLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PulsingHaloLayer.h; sourceTree = "<group>"; };
 		6BA8A8981A7F483D004BC38D /* PulsingHaloLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PulsingHaloLayer.m; sourceTree = "<group>"; };
+		6BBBE1891ACA838500DD0266 /* EAIntroPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAIntroPage.h; sourceTree = "<group>"; };
+		6BBBE18A1ACA838500DD0266 /* EAIntroPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAIntroPage.m; sourceTree = "<group>"; };
+		6BBBE18B1ACA838500DD0266 /* EAIntroView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAIntroView.h; sourceTree = "<group>"; };
+		6BBBE18C1ACA838500DD0266 /* EAIntroView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EAIntroView.m; sourceTree = "<group>"; };
 		6BCA94071A989EEA0070FA59 /* camera-white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "camera-white.png"; sourceTree = "<group>"; };
 		6BCA94081A989EEA0070FA59 /* camera-yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "camera-yellow.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1002,7 +1000,6 @@
 				5D18094118F12A8B0039F50E /* VPImageCropper */,
 				5D18093D18F128AF0039F50E /* AFpicker */,
 				5D18091F18F1278E0039F50E /* CustomPickerAndFitler */,
-				5DF2388818E7B5A100538DA1 /* EAIntroView */,
 				5DF2385618E7B48A00538DA1 /* SunMoon */,
 				5DF2387818E7B48A00538DA1 /* SunMoonTests */,
 				5DF2384F18E7B48A00538DA1 /* Frameworks */,
@@ -1054,6 +1051,7 @@
 		5DF2385618E7B48A00538DA1 /* SunMoon */ = {
 			isa = PBXGroup;
 			children = (
+				6BBBE1881ACA838500DD0266 /* EAIntroView */,
 				5D5113FF19356BB000F41F8A /* RootViewController.m */,
 				5D5113FE19356BB000F41F8A /* RootViewController.h */,
 				5D5113F8193568E700F41F8A /* MenuNavigationController.h */,
@@ -1135,18 +1133,6 @@
 				5DF2387B18E7B48A00538DA1 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		5DF2388818E7B5A100538DA1 /* EAIntroView */ = {
-			isa = PBXGroup;
-			children = (
-				5DF238A318E7BB0400538DA1 /* Guid-start.png */,
-				5DF2388C18E7B5A100538DA1 /* EAIntroPage.h */,
-				5DF2388D18E7B5A100538DA1 /* EAIntroPage.m */,
-				5DF2388E18E7B5A100538DA1 /* EAIntroView.h */,
-				5DF2388F18E7B5A100538DA1 /* EAIntroView.m */,
-			);
-			path = EAIntroView;
 			sourceTree = "<group>";
 		};
 		5DF238A718E7BF7500538DA1 /* Image */ = {
@@ -1428,6 +1414,17 @@
 			path = spirite;
 			sourceTree = "<group>";
 		};
+		6BBBE1881ACA838500DD0266 /* EAIntroView */ = {
+			isa = PBXGroup;
+			children = (
+				6BBBE1891ACA838500DD0266 /* EAIntroPage.h */,
+				6BBBE18A1ACA838500DD0266 /* EAIntroPage.m */,
+				6BBBE18B1ACA838500DD0266 /* EAIntroView.h */,
+				6BBBE18C1ACA838500DD0266 /* EAIntroView.m */,
+			);
+			path = EAIntroView;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1534,7 +1531,6 @@
 				6B4D97FD1AB539ED00739B05 /* 提示框V2-白.png in Resources */,
 				5D983493195FB59300A80EEB /* abFrame_8@2x.png in Resources */,
 				6B45096B1AB8128100507525 /* lightCircleBlured.png in Resources */,
-				5DF238A418E7BB0400538DA1 /* Guid-start.png in Resources */,
 				5D983491195FB59300A80EEB /* abFrame_6@2x.png in Resources */,
 				6B6FBC5B1B144A3C00E612B7 /* 截屏分享.png in Resources */,
 				6B70C08F1AA952B600F25F43 /* touch.png in Resources */,
@@ -1707,6 +1703,7 @@
 				5D18093B18F127FF0039F50E /* UIImage+RoundedCorner.m in Sources */,
 				5D18092C18F127BA0039F50E /* IphoneScreen.m in Sources */,
 				5D18091918F123800039F50E /* HomeInsideViewController.m in Sources */,
+				6BBBE18D1ACA838500DD0266 /* EAIntroPage.m in Sources */,
 				6B3256AA1A615A9100612A71 /* AFURLSessionManager.m in Sources */,
 				6B4509541AB8126800507525 /* NavBar.m in Sources */,
 				5D18093818F127FF0039F50E /* UIImage+Alpha.m in Sources */,
@@ -1753,16 +1750,15 @@
 				5D18092B18F127BA0039F50E /* ImageUtil.m in Sources */,
 				5D18ACEB18EB065400D4741A /* UserSetViewController.m in Sources */,
 				5D618AB41924E7F900150945 /* SunMoonAlertTime.m in Sources */,
-				5DF2389A18E7B5A100538DA1 /* EAIntroPage.m in Sources */,
 				5D18091C18F124AC0039F50E /* TakePhotoViewController.m in Sources */,
 				5DDC6752191200BB000B6A61 /* UIView+viewController.m in Sources */,
 				5D18094018F128BC0039F50E /* AFPickerView.m in Sources */,
-				5DF2389B18E7B5A100538DA1 /* EAIntroView.m in Sources */,
 				6B4509511AB8125700507525 /* REFrostedContainerViewController.m in Sources */,
 				6B4509351AB811AF00507525 /* UserDBManager.m in Sources */,
 				6B45093F1AB8121D00507525 /* VPImageCropperViewController.m in Sources */,
 				5D8AF89518FEC8F800CA23C1 /* UserInfoCloud.m in Sources */,
 				6B45094F1AB8125700507525 /* UIViewController+REFrostedViewController.m in Sources */,
+				6BBBE18E1ACA838500DD0266 /* EAIntroView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
