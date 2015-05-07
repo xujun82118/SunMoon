@@ -18,6 +18,7 @@
 #import "SunSentenceManagerViewController.h"
 #import "MoonSentenceManagerViewContrller.h"
 
+@import iAd;
 
 
 
@@ -68,7 +69,7 @@
 @property (nonatomic, copy) UserDB * userDB;
 @property (nonatomic, strong) UserInfoCloud* userCloud;
 
-
+@property(weak,nonatomic) ADBannerView *bannerView;
 @property (nonatomic, assign) PulsingHaloLayer *haloAdd;
 
 @property(nonatomic, assign) NSInteger  DayType;

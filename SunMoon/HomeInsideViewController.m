@@ -13,7 +13,6 @@
 #import "ShareByShareSDR.h"
 
 
-
 @interface HomeInsideViewController ()
 {
     
@@ -80,6 +79,13 @@
 //    [backBtn setFrame:CGRectMake(LEFT_NAVI_BTN_TO_SIDE_X, NAVI_BAR_BTN_Y-backBtnHeight/2+10, backBtnWidth, backBtnHeight)];
 //    [backBtn addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
 //    [self.view addSubview:backBtn];
+    
+    //添加广告条
+    ADBannerView *bannerView = [[ADBannerView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT -  60, SCREEN_WIDTH, 60)];
+    bannerView.delegate = (id)self;
+    bannerView.alpha = .0f;
+    [self.view addSubview:bannerView];
+    _bannerView = bannerView;
     
     //初始化时间
     _DayType = [CommonObject checkSunOrMoonTime];
@@ -1267,6 +1273,13 @@
     }
     [self showCustomDelayAlertBottom:[NSString stringWithFormat:NSLocalizedString(@"changeDay", @""), day] ];
 
+    //显示广告条
+    [UIView animateWithDuration:.25f animations:^{
+        _bannerView.alpha = 1.f;
+    }];
+    //计时8秒后隐藏
+    [NSTimer scheduledTimerWithTimeInterval:8.0f target:self selector:@selector(stopShowiADbannaer) userInfo:nil repeats:NO];
+
     
     //显示定时时间
     NSCalendar* calendar = [NSCalendar currentCalendar];
@@ -1299,6 +1312,14 @@
 
     
     
+}
+
+-(void) stopShowiADbannaer
+{
+    
+    [UIView animateWithDuration:.25f animations:^{
+        _bannerView.alpha = .0f;
+    }];
 }
 
 #pragma mark - 闹钟控制
@@ -1398,6 +1419,38 @@
         
     }
     
+}
+
+#pragma mark - iAd delegate
+
+- (void)bannerViewWillLoadAd:(ADBannerView *)banner{
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    
+    [UIView animateWithDuration:.25f animations:^{
+       // _bannerView.alpha = 1.f;
+    }];
+}
+
+
+- (void)bannerViewDidLoadAd:(ADBannerView *)banner{
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+}
+
+- (BOOL)bannerViewActionShouldBegin:(ADBannerView *)banner willLeaveApplication:(BOOL)willLeave{
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    return YES;
+}
+
+- (void)bannerViewActionDidFinish:(ADBannerView *)banner{
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+}
+
+- (void)bannerView:(ADBannerView *)banner didFailToReceiveAdWithError:(NSError *)error{
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    
+    [UIView animateWithDuration:.25f animations:^{
+        _bannerView.alpha = .0f;
+    }];
 }
 
 #pragma mark - InfiniteScrollPickerDelegate   

@@ -3908,18 +3908,25 @@
         
         [endFrameArray addObject:[swimOutBaselightImageViewArrayFrame objectAtIndex:i]];
     }
+
+    
     
     //构造View
     NSMutableArray *srcViewArray =[NSMutableArray arrayWithCapacity:getCount];
     for (NSInteger i = currentCount; i<currentCount+getCount; i++) {
         
-        [srcViewArray addObject:[swimOutBaselightImageViewArray objectAtIndex:i]];
+        UIImageView* srcView =[swimOutBaselightImageViewArray objectAtIndex:i];
+
+        [srcViewArray addObject:srcView];
+        
     }
+    
     
     //先大范围弹出，结束后，再小范围游动，以便在召回时，位置可知
     [self popOutLightCount:getCount  lightType:type srcViewArray:srcViewArray  aniKey:outTypeKey startFrame:startSpi endFrameArray:endFrameArray];
     
 }
+
 
 #pragma mark -
 /**
@@ -4376,6 +4383,17 @@
         return;
     }
     
+    
+    //点击天空窗口时，判断并放出音乐
+    if(CGRectContainsPoint(_lightPostionFrame.frame, location))
+    {
+
+        NSLog(@"Touch the base light, play the voice！");
+        //[self touchBaseLightPlayVoice:location];
+        
+        return;
+    }
+    
     //点击闪烁提示
     [self StartTouchIndication:location];
     
@@ -4509,6 +4527,55 @@
     
 }
 
+
+//有问题，暂时不用，self.userInfo.userDataBase出现空
+-(void)touchBaseLightPlayVoice:(CGPoint)tPoint
+{
+    
+    
+    //判断是第几个光的frame
+    for (int i ; i<swimOutBaselightImageViewArrayFrame.count; i++)
+    {
+        
+        CGRect curRect = [[swimOutBaselightImageViewArrayFrame objectAtIndex:i] CGRectValue];
+        
+        if (CGRectContainsPoint(curRect, tPoint)) {
+            
+            //如果超过了现有的光的个数，则返回
+            NSInteger lightCount = [[lightTypeCountInfo objectForKey:KEY_LIGHT_TYPE_LEFT_BASE_COUNT] integerValue];
+            if (i>=lightCount) {
+                return;
+            }
+            //放对应的最近lateDay天的录音
+            NSInteger lateDay = lightCount - i;
+            
+            NSInteger count = [self.userInfo.userDataBase count];
+            if (count>0) {
+                
+                if(count<lateDay)
+                {
+                    //语音的个数小于点击光的个数，取最早一天的
+                    lateDay = 0;
+                }
+                
+                UserInfo* userInfo = nil;
+                userInfo = [self.userInfo.userDataBase objectAtIndex:lateDay];
+                NSString* imageName;
+                if([CommonObject checkSunOrMoonTime]== IS_SUN_TIME)
+                {
+                    imageName =userInfo.sun_image_name;
+                    
+                }else
+                {
+                    imageName =userInfo.moon_image_name;
+
+                }
+                
+        }
+    }
+    
+   }
+}
 
 #pragma mark - 计算光的奖励
 //return 奖励的个数
@@ -5092,9 +5159,6 @@
     EAIntroPage *page2 = [EAIntroPage page];
     EAIntroPage *page3 = [EAIntroPage page];
     EAIntroPage *page4 = [EAIntroPage page];
-
-
-
     //page1.title = @"";
     //page1.desc = @"";
     //page1.bgImage = [UIImage imageNamed:@"intro-1"];
@@ -5113,16 +5177,15 @@
         page3.titleImage = [UIImage imageNamed:@"引导3-4.png"];
         page4.titleImage = [UIImage imageNamed:@"引导4-4.png"];
 
-
     }
  
+    
     //page1.title = @"";
     //page1.desc = @"";
     //page1.bgImage = [UIImage imageNamed:@"intro-1"];
-    
-    
-    
-    intro = [[EAIntroView alloc] initWithFrame:self.view.bounds andPages:@[page1,page2,page3,page4]];
+
+    CGRect frameRect = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    intro = [[EAIntroView alloc] initWithFrame:frameRect andPages:@[page1,page2,page3,page4]];
     [intro.skipButton setHidden:YES];
 
     [intro setDelegate:self];
